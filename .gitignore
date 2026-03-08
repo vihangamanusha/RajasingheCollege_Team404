@@ -1,5 +1,5 @@
 # Node.js
-node_modules/
+node_modules
 
 # Logs
 logs/
@@ -26,3 +26,22 @@ build/
 # OS specific
 Thumbs.db
 .DS_Store
+
+# Temporary files
+*.tmp
+*.temp
+
+# Coverage reports
+coverage/
+
+# Dist folders
+dist/
+
+# Generated files
+*.generated.js
+*.generated.ts
+
+# Backup files
+*.bak
+*.swp
+*.swo
