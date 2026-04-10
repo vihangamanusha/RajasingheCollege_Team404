@@ -45,8 +45,10 @@ const styles = {
   navList: {
     listStyle: "none",
     display: "flex",
-    gap: "20px",
-    margin: 0
+    gap: "70px",
+    margin: 0,
+    paddingTop: "80px",
+    fontSize: "18px",
   },
   image: {
     width: "125px",
