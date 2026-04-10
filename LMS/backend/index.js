@@ -14,10 +14,18 @@ app.use(cors());
 app.use(express.json());
 
 // Database connection
-const dbURI = 'mongodb://localhost:27017/rajasinghe_college';
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to the database'))
-    .catch((err) => console.error('Database connection error:', err));
+const dbUsername = process.env.DB_USERNAME;
+const dbPassword = process.env.DB_PASSWORD;
+const dbCluster = process.env.DB_CLUSTER;
+const dbName = process.env.DB_NAME;
+
+// Construct the MongoDB connection string
+const connectionString = `mongodb+srv://${dbUsername}:${dbPassword}@${dbCluster}/${dbName}?retryWrites=true&w=majority`;
+
+// Connect to MongoDB
+mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('Failed to connect to MongoDB', err));
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
