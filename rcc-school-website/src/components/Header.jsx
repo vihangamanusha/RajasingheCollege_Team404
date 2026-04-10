@@ -1,16 +1,24 @@
 import React from "react";
+import logo from "../assets/rcc.png";
 
 function Header() {
   return (
     <header style={styles.header}>
-      <h2 style={styles.logo}>Ruwanwella Rajasinhge Central College</h2>
+      
+      <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+        <img src={logo} alt="School Logo" style={styles.image} />
+        <h1 style={styles.logo}>
+          Ruwanwella Rajasinhge Central College
+        </h1>
+      </div>
 
       <nav>
         <ul style={styles.navList}>
           <li>Home</li>
           <li>About</li>
           <li>News</li>
-          <li>Events</li>
+          <li>Sports</li>
+          <li>Live Stream</li>
           <li>Contact</li>
         </ul>
       </nav>
@@ -36,6 +44,10 @@ const styles = {
     display: "flex",
     gap: "20px",
     margin: 0
+  },
+  image: {
+    width: "50px",
+    height: "50px"
   }
 };
 
