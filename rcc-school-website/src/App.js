@@ -1,14 +1,12 @@
-import logo from './logo.svg';
-import './App.css';
+import Header from "./components/Header";
 
 function App() {
   return (
     <div>
-      <h1>Ruwanwella Rajasinhge Central College</h1>
-      <p>Welcome to our school website</p>
+      <Header />
+      <h1>Welcome to School Website</h1>
     </div>
   );
 }
 
 export default App;
-
