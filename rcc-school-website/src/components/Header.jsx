@@ -8,7 +8,7 @@ function Header() {
       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
         <img src={logo} alt="School Logo" style={styles.image} />
         <h1 style={styles.logo}>
-          Ruwanwella Rajasinhge Central College
+            Rajasinhge Central College <br />Ruwanwella
         </h1>
       </div>
 
@@ -37,7 +37,10 @@ const styles = {
   },
   logo: {
     margin: 0,
-    fontSize: "18px"
+    fontSize: "px",
+    color: "white",
+    lineHeight: "1.0" ,
+    fontFamily: "Arial, sans-serif"
   },
   navList: {
     listStyle: "none",
@@ -46,8 +49,8 @@ const styles = {
     margin: 0
   },
   image: {
-    width: "50px",
-    height: "50px"
+    width: "125px",
+    height: "125px"
   }
 };
 
