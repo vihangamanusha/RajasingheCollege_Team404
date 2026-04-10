@@ -45,7 +45,7 @@ const styles = {
   navList: {
     listStyle: "none",
     display: "flex",
-    gap: "70px",
+    gap: "50px",
     margin: 0,
     paddingTop: "80px",
     fontSize: "18px",
