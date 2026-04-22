@@ -9,7 +9,7 @@ const authenticateToken = require('./middleware/authMiddleware');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001; // Changed default port to 5001
 
 // Middleware setup
 app.use(cors()); // Enable Cross-Origin Resource Sharing
@@ -21,13 +21,12 @@ const dbPassword = process.env.DB_PASSWORD;
 const dbCluster = process.env.DB_CLUSTER;
 const dbName = process.env.DB_NAME;
 
-// Construct the MongoDB connection string
 const connectionString = `mongodb+srv://${dbUsername}:${dbPassword}@${dbCluster}/${dbName}?retryWrites=true&w=majority`;
 
 // Connect to MongoDB
-mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Failed to connect to MongoDB', err));
+//mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+//  .then(() => console.log('Connected to MongoDB'))
+//    .catch(err => console.error('Failed to connect to MongoDB', err));
 
 // Define a simple route
 app.get('/', (req, res) => {
