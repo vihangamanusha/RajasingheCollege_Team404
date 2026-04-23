@@ -20,6 +20,7 @@ const connectionString = process.env.MONGO_URI;
 // Connect to MongoDB
 mongoose.connect(connectionString).then(() => {
   console.log('Connected to MongoDB');
+  
 }).catch((err) => {
   console.error('Error connecting to MongoDB:', err);
 }
