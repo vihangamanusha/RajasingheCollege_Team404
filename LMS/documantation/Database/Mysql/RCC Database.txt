@@ -5,7 +5,7 @@ USE RCC;
 CREATE TABLE user (
     user_id VARCHAR(20) PRIMARY KEY,
     username VARCHAR(50) UNIQUE,
-    password VARCHAR(100),
+    password VARCHAR(255),
     role ENUM('Admin','Teacher','Student','TechnicalOfficer'),
     email VARCHAR(100),
     created_date DATE,
@@ -38,6 +38,7 @@ CREATE TABLE student (
     full_name VARCHAR(100),
     date_of_birth DATE,
     address VARCHAR(255),
+    medium ENUM('Sinhala','English') NOT NULL,
     class_id VARCHAR(20),
     contact_number VARCHAR(15),
     FOREIGN KEY (user_id) REFERENCES user(user_id),
