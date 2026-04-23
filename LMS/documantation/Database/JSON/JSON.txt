@@ -1,0 +1,106 @@
+USER
+{
+  "_id": "U001",
+  "username": "admin1",
+  "password": "1234",
+  "role": "Admin",
+  "email": "admin@gmail.com",
+  "created_date": "2026-04-23",
+  "status": "Active"
+}
+
+
+STUDENT
+{
+  "_id": "S001",
+  "user_id": "U010",
+  "full_name": "Kamal Silva",
+  "date_of_birth": "2002-05-10",
+  "address": "Colombo, Sri Lanka",
+  "medium": "Sinhala"
+  "class_id": "C01",
+  "contact_number": "0712345678"
+}
+
+
+TEACHER
+{
+  "_id": "T001",
+  "user_id": "U002",
+  "full_name": "Nimal Perera",
+  "subject_specialization": "ICT",
+  "contact_number": "0771234567"
+}
+
+
+TECHNICAL OFFICER
+{
+  "_id": "TO001",
+  "user_id": "U003",
+  "full_name": "Saman Kumara",
+  "email": "saman@gmail.com",
+  "contact_number": "0751234567",
+  "position": "IT Officer",
+  "assigned_area": "Computer Lab"
+}
+
+
+ADMIN
+{
+  "_id": "A001",
+  "user_id": "U001",
+  "full_name": "Admin User",
+  "contact_number": "0701234567"
+}
+
+
+CLASS
+{
+  "_id": "C01",
+  "class_name": "Grade 10-A",
+  "year": 2026,
+  "teacher_id": "T001"
+}
+
+
+SUBJECT
+{
+  "_id": "SUB01",
+  "subject_name": "ICT",
+  "class_id": "C01",
+  "teacher_id": "T001"
+}
+
+
+MARKS
+{
+  "_id": 1,
+  "student_id": "S001",
+  "subject_id": "SUB01",
+  "term": "Term 1",
+  "assignment_mark": 75
+}
+
+
+DOCUMENT
+{
+  "_id": "D001",
+  "title": "ICT Lesson 1",
+  "file_path": "/files/ict_lesson1.pdf",
+  "upload_date": "2026-04-23",
+  "teacher_id": "T001",
+  "subject_id": "SUB01"
+}
+
+
+REPORT
+{
+  "_id": 1,
+  "student_id": "S001",
+  "class_id": "C01",
+  "term": "Term 1",
+  "total_marks": 310,
+  "average": 77.5,
+  "rank_position": 5,
+  "generated_date": "2026-04-23"
+}
