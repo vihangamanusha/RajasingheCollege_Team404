@@ -1,4 +1,4 @@
-import { Sidebar } from "../shared/Sidebar";
+ import { Sidebar } from "../shared/Sidebar";
 import { TopNavbar } from "../shared/TopNavbar";
 import { Users, BookOpen, Calendar, Upload } from "lucide-react";
 
@@ -10,8 +10,8 @@ export function TeacherClasses() {
       students: 42,
       medium: "English",
       subjects: ["Mathematics"],
-      schedule: "Mon, Wed, Fri - 8:00 AM",
-      attendance: 95.5,
+    //  schedule: "Mon, Wed, Fri - 8:00 AM",
+     // attendance: 95.5,
     },
     {
       id: 2,
@@ -19,8 +19,8 @@ export function TeacherClasses() {
       students: 38,
       medium: "Sinhala",
       subjects: ["Mathematics"],
-      schedule: "Tue, Thu - 9:00 AM",
-      attendance: 92.3,
+    //  schedule: "Tue, Thu - 9:00 AM",
+     // attendance: 92.3,
     },
     {
       id: 3,
@@ -28,8 +28,8 @@ export function TeacherClasses() {
       students: 40,
       medium: "English",
       subjects: ["Mathematics"],
-      schedule: "Mon, Wed - 10:00 AM",
-      attendance: 94.8,
+     // schedule: "Mon, Wed - 10:00 AM",
+     // attendance: 94.8,
     },
   ];
 
@@ -37,9 +37,9 @@ export function TeacherClasses() {
     alert(`Viewing student list for ${className}\n\nThis would show detailed student information and attendance records.`);
   };
 
-  const handleMarkAttendance = (className) => {
-    alert(`Mark attendance for ${className}\n\nThis would open the attendance marking interface.`);
-  };
+ // const handleMarkAttendance = (className) => {
+ //   alert(`Mark attendance for ${className}\n\nThis would open the attendance marking interface.`);
+ // };
 
   const handleUploadMarks = () => {
     window.location.href = '/upload-marks';
@@ -68,13 +68,13 @@ export function TeacherClasses() {
                       </p>
                     </div>
                   </div>
-                  <span className={`px-4 py-2 rounded-lg text-sm ${
+               {/*   <span className={`px-4 py-2 rounded-lg text-sm ${
                     cls.attendance >= 95 ? 'bg-green-100 text-green-700' :
                     cls.attendance >= 90 ? 'bg-yellow-100 text-yellow-700' :
                     'bg-red-100 text-red-700'
                   }`}>
-                    {cls.attendance}% Attendance
-                  </span>
+                   {cls.attendance}% Attendance 
+                  </span>*/}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -85,13 +85,13 @@ export function TeacherClasses() {
                     </div>
                     <p className="text-sm text-gray-900">{cls.subjects.join(', ')}</p>
                   </div>
-                  <div className="p-4 bg-yellow-50 rounded-lg">
+                { /* <div className="p-4 bg-yellow-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <Calendar className="w-4 h-4 text-[#fbbf24]" />
                       <span className="text-sm text-gray-600">Schedule</span>
                     </div>
                     <p className="text-sm text-gray-900">{cls.schedule}</p>
-                  </div>
+                  </div>*/}
                   <div className="p-4 bg-green-50 rounded-lg">
                     <div className="flex items-center gap-2 mb-2">
                       <Users className="w-4 h-4 text-green-600" />
@@ -105,13 +105,13 @@ export function TeacherClasses() {
                   <button onClick={() => handleViewStudents(cls.name)} className="flex-1 px-4 py-2 bg-[#1e40af] text-white rounded-lg hover:bg-[#1e3a8a] transition-colors">
                     View Students
                   </button>
-                  <button onClick={() => handleMarkAttendance(cls.name)} className="flex-1 px-4 py-2 bg-[#fbbf24] text-[#1e40af] rounded-lg hover:bg-[#f59e0b] transition-colors">
+              { /*   <button onClick={() => handleMarkAttendance(cls.name)} className="flex-1 px-4 py-2 bg-[#fbbf24] text-[#1e40af] rounded-lg hover:bg-[#f59e0b] transition-colors">
                     Mark Attendance
-                  </button>
-                  <button onClick={handleUploadMarks} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
+                  </button>*/}
+              { /*    <button onClick={handleUploadMarks} className="flex-1 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center gap-2">
                     <Upload className="w-4 h-4" />
                     Upload Marks
-                  </button>
+                  </button> */}
                 </div>
               </div>
             ))}
