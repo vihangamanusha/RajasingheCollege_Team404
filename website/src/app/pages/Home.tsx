@@ -10,7 +10,7 @@ export default function Home() {
       <section className="relative h-[50vh] flex items-center justify-center overflow-hidden mt-20">
         <div className="absolute inset-0">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1664553692783-888fda781031?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHw1fHxzY2hvb2wlMjBidWlsZGluZyUyMGFyY2hpdGVjdHVyZXxlbnwxfHx8fDE3NzY5NjI5ODZ8MA&ixlib=rb-4.1.0&q=80&w=1080"
+            src="https://www.bing.com/images/search?view=detailV2&ccid=Np5GoBag&id=F16DE118C7A90D2FBD8326F39FE51CDCB470DF7E&thid=OIP.Np5GoBagEaqjdqt6Ev4h-wHaFj&mediaurl=https%3A%2F%2Flookaside.fbsbx.com%2Flookaside%2Fcrawler%2Fmedia%2F%3Fmedia_id%3D383219537325162&cdnurl=https%3A%2F%2Fth.bing.com%2Fth%2Fid%2FR.369e46a016a011aaa376ab7a12fe21fb%3Frik%3Dft9wtNwc5Z%252fzJg%26pid%3DImgRaw%26r%3D0&exph=1536&expw=2048&q=ruwanwella+rajasinghe+central+college&FORM=IRPRST&ck=C8269CB642126257A00985DED0C2C3E5&selectedIndex=0&itb=0&cw=1375&ch=659&ajaxhist=0&ajaxserp=0"
             alt="School Building"
             className="w-full h-full object-cover"
           />
