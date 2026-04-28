@@ -37,7 +37,8 @@ const styles = {
     alignItems: "center",
     background: "#002147",
     color: "white",
-    padding: "10px 30px"
+    padding: " 30px",
+    height: "80px" 
   },
 
   left: {
