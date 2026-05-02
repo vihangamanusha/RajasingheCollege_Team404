@@ -4,8 +4,9 @@ import { Plus, Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 export function ClassManagement() {
+  const params = new URLSearchParams(window.location.search);
   const [userRole] = useState(
-    window.location.pathname.includes('admin') ? 'admin' : 'technical-officer'
+    params.get('from') === 'admin' ? 'admin' : 'technical-officer'
   );
 
   const classes = [
