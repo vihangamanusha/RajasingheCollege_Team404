@@ -15,20 +15,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * JWT Authentication Filter — runs once per request.
+ * JWT authentication filter.
+ * This filter runs for every request.
  *
- * This is the direct equivalent of authMiddleware.js:
- *
- *   const token = req.header('Authorization');
- *   if (!token) return res.status(401).send('Access Denied');
- *   try {
- *       const verified = jwt.verify(token, 'your_secret_key');
- *       req.user = verified;
- *       next();
- *   } catch (err) {
- *       res.status(400).send('token is not valid');
- *   }
+ * Responsibilities:
+ * - Read Authorization header
+ * - Extract JWT token
+ * - Validate token
+ * - Set authentication in Spring Security context
  */
+
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -41,41 +37,55 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Read the Authorization header (same as req.header('Authorization'))
+        // Get request URL path
+        String path = request.getRequestURI();
+
+        // Skip authentication for public routes
+        if (path.startsWith("/api/auth") || path.equals("/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Read Authorization header
         String authHeader = request.getHeader("Authorization");
 
         String token = null;
         String username = null;
 
-        // Support both "Bearer <token>" and raw token formats
+        // Extract token from Bearer format
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-        } else if (authHeader != null) {
-            token = authHeader;
         }
 
-        // If token is present, try to extract and verify it
-        if (token != null) {
-            try {
+        // Extract username from token
+        try {
+            if (token != null) {
                 username = jwtUtil.extractUsername(token);
-            } catch (Exception e) {
-                // Token is invalid — equivalent to: res.status(400).send('token is not valid')
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("token is not valid");
-                return;
             }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid token");
+            return;
         }
 
-        // If username extracted and no existing auth in context, set authentication
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        // Validate token and set authentication context
+        if (username != null &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
+
             if (jwtUtil.validateToken(token, username)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                null,
+                                new ArrayList<>()
+                        );
+
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
 
-        // Continue the filter chain (equivalent to next())
+        // Continue request flow
         filterChain.doFilter(request, response);
     }
 }

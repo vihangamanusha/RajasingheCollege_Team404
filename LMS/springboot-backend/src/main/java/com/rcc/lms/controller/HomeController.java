@@ -4,9 +4,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Root controller — equivalent to:
- *   app.get('/', (req, res) => res.send('Rajasinghe College LMS Backend is running'))
+ * Simple test controller to check if backend is running.
+ * Equivalent to a basic root route in Node.js.
  */
+
 @RestController
 public class HomeController {
 
