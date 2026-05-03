@@ -11,9 +11,13 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
- * Spring Security configuration.
- * Registers the JWT filter and defines which routes are protected.
+ * Security configuration for the LMS backend.
+ * Controls:
+ * - Public endpoints
+ * - Protected endpoints
+ * - Stateless session (JWT based authentication)
  */
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -23,31 +27,32 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
-            // Disable CSRF (not needed for stateless REST APIs)
-            .csrf(csrf -> csrf.disable())
+                // Disable CSRF because this is a REST API
+                .csrf(csrf -> csrf.disable())
 
-            // Set session management to stateless (JWT-based, no server sessions)
-            .sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Disable session creation (JWT is stateless)
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
 
-            // Define route access rules
-            .authorizeHttpRequests(auth -> auth
-                // Public routes — no token required
-                .requestMatchers("/", "/auth/**").permitAll()
+                // Define route access rules
+                .authorizeHttpRequests(auth -> auth
 
-                // All other routes require authentication
-                .anyRequest().authenticated()
-           )
+                        // Public routes that do not require authentication
+                        .requestMatchers(
+                                "/",
+                                "/api/auth/**",
+                                "/error"
+                        ).permitAll()
 
+                        // All other routes require authentication
+                        .anyRequest().authenticated()
+                )
 
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/**").permitAll()
-//                        .anyRequest().authenticated()
-//                )
-
-            // Add our JWT filter before the default username/password filter
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                // Add JWT filter before Spring Security authentication filter
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
