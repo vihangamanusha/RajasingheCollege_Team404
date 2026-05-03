@@ -31,16 +31,18 @@ public class AuthController {
     @PostMapping("/register")
     public Map<String, Object> register(@RequestBody User user) {
 
-        // Step 1: Hash the password before saving to database
+        // Always assign ADMIN role for now (for your LMS admin module)
+        user.setRole("ADMIN");
+
+        // Hash password before saving
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Step 2: Save user to MongoDB
+        // Save user
         User savedUser = userRepository.save(user);
 
-        // Step 3: Hide password from API response (security best practice)
+        // Hide password from response
         savedUser.setPassword(null);
 
-        // Step 4: Prepare response
         Map<String, Object> response = new HashMap<>();
         response.put("message", "User registered successfully");
         response.put("user", savedUser);
