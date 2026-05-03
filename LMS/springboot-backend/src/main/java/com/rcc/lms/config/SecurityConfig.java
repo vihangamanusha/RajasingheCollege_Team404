@@ -32,13 +32,19 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
             // Define route access rules
-            .authorizeHttpRequests(auth -> auth
-                // Public routes — no token required
-                .requestMatchers("/", "/auth/**").permitAll()
+//            .authorizeHttpRequests(auth -> auth
+//                // Public routes — no token required
+//                .requestMatchers("/", "/auth/**").permitAll()
+//
+//                // All other routes require authentication
+//                .anyRequest().authenticated()
+//            )
 
-                // All other routes require authentication
-                .anyRequest().authenticated()
-            )
+
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
 
             // Add our JWT filter before the default username/password filter
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
