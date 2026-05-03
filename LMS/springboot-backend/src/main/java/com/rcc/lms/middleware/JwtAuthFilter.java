@@ -14,21 +14,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * JWT Authentication Filter — runs once per request.
- *
- * This is the direct equivalent of authMiddleware.js:
- *
- *   const token = req.header('Authorization');
- *   if (!token) return res.status(401).send('Access Denied');
- *   try {
- *       const verified = jwt.verify(token, 'your_secret_key');
- *       req.user = verified;
- *       next();
- *   } catch (err) {
- *       res.status(400).send('token is not valid');
- *   }
- */
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -41,41 +26,53 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Read the Authorization header (same as req.header('Authorization'))
+        String path = request.getRequestURI();
+
+        // ✅ 1. SKIP AUTH ENDPOINTS (VERY IMPORTANT)
+        if (path.startsWith("/api/auth")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Read Authorization header
         String authHeader = request.getHeader("Authorization");
 
         String token = null;
         String username = null;
 
-        // Support both "Bearer <token>" and raw token formats
+        // Extract token
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
         } else if (authHeader != null) {
             token = authHeader;
         }
 
-        // If token is present, try to extract and verify it
+        // If token exists → try extract username
         if (token != null) {
             try {
                 username = jwtUtil.extractUsername(token);
             } catch (Exception e) {
-                // Token is invalid — equivalent to: res.status(400).send('token is not valid')
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 response.getWriter().write("token is not valid");
                 return;
             }
         }
 
-        // If username extracted and no existing auth in context, set authentication
+        // Validate token and set authentication
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             if (jwtUtil.validateToken(token, username)) {
+
                 UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                        new UsernamePasswordAuthenticationToken(
+                                username,
+                                null,
+                                new ArrayList<>()
+                        );
+
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
-        // Continue the filter chain (equivalent to next())
         filterChain.doFilter(request, response);
     }
 }
