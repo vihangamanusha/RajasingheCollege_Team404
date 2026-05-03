@@ -5,9 +5,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * USER MODEL
- * This represents a document in MongoDB
+ * Represents a user document in MongoDB
  */
-
 @Document(collection = "users")
 public class User {
 
@@ -16,17 +15,19 @@ public class User {
 
     private String username;
     private String password;
-    private String role;
+
+    // IMPORTANT CHANGE: use Role enum instead of String
+    private Role role;
 
     public User() {}
 
-    public User(String username, String password, String role) {
+    public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.role = role;
     }
 
-    // Getters and setters
+    // Getters and Setters
 
     public String getId() {
         return id;
@@ -48,11 +49,11 @@ public class User {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }
