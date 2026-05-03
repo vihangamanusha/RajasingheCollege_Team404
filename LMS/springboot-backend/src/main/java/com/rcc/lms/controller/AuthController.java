@@ -31,7 +31,12 @@ public class AuthController {
     @PostMapping("/register")
     public Map<String, Object> register(@RequestBody User user) {
 
-        // Always assign ADMIN role for now (for your LMS admin module)
+        // Validate password
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new RuntimeException("Password cannot be empty");
+        }
+
+        // Force ADMIN role (temporary for testing)
         user.setRole("ADMIN");
 
         // Hash password before saving
@@ -40,7 +45,7 @@ public class AuthController {
         // Save user
         User savedUser = userRepository.save(user);
 
-        // Hide password from response
+        // Hide password in response
         savedUser.setPassword(null);
 
         Map<String, Object> response = new HashMap<>();
