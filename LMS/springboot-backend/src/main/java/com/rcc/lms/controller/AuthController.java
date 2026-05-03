@@ -1,5 +1,8 @@
 package com.rcc.lms.controller;
 
+import com.rcc.lms.model.User;
+import com.rcc.lms.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -7,28 +10,25 @@ import java.util.Map;
 
 /**
  * AUTH CONTROLLER
- * This handles login and registration APIs
+ * Now connected to MongoDB
  */
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    /**
-     * TEST REGISTER API (no database yet)
-     * We will connect MongoDB later
-     */
+    @Autowired
+    private UserRepository userRepository;
+
     @PostMapping("/register")
-    public Map<String, String> register(@RequestBody Map<String, String> user) {
+    public Map<String, Object> register(@RequestBody User user) {
 
-        String username = user.get("username");
-        String password = user.get("password");
-        String role = user.get("role");
+        // Save user to MongoDB
+        User savedUser = userRepository.save(user);
 
-        Map<String, String> response = new HashMap<>();
+        Map<String, Object> response = new HashMap<>();
         response.put("message", "User registered successfully");
-        response.put("username", username);
-        response.put("role", role);
+        response.put("user", savedUser);
 
         return response;
     }
