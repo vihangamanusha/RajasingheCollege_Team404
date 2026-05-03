@@ -14,6 +14,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * JWT authentication filter.
+ * This filter runs for every request.
+ *
+ * Responsibilities:
+ * - Read Authorization header
+ * - Extract JWT token
+ * - Validate token
+ * - Set authentication in Spring Security context
+ */
+
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
@@ -26,10 +37,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        // Get request URL path
         String path = request.getRequestURI();
 
-        // ✅ 1. SKIP AUTH ENDPOINTS (VERY IMPORTANT)
-        if (path.startsWith("/api/auth")) {
+        // Skip authentication for public routes
+        if (path.startsWith("/api/auth") || path.equals("/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -40,39 +52,40 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = null;
         String username = null;
 
-        // Extract token
+        // Extract token from Bearer format
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-        } else if (authHeader != null) {
-            token = authHeader;
         }
 
-        // If token exists → try extract username
-        if (token != null) {
-            try {
+        // Extract username from token
+        try {
+            if (token != null) {
                 username = jwtUtil.extractUsername(token);
-            } catch (Exception e) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("token is not valid");
-                return;
             }
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("Invalid token");
+            return;
         }
 
-        // Validate token and set authentication
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        // Validate token and set authentication context
+        if (username != null &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
+
             if (jwtUtil.validateToken(token, username)) {
 
-                UsernamePasswordAuthenticationToken authToken =
+                UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 username,
                                 null,
                                 new ArrayList<>()
                         );
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }
 
+        // Continue request flow
         filterChain.doFilter(request, response);
     }
 }
