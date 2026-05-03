@@ -7,9 +7,9 @@ export function Sidebar({ role }) {
   const menuItems = {
     admin: [
       { icon: Home, label: "Dashboard", path: "/admin" },
-      { icon: Users, label: "Students", path: "/users?role=student" },
-      { icon: GraduationCap, label: "Teachers", path: "/users?role=teacher" },
-      { icon: BookOpen, label: "Classes", path: "/classes" },
+      { icon: Users, label: "Students", path: "/users?role=student&from=admin" },
+      { icon: GraduationCap, label: "Teachers", path: "/users?role=teacher&from=admin" },
+      { icon: BookOpen, label: "Classes", path: "/classes?from=admin" },
       { icon: FileText, label: "Reports", path: "/admin/reports" },
       { icon: Settings, label: "Settings", path: "/admin/settings" },
     ],
@@ -62,7 +62,10 @@ export function Sidebar({ role }) {
       <nav className="flex-1 p-4">
         {items.map((item) => {
           const Icon = item.icon;
-          const isActive = location.pathname === item.path;
+          const itemUrl = new URL(item.path, 'http://x');
+          const isActive =
+            location.pathname === itemUrl.pathname &&
+            (!itemUrl.search || location.search.includes(itemUrl.searchParams.get('role') || ''));
           return (
             <Link
               key={item.path}
