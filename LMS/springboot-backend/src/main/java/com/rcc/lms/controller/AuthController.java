@@ -45,27 +45,27 @@ public class AuthController {
     public Map<String, Object> register(@RequestBody User user) {
 
         // Validate username
-        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
             throw new RuntimeException("Username cannot be empty");
         }
 
         // Validate password
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
             throw new RuntimeException("Password cannot be empty");
         }
 
-        // Validate role
-        if (user.getRole() == null || user.getRole().isEmpty()) {
+        // FIX: Role is ENUM → only null check is allowed
+        if (user.getRole() == null) {
             throw new RuntimeException("Role cannot be empty");
         }
 
-        // Hash password before saving
+        // Hash password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // Save user to MongoDB
+        // Save user
         User savedUser = userRepository.save(user);
 
-        // Hide password in response
+        // Hide password
         savedUser.setPassword(null);
 
         Map<String, Object> response = new HashMap<>();
