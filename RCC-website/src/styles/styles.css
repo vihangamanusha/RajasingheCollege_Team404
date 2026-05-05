@@ -206,6 +206,8 @@ body {
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
+  
+  
 }
 
 .py-8 {
@@ -728,19 +730,25 @@ body {
   position: sticky;
   top: 0;
   z-index: 50;
+  height: 120px;
 }
+
+
 
 .header .logo-link {
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin-top: 10px;
+  margin-left: 0;
 }
 
 .header .logo {
-  width: 5rem;
-  height: 5rem;
+  width: 6rem;
+  height: 6rem;
   object-fit: contain;
   transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  margin-left: 0px;
 }
 
 .header .logo:hover {

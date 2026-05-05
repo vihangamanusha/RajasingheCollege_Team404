@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router";
-import { Menu, X, Globe } from "lucide-react";
+import { Menu, X, Globe, LucideDivide } from "lucide-react";
 import logo from "../assets/rcc.png";
 import { useLanguage } from "../contexts/LanguageContext";
 
@@ -27,9 +27,9 @@ export function Header() {
       {/* Main Header */}
       <header className="header">
         <div className="container py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex  justify-between">
             {/* Logo and School Name - Left */}
-            <Link to="/" className="logo-link group">
+            <div className="logo-link group">
               <img
                 src={logo}
                 alt="RRCC Logo"
@@ -42,7 +42,7 @@ export function Header() {
                 </h2>
                 <p className="school-location">Ruwanwella</p>
               </div>
-            </Link>
+            </div>
 
             {/* Desktop Navigation - Right */}
             <nav className="hidden lg:flex nav">
