@@ -1878,6 +1878,8 @@ body {
 
 .home-section-title {
   font-size: 2.25rem;
+  font-style: italic;
+  font-family: 'Times New Roman', Times, serif;
   line-height: 2.5rem;
   color: #002147;
   margin-bottom: 1rem;

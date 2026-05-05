@@ -167,7 +167,7 @@ export function Home() {
                 <BookOpen className="home-news-icon" />
                 <div className="home-news-icon-line"></div>
               </div>
-              <h2 className="home-news-title">
+              <h2 className="home-section-title">
                 {t("home.latestNews")}
               </h2>
               <div className="home-news-divider"></div>
