@@ -163,7 +163,7 @@ export function Home() {
 
       {/* Latest News */}
       <section className="home-news-section">
-        <div className="home-news-bg-decor"></div>
+        {/*<div className="home-news-bg-decor"></div>*/}
         <div className="home-news-container">
           <div className="home-section-header">
             <div className="home-news-title-wrapper">

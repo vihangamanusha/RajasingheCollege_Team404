@@ -1633,6 +1633,8 @@ body {
   line-height: 1.6;
 }
 
+
+
 .news-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -1640,7 +1642,7 @@ body {
 }
 
 .news-card {
-  background-color: #ffffff;
+  background-color: #e5e5e9;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -1667,7 +1669,7 @@ body {
 }
 
 .news-date {
-  color: #6b7280;
+  color: #000000;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }
