@@ -277,6 +277,15 @@ export function Home() {
             ))}
           </div>
         </div>
+        <div className="home-news-footer">
+          <Link
+            to="/news"
+            className="btn btn-primary"
+          >
+            <span className="btn-text">{t("home.viewAll")}</span>
+            <ArrowRight className="icon-lg" />
+          </Link>
+        </div>
       </section>
       {/* LMS Section */}
       <section className="home-lms-section">
