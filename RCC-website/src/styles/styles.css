@@ -748,7 +748,8 @@ body {
   height: 6rem;
   object-fit: contain;
   transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
-  
+  margin: 0;
+  margin-left: 0;
 }
 
 
@@ -911,7 +912,7 @@ body {
 /* Hero Sections */
 .hero {
   position: relative;
-  height: 20rem;
+  height: 30rem;
   overflow: hidden;
 }
 
@@ -933,6 +934,7 @@ body {
 .hero .content {
   text-align: center;
   color: #ffffff;
+  font-family: 'Playfair Display', serif;
 }
 
 .hero .title {
