@@ -292,6 +292,13 @@ export function Home() {
         <div className="container">
           <div className="home-lms-grid">
             <div>
+              <ImageWithFallback
+                src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&h=600&fit=crop"
+                alt="Learning Management System"
+                className="home-lms-img"
+              />
+            </div>
+            <div>
               <div className="home-lms-header">
                 <div className="home-lms-icon-bg">
                   <GraduationCap className="home-lms-icon" />
@@ -311,13 +318,7 @@ export function Home() {
                 <ArrowRight className="btn-icon" />
               </a>
             </div>
-            <div>
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&h=600&fit=crop"
-                alt="Learning Management System"
-                className="home-lms-img"
-              />
-            </div>
+
           </div>
         </div>
       </section>
