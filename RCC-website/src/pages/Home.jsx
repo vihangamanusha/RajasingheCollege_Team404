@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import school from "../assets/school.webp";
 
 export function Home() {
   const { t } = useLanguage();
@@ -82,7 +83,7 @@ export function Home() {
       <section className="hero">
         <div className="background">
           <ImageWithFallback
-            src="https://th.bing.com/th/id/OIP.d4KoNDsV2D1TnrarA3MUsQHaEw?w=280&h=183&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3="
+            src={school}
             alt="School Campus"
             className="hero-bg-img"
           />
@@ -90,7 +91,7 @@ export function Home() {
         <div className="overlay">
           <div className="content">
             <h1 className="title">
-              {t("home.welcome")} {t("home.schoolName")}
+              {t("home.welcome")}<br /> {t("home.schoolName")}
             </h1>
             <Link
               to="/about"
