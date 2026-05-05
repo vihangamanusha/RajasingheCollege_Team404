@@ -1080,10 +1080,18 @@ body {
 }
 
 .hero .title {
-  font-size: 3rem;
+  font-size: 2.6rem;
   font-weight: 700;
   margin-bottom: 1rem;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.hero .school-name {
+  font-size: 3.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #FFD700;
 }
 
 .hero .subtitle {

@@ -9,6 +9,7 @@ import {
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
 import school from "../assets/school.webp";
+import schoolimg from "../assets/schoolimg.jpeg";
 
 export function Home() {
   const { t } = useLanguage();
@@ -91,7 +92,10 @@ export function Home() {
         <div className="overlay">
           <div className="content">
             <h1 className="title">
-              {t("home.welcome")}<br /> {t("home.schoolName")}
+              {t("home.welcome")}<br />
+              <p className="school-name">
+                {t("home.schoolName")}
+              </p>
             </h1>
             <Link
               to="/about"
@@ -136,7 +140,7 @@ export function Home() {
           <div className="home-about-grid">
             <div>
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=600&fit=crop"
+                src={schoolimg}
                 alt="Students Learning"
                 className="home-about-img"
               />

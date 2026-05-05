@@ -29,9 +29,9 @@ const translations = {
   },
 
   // Home Page
-  "home.welcome": { en: "Welcome to", si: "ඔබව සාදරයෙන් පිළිගනිමු" },
+  "home.welcome": { en: "WELCOME TO", si: "ඔබව සාදරයෙන් පිළිගනිමු" },
   "home.schoolName": {
-    en: "Rajasinghe Central College",
+    en: "RAJASINGHE CENTRAL COLLEGE",
     si: "රාජසිංහ මධ්‍ය විද්‍යාලය",
   },
   "home.subtitle": { en: "Ruwanwella", si: "රුවන්වැල්ල" },
