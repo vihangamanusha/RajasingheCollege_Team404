@@ -206,8 +206,7 @@ export function Home() {
                     to="/news"
                     className="home-link-news group"
                   >
-                    <span>{t("home.readMore")}</span>
-                    <ArrowRight className="btn-icon home-link-news-icon" />
+
                   </Link>
                 </div>
               </div>
