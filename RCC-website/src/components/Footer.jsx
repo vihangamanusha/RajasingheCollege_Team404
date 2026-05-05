@@ -7,8 +7,8 @@ export function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="bg-[#002147] text-white">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-12">
+    <footer className="footer">
+      <div className="container">
         {/* Logo Section */}
         <div className="flex justify-center mb-6">
           <img
@@ -20,7 +20,7 @@ export function Footer() {
 
         {/* School Name */}
         <div className="text-center mb-8">
-          <h3 className="text-[#FFD700] text-2xl mb-2">
+          <h3 className="text-secondary text-2xl mb-2">
             {t("footer.schoolName")}
           </h3>
           <p className="text-gray-300">{t("footer.tagline")}</p>
@@ -32,7 +32,7 @@ export function Footer() {
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFD700] hover:text-[#002147] transition-all duration-300"
+            className="social-link"
           >
             <Facebook className="w-6 h-6" />
           </a>
@@ -40,7 +40,7 @@ export function Footer() {
             href="https://youtube.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFD700] hover:text-[#002147] transition-all duration-300"
+            className="social-link"
           >
             <Youtube className="w-6 h-6" />
           </a>
@@ -48,7 +48,7 @@ export function Footer() {
             href="https://linkedin.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center hover:bg-[#FFD700] hover:text-[#002147] transition-all duration-300"
+            className="social-link"
           >
             <Linkedin className="w-6 h-6" />
           </a>
@@ -56,31 +56,31 @@ export function Footer() {
         <div className="flex flex-wrap justify-center gap-6 mb-6">
           <Link
             to="/about"
-            className="text-white hover:text-[#FFD700] transition-colors"
+            className="text-white hover:text-secondary transition-colors"
           >
             {t("nav.about")}
           </Link>
           <Link
             to="/news"
-            className="text-white hover:text-[#FFD700] transition-colors"
+            className="text-white hover:text-secondary transition-colors"
           >
             {t("nav.news")}
           </Link>
           <Link
             to="/sports"
-            className="text-white hover:text-[#FFD700] transition-colors"
+            className="text-white hover:text-secondary transition-colors"
           >
             {t("nav.sports")}
           </Link>
           <Link
             to="/live-stream"
-            className="text-white hover:text-[#FFD700] transition-colors"
+            className="text-white hover:text-secondary transition-colors"
           >
             {t("nav.liveStream")}
           </Link>
           <a
             href="#lms"
-            className="text-white hover:text-[#FFD700] transition-colors"
+            className="text-white hover:text-secondary transition-colors"
           >
             {t("nav.lms")}
           </a>

@@ -24,37 +24,35 @@ export function Header() {
 
   return (
     <>
-      {/* Top Bar with School Name */}
-
       {/* Main Header */}
-      <header className="bg-[#002147] shadow-md sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
+      <header className="header">
+        <div className="container py-4">
           <div className="flex items-center justify-between">
             {/* Logo and School Name - Left */}
-            <Link to="/" className="flex items-center gap-4 group">
+            <Link to="/" className="logo-link group">
               <img
                 src={logo}
                 alt="RRCC Logo"
-                className="w-20 h-20 object-contain transition-transform duration-300 group-hover:scale-110"
+                className="logo"
               />
 
               <div className="hidden md:block">
-                <h2 className="text-[#FFD700] leading-tight text-2xl">
+                <h2 className="school-name">
                   Rajasinghe Central College
                 </h2>
-                <p className="text-white text-base leading-tight">Ruwanwella</p>
+                <p className="school-location">Ruwanwella</p>
               </div>
             </Link>
 
             {/* Desktop Navigation - Right */}
-            <nav className="hidden lg:flex items-center gap-6 ml-auto">
+            <nav className="hidden lg:flex nav">
               {navItems.map((item) => {
                 if (item.path === "#lms") {
                   return (
                     <a
                       key={item.path}
                       href={item.path}
-                      className="relative py-2 transition-colors duration-300 text-white/80 hover:text-white"
+                      className="nav-link"
                     >
                       {item.name}
                     </a>
@@ -64,16 +62,9 @@ export function Header() {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`relative py-2 transition-colors duration-300 ${
-                      isActive(item.path)
-                        ? "text-white"
-                        : "text-white/80 hover:text-white"
-                    }`}
+                    className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
                   >
                     {item.name}
-                    {isActive(item.path) && (
-                      <span className="absolute bottom-0 left-0 w-full h-0.5 bg-[#FFD700]"></span>
-                    )}
                   </Link>
                 );
               })}
@@ -81,7 +72,7 @@ export function Header() {
               {/* Language Switch */}
               <button
                 onClick={toggleLanguage}
-                className="flex items-center gap-2 px-4 py-2 bg-[#FFD700] text-[#002147] rounded-lg hover:bg-[#FFC700] transition-all duration-300"
+                className="language-btn"
               >
                 <Globe className="w-4 h-4" />
                 <span>{language === "en" ? "සිං" : "EN"}</span>
@@ -91,7 +82,7 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden text-white p-2"
+              className="lg:hidden mobile-menu-btn"
             >
               {isMenuOpen ? (
                 <X className="w-6 h-6" />
@@ -103,7 +94,7 @@ export function Header() {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <nav className="lg:hidden mt-4 pb-4 border-t border-white/20 pt-4">
+            <nav className="mobile-nav">
               {navItems.map((item) => {
                 if (item.path === "#lms") {
                   return (
@@ -111,7 +102,7 @@ export function Header() {
                       key={item.path}
                       href={item.path}
                       onClick={() => setIsMenuOpen(false)}
-                      className="block py-3 px-4 rounded-lg transition-colors duration-300 text-white hover:bg-white/10"
+                      className="mobile-nav-link"
                     >
                       {item.name}
                     </a>
@@ -122,11 +113,7 @@ export function Header() {
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`block py-3 px-4 rounded-lg transition-colors duration-300 ${
-                      isActive(item.path)
-                        ? "bg-[#FFD700] text-[#002147]"
-                        : "text-white hover:bg-white/10"
-                    }`}
+                    className={`mobile-nav-link ${isActive(item.path) ? 'active' : ''}`}
                   >
                     {item.name}
                   </Link>
@@ -134,7 +121,7 @@ export function Header() {
               })}
               <button
                 onClick={toggleLanguage}
-                className="w-full mt-3 flex items-center justify-center gap-2 px-4 py-3 bg-[#FFD700] text-[#002147] rounded-lg hover:bg-[#FFC700] transition-all duration-300"
+                className="w-full mt-3 language-btn"
               >
                 <Globe className="w-4 h-4" />
                 <span>{language === "en" ? "සිංහල" : "English"}</span>

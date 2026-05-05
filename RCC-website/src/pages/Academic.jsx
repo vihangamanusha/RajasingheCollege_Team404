@@ -29,30 +29,33 @@ export function Academic() {
   return (
     <div>
       {/* Hero Banner */}
-      <section className="relative h-80 overflow-hidden">
-        <ImageWithFallback
-          src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920&h=1080&fit=crop"
-          alt="Academic Programs"
-          className="w-full h-full object-cover"
-        />
-
-        <div className="absolute inset-0 bg-[#002147]/70 flex items-center justify-center">
-          <h1 className="text-5xl md:text-6xl text-white">
-            {t("academic.title")}
-          </h1>
+      <section className="hero">
+        <div className="background">
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920&h=1080&fit=crop"
+            alt="Academic Programs"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="overlay">
+          <div className="content">
+            <h1 className="title">
+              {t("academic.title")}
+            </h1>
+          </div>
         </div>
       </section>
 
       {/* Introduction */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="container">
           <div className="max-w-3xl mx-auto text-center">
             <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center">
-                <BookOpen className="w-8 h-8 text-[#FFD700]" />
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                <BookOpen className="w-8 h-8 text-secondary" />
               </div>
             </div>
-            <h2 className="text-4xl text-[#002147] mb-6">
+            <h2 className="text-4xl text-primary mb-6">
               {t("academic.excellence")}
             </h2>
             <p className="text-lg text-gray-700 leading-relaxed">
@@ -67,32 +70,32 @@ export function Academic() {
       </section>
 
       {/* Academic Levels */}
-      <section className="py-20 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-20 bg-muted">
+        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-[#002147] mb-4">
+            <h2 className="text-4xl md:text-5xl text-primary mb-4">
               {t("academic.ourPrograms")}
             </h2>
-            <div className="w-24 h-1 bg-[#FFD700] mx-auto"></div>
+            <div className="w-24 h-1 bg-secondary mx-auto"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="academic-grid">
             {/* Grades 6-9 */}
             <Link
               to="/academic/grades-6-9"
-              className="group bg-white rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="facility-card"
             >
-              <div className="h-48 overflow-hidden">
+              <div className="facility-image">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop"
                   alt="Grades 6-9"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-2xl text-[#002147] mb-3 group-hover:text-[#FFD700] transition-colors">
+              <div className="facility-content">
+                <h3 className="facility-title">
                   {t("academic.grades69")}
                 </h3>
-                <p className="text-gray-600 text-sm italic">
+                <p className="facility-description">
                   {t("academic.grades69Desc")}
                 </p>
               </div>
@@ -101,20 +104,20 @@ export function Academic() {
             {/* Ordinary Level */}
             <Link
               to="/academic/ordinary-level"
-              className="group bg-white rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="facility-card"
             >
-              <div className="h-48 overflow-hidden">
+              <div className="facility-image">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&h=600&fit=crop"
                   alt="Ordinary Level"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-2xl text-[#002147] mb-3 group-hover:text-[#FFD700] transition-colors">
+              <div className="facility-content">
+                <h3 className="facility-title">
                   {t("academic.oLevel")}
                 </h3>
-                <p className="text-gray-600 text-sm italic">
+                <p className="facility-description">
                   {t("academic.oLevelDesc")}
                 </p>
               </div>
@@ -123,20 +126,20 @@ export function Academic() {
             {/* Advanced Level */}
             <Link
               to="/academic/advanced-level"
-              className="group bg-white rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="facility-card"
             >
-              <div className="h-48 overflow-hidden">
+              <div className="facility-image">
                 <ImageWithFallback
                   src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
                   alt="Advanced Level"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-2xl text-[#002147] mb-3 group-hover:text-[#FFD700] transition-colors">
+              <div className="facility-content">
+                <h3 className="facility-title">
                   {t("academic.aLevel")}
                 </h3>
-                <p className="text-gray-600 text-sm italic">
+                <p className="facility-description">
                   {t("academic.aLevelDesc")}
                 </p>
               </div>
@@ -147,12 +150,12 @@ export function Academic() {
 
       {/* Examination Results */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-[#002147] mb-4">
+            <h2 className="text-4xl md:text-5xl text-primary mb-4">
               {t("academic.examExcellence")}
             </h2>
-            <div className="w-24 h-1 bg-[#FFD700] mx-auto"></div>
+            <div className="w-24 h-1 bg-secondary mx-auto"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -174,9 +177,9 @@ export function Academic() {
             ].map((stat, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-[#002147] to-[#003366] text-white p-10 rounded-lg shadow-xl text-center"
+                className="bg-gradient-to-br from-primary to-[#003366] text-white p-10 rounded-lg shadow-xl text-center"
               >
-                <div className="text-6xl text-[#FFD700] mb-4">
+                <div className="text-6xl text-secondary mb-4">
                   {stat.percentage}
                 </div>
                 <h3 className="text-2xl mb-3">{stat.title}</h3>
@@ -188,32 +191,32 @@ export function Academic() {
       </section>
 
       {/* Facilities */}
-      <section className="py-20 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-20 bg-muted">
+        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-[#002147] mb-4">
+            <h2 className="text-4xl md:text-5xl text-primary mb-4">
               {t("academic.facilities")}
             </h2>
-            <div className="w-24 h-1 bg-[#FFD700] mx-auto"></div>
+            <div className="w-24 h-1 bg-secondary mx-auto"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {facilities.map((facility, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+                className="facility-card"
               >
-                <div className="h-48 overflow-hidden">
+                <div className="facility-image">
                   <ImageWithFallback
                     src={facility.image}
                     alt={facility.title}
                     className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
                   />
                 </div>
-                <div className="p-6">
-                  <h3 className="text-[#002147] mb-3">
+                <div className="facility-content">
+                  <h3 className="facility-title">
                     {t(facility.titleKey)}
                   </h3>
-                  <p className="text-gray-600">{t(facility.descriptionKey)}</p>
+                  <p className="facility-description">{t(facility.descriptionKey)}</p>
                 </div>
               </div>
             ))}
@@ -222,8 +225,8 @@ export function Academic() {
       </section>
 
       {/* Academic Staff Section */}
-      <section className="py-20 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-20 bg-muted">
+        <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <ImageWithFallback
@@ -234,10 +237,10 @@ export function Academic() {
             </div>
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center">
-                  <BookOpen className="w-8 h-8 text-[#FFD700]" />
+                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                  <BookOpen className="w-8 h-8 text-secondary" />
                 </div>
-                <h2 className="text-4xl text-[#002147]">
+                <h2 className="text-4xl text-primary">
                   {t("academic.staff")}
                 </h2>
               </div>
@@ -246,7 +249,7 @@ export function Academic() {
               </p>
               <Link
                 to="/academic/all-staff"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#002147] text-white rounded-lg hover:bg-[#003366] transition-all duration-300 shadow-lg"
+                className="btn btn-primary"
               >
                 <span>{t("academic.seeAllStaff")}</span>
                 <BookOpen className="w-5 h-5" />
@@ -257,8 +260,8 @@ export function Academic() {
       </section>
 
       {/* LMS Portal Link */}
-      <section className="py-20 bg-gradient-to-br from-[#002147] to-[#003366] text-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
+      <section className="py-20 bg-gradient-to-br from-primary to-[#003366] text-white">
+        <div className="container text-center">
           <h2 className="text-4xl md:text-5xl mb-6">
             {t("academic.lmsAccess")}
           </h2>
@@ -269,7 +272,7 @@ export function Academic() {
             href="https://lms.rrcc.lk"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFD700] text-[#002147] rounded-lg hover:bg-[#FFC700] transition-all duration-300 shadow-lg text-lg"
+            className="btn btn-secondary"
           >
             <BookOpen className="w-6 h-6" />
             <span>{t("academic.accessPortal")}</span>

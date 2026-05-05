@@ -79,24 +79,22 @@ export function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative h-[600px] overflow-hidden">
-        <div className="absolute inset-0">
+      <section className="hero">
+        <div className="background">
           <ImageWithFallback
             src="https://th.bing.com/th/id/OIP.d4KoNDsV2D1TnrarA3MUsQHaEw?w=280&h=183&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3="
             alt="School Campus"
             className="w-full h-full object-cover"
           />
-
-          <div className="absolute inset-0 bg-gradient-to-r from-[#002147]/90 to-[#002147]/60"></div>
         </div>
-        <div className="relative max-w-7xl mx-auto px-4 md:px-8 h-full flex items-center">
-          <div className="text-white max-w-3xl">
-            <h1 className="text-5xl md:text-6xl mb-8">
+        <div className="overlay">
+          <div className="content">
+            <h1 className="title">
               {t("home.welcome")} {t("home.schoolName")}
             </h1>
             <Link
               to="/about"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFD700] text-[#002147] rounded-lg hover:bg-[#FFC700] transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="btn btn-secondary"
             >
               <span>{t("home.learnMore")}</span>
               <ArrowRight className="w-5 h-5" />
@@ -106,18 +104,18 @@ export function Home() {
       </section>
 
       {/* Motivation Section */}
-      <section className="py-16 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-16 bg-muted">
+        <div className="container">
           <div className="max-w-4xl mx-auto text-center">
             <div className="mb-6">
-              <div className="w-20 h-20 bg-[#002147] rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
                 <span className="text-4xl">🎓</span>
               </div>
             </div>
-            <p className="text-[#002147] text-2xl md:text-3xl italic mb-6 leading-relaxed">
+            <p className="text-primary text-2xl md:text-3xl italic mb-6 leading-relaxed">
               "{t("home.motivationQuote")}"
             </p>
-            <div className="w-32 h-1 bg-[#FFD700] mx-auto mb-6"></div>
+            <div className="w-32 h-1 bg-secondary mx-auto mb-6"></div>
             <p className="text-gray-700 text-lg">
               {t("home.motivationSubtext")}
             </p>
@@ -127,12 +125,12 @@ export function Home() {
 
       {/* About Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-[#002147] mb-4">
+            <h2 className="text-4xl md:text-5xl text-primary mb-4">
               {t("home.aboutTitle")}
             </h2>
-            <div className="w-24 h-1 bg-[#FFD700] mx-auto"></div>
+            <div className="w-24 h-1 bg-secondary mx-auto"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
@@ -148,7 +146,7 @@ export function Home() {
               </p>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 text-[#002147] hover:text-[#FFD700] transition-colors duration-300"
+                className="inline-flex items-center gap-2 text-primary hover:text-secondary transition-colors duration-300"
               >
                 <span>{t("common.readMore")}</span>
                 <ArrowRight className="w-5 h-5" />
@@ -159,62 +157,52 @@ export function Home() {
       </section>
 
       {/* Latest News */}
-      <section className="py-24 bg-gradient-to-b from-[#F5F5F5] to-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#FFD700] opacity-5 rounded-full blur-3xl"></div>
-        <div className="max-w-7xl mx-auto px-4 md:px-8 relative">
+      <section className="py-24 bg-gradient-to-b from-muted to-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-secondary opacity-5 rounded-full blur-3xl"></div>
+        <div className="container relative">
           <div className="text-center mb-16">
             <div className="inline-block">
               <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-12 h-0.5 bg-[#FFD700]"></div>
-                <BookOpen className="w-8 h-8 text-[#FFD700]" />
-                <div className="w-12 h-0.5 bg-[#FFD700]"></div>
+                <div className="w-12 h-0.5 bg-secondary"></div>
+                <BookOpen className="w-8 h-8 text-secondary" />
+                <div className="w-12 h-0.5 bg-secondary"></div>
               </div>
-              <h2 className="text-5xl md:text-6xl text-[#002147] mb-4 font-serif">
+              <h2 className="text-5xl md:text-6xl text-primary mb-4 font-serif">
                 {t("home.latestNews")}
               </h2>
-              <div className="w-32 h-1 bg-gradient-to-r from-transparent via-[#FFD700] to-transparent mx-auto"></div>
+              <div className="w-32 h-1 bg-gradient-to-r from-transparent via-secondary to-transparent mx-auto"></div>
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="news-grid">
             {newsItems.slice(0, 3).map((news, index) => (
               <div
                 key={news.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3"
+                className="news-card"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="relative h-56 overflow-hidden">
+                <div className="news-image">
                   <ImageWithFallback
                     src={news.image}
                     alt={news.title}
                     className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                   />
-
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#002147] via-transparent to-transparent opacity-60"></div>
-                  <div className="absolute top-4 right-4">
-                    <div className="bg-[#FFD700] text-[#002147] px-4 py-2 rounded-full shadow-lg">
-                      <Calendar className="w-4 h-4 inline mr-2" />
-                      <span className="text-sm font-semibold">
-                        {news.date.split(",")[0]}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <div className="w-12 h-1 bg-[#FFD700] mb-3"></div>
-                  </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="text-2xl text-[#002147] mb-3 group-hover:text-[#FFD700] transition-colors duration-300 line-clamp-2">
+                <div className="news-content">
+                  <div className="news-date">
+                    {news.date.split(",")[0]}
+                  </div>
+                  <h3 className="news-title">
                     {t(news.titleKey)}
                   </h3>
-                  <p className="text-gray-600 mb-5 leading-relaxed line-clamp-3">
+                  <p className="news-excerpt">
                     {t(news.excerptKey)}
                   </p>
                   <Link
                     to="/news"
-                    className="inline-flex items-center gap-2 text-[#002147] font-semibold group-hover:gap-4 transition-all duration-300"
+                    className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-4 transition-all duration-300"
                   >
                     <span>{t("home.readMore")}</span>
-                    <ArrowRight className="w-5 h-5 group-hover:text-[#FFD700]" />
+                    <ArrowRight className="w-5 h-5 group-hover:text-secondary" />
                   </Link>
                 </div>
               </div>
@@ -223,7 +211,7 @@ export function Home() {
           <div className="text-center mt-16">
             <Link
               to="/news"
-              className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-[#002147] to-[#003366] text-white rounded-full hover:from-[#003366] hover:to-[#002147] transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
+              className="btn btn-primary"
             >
               <span className="text-lg font-semibold">{t("home.viewAll")}</span>
               <ArrowRight className="w-6 h-6" />
@@ -234,20 +222,20 @@ export function Home() {
 
       {/* Upcoming Events */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="container">
           <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-[#002147] mb-4">
+            <h2 className="text-4xl md:text-5xl text-primary mb-4">
               {t("home.upcomingEvents")}
             </h2>
-            <div className="w-24 h-1 bg-[#FFD700] mx-auto mb-4"></div>
+            <div className="w-24 h-1 bg-secondary mx-auto mb-4"></div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {upcomingEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-gradient-to-br from-white to-gray-50 border-l-4 border-[#FFD700] rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="bg-gradient-to-br from-white to-gray-50 border-l-4 border-secondary rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
               >
-                <h3 className="text-2xl text-[#002147] mb-3 font-serif">
+                <h3 className="text-2xl text-primary mb-3 font-serif">
                   {t(event.titleKey)}
                 </h3>
 
@@ -257,7 +245,7 @@ export function Home() {
 
                 <div className="space-y-3 text-sm">
                   <div className="flex items-center gap-3 bg-white p-3 rounded-lg">
-                    <div className="w-8 h-8 bg-[#002147] rounded-full flex items-center justify-center text-white">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
                       📅
                     </div>
                     <span className="text-gray-700 font-medium">
@@ -265,7 +253,7 @@ export function Home() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3 bg-white p-3 rounded-lg">
-                    <div className="w-8 h-8 bg-[#002147] rounded-full flex items-center justify-center text-white">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
                       🕐
                     </div>
                     <span className="text-gray-700 font-medium">
@@ -273,7 +261,7 @@ export function Home() {
                     </span>
                   </div>
                   <div className="flex items-center gap-3 bg-white p-3 rounded-lg">
-                    <div className="w-8 h-8 bg-[#002147] rounded-full flex items-center justify-center text-white">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
                       📍
                     </div>
                     <span className="text-gray-700 font-medium">
@@ -287,13 +275,13 @@ export function Home() {
         </div>
       </section>
       {/* LMS Section */}
-      <section className="py-20 bg-gradient-to-br from-[#002147] to-[#003366] text-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-20 bg-gradient-to-br from-primary to-[#003366] text-white">
+        <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-[#FFD700] rounded-full flex items-center justify-center">
-                  <GraduationCap className="w-8 h-8 text-[#002147]" />
+                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center">
+                  <GraduationCap className="w-8 h-8 text-primary" />
                 </div>
                 <h2 className="text-4xl text-white">{t("home.lmsTitle")}</h2>
               </div>
@@ -304,7 +292,7 @@ export function Home() {
                 href="https://lms.rrcc.lk"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#FFD700] text-[#002147] rounded-lg hover:bg-[#FFC700] transition-all duration-300 shadow-lg"
+                className="btn btn-secondary"
               >
                 <span>{t("home.accessLMS")}</span>
                 <ArrowRight className="w-5 h-5" />
@@ -321,15 +309,15 @@ export function Home() {
         </div>
       </section>
       {/* Academic Section */}
-      <section className="py-20 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+      <section className="py-20 bg-muted">
+        <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div className="order-2 md:order-1">
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center">
-                  <BookOpen className="w-8 h-8 text-[#FFD700]" />
+                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                  <BookOpen className="w-8 h-8 text-secondary" />
                 </div>
-                <h2 className="text-4xl text-[#002147]">
+                <h2 className="text-4xl text-primary">
                   {t("home.academicTitle")}
                 </h2>
               </div>
@@ -338,7 +326,7 @@ export function Home() {
               </p>
               <Link
                 to="/academic"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#002147] text-white rounded-lg hover:bg-[#003366] transition-all duration-300 shadow-lg"
+                className="btn btn-primary"
               >
                 <span>{t("home.explorePrograms")}</span>
                 <ArrowRight className="w-5 h-5" />
@@ -357,7 +345,7 @@ export function Home() {
 
       {/* Sports Section */}
       <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="container">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
               <ImageWithFallback
@@ -368,10 +356,10 @@ export function Home() {
             </div>
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center">
-                  <Trophy className="w-8 h-8 text-[#FFD700]" />
+                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                  <Trophy className="w-8 h-8 text-secondary" />
                 </div>
-                <h2 className="text-4xl text-[#002147]">
+                <h2 className="text-4xl text-primary">
                   {t("home.sportsTitle")}
                 </h2>
               </div>
@@ -380,7 +368,7 @@ export function Home() {
               </p>
               <Link
                 to="/sports"
-                className="inline-flex items-center gap-2 px-8 py-4 bg-[#002147] text-white rounded-lg hover:bg-[#003366] transition-all duration-300 shadow-lg"
+                className="btn btn-primary"
               >
                 <span>View Sports Achievements</span>
                 <ArrowRight className="w-5 h-5" />

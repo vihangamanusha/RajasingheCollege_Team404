@@ -77,6 +77,7 @@ export function Sports() {
               {
                 name: t("sports.volleyball"),
                 icon: "🏐",
+                path: "/sports/volleyball",
                 image:
                   "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=800&h=600&fit=crop",
                 description: "Provincial Champions",
@@ -84,6 +85,7 @@ export function Sports() {
               {
                 name: t("sports.cricket"),
                 icon: "🏏",
+                path: "/sports/cricket",
                 image:
                   "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&h=600&fit=crop",
                 description: "District Tournament Winners",
@@ -91,6 +93,7 @@ export function Sports() {
               {
                 name: t("sports.rugby"),
                 icon: "🏉",
+                path: "/sports/rugby",
                 image:
                   "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&h=600&fit=crop",
                 description: "Inter-School Champions",
@@ -98,6 +101,7 @@ export function Sports() {
               {
                 name: t("sports.karate"),
                 icon: "🥋",
+                path: "/sports/karate",
                 image:
                   "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&h=600&fit=crop",
                 description: "National Medalists",
@@ -105,13 +109,15 @@ export function Sports() {
               {
                 name: t("sports.athletics"),
                 icon: "🏃",
+                path: "/sports/athletics",
                 image:
                   "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
                 description: "Record Holders",
               },
             ].map((sport, index) => (
-              <div
+              <Link
                 key={index}
+                to={sport.path}
                 className="group relative bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3"
               >
                 <div className="relative h-64 overflow-hidden">
@@ -147,7 +153,7 @@ export function Sports() {
                     />
                   </svg>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
