@@ -1642,7 +1642,7 @@ body {
 }
 
 .news-card {
-  background-color: #e5e5e9;
+  background-color: #ffffff;
   border-radius: 1rem;
   overflow: hidden;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -1957,7 +1957,7 @@ body {
 .home-news-section {
   padding-top: 6rem;
   padding-bottom: 6rem;
-  background: linear-gradient(to bottom, #f3f4f6, #ffffff);
+  background: linear-gradient(to bottom, #e6e6e6, #e6e6e6);
   position: relative;
   overflow: hidden;
 }
@@ -2065,9 +2065,15 @@ body {
   margin-top: 4rem;
 }
 
+
+
 .btn-text {
-  font-size: 1.125rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.btn-text:hover {
+  color: #FFD700;
 }
 
 .icon-lg {
@@ -2092,7 +2098,7 @@ body {
 }
 
 .home-event-card {
-  background: linear-gradient(to bottom right, #ffffff, #f9fafb);
+  background: linear-gradient(to bottom right, #ebebf1, #ebebf1);
   border-left: 4px solid #FFD700;
   border-radius: 0.5rem;
   padding: 1.5rem;
