@@ -84,7 +84,7 @@ export function Home() {
           <ImageWithFallback
             src="https://th.bing.com/th/id/OIP.d4KoNDsV2D1TnrarA3MUsQHaEw?w=280&h=183&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3="
             alt="School Campus"
-            className="w-full h-full object-cover"
+            className="hero-bg-img"
           />
         </div>
         <div className="overlay">
@@ -97,26 +97,26 @@ export function Home() {
               className="btn btn-secondary"
             >
               <span>{t("home.learnMore")}</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="btn-icon" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Motivation Section */}
-      <section className="py-16 bg-muted">
+      <section className="home-motivation-section">
         <div className="container">
-          <div className="max-w-4xl mx-auto text-center">
+          <div className="home-motivation-container">
             <div className="mb-6">
-              <div className="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-4xl">🎓</span>
+              <div className="home-motivation-icon-bg">
+                <span className="home-motivation-icon">🎓</span>
               </div>
             </div>
-            <p className="text-primary text-2xl md:text-3xl italic mb-6 leading-relaxed">
+            <p className="home-motivation-quote">
               "{t("home.motivationQuote")}"
             </p>
-            <div className="w-32 h-1 bg-secondary mx-auto mb-6"></div>
-            <p className="text-gray-700 text-lg">
+            <div className="home-motivation-divider"></div>
+            <p className="home-motivation-subtext">
               {t("home.motivationSubtext")}
             </p>
           </div>
@@ -124,32 +124,32 @@ export function Home() {
       </section>
 
       {/* About Section */}
-      <section className="py-20 bg-white">
+      <section className="home-section-white">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-primary mb-4">
+          <div className="home-section-header">
+            <h2 className="home-section-title">
               {t("home.aboutTitle")}
             </h2>
-            <div className="w-24 h-1 bg-secondary mx-auto"></div>
+            <div className="home-section-divider"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="home-about-grid">
             <div>
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=600&fit=crop"
                 alt="Students Learning"
-                className="w-full h-96 object-cover rounded-lg shadow-xl"
+                className="home-about-img"
               />
             </div>
             <div>
-              <p className="text-lg text-gray-700 mb-6 leading-relaxed">
+              <p className="home-about-desc">
                 {t("home.aboutDesc")}
               </p>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-2 text-primary hover:text-secondary transition-colors duration-300"
+                className="home-link-primary"
               >
                 <span>{t("common.readMore")}</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="btn-icon" />
               </Link>
             </div>
           </div>
@@ -157,20 +157,20 @@ export function Home() {
       </section>
 
       {/* Latest News */}
-      <section className="py-24 bg-gradient-to-b from-muted to-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-secondary opacity-5 rounded-full blur-3xl"></div>
-        <div className="container relative">
-          <div className="text-center mb-16">
-            <div className="inline-block">
-              <div className="flex items-center justify-center gap-3 mb-4">
-                <div className="w-12 h-0.5 bg-secondary"></div>
-                <BookOpen className="w-8 h-8 text-secondary" />
-                <div className="w-12 h-0.5 bg-secondary"></div>
+      <section className="home-news-section">
+        <div className="home-news-bg-decor"></div>
+        <div className="home-news-container">
+          <div className="home-section-header">
+            <div className="home-news-title-wrapper">
+              <div className="home-news-icon-wrapper">
+                <div className="home-news-icon-line"></div>
+                <BookOpen className="home-news-icon" />
+                <div className="home-news-icon-line"></div>
               </div>
-              <h2 className="text-5xl md:text-6xl text-primary mb-4 font-serif">
+              <h2 className="home-news-title">
                 {t("home.latestNews")}
               </h2>
-              <div className="w-32 h-1 bg-gradient-to-r from-transparent via-secondary to-transparent mx-auto"></div>
+              <div className="home-news-divider"></div>
             </div>
           </div>
           <div className="news-grid">
@@ -184,7 +184,7 @@ export function Home() {
                   <ImageWithFallback
                     src={news.image}
                     alt={news.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    className="home-news-img"
                   />
                 </div>
                 <div className="news-content">
@@ -199,72 +199,72 @@ export function Home() {
                   </p>
                   <Link
                     to="/news"
-                    className="inline-flex items-center gap-2 text-primary font-semibold group-hover:gap-4 transition-all duration-300"
+                    className="home-link-news group"
                   >
                     <span>{t("home.readMore")}</span>
-                    <ArrowRight className="w-5 h-5 group-hover:text-secondary" />
+                    <ArrowRight className="btn-icon home-link-news-icon" />
                   </Link>
                 </div>
               </div>
             ))}
           </div>
-          <div className="text-center mt-16">
+          <div className="home-news-footer">
             <Link
               to="/news"
               className="btn btn-primary"
             >
-              <span className="text-lg font-semibold">{t("home.viewAll")}</span>
-              <ArrowRight className="w-6 h-6" />
+              <span className="btn-text">{t("home.viewAll")}</span>
+              <ArrowRight className="icon-lg" />
             </Link>
           </div>
         </div>
       </section>
 
       {/* Upcoming Events */}
-      <section className="py-20 bg-white">
+      <section className="home-section-white">
         <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-primary mb-4">
+          <div className="home-section-header">
+            <h2 className="home-section-title">
               {t("home.upcomingEvents")}
             </h2>
-            <div className="w-24 h-1 bg-secondary mx-auto mb-4"></div>
+            <div className="home-section-divider home-section-divider-mb4"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="home-events-grid">
             {upcomingEvents.map((event) => (
               <div
                 key={event.id}
-                className="bg-gradient-to-br from-white to-gray-50 border-l-4 border-secondary rounded-lg p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                className="home-event-card"
               >
-                <h3 className="text-2xl text-primary mb-3 font-serif">
+                <h3 className="home-event-title">
                   {t(event.titleKey)}
                 </h3>
 
-                <p className="text-gray-600 text-sm mb-6 leading-relaxed italic">
+                <p className="home-event-desc">
                   {t(event.descriptionKey)}
                 </p>
 
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center gap-3 bg-white p-3 rounded-lg">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
+                <div className="home-event-details">
+                  <div className="home-event-detail-item">
+                    <div className="home-event-icon">
                       📅
                     </div>
-                    <span className="text-gray-700 font-medium">
+                    <span className="home-event-text">
                       {event.date}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 bg-white p-3 rounded-lg">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
+                  <div className="home-event-detail-item">
+                    <div className="home-event-icon">
                       🕐
                     </div>
-                    <span className="text-gray-700 font-medium">
+                    <span className="home-event-text">
                       {event.time}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 bg-white p-3 rounded-lg">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
+                  <div className="home-event-detail-item">
+                    <div className="home-event-icon">
                       📍
                     </div>
-                    <span className="text-gray-700 font-medium">
+                    <span className="home-event-text">
                       {t(event.locationKey)}
                     </span>
                   </div>
@@ -275,17 +275,17 @@ export function Home() {
         </div>
       </section>
       {/* LMS Section */}
-      <section className="py-20 bg-gradient-to-br from-primary to-[#003366] text-white">
+      <section className="home-lms-section">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="home-lms-grid">
             <div>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center">
-                  <GraduationCap className="w-8 h-8 text-primary" />
+              <div className="home-lms-header">
+                <div className="home-lms-icon-bg">
+                  <GraduationCap className="home-lms-icon" />
                 </div>
-                <h2 className="text-4xl text-white">{t("home.lmsTitle")}</h2>
+                <h2 className="home-lms-title">{t("home.lmsTitle")}</h2>
               </div>
-              <p className="text-base text-gray-300 mb-6 leading-relaxed font-light italic">
+              <p className="home-lms-desc">
                 {t("home.lmsDesc")}
               </p>
               <a
@@ -295,33 +295,33 @@ export function Home() {
                 className="btn btn-secondary"
               >
                 <span>{t("home.accessLMS")}</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="btn-icon" />
               </a>
             </div>
             <div>
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&h=600&fit=crop"
                 alt="Learning Management System"
-                className="w-full h-96 object-cover rounded-lg shadow-xl"
+                className="home-lms-img"
               />
             </div>
           </div>
         </div>
       </section>
       {/* Academic Section */}
-      <section className="py-20 bg-muted">
+      <section className="home-section-muted">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="order-2 md:order-1">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                  <BookOpen className="w-8 h-8 text-secondary" />
+          <div className="home-feature-grid">
+            <div className="home-order-text-left">
+              <div className="home-feature-header">
+                <div className="home-feature-icon-bg">
+                  <BookOpen className="home-feature-icon" />
                 </div>
-                <h2 className="text-4xl text-primary">
+                <h2 className="home-feature-title">
                   {t("home.academicTitle")}
                 </h2>
               </div>
-              <p className="text-base text-gray-600 mb-6 leading-relaxed font-light italic">
+              <p className="home-feature-desc">
                 {t("home.academicIntro")}
               </p>
               <Link
@@ -329,14 +329,14 @@ export function Home() {
                 className="btn btn-primary"
               >
                 <span>{t("home.explorePrograms")}</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="btn-icon" />
               </Link>
             </div>
-            <div className="order-1 md:order-2">
+            <div className="home-order-img-right">
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&h=600&fit=crop"
                 alt="Academic Excellence"
-                className="w-full h-96 object-cover rounded-lg shadow-xl"
+                className="home-feature-img"
               />
             </div>
           </div>
@@ -344,26 +344,26 @@ export function Home() {
       </section>
 
       {/* Sports Section */}
-      <section className="py-20 bg-white">
+      <section className="home-section-white">
         <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div className="home-feature-grid">
             <div>
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&h=600&fit=crop"
                 alt="Sports Activities"
-                className="w-full h-96 object-cover rounded-lg shadow-xl"
+                className="home-feature-img"
               />
             </div>
             <div>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                  <Trophy className="w-8 h-8 text-secondary" />
+              <div className="home-feature-header">
+                <div className="home-feature-icon-bg">
+                  <Trophy className="home-feature-icon" />
                 </div>
-                <h2 className="text-4xl text-primary">
+                <h2 className="home-feature-title">
                   {t("home.sportsTitle")}
                 </h2>
               </div>
-              <p className="text-base text-gray-600 mb-6 leading-relaxed font-light italic">
+              <p className="home-feature-desc">
                 {t("home.sportsDesc")}
               </p>
               <Link
@@ -371,7 +371,7 @@ export function Home() {
                 className="btn btn-primary"
               >
                 <span>View Sports Achievements</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="btn-icon" />
               </Link>
             </div>
           </div>

@@ -8,33 +8,33 @@ export function Footer() {
 
   return (
     <footer className="footer">
-      <div className="container">
+      <div className="footer-container">
         {/* Logo Section */}
-        <div className="flex justify-center mb-6">
+        <div className="footer-logo-wrapper">
           <img
             src={logo}
             alt="RRCC Logo"
-            className="w-24 h-24 object-contain"
+            className="footer-logo"
           />
         </div>
 
         {/* School Name */}
-        <div className="text-center mb-8">
-          <h3 className="text-secondary text-2xl mb-2">
+        <div className="footer-school-info">
+          <h3 className="footer-school-name">
             {t("footer.schoolName")}
           </h3>
-          <p className="text-gray-300">{t("footer.tagline")}</p>
+          <p className="footer-tagline">{t("footer.tagline")}</p>
         </div>
 
         {/* Social Media Icons */}
-        <div className="flex justify-center gap-4 mb-8">
+        <div className="footer-social-links">
           <a
             href="https://facebook.com"
             target="_blank"
             rel="noopener noreferrer"
             className="social-link"
           >
-            <Facebook className="w-6 h-6" />
+            <Facebook className="footer-icon" />
           </a>
           <a
             href="https://youtube.com"
@@ -42,7 +42,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="social-link"
           >
-            <Youtube className="w-6 h-6" />
+            <Youtube className="footer-icon" />
           </a>
           <a
             href="https://linkedin.com"
@@ -50,48 +50,48 @@ export function Footer() {
             rel="noopener noreferrer"
             className="social-link"
           >
-            <Linkedin className="w-6 h-6" />
+            <Linkedin className="footer-icon" />
           </a>
         </div>
-        <div className="flex flex-wrap justify-center gap-6 mb-6">
+        <div className="footer-nav-links">
           <Link
             to="/about"
-            className="text-white hover:text-secondary transition-colors"
+            className="footer-nav-link"
           >
             {t("nav.about")}
           </Link>
           <Link
             to="/news"
-            className="text-white hover:text-secondary transition-colors"
+            className="footer-nav-link"
           >
             {t("nav.news")}
           </Link>
           <Link
             to="/sports"
-            className="text-white hover:text-secondary transition-colors"
+            className="footer-nav-link"
           >
             {t("nav.sports")}
           </Link>
           <Link
             to="/live-stream"
-            className="text-white hover:text-secondary transition-colors"
+            className="footer-nav-link"
           >
             {t("nav.liveStream")}
           </Link>
           <a
             href="#lms"
-            className="text-white hover:text-secondary transition-colors"
+            className="footer-nav-link"
           >
             {t("nav.lms")}
           </a>
         </div>
 
         {/* Horizontal Line */}
-        <div className="border-t border-white/20 pt-8">
+        <div className="footer-bottom-section">
           {/* Footer Links */}
 
           {/* Copyright */}
-          <div className="text-center text-sm text-gray-300">
+          <div className="footer-copyright">
             <p>{t("footer.copyright")}</p>
           </div>
         </div>

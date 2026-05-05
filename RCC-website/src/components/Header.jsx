@@ -26,17 +26,17 @@ export function Header() {
     <>
       {/* Main Header */}
       <header className="header">
-        <div className="container py-4">
-          <div className="flex  justify-between">
+        <div className="header-container">
+          <div className="header-flex">
             {/* Logo and School Name - Left */}
-            <div className="logo-link group">
+            <div className="header-logo-link">
               <img
                 src={logo}
                 alt="RRCC Logo"
                 className="logo"
               />
 
-              <div className="hidden md:block">
+              <div className="header-title-wrapper">
                 <h2 className="school-name">
                   Rajasinghe Central College
                 </h2>
@@ -45,7 +45,7 @@ export function Header() {
             </div>
 
             {/* Desktop Navigation - Right */}
-            <nav className="hidden lg:flex nav">
+            <nav className="header-desktop-nav">
               {navItems.map((item) => {
                 if (item.path === "#lms") {
                   return (
@@ -74,7 +74,7 @@ export function Header() {
                 onClick={toggleLanguage}
                 className="language-btn"
               >
-                <Globe className="w-4 h-4" />
+                <Globe className="header-icon" />
                 <span>{language === "en" ? "සිං" : "EN"}</span>
               </button>
             </nav>
@@ -82,12 +82,12 @@ export function Header() {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden mobile-menu-btn"
+              className="header-mobile-menu-btn"
             >
               {isMenuOpen ? (
-                <X className="w-6 h-6" />
+                <X className="header-icon-large" />
               ) : (
-                <Menu className="w-6 h-6" />
+                <Menu className="header-icon-large" />
               )}
             </button>
           </div>
@@ -121,9 +121,9 @@ export function Header() {
               })}
               <button
                 onClick={toggleLanguage}
-                className="w-full mt-3 language-btn"
+                className="header-language-btn-mobile language-btn"
               >
-                <Globe className="w-4 h-4" />
+                <Globe className="header-icon" />
                 <span>{language === "en" ? "සිංහල" : "English"}</span>
               </button>
             </nav>
