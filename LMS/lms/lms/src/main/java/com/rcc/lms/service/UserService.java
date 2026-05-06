@@ -68,7 +68,7 @@ public class UserService {
     }
 
     // ========================
-    // 👑 ADMIN - CREATE USER
+    // ADMIN - CREATE USER
     // ========================
     public String createUserByAdmin(User user) {
 
@@ -86,7 +86,7 @@ public class UserService {
     }
 
     // ========================
-    // ✏️ ADMIN - UPDATE USER (NEW)
+    // ADMIN - UPDATE USER (NEW)
     // ========================
     public String updateUser(String username, User updatedUser) {
 
