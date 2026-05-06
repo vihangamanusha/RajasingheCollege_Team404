@@ -5,6 +5,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import grade69Image from "../assets/grade69.jpeg";
 import gradeOLImage from "../assets/gradeOL.jpeg";
 import gradeALImage from "../assets/gradeAL.jpeg";
+import academicstaffImage from "../assets/academicstaff.jpeg";
 
 export function Academic() {
   const { t } = useLanguage();
@@ -252,7 +253,7 @@ export function Academic() {
           <div className="academic-staff-grid">
             <div className="academic-staff-image-wrap">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&h=600&fit=crop"
+                src={academicstaffImage}
                 alt="Academic Staff"
                 className="academic-staff-image"
               />
