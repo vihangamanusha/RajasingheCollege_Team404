@@ -29,4 +29,9 @@ public class UserController {
     public LoginResponse loginUser(@RequestBody LoginRequest request) {
         return userService.loginUser(request);
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "This is a protected API!";
+    }
 }
