@@ -25,5 +25,23 @@ public class NewsService {
         return newsRepository.save(news);
     }
 
-    
+    //updates news
+    public News updateNews(Long id,News updatedNews){
+        News exisitingNews = newsRepository.findById(id).orElseThrow(()->new RuntimeException("News not found"));
+        exisitingNews.setTitle(updatedNews.getTitle());
+        exisitingNews.setContent(updatedNews.getContent());
+        exisitingNews.setDate(updatedNews.getDate());
+        exisitingNews.setImage(updatedNews.getImage());
+
+        return exisitingNews;
+    }
+
+    //delete news
+
+    public void deleteNews(Long id){
+        if(!newsRepository.existsById(id)){
+            throw new RuntimeException("News not found");
+        }
+        newsRepository.deleteById(id);
+    }
 }
