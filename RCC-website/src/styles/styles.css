@@ -1191,13 +1191,16 @@ body {
   background-color: #001a3a;
 }
 
+/**/
 .btn-secondary {
   background-color: #FFD700;
   color: #002147;
+  margin-left: 80px;
 }
 
 .btn-secondary:hover {
   background-color: #FFC700;
+  transform: translateY(-5px);
 }
 
 /* Forms */
@@ -2210,6 +2213,7 @@ body {
   line-height: 2.5rem;
   color: #ffffff;
   font-family: 'Times New Roman', Times, serif;
+
 }
 
 .home-lms-desc {
@@ -2219,6 +2223,7 @@ body {
   line-height: 1.625;
   font-weight: 300;
   font-style: italic;
+  margin-left: 0px;
 }
 
 .home-lms-img {
