@@ -18,20 +18,14 @@ public class UserTestController {
 
     // ================= ADD USER =================
     @PostMapping("/add")
-    public String addUser() {
+    public String addUser(@RequestBody User user) {
 
-        User user = new User();
-        user.setUserId("U001");
-        user.setUsername("admin");
-        user.setPassword("1234");
-        user.setRole("Admin");
-        user.setEmail("admin@gmail.com");
         user.setCreatedDate(LocalDate.now());
         user.setStatus("ACTIVE");
 
         userRepository.save(user);
 
-        return "User saved successfully!";
+        return "User registered successfully!";
     }
 
     // ================= LOGIN USER =================
