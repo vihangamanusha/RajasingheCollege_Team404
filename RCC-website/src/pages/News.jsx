@@ -80,72 +80,62 @@ export function News() {
   ];
 
   return (
-    <div>
+    <div className="news-page">
       {/* Hero Banner */}
-      <section className="relative h-80 overflow-hidden">
+      <section className="news-hero">
         <ImageWithFallback
           src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1920&h=1080&fit=crop"
           alt="Latest News"
-          className="w-full h-full object-cover"
+          className="news-hero__image"
         />
 
-        <div className="absolute inset-0 bg-[#002147]/70 flex items-center justify-center">
-          <h1 className="text-5xl md:text-6xl text-white">
-            {t("news.latest")}
-          </h1>
+        <div className="news-hero__overlay">
+          <h1 className="news-hero__title">{t("news.latest")}</h1>
         </div>
       </section>
 
       {/* News Grid */}
-      <section className="py-24 bg-gradient-to-b from-[#F5F5F5] to-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <section className="news-section">
+        <div className="news-container">
+          <div className="news-grid">
             {allNews.map((news, index) => (
               <article
                 key={news.id}
-                className="group bg-white rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-gray-100"
+                className="news-card"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <div className="relative h-64 overflow-hidden">
+                <div className="news-card__image-wrapper">
                   <ImageWithFallback
                     src={news.image}
                     alt={news.title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                    className="news-card__image"
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#002147] via-[#002147]/20 to-transparent opacity-70"></div>
+                  <div className="news-card__image-overlay"></div>
 
-                  <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-                    <span className="px-4 py-2 bg-[#FFD700] text-[#002147] rounded-full text-sm font-bold shadow-lg">
-                      {news.category}
-                    </span>
-                    <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
-                      <Calendar className="w-4 h-4 inline text-[#002147] mr-2" />
-                      <span className="text-sm font-semibold text-[#002147]">
-                        {news.date.split(",")[0]}
-                      </span>
+                  <div className="news-card__meta-row">
+                    <span className="news-card__category">{news.category}</span>
+                    <div className="news-card__date">
+                      <Calendar className="news-card__icon" />
+                      <span>{news.date.split(",")[0]}</span>
                     </div>
                   </div>
 
-                  <div className="absolute bottom-4 left-4">
-                    <div className="flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/30">
-                      <User className="w-4 h-4 text-white" />
-                      <span className="text-sm text-white font-medium">
-                        {news.author}
-                      </span>
-                    </div>
+                  <div className="news-card__author-row">
+                    <User className="news-card__icon" />
+                    <span className="news-card__author">{news.author}</span>
                   </div>
                 </div>
 
-                <div className="p-7">
-                  <h3 className="text-2xl text-[#002147] mb-4 group-hover:text-[#FFD700] transition-colors duration-300 font-semibold leading-tight">
+                <div className="news-card__content">
+                  <h3 className="news-card__title">
                     {news.titleKey ? t(news.titleKey) : news.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed line-clamp-2">
+                  <p className="news-card__excerpt line-clamp-2">
                     {news.excerptKey ? t(news.excerptKey) : news.excerpt}
                   </p>
-                  <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mb-4"></div>
-                  <p className="text-gray-700 leading-relaxed text-sm line-clamp-3">
+                  <div className="news-card__divider"></div>
+                  <p className="news-card__body line-clamp-3">
                     {news.content}
                   </p>
                 </div>
