@@ -1,0 +1,104 @@
+:root {
+  --font-size: 16px;
+
+  /* Base colors */
+  --background: #ffffff;
+  --foreground: #111111;
+
+  /* UI colors */
+  --primary: #030213;
+  --secondary: #f3f3f5;
+  --muted: #ececf0;
+
+  --border: rgba(0, 0, 0, 0.1);
+
+  /* Components */
+  --card: #ffffff;
+  --card-foreground: #111111;
+
+  --popover: #ffffff;
+  --popover-foreground: #111111;
+
+  --accent: #e9ebef;
+  --accent-foreground: #111111;
+
+  --destructive: #d4183d;
+  --destructive-foreground: #ffffff;
+
+  /* Inputs */
+  --input: transparent;
+  --input-background: #f3f3f5;
+
+  /* UI extras */
+  --switch-background: #cbced4;
+  --ring: #999999;
+
+  /* Layout */
+  --radius: 10px;
+}
+
+.dark {
+  /* Base colors */
+  --background: #111111;
+  --foreground: #ffffff;
+
+  /* UI colors */
+  --primary: #ffffff;
+  --secondary: #222222;
+  --muted: #2a2a2a;
+
+  --border: rgba(255, 255, 255, 0.1);
+
+  /* Components */
+  --card: #1a1a1a;
+  --card-foreground: #ffffff;
+
+  --popover: #1a1a1a;
+  --popover-foreground: #ffffff;
+
+  --accent: #2a2a2a;
+  --accent-foreground: #ffffff;
+
+  --destructive: #ff4d4d;
+  --destructive-foreground: #ffffff;
+
+  /* Inputs */
+  --input: #2a2a2a;
+  --input-background: #2a2a2a;
+
+  /* UI extras */
+  --switch-background: #444;
+  --ring: #666;
+
+  /* Layout */
+  --radius: 10px;
+}
+
+/* Optional Tailwind mapping (safe to keep if using Tailwind) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+
+  --radius: var(--radius);
+}
