@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // allow public endpoints (no token needed)
-                        .requestMatchers("/user/login", "/user/register").permitAll()
+                        .requestMatchers("/user/login", "/user/register","/api/v1/marks/**").permitAll()
 
                         // all other APIs require JWT token
                         .anyRequest().authenticated()
