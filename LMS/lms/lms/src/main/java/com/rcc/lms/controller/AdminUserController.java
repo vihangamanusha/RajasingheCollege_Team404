@@ -20,7 +20,7 @@ public class AdminUserController {
     private UserRepository userRepository;
 
     // =========================
-    //  CREATE USER (ADMIN ONLY)
+    // CREATE USER (ADMIN ONLY)
     // =========================
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
@@ -45,5 +45,14 @@ public class AdminUserController {
     public String updateUser(@PathVariable String username,
                              @RequestBody User user) {
         return userService.updateUser(username, user);
+    }
+
+    // =========================
+    // DELETE USER (ADMIN ONLY)
+    // =========================
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/delete/{username}")
+    public String deleteUser(@PathVariable String username) {
+        return userService.deleteUser(username);
     }
 }
