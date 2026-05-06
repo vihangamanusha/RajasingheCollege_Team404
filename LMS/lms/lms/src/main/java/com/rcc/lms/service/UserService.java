@@ -1,6 +1,7 @@
 package com.rcc.lms.service;
 
 import com.rcc.lms.dto.LoginRequest;
+import com.rcc.lms.dto.LoginResponse;
 import com.rcc.lms.entity.User;
 import com.rcc.lms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class UserService {
             return "Username already exists!";
         }
 
-        // 🔐 encrypt password before saving
+        // encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         user.setCreatedDate(LocalDate.now());
@@ -39,22 +40,27 @@ public class UserService {
     }
 
     // ========================
-    // LOGIN USER (SECURE)
+    // LOGIN USER (FIXED)
     // ========================
-    public String loginUser(LoginRequest request) {
+    public LoginResponse loginUser(LoginRequest request) {
 
         User user = userRepository.findByUsername(request.getUsername())
                 .orElse(null);
 
         if (user == null) {
-            return "User not found!";
+            return new LoginResponse("User not found!", null, null);
         }
 
-        // 🔐 compare encrypted password properly
+        // check password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return "Invalid password!";
+            return new LoginResponse("Invalid password!", null, null);
         }
 
-        return "Login successful! Role: " + user.getRole();
+        // success response
+        return new LoginResponse(
+                "Login successful",
+                user.getUsername(),
+                user.getRole()
+        );
     }
 }
