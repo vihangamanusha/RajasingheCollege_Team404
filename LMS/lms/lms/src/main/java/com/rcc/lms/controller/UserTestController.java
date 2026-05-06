@@ -32,21 +32,17 @@ public class UserTestController {
     @PostMapping("/login")
     public String loginUser(@RequestBody LoginRequest request) {
 
-        Optional<User> userOptional =
-                userRepository.findByUsername(request.getUsername());
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElse(null);
 
-        if (userOptional.isPresent()) {
-
-            User user = userOptional.get();
-
-            if (user.getPassword().equals(request.getPassword())) {
-                return "Login successful!";
-            } else {
-                return "Invalid password!";
-            }
-
-        } else {
+        if (user == null) {
             return "User not found!";
         }
+
+        if (!user.getPassword().equals(request.getPassword())) {
+            return "Invalid password!";
+        }
+
+        return "Login successful! Role: " + user.getRole();
     }
 }
