@@ -1624,6 +1624,269 @@ body {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
+/* About Page Styles */
+.about-page {
+  width: 100%;
+}
+
+.about-hero {
+  position: relative;
+  min-height: 70vh;
+}
+
+.about-hero-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.about-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 33, 71, 0.52);
+  padding: 3rem 1rem;
+}
+
+.about-hero-content {
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.about-hero-title {
+  color: #ffffff;
+  font-size: 2.75rem;
+  line-height: 1.05;
+  font-weight: 700;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .about-hero-title {
+    font-size: 4rem;
+  }
+}
+
+.about-history-section,
+.about-principal-section {
+  padding: 5rem 0;
+  background-color: #ffffff;
+}
+
+.about-mission-vision {
+  padding: 5rem 0;
+  background-color: #F5F5F5;
+}
+
+.about-section-wrapper {
+  width: 100%;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .about-section-wrapper {
+    padding: 0 2rem;
+  }
+}
+
+.about-history-wrapper {
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.about-history-heading {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.about-history-icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1.5rem;
+  background-color: #002147;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFD700;
+}
+
+.about-history-icon-symbol {
+  width: 2rem;
+  height: 2rem;
+}
+
+.about-history-title {
+  font-size: 2.5rem;
+  color: #002147;
+  margin: 0;
+}
+
+.about-history-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #4b5563;
+  font-weight: 300;
+  font-style: italic;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.about-card-grid {
+  display: grid;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .about-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.about-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  padding: 2.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  text-align: center;
+}
+
+.about-card-icon {
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1.5rem;
+  background-color: #002147;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFD700;
+}
+
+.about-card-icon-symbol {
+  width: 2rem;
+  height: 2rem;
+}
+
+.about-card-heading {
+  font-size: 2rem;
+  color: #002147;
+  margin: 0 0 1rem;
+}
+
+.about-card-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #4b5563;
+  font-weight: 300;
+  font-style: italic;
+  margin: 0;
+}
+
+.about-principal-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.about-principal-title {
+  font-size: 2.5rem;
+  color: #002147;
+  margin: 0 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .about-principal-title {
+    font-size: 3rem;
+  }
+}
+
+.about-principal-divider {
+  width: 6rem;
+  height: 0.25rem;
+  background-color: #FFD700;
+  margin: 0 auto;
+}
+
+.about-principal-grid {
+  display: grid;
+  gap: 3rem;
+  align-items: center;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .about-principal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.about-principal-photo-card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.about-principal-image {
+  width: 100%;
+  height: 24rem;
+  object-fit: cover;
+}
+
+.about-principal-meta {
+  padding: 1.5rem;
+  background-color: #002147;
+  color: #ffffff;
+  text-align: center;
+}
+
+.about-principal-name {
+  color: #FFD700;
+  font-size: 1.5rem;
+  margin: 0 0 0.5rem;
+}
+
+.about-principal-role {
+  color: #d1d5db;
+  margin: 0;
+}
+
+.about-principal-text-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.about-principal-text {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #4b5563;
+  font-weight: 300;
+  font-style: italic;
+  margin: 0;
+}
+
+.about-principal-signature {
+  font-size: 1rem;
+  color: #374151;
+  font-weight: 500;
+  margin: 0;
+}
+
 .facility-image {
   height: 250px;
   overflow: hidden;
