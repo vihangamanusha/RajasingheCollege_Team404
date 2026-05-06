@@ -1207,8 +1207,8 @@ body {
 .btn-secondary {
   background-color: #FFD700;
   color: #002147;
-  margin-left: 200px;
-  margin-top: 10px;
+  margin-left: 125px;
+  margin-top: -10px;
 }
 
 .btn-secondary:hover {
@@ -1828,9 +1828,11 @@ body {
   object-fit: cover;
 }
 
+/**/
 .btn-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 2rem;
+  height: 2.25rem;
+
 }
 
 .home-motivation-section {
