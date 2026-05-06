@@ -9,6 +9,7 @@ import academicstaffImage from "../assets/academicstaff.jpeg";
 import libraryImage from "../assets/library.jpeg";
 import labImage from"../assets/lab.jpeg";
 import clabImage from"../assets/clab.webp";
+import academicImage from"../assets/academicabout.jpeg";
 
 export function Academic() {
   const { t } = useLanguage();
@@ -39,7 +40,7 @@ export function Academic() {
       <section className="academic-hero">
         <div className="academic-hero-background">
           <ImageWithFallback
-            src=
+            src={academicImage}
             alt="Academic Programs"
             className="academic-hero-image"
           />
