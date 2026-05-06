@@ -16,13 +16,13 @@ public class StudentController {
     private StudentRepository studentRepo;
 
     @Autowired
-    private MarksRepository marksRepo;
+    private StudentMarks marksRepo;
 
     @Autowired
-    private ReportRepository reportRepo;
+    private StudentReport reportRepo;
 
     @Autowired
-    private DocumentRepository documentRepo;
+    private StudentDocument documentRepo;
 
     // 🔹 Get student profile
     @GetMapping("/{id}")
