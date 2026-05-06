@@ -4,6 +4,7 @@ import com.rcc.lms.dto.LoginRequest;
 import com.rcc.lms.entity.User;
 import com.rcc.lms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,17 +15,21 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     // ========================
-    // REGISTER USER
+    // REGISTER USER (SECURE)
     // ========================
     public String registerUser(User user) {
 
-        // check if username already exists
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "Username already exists!";
         }
 
-        // set default values
+        // 🔐 encrypt password before saving
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         user.setCreatedDate(LocalDate.now());
         user.setStatus("ACTIVE");
 
@@ -34,7 +39,7 @@ public class UserService {
     }
 
     // ========================
-    // LOGIN USER
+    // LOGIN USER (SECURE)
     // ========================
     public String loginUser(LoginRequest request) {
 
@@ -45,7 +50,8 @@ public class UserService {
             return "User not found!";
         }
 
-        if (!user.getPassword().equals(request.getPassword())) {
+        // 🔐 compare encrypted password properly
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return "Invalid password!";
         }
 
