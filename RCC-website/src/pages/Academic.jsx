@@ -6,6 +6,9 @@ import grade69Image from "../assets/grade69.jpeg";
 import gradeOLImage from "../assets/gradeOL.jpeg";
 import gradeALImage from "../assets/gradeAL.jpeg";
 import academicstaffImage from "../assets/academicstaff.jpeg";
+import libraryImage from "../assets/library.jpeg";
+import labImage from"../assets/lab.jpeg";
+import clabImage from"../assets/clab.webp";
 
 export function Academic() {
   const { t } = useLanguage();
@@ -14,19 +17,19 @@ export function Academic() {
       titleKey: "facility1.title",
       descriptionKey: "facility1.desc",
       image:
-        "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&h=600&fit=crop",
+       labImage,
     },
     {
       titleKey: "facility2.title",
       descriptionKey: "facility2.desc",
       image:
-        "https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&h=600&fit=crop",
+        clabImage,
     },
     {
       titleKey: "facility3.title",
       descriptionKey: "facility3.desc",
       image:
-        "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?w=800&h=600&fit=crop",
+        libraryImage,
     },
   ];
 
@@ -36,7 +39,7 @@ export function Academic() {
       <section className="academic-hero">
         <div className="academic-hero-background">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920&h=1080&fit=crop"
+            src=
             alt="Academic Programs"
             className="academic-hero-image"
           />
