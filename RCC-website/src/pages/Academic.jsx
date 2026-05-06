@@ -2,6 +2,9 @@ import { BookOpen } from "lucide-react";
 import { Link } from "react-router";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import grade69Image from "../assets/grade69.jpeg";
+import gradeOLImage from "../assets/gradeOL.jpeg";
+import gradeALImage from "../assets/gradeAL.jpeg";
 
 export function Academic() {
   const { t } = useLanguage();
@@ -27,19 +30,19 @@ export function Academic() {
   ];
 
   return (
-    <div>
+    <div className="academic-page">
       {/* Hero Banner */}
-      <section className="hero">
-        <div className="background">
+      <section className="academic-hero">
+        <div className="academic-hero-background">
           <ImageWithFallback
             src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920&h=1080&fit=crop"
             alt="Academic Programs"
-            className="w-full h-full object-cover"
+            className="academic-hero-image"
           />
         </div>
-        <div className="overlay">
-          <div className="content">
-            <h1 className="title">
+        <div className="academic-hero-overlay">
+          <div className="academic-hero-content">
+            <h1 className="academic-hero-title">
               {t("academic.title")}
             </h1>
           </div>
@@ -47,18 +50,16 @@ export function Academic() {
       </section>
 
       {/* Introduction */}
-      <section className="py-20 bg-white">
-        <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="flex items-center justify-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                <BookOpen className="w-8 h-8 text-secondary" />
-              </div>
+      <section className="academic-intro-section">
+        <div className="academic-section-wrapper">
+          <div className="academic-intro-card">
+            <div className="academic-intro-icon">
+              <BookOpen className="academic-intro-icon-symbol" />
             </div>
-            <h2 className="text-4xl text-primary mb-6">
+            <h2 className="academic-intro-title">
               {t("academic.excellence")}
             </h2>
-            <p className="text-lg text-gray-700 leading-relaxed">
+            <p className="academic-intro-text">
               Our comprehensive academic programs are designed to provide
               students with a strong foundation in their chosen fields while
               developing critical thinking, problem-solving, and leadership
@@ -70,32 +71,32 @@ export function Academic() {
       </section>
 
       {/* Academic Levels */}
-      <section className="py-20 bg-muted">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-primary mb-4">
+      <section className="academic-programs-section">
+        <div className="academic-section-wrapper">
+          <div className="academic-section-header">
+            <h2 className="academic-section-heading">
               {t("academic.ourPrograms")}
             </h2>
-            <div className="w-24 h-1 bg-secondary mx-auto"></div>
+            <div className="academic-section-divider"></div>
           </div>
-          <div className="academic-grid">
+          <div className="academic-program-grid">
             {/* Grades 6-9 */}
             <Link
               to="/academic/grades-6-9"
-              className="facility-card"
+              className="academic-program-card"
             >
-              <div className="facility-image">
+              <div className="academic-program-image-wrap">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop"
+                  src={grade69Image}
                   alt="Grades 6-9"
-                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                  className="academic-program-image"
                 />
               </div>
-              <div className="facility-content">
-                <h3 className="facility-title">
+              <div className="academic-program-content">
+                <h3 className="academic-program-title">
                   {t("academic.grades69")}
                 </h3>
-                <p className="facility-description">
+                <p className="academic-program-description">
                   {t("academic.grades69Desc")}
                 </p>
               </div>
@@ -104,20 +105,20 @@ export function Academic() {
             {/* Ordinary Level */}
             <Link
               to="/academic/ordinary-level"
-              className="facility-card"
+              className="academic-program-card"
             >
-              <div className="facility-image">
+              <div className="academic-program-image-wrap">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&h=600&fit=crop"
+                  src={gradeOLImage}
                   alt="Ordinary Level"
-                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                  className="academic-program-image"
                 />
               </div>
-              <div className="facility-content">
-                <h3 className="facility-title">
+              <div className="academic-program-content">
+                <h3 className="academic-program-title">
                   {t("academic.oLevel")}
                 </h3>
-                <p className="facility-description">
+                <p className="academic-program-description">
                   {t("academic.oLevelDesc")}
                 </p>
               </div>
@@ -126,20 +127,20 @@ export function Academic() {
             {/* Advanced Level */}
             <Link
               to="/academic/advanced-level"
-              className="facility-card"
+              className="academic-program-card"
             >
-              <div className="facility-image">
+              <div className="academic-program-image-wrap">
                 <ImageWithFallback
-                  src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop"
+                  src={gradeALImage}
                   alt="Advanced Level"
-                  className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                  className="academic-program-image"
                 />
               </div>
-              <div className="facility-content">
-                <h3 className="facility-title">
+              <div className="academic-program-content">
+                <h3 className="academic-program-title">
                   {t("academic.aLevel")}
                 </h3>
-                <p className="facility-description">
+                <p className="academic-program-description">
                   {t("academic.aLevelDesc")}
                 </p>
               </div>
@@ -149,15 +150,15 @@ export function Academic() {
       </section>
 
       {/* Examination Results */}
-      <section className="py-20 bg-white">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-primary mb-4">
+      <section className="academic-stats-section">
+        <div className="academic-section-wrapper">
+          <div className="academic-section-header">
+            <h2 className="academic-section-heading">
               {t("academic.examExcellence")}
             </h2>
-            <div className="w-24 h-1 bg-secondary mx-auto"></div>
+            <div className="academic-section-divider"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="academic-stat-grid">
             {[
               {
                 title: "O/L Success Rate",
@@ -177,13 +178,13 @@ export function Academic() {
             ].map((stat, index) => (
               <div
                 key={index}
-                className="bg-gradient-to-br from-primary to-[#003366] text-white p-10 rounded-lg shadow-xl text-center"
+                className="academic-stat-card"
               >
-                <div className="text-6xl text-secondary mb-4">
+                <div className="academic-stat-value">
                   {stat.percentage}
                 </div>
-                <h3 className="text-2xl mb-3">{stat.title}</h3>
-                <p className="text-gray-300">{stat.description}</p>
+                <h3 className="academic-stat-title">{stat.title}</h3>
+                <p className="academic-stat-description">{stat.description}</p>
               </div>
             ))}
           </div>
@@ -191,32 +192,32 @@ export function Academic() {
       </section>
 
       {/* Facilities */}
-      <section className="py-20 bg-muted">
-        <div className="container">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-primary mb-4">
+      <section className="academic-facilities-section">
+        <div className="academic-section-wrapper">
+          <div className="academic-section-header">
+            <h2 className="academic-section-heading">
               {t("academic.facilities")}
             </h2>
-            <div className="w-24 h-1 bg-secondary mx-auto"></div>
+            <div className="academic-section-divider"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="academic-facility-grid">
             {facilities.map((facility, index) => (
               <div
                 key={index}
-                className="facility-card"
+                className="academic-facility-card"
               >
-                <div className="facility-image">
+                <div className="academic-facility-image-wrap">
                   <ImageWithFallback
                     src={facility.image}
                     alt={facility.title}
-                    className="w-full h-full object-cover transform hover:scale-110 transition-transform duration-500"
+                    className="academic-facility-image"
                   />
                 </div>
-                <div className="facility-content">
-                  <h3 className="facility-title">
+                <div className="academic-facility-content">
+                  <h3 className="academic-facility-title">
                     {t(facility.titleKey)}
                   </h3>
-                  <p className="facility-description">{t(facility.descriptionKey)}</p>
+                  <p className="academic-facility-description">{t(facility.descriptionKey)}</p>
                 </div>
               </div>
             ))}
@@ -225,34 +226,34 @@ export function Academic() {
       </section>
 
       {/* Academic Staff Section */}
-      <section className="py-20 bg-muted">
-        <div className="container">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div>
+      <section className="academic-staff-section">
+        <div className="academic-section-wrapper">
+          <div className="academic-staff-grid">
+            <div className="academic-staff-image-wrap">
               <ImageWithFallback
                 src="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&h=600&fit=crop"
                 alt="Academic Staff"
-                className="w-full h-96 object-cover rounded-lg shadow-xl"
+                className="academic-staff-image"
               />
             </div>
             <div>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                  <BookOpen className="w-8 h-8 text-secondary" />
+              <div className="academic-staff-heading-wrap">
+                <div className="academic-staff-icon">
+                  <BookOpen className="academic-staff-icon-symbol" />
                 </div>
-                <h2 className="text-4xl text-primary">
+                <h2 className="academic-staff-title">
                   {t("academic.staff")}
                 </h2>
               </div>
-              <p className="text-base text-gray-600 mb-6 leading-relaxed font-light italic">
+              <p className="academic-staff-description">
                 {t("academic.staffDesc")}
               </p>
               <Link
                 to="/academic/all-staff"
-                className="btn btn-primary"
+                className="academic-button"
               >
                 <span>{t("academic.seeAllStaff")}</span>
-                <BookOpen className="w-5 h-5" />
+                <BookOpen className="academic-button-icon" />
               </Link>
             </div>
           </div>
@@ -260,21 +261,21 @@ export function Academic() {
       </section>
 
       {/* LMS Portal Link */}
-      <section className="py-20 bg-gradient-to-br from-primary to-[#003366] text-white">
-        <div className="container text-center">
-          <h2 className="text-4xl md:text-5xl mb-6">
+      <section className="academic-lms-section">
+        <div className="academic-section-wrapper academic-lms-content">
+          <h2 className="academic-section-heading academic-lms-heading">
             {t("academic.lmsAccess")}
           </h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
+          <p className="academic-lms-text">
             {t("academic.lmsDesc")}
           </p>
           <a
             href="https://lms.rrcc.lk"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn btn-secondary"
+            className="academic-button academic-button-secondary"
           >
-            <BookOpen className="w-6 h-6" />
+            <BookOpen className="academic-button-icon" />
             <span>{t("academic.accessPortal")}</span>
           </a>
         </div>
