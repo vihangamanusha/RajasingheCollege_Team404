@@ -1686,9 +1686,12 @@ body {
 
 .academic-intro-section,
 .academic-stats-section,
-.academic-facilities-section,
 .academic-staff-section {
   background-color: #f5f5f5;
+}
+
+.academic-facilities-section{
+  background-color: #ffffff;
 }
 
 .academic-programs-section,
@@ -1957,7 +1960,7 @@ body {
 
 .academic-lms-section {
   padding: 5rem 0;
-  background: linear-gradient(135deg, #002147 0%, #003366 100%);
+  background:#002147;
   color: #ffffff;
 }
 

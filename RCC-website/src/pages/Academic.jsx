@@ -69,6 +69,8 @@ export function Academic() {
           </div>
         </div>
       </section>
+      
+      
 
       {/* Academic Levels */}
       <section className="academic-programs-section">
@@ -224,7 +226,26 @@ export function Academic() {
           </div>
         </div>
       </section>
-
+{/* LMS Portal Link */}
+      <section className="academic-lms-section">
+        <div className="academic-section-wrapper academic-lms-content">
+          <h2 className="academic-section-heading academic-lms-heading">
+            {t("academic.lmsAccess")}
+          </h2>
+          <p className="academic-lms-text">
+            {t("academic.lmsDesc")}
+          </p>
+          <a
+            href="https://lms.rrcc.lk"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="academic-button academic-button-secondary"
+          >
+            <BookOpen className="academic-button-icon" />
+            <span>{t("academic.accessPortal")}</span>
+          </a>
+        </div>
+      </section>
       {/* Academic Staff Section */}
       <section className="academic-staff-section">
         <div className="academic-section-wrapper">
@@ -260,26 +281,7 @@ export function Academic() {
         </div>
       </section>
 
-      {/* LMS Portal Link */}
-      <section className="academic-lms-section">
-        <div className="academic-section-wrapper academic-lms-content">
-          <h2 className="academic-section-heading academic-lms-heading">
-            {t("academic.lmsAccess")}
-          </h2>
-          <p className="academic-lms-text">
-            {t("academic.lmsDesc")}
-          </p>
-          <a
-            href="https://lms.rrcc.lk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="academic-button academic-button-secondary"
-          >
-            <BookOpen className="academic-button-icon" />
-            <span>{t("academic.accessPortal")}</span>
-          </a>
-        </div>
-      </section>
+      
     </div>
   );
 }
