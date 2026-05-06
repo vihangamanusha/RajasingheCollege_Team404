@@ -72,20 +72,39 @@ public class UserService {
     // ========================
     public String createUserByAdmin(User user) {
 
-        // check duplicate username
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "Username already exists!";
         }
 
-        // encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-        // default values
         user.setCreatedDate(LocalDate.now());
         user.setStatus("ACTIVE");
 
         userRepository.save(user);
 
         return "User created by admin successfully!";
+    }
+
+    // ========================
+    // ✏️ ADMIN - UPDATE USER (NEW)
+    // ========================
+    public String updateUser(String username, User updatedUser) {
+
+        User existingUser = userRepository.findByUsername(username)
+                .orElse(null);
+
+        if (existingUser == null) {
+            return "User not found!";
+        }
+
+        // update fields
+        existingUser.setRole(updatedUser.getRole());
+        existingUser.setSubRole(updatedUser.getSubRole());
+        existingUser.setEmail(updatedUser.getEmail());
+        existingUser.setStatus(updatedUser.getStatus());
+
+        userRepository.save(existingUser);
+
+        return "User updated successfully!";
     }
 }
