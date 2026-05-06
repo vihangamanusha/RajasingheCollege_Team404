@@ -1056,6 +1056,8 @@ body {
   height: 20rem;
   overflow: hidden;
   height: 500px;
+  justify-content: flex-start;
+
 }
 
 .hero .background {
@@ -1071,19 +1073,23 @@ body {
   background-color: rgba(0, 33, 71, 0.7);
   display: flex;
   align-items: center;
-  justify-content: center;
+
 }
 
 .hero .content {
-  text-align: center;
+  text-align: left;
   color: #ffffff;
+  padding-left: 0px;
+
 }
 
 .hero .title {
-  font-size: 2.6rem;
+  font-size: 3.6rem;
   font-weight: 700;
   margin-bottom: 1rem;
   font-family: Arial, Helvetica, sans-serif;
+  margin-left: 120px;
+
 }
 
 .hero .school-name {
@@ -1092,6 +1098,9 @@ body {
   margin-bottom: 1rem;
   font-family: Arial, Helvetica, sans-serif;
   color: #FFD700;
+  padding-top: -0px;
+
+
 }
 
 .hero .subtitle {
