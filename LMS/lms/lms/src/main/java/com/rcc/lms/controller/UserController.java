@@ -1,6 +1,7 @@
 package com.rcc.lms.controller;
 
 import com.rcc.lms.dto.LoginRequest;
+import com.rcc.lms.dto.LoginResponse;
 import com.rcc.lms.entity.User;
 import com.rcc.lms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class UserController {
     // LOGIN USER
     // =========================
     @PostMapping("/login")
-    public String loginUser(@RequestBody LoginRequest request) {
+    public LoginResponse loginUser(@RequestBody LoginRequest request) {
         return userService.loginUser(request);
     }
 }
