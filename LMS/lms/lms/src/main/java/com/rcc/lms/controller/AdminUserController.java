@@ -28,12 +28,22 @@ public class AdminUserController {
         return userService.createUserByAdmin(user);
     }
 
-    // ==========================
-    //  GET ALL USERS (ADMIN ONLY)
+    // =========================
+    // GET ALL USERS (ADMIN ONLY)
     // =========================
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    // =========================
+    // UPDATE USER (ADMIN ONLY)
+    // =========================
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/update/{username}")
+    public String updateUser(@PathVariable String username,
+                             @RequestBody User user) {
+        return userService.updateUser(username, user);
     }
 }
