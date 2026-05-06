@@ -20,6 +20,10 @@ public class User {
     @Column(name = "role")
     private String role;
 
+    //  Sub role (Deputy Principal, Section Head, etc.)
+    @Column(name = "sub_role")
+    private String subRole;
+
     @Column(name = "email", length = 100)
     private String email;
 
@@ -35,11 +39,12 @@ public class User {
     }
 
     public User(String userId, String username, String password, String role,
-                String email, LocalDate createdDate, String status) {
+                String subRole, String email, LocalDate createdDate, String status) {
         this.userId = userId;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.subRole = subRole;
         this.email = email;
         this.createdDate = createdDate;
         this.status = status;
@@ -77,6 +82,15 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    //  SUB ROLE GETTER/SETTER
+    public String getSubRole() {
+        return subRole;
+    }
+
+    public void setSubRole(String subRole) {
+        this.subRole = subRole;
     }
 
     public String getEmail() {

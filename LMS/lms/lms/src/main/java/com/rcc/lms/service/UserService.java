@@ -4,10 +4,10 @@ import com.rcc.lms.dto.LoginRequest;
 import com.rcc.lms.dto.LoginResponse;
 import com.rcc.lms.entity.User;
 import com.rcc.lms.repository.UserRepository;
+import com.rcc.lms.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import com.rcc.lms.security.JwtUtil;
 
 import java.time.LocalDate;
 
@@ -24,7 +24,7 @@ public class UserService {
     private JwtUtil jwtUtil;
 
     // ========================
-    // REGISTER USER (SECURE)
+    // REGISTER USER (PUBLIC)
     // ========================
     public String registerUser(User user) {
 
@@ -32,9 +32,7 @@ public class UserService {
             return "Username already exists!";
         }
 
-        // encrypt password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-
         user.setCreatedDate(LocalDate.now());
         user.setStatus("ACTIVE");
 
@@ -44,7 +42,7 @@ public class UserService {
     }
 
     // ========================
-    // LOGIN USER (FIXED)
+    // LOGIN USER (JWT)
     // ========================
     public LoginResponse loginUser(LoginRequest request) {
 
@@ -55,12 +53,10 @@ public class UserService {
             return new LoginResponse("User not found!", null, null, null);
         }
 
-        // check password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return new LoginResponse("Invalid password!", null, null,null);
+            return new LoginResponse("Invalid password!", null, null, null);
         }
 
-        // success response
         String token = jwtUtil.generateToken(user.getUsername());
 
         return new LoginResponse(
@@ -69,5 +65,27 @@ public class UserService {
                 user.getRole(),
                 token
         );
+    }
+
+    // ========================
+    // 👑 ADMIN - CREATE USER
+    // ========================
+    public String createUserByAdmin(User user) {
+
+        // check duplicate username
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return "Username already exists!";
+        }
+
+        // encrypt password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // default values
+        user.setCreatedDate(LocalDate.now());
+        user.setStatus("ACTIVE");
+
+        userRepository.save(user);
+
+        return "User created by admin successfully!";
     }
 }
