@@ -1185,10 +1185,13 @@ body {
 .btn-primary {
   background-color: #002147;
   color: #ffffff;
+
 }
 
 .btn-primary:hover {
   background-color: #001a3a;
+  transform: translateY(-5px);
+  color: #FFD700;
 }
 
 /**/
@@ -2303,12 +2306,15 @@ body {
 .home-feature-title {
   font-size: 2.25rem;
   color: #002147;
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: bold;
+
 }
 
 .home-feature-desc {
   font-size: 1rem;
   color: #4b5563;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2.5rem;
   line-height: 1.625;
   font-weight: 300;
   font-style: italic;
