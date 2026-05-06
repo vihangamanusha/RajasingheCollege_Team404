@@ -7,6 +7,7 @@ import com.rcc.lms.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import com.rcc.lms.security.JwtUtil;
 
 import java.time.LocalDate;
 
@@ -18,6 +19,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // ========================
     // REGISTER USER (SECURE)
@@ -48,19 +52,22 @@ public class UserService {
                 .orElse(null);
 
         if (user == null) {
-            return new LoginResponse("User not found!", null, null);
+            return new LoginResponse("User not found!", null, null, null);
         }
 
         // check password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return new LoginResponse("Invalid password!", null, null);
+            return new LoginResponse("Invalid password!", null, null,null);
         }
 
         // success response
+        String token = jwtUtil.generateToken(user.getUsername());
+
         return new LoginResponse(
                 "Login successful",
                 user.getUsername(),
-                user.getRole()
+                user.getRole(),
+                token
         );
     }
 }
