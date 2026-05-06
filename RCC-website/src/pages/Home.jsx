@@ -10,6 +10,7 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
 import school from "../assets/school.webp";
 import schoolimg from "../assets/schoolimg.jpeg";
+import LMS from "../assets/LMS.png";
 
 export function Home() {
   const { t } = useLanguage();
@@ -293,7 +294,7 @@ export function Home() {
           <div className="home-lms-grid">
             <div>
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=800&h=600&fit=crop"
+                src={LMS}
                 alt="Learning Management System"
                 className="home-lms-img"
               />
