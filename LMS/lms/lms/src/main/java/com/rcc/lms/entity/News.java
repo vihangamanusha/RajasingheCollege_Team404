@@ -23,6 +23,43 @@ public class News {
     @Column(nullable=false)
     private String image;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
 
+    public @NotBlank String getTitle() {
+        return title;
+    }
+
+    public void setTitle(@NotBlank String title) {
+        this.title = title;
+    }
+
+    public @NotBlank String getContent() {
+        return content;
+    }
+
+    public void setContent(@NotBlank String content) {
+        this.content = content;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 }
