@@ -68,7 +68,7 @@ public class UserService {
     }
 
     // ========================
-    // ADMIN - CREATE USER
+    //  ADMIN - CREATE USER
     // ========================
     public String createUserByAdmin(User user) {
 
@@ -86,7 +86,7 @@ public class UserService {
     }
 
     // ========================
-    // ADMIN - UPDATE USER (NEW)
+    //  ADMIN - UPDATE USER
     // ========================
     public String updateUser(String username, User updatedUser) {
 
@@ -97,14 +97,38 @@ public class UserService {
             return "User not found!";
         }
 
-        // update fields
-        existingUser.setRole(updatedUser.getRole());
-        existingUser.setSubRole(updatedUser.getSubRole());
-        existingUser.setEmail(updatedUser.getEmail());
-        existingUser.setStatus(updatedUser.getStatus());
+        // update only allowed fields
+        if (updatedUser.getRole() != null)
+            existingUser.setRole(updatedUser.getRole());
+
+        if (updatedUser.getSubRole() != null)
+            existingUser.setSubRole(updatedUser.getSubRole());
+
+        if (updatedUser.getEmail() != null)
+            existingUser.setEmail(updatedUser.getEmail());
+
+        if (updatedUser.getStatus() != null)
+            existingUser.setStatus(updatedUser.getStatus());
 
         userRepository.save(existingUser);
 
         return "User updated successfully!";
+    }
+
+    // ========================
+    //  ADMIN - DELETE USER
+    // ========================
+    public String deleteUser(String username) {
+
+        User user = userRepository.findByUsername(username)
+                .orElse(null);
+
+        if (user == null) {
+            return "User not found!";
+        }
+
+        userRepository.delete(user);
+
+        return "User deleted successfully!";
     }
 }
