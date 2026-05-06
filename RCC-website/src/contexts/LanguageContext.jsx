@@ -142,7 +142,7 @@ const translations = {
   },
 
   // About Page
-  "about.title": { en: "About Us", si: "අප ගැන" },
+  "about.title": { en: "ABOUT_US", si: "අප ගැන" },
   "about.ourHistory": { en: "Our History", si: "අපගේ ඉතිහාසය" },
   "about.missionVision": { en: "Mission & Vision", si: "මෙහෙවර සහ දැක්ම" },
   "about.ourMission": { en: "Our Mission", si: "අපගේ මෙහෙවර" },
