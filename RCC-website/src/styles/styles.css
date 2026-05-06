@@ -1211,6 +1211,13 @@ body {
   margin-top: -10px;
 }
 
+.btn-secondary-lms {
+  background-color: #FFD700;
+  color: #002147;
+  margin-left: 75px;
+  margin-top: -10px;
+}
+
 .btn-secondary:hover {
   background-color: #FFC700;
   transform: translateY(-5px);

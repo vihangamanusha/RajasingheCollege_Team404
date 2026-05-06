@@ -313,7 +313,7 @@ export function Home() {
                 href="https://lms.rrcc.lk"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn btn-secondary"
+                className="btn btn-secondary-lms"
               >
                 <span>{t("home.accessLMS")}</span>
                 <ArrowRight className="btn-icon" />
