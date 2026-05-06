@@ -1926,6 +1926,7 @@ body {
   font-size: 2.5rem;
   color: #002147;
   margin: 0;
+  
 }
 
 .academic-staff-description {
@@ -1933,6 +1934,7 @@ body {
   line-height: 1.75;
   font-weight: 300;
   margin: 0 0 2rem;
+  padding-left: 40px;
 }
 
 .academic-button {
@@ -1946,11 +1948,13 @@ body {
   text-decoration: none;
   font-weight: 600;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-left: 40px;
 }
 
 .academic-button:hover {
-  transform: translateY(-2px);
+  transform: translateY(-5px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  color:#FFD700 ;
 }
 
 .academic-button-icon {
@@ -1969,7 +1973,7 @@ body {
 }
 
 .academic-lms-heading {
-  color: #ffffff;
+  color: #FFD700;
   margin-bottom: 1.5rem;
 }
 
@@ -1987,6 +1991,7 @@ body {
 
 .academic-button-secondary:hover {
   background-color: rgba(255, 255, 255, 0.2);
+  color: #FFD700;
 }
 
 /* About Page Styles */
