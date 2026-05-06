@@ -11,6 +11,8 @@ import { useLanguage } from "../contexts/LanguageContext";
 import school from "../assets/school.webp";
 import schoolimg from "../assets/schoolimg.jpeg";
 import LMS from "../assets/LMS.png";
+import academic from "../assets/academic.jpeg";
+import sport from "../assets/sport.jpeg";
 
 export function Home() {
   const { t } = useLanguage();
@@ -349,7 +351,7 @@ export function Home() {
             </div>
             <div className="home-order-img-right">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=800&h=600&fit=crop"
+                src={academic}
                 alt="Academic Excellence"
                 className="home-feature-img"
               />
@@ -364,9 +366,9 @@ export function Home() {
           <div className="home-feature-grid">
             <div>
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&h=600&fit=crop"
+                src={sport}
                 alt="Sports Activities"
-                className="home-feature-img"
+                className="home-feature-imgsport"
               />
             </div>
             <div>

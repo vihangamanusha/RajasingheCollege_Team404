@@ -1,6 +1,7 @@
 import { Target, Award, History } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import aboutImage from "../assets/about.jpeg";
 
 export function About() {
   const { t } = useLanguage();
@@ -11,7 +12,7 @@ export function About() {
       <section className="hero">
         <div className="background">
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=1920&h=1080&fit=crop"
+            src={aboutImage}
             alt="About Us"
             className="w-full h-full object-cover"
           />
