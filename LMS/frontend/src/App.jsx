@@ -1,18 +1,29 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import AdminLayout from "./layouts/AdminLayout";
-import Dashboard from "./pages/Dashboard";
+
 import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import AdminLayout from "./layouts/AdminLayout";
+import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
     return (
         <Routes>
 
-            {/* default route */}
+            {/* DEFAULT ROUTE → go to login */}
             <Route path="/" element={<Navigate to="/login" />} />
 
+            {/* LOGIN */}
             <Route path="/login" element={<Login />} />
 
-            <Route path="/admin" element={<AdminLayout />}>
+            {/* ADMIN (PROTECTED) */}
+            <Route
+                path="/admin"
+                element={
+                    <ProtectedRoute>
+                        <AdminLayout />
+                    </ProtectedRoute>
+                }
+            >
                 <Route index element={<Dashboard />} />
             </Route>
 

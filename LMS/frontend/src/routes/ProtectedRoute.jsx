@@ -1,16 +1,15 @@
 import { Navigate } from "react-router-dom";
 
-// This component protects admin pages
 export default function ProtectedRoute({ children }) {
 
-    // check token in browser
+    // check token in browser storage
     const token = localStorage.getItem("token");
 
-    // if no token → go login page
+    // if no token → redirect to login
     if (!token) {
         return <Navigate to="/login" />;
     }
 
-    // if token exists → allow page
+    // if token exists → allow access
     return children;
 }
