@@ -3,7 +3,7 @@ package com.rcc.lms.entity.student;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "class")
+@Table(name = "student_class")
 public class ClassEntity {
 
     @Id
