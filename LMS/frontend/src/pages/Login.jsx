@@ -11,6 +11,9 @@ export default function Login() {
 
     const navigate = useNavigate();
 
+    // =========================
+    // LOGIN FUNCTION
+    // =========================
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -18,20 +21,25 @@ export default function Login() {
         setMessage("");
 
         try {
-            // call backend API
+            // call backend
             const res = await loginUser({ username, password });
 
-            // save JWT token
+            // save token
             localStorage.setItem("token", res.data.token);
 
             setMessage("Login Successful ✅");
 
-            // redirect to admin dashboard
+            // redirect to admin panel
             navigate("/admin");
 
         } catch (error) {
-            console.log(error);
-            setMessage("Login Failed ❌");
+
+            // handle backend error response
+            if (error.response?.status === 401) {
+                setMessage("Invalid username or password ❌");
+            } else {
+                setMessage("Server error ❌");
+            }
         } finally {
             setLoading(false);
         }

@@ -2,9 +2,9 @@ package com.rcc.lms.controller;
 
 import com.rcc.lms.dto.LoginRequest;
 import com.rcc.lms.dto.LoginResponse;
-import com.rcc.lms.entity.User;
 import com.rcc.lms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,23 +15,20 @@ public class UserController {
     private UserService userService;
 
     // =========================
-    // REGISTER USER
-    // =========================
-    @PostMapping("/register")
-    public String registerUser(@RequestBody User user) {
-        return userService.registerUser(user);
-    }
-
-    // =========================
-    // LOGIN USER
+    // LOGIN API
     // =========================
     @PostMapping("/login")
-    public LoginResponse loginUser(@RequestBody LoginRequest request) {
-        return userService.loginUser(request);
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request) {
+
+        // call service and return response
+        return ResponseEntity.ok(userService.loginUser(request));
     }
 
+    // =========================
+    // TEST API
+    // =========================
     @GetMapping("/test")
     public String test() {
-        return "This is a protected API!";
+        return "API is working!";
     }
 }
