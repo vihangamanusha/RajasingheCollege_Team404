@@ -33,7 +33,7 @@ public class NewsService {
         exisitingNews.setDate(updatedNews.getDate());
         exisitingNews.setImage(updatedNews.getImage());
 
-        return exisitingNews;
+        return newsRepository.save(exisitingNews);
     }
 
     //delete news

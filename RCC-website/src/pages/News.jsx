@@ -1,6 +1,7 @@
 import { Calendar, User } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import newsImage from "../assets/news.jpeg";
 
 export function News() {
   const { t } = useLanguage();
@@ -84,7 +85,7 @@ export function News() {
       {/* Hero Banner */}
       <section className="news-hero">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1920&h=1080&fit=crop"
+          src={newsImage}
           alt="Latest News"
           className="news-hero__image"
         />
@@ -114,17 +115,14 @@ export function News() {
                   <div className="news-card__image-overlay"></div>
 
                   <div className="news-card__meta-row">
-                    <span className="news-card__category">{news.category}</span>
+                    
                     <div className="news-card__date">
                       <Calendar className="news-card__icon" />
                       <span>{news.date.split(",")[0]}</span>
                     </div>
                   </div>
 
-                  <div className="news-card__author-row">
-                    <User className="news-card__icon" />
-                    <span className="news-card__author">{news.author}</span>
-                  </div>
+               
                 </div>
 
                 <div className="news-card__content">

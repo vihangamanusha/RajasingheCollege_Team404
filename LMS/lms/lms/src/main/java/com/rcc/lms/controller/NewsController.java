@@ -15,7 +15,7 @@ public class NewsController {
     private NewsService service;
 
     public NewsController(NewsService newsService) {
-        this.service = service;
+        this.service = newsService;
     }
 
     //get all news
@@ -41,5 +41,8 @@ public class NewsController {
     public void deleteNews(@PathVariable Long id) {
         service.deleteNews(id);
     }
-
+    @GetMapping("/test")
+    public String test() {
+        return "API Working";
+    }
 }
