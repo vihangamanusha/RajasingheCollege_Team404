@@ -26,11 +26,19 @@ button {
   background: #eef2f8;
 }
 
+.logo-image {
+  width: 102px;
+  height: 102px;
+  
+  margin-left: 55px;
+
+}
+
 /* SIDEBAR */
 .sidebar {
   width: 260px;
   min-height: 100vh;
-  background: #1c3a80;
+  background: #1e3a8a;
   color: #f5f8ff;
   padding: 28px 22px;
   position: sticky;
@@ -43,6 +51,7 @@ button {
   letter-spacing: 0.04em;
   font-weight: 700;
   line-height: 1.2;
+  margin-left: 25px;
 }
 
 .sidebar nav {
@@ -412,6 +421,14 @@ button {
 
 .form textarea {
   min-height: 140px;
+}
+
+.image-preview {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid rgba(36, 49, 78, 0.12);
 }
 
 .form-actions {

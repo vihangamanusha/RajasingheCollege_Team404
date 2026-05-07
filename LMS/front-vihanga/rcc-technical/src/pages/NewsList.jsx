@@ -6,12 +6,27 @@ export default function NewsList() {
   const [activeTab, setActiveTab] = useState("News");
   const [news, setNews] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [form, setForm] = useState({ title: "", content: "", date: "", image: "" });
+  const [form, setForm] = useState({ title: "", content: "", date: "", image: null });
+  const [imagePreview, setImagePreview] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     loadNews();
   }, []);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setForm((prev) => ({ ...prev, image: file }));
+
+    if (!file) {
+      setImagePreview("");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+  };
 
   const loadNews = async () => {
     const data = await getNews();
@@ -25,11 +40,24 @@ export default function NewsList() {
       return;
     }
 
-    await addNews(form);
-    setForm({ title: "", content: "", date: "", image: "" });
-    setStatusMessage("Article added successfully.");
-    setShowAddForm(false);
-    await loadNews();
+    try {
+      const payload = new FormData();
+      payload.append("title", form.title);
+      payload.append("content", form.content);
+      payload.append("date", form.date);
+      if (form.image) payload.append("image", form.image);
+
+      const result = await addNews(payload);
+      console.log("Upload response:", result);
+      setForm({ title: "", content: "", date: "", image: null });
+      setImagePreview("");
+      setStatusMessage("Article added successfully.");
+      setShowAddForm(false);
+      await loadNews();
+    } catch (error) {
+      console.error("Upload error:", error);
+      setStatusMessage(`Error: ${error.message}`);
+    }
   };
 
   const remove = async (id) => {
@@ -102,11 +130,8 @@ export default function NewsList() {
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
-              <input
-                placeholder="Image URL"
-                value={form.image}
-                onChange={(e) => setForm({ ...form, image: e.target.value })}
-              />
+              <input type="file" accept="image/*" onChange={handleImageChange} />
+              {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
               <div className="form-actions">
                 <button type="submit" className="btn primary">
                   Save Article

@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import logoImage from "../assets/react.svg";
+import logoImage from "../assets/rcc.png";
 
 export default function Sidebar() {
   const navigate = useNavigate();
