@@ -1,4 +1,6 @@
-export default function AdminLayout({ children }) {
+import { Outlet } from "react-router-dom";
+
+export default function AdminLayout() {
 
     return (
         <div style={{ display: "flex", height: "100vh" }}>
@@ -24,7 +26,7 @@ export default function AdminLayout({ children }) {
                 padding: "30px",
                 backgroundColor: "#f1f5f9"
             }}>
-                {children}
+                <Outlet />
             </div>
 
         </div>
