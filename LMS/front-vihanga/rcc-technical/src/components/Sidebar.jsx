@@ -1,4 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import logoImage from "../assets/react.svg";
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ export default function Sidebar() {
 
   return (
     <div className="sidebar">
+        <img src={logoImage} alt="Logo" className="logo-image" />
       <h2 className="logo">Rajasinghe LMS</h2>
 
       <nav>
@@ -36,9 +38,7 @@ export default function Sidebar() {
         <NavLink to="/news" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           Website Content
         </NavLink>
-        <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
-          Add News
-        </NavLink>
+        
       </nav>
 
       <button className="logout" onClick={handleLogout}>
