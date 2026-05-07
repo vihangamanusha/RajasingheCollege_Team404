@@ -1,23 +1,23 @@
 package com.rcc.lms.service;
 
-import com.rcc.lms.dto.MarksDTO;
-import com.rcc.lms.entity.Marks;
-import com.rcc.lms.repository.MarksRepository;
+import com.rcc.lms.dto.TeacherMarksDTO;
+import com.rcc.lms.entity.TeacherMarks;
+import com.rcc.lms.repository.TeacherMarksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class MarksService {
+public class TeacherMarksService {
 
     @Autowired
-    private MarksRepository marksRepository;
+    private TeacherMarksRepository marksRepository;
 
-    public void saveMarks(List<MarksDTO> dtoList) {
+    public void saveMarks(List<TeacherMarksDTO> dtoList) {
 
-        List<Marks> marksList = dtoList.stream().map(dto -> {
-            Marks m = new Marks();
+        List<TeacherMarks> marksList = dtoList.stream().map(dto -> {
+            TeacherMarks m = new TeacherMarks();
             m.setStudentId(dto.getStudentId());
             m.setSubjectId(dto.getSubjectId());
             m.setTerm(dto.getTerm());
