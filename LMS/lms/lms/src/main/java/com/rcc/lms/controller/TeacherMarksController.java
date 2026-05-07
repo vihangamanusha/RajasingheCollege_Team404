@@ -1,7 +1,7 @@
 package com.rcc.lms.controller;
 
-import com.rcc.lms.dto.MarksDTO;
-import com.rcc.lms.service.MarksService;
+import com.rcc.lms.dto.TeacherMarksDTO;
+import com.rcc.lms.service.TeacherMarksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +10,13 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/marks")
 @CrossOrigin
-public class MarksController {
+public class TeacherMarksController {
 
     @Autowired
-    private MarksService marksService;
+    private TeacherMarksService marksService;
 
     @PostMapping("/save")
-    public String saveMarks(@RequestBody List<MarksDTO> marks) {
+    public String saveMarks(@RequestBody List<TeacherMarksDTO> marks) {
         marksService.saveMarks(marks);
         return "Marks saved successfully";
     }

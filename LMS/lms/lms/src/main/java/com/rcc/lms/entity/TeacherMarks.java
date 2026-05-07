@@ -4,16 +4,16 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "marks")
-public class Marks {
+public class TeacherMarks {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int markId;
 
-    @Column(nullable = false)
+    @Column(name="student_id",nullable = false)
     private String studentId;
 
-    @Column(nullable = false)
+    @Column(name="subject_id",nullable = false)
     private String subjectId;
 
     private String term;

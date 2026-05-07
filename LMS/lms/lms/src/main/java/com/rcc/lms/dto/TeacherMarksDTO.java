@@ -1,6 +1,6 @@
 package com.rcc.lms.dto;
 
-public class MarksDTO {
+public class TeacherMarksDTO {
 
     private String studentId;
     private String subjectId;
