@@ -1,41 +1,49 @@
 import { useState } from "react";
+import { loginUser } from "../services/api";
 
 function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        console.log("Login Data:", { username, password });
+
+        try {
+            const res = await loginUser({ username, password });
+
+            console.log(res.data);
+
+            localStorage.setItem("token", res.data.token);
+
+            setMessage("Login Successful ✅");
+
+        } catch (error) {
+            console.log(error);
+            setMessage("Login Failed ❌");
+        }
     };
 
     return (
-        <div style={{ textAlign: "center", marginTop: "100px" }}>
+        <div>
             <h2>LMS Login</h2>
 
             <form onSubmit={handleLogin}>
-                <div>
-                    <input
-                        type="text"
-                        placeholder="Username"
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                </div>
+                <input
+                    placeholder="Username"
+                    onChange={(e) => setUsername(e.target.value)}
+                />
 
-                <br />
-
-                <div>
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-
-                <br />
+                <input
+                    type="password"
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                />
 
                 <button type="submit">Login</button>
             </form>
+
+            <p>{message}</p>
         </div>
     );
 }
