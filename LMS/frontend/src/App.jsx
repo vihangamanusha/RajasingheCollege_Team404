@@ -1,10 +1,11 @@
-import Test from "./pages/Test";
+import Dashboard from "./pages/Dashboard";
+import AdminLayout from "./layouts/AdminLayout";
 
 function App() {
     return (
-        <div>
-            <Test />
-        </div>
+        <AdminLayout>
+            <Dashboard />
+        </AdminLayout>
     );
 }
 
