@@ -1,9 +1,8 @@
 import axios from "axios";
 
-// Backend base URL
-const API_URL = "http://localhost:8080";
+const API = axios.create({
+    baseURL: "http://localhost:8080",
+});
 
-// Login API call
-export const loginUser = (data) => {
-    return axios.post(`${API_URL}/user/login`, data);
-};
+export const loginUser = (data) => API.post("/auth/login", data);
+export const registerUser = (data) => API.post("/auth/register", data);
