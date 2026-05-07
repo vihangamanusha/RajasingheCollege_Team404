@@ -29,10 +29,7 @@ public class NewsController {
     }
 
     //create news
-    @PostMapping
-    public News createNews(@RequestBody News news) {
-        return service.saveNews(news);
-    }
+    
 
     //update news
     @PutMapping("/{id}")

@@ -20,7 +20,7 @@ public class News {
     @Column(nullable=false)
     private String date;
 
-    @Column(nullable=false)
+
     private String image;
 
     public Long getId() {

@@ -26,6 +26,7 @@ public class SecurityConfig {
                 // 1. Disable CSRF (REST API only)
                 // -----------------------------
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> {})//vihnga
 
                 // -----------------------------
                 // 2. Make session stateless (JWT does not use session)
