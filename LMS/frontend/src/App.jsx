@@ -1,13 +1,11 @@
-import { RouterProvider } from 'react-router-dom';
-import { router } from './routes';
-import AddMarks from "./components/AddMarks";
+import Login from "./pages/Login";
 
-
-export default function App() {
-  <div>
-    <AddMarks />
-  </div>
-  return <RouterProvider router={router} />;
-
-
+function App() {
+  return (
+      <div>
+        <Login />
+      </div>
+  );
 }
+
+export default App;
