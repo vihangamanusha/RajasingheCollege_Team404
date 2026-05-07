@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
 
 export default function Login() {
@@ -7,6 +8,8 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -17,16 +20,13 @@ export default function Login() {
         try {
             const res = await loginUser({ username, password });
 
-            console.log("LOGIN RESPONSE:", res.data);
-
-            // save token
             localStorage.setItem("token", res.data.token);
 
             setMessage("Login Successful ✅");
 
-        } catch (error) {
-            console.log("LOGIN ERROR:", error.response?.data || error.message);
+            navigate("/admin"); //  redirect
 
+        } catch (error) {
             setMessage("Login Failed ❌");
         } finally {
             setLoading(false);

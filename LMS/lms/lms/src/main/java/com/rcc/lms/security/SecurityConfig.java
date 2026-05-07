@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-// Enables Spring Security configuration
+// Enables Spring Security annotations like @PreAuthorize
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-// CORS (Cross-Origin Resource Sharing) imports
+// CORS configuration classes
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -19,10 +19,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 
 @Configuration
-@EnableMethodSecurity // Enables @PreAuthorize annotations in controllers
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    // JWT filter that checks token in every request
+    // JWT filter (checks token in every request)
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -30,53 +30,53 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // -----------------------------------------
+                // =====================================
                 // 1. Disable CSRF (not needed for REST API)
-                // -----------------------------------------
+                // =====================================
                 .csrf(csrf -> csrf.disable())
 
-                // -----------------------------------------
-                // 2. Enable CORS (VERY IMPORTANT for React)
-                // -----------------------------------------
+                // =====================================
+                // 2. Enable CORS for React frontend
+                // =====================================
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                // -----------------------------------------
+                // =====================================
                 // 3. Make session stateless (JWT system)
-                // -----------------------------------------
+                // =====================================
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // -----------------------------------------
-                // 4. API Security Rules
-                // -----------------------------------------
+                // =====================================
+                // 4. API security rules
+                // =====================================
                 .authorizeHttpRequests(auth -> auth
 
-                        // Public APIs (no token needed)
+                        // Public endpoints (NO token required)
                         .requestMatchers("/user/login", "/user/register").permitAll()
 
-                        // All other APIs need authentication
+                        // All other endpoints require authentication
                         .anyRequest().authenticated()
                 )
 
-                // -----------------------------------------
-                // 5. Disable default login forms
-                // -----------------------------------------
+                // =====================================
+                // 5. Disable default Spring login
+                // =====================================
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
 
-        // -----------------------------------------
-        // 6. Add JWT filter before Spring security
-        // -----------------------------------------
+        // =====================================
+        // 6. Add JWT filter before authentication
+        // =====================================
         http.addFilterBefore(jwtFilter,
                 UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
-    // =========================================
-    // CORS CONFIGURATION (ALLOW REACT FRONTEND)
-    // =========================================
+    // =====================================
+    // CORS CONFIGURATION (React frontend)
+    // =====================================
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
@@ -91,10 +91,10 @@ public class SecurityConfig {
         // Allow all headers (important for JWT token)
         config.setAllowedHeaders(List.of("*"));
 
-        // Allow sending cookies / auth headers
+        // Allow Authorization header + cookies
         config.setAllowCredentials(true);
 
-        // Apply CORS settings to all endpoints
+        // Apply to all endpoints
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
 
