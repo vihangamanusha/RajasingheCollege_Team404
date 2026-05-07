@@ -29,8 +29,14 @@ export default function NewsList() {
   };
 
   const loadNews = async () => {
-    const data = await getNews();
-    setNews(data || []);
+    try {
+      const data = await getNews();
+      console.log("Setting news to:", data);
+      setNews(data || []);
+    } catch (error) {
+      console.error("Error loading news:", error);
+      setStatusMessage("Failed to load articles");
+    }
   };
 
   const handleSubmit = async (e) => {

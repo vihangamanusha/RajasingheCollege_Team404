@@ -58,11 +58,13 @@ public class NewsController {
         String filename = null;
 
         try {
+
             if (image != null && !image.isEmpty()) {
 
                 String uploadDir = "uploads/";
 
                 File dir = new File(uploadDir);
+
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
@@ -70,10 +72,12 @@ public class NewsController {
                 filename = System.currentTimeMillis() + "_" + image.getOriginalFilename();
 
                 File saveFile = new File(uploadDir + filename);
+
                 image.transferTo(saveFile);
             }
 
             News news = new News();
+
             news.setTitle(title);
             news.setContent(content);
             news.setDate(date);
@@ -82,8 +86,11 @@ public class NewsController {
             return service.saveNews(news);
 
         } catch (Exception e) {
+
             e.printStackTrace();
+
             throw new RuntimeException("Upload failed: " + e.getMessage());
         }
     }
-}
+    }
+

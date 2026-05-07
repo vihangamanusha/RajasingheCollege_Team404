@@ -2,8 +2,18 @@ const BASE_URL = "http://localhost:8080/api/news";
 
 // GET all
 export const getNews = async () => {
-  const res = await fetch(BASE_URL);
-  return res.json();
+  try {
+    const res = await fetch(BASE_URL);
+    if (!res.ok) {
+      throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
+    }
+    const data = await res.json();
+    console.log("Fetched news:", data);
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error("Error fetching news:", error);
+    return [];
+  }
 };
 
 // POST
