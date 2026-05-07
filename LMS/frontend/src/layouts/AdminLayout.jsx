@@ -8,7 +8,7 @@ export default function AdminLayout() {
     // LOGOUT FUNCTION
     // =========================
     const handleLogout = () => {
-        // remove token from browser
+        // remove JWT token from browser storage
         localStorage.removeItem("token");
 
         // redirect to login page
@@ -19,7 +19,7 @@ export default function AdminLayout() {
         <div style={{ display: "flex", height: "100vh" }}>
 
             {/* =========================
-                SIDEBAR
+                SIDEBAR MENU
             ========================= */}
             <div
                 style={{
@@ -33,14 +33,39 @@ export default function AdminLayout() {
 
                 <hr />
 
-                <p>Dashboard</p>
-                <p>Users</p>
+                {/* =========================
+                    NAVIGATION LINKS
+                ========================= */}
+
+                {/* Dashboard */}
+                <p
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/admin")}
+                >
+                    Dashboard
+                </p>
+
+                {/* Users (STEP 5) */}
+                <p
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate("/admin/users")}
+                >
+                    Users
+                </p>
+
+                {/* Courses (future step) */}
                 <p>Courses</p>
 
-                {/* Logout button */}
+                <hr />
+
+                {/* LOGOUT */}
                 <button
                     onClick={handleLogout}
-                    style={{ marginTop: "20px", padding: "8px" }}
+                    style={{
+                        marginTop: "20px",
+                        padding: "8px",
+                        cursor: "pointer"
+                    }}
                 >
                     Logout
                 </button>
@@ -48,6 +73,7 @@ export default function AdminLayout() {
 
             {/* =========================
                 MAIN CONTENT AREA
+                (renders child routes)
             ========================= */}
             <div
                 style={{
@@ -56,7 +82,7 @@ export default function AdminLayout() {
                     backgroundColor: "#f1f5f9"
                 }}
             >
-                {/* IMPORTANT: This renders child pages */}
+                {/* This is where Dashboard / Users page will load */}
                 <Outlet />
             </div>
 
