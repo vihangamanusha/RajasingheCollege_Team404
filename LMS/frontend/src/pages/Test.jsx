@@ -15,8 +15,8 @@ export default function Test() {
 
     return (
         <div>
-            <h1>API Test Page</h1>
-            <p>Check console for output</p>
+            <h1>Test Page</h1>
+            <p>Check console for backend data</p>
         </div>
     );
 }
