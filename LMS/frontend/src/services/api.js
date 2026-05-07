@@ -1,7 +1,26 @@
 import axios from "axios";
 
+// ======================
+// BASE API CONFIG
+// ======================
 const API = axios.create({
     baseURL: "http://localhost:8080",
+});
+
+// ======================
+// ATTACH JWT TOKEN AUTOMATICALLY
+// ======================
+API.interceptors.request.use((config) => {
+
+    // get token from local storage
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        // IMPORTANT: must include Bearer prefix
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
 });
 
 // ======================
@@ -9,17 +28,5 @@ const API = axios.create({
 // ======================
 export const loginUser = (data) => API.post("/user/login", data);
 
-// ======================
-// ATTACH TOKEN AUTOMATICALLY
-// ======================
-API.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-
-    return config;
-});
-
+// export API for other calls
 export default API;

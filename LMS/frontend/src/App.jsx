@@ -1,16 +1,26 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 // =========================
-// PAGES
+// LOGIN PAGE
 // =========================
 import Login from "./pages/Login";
+
+// =========================
+// ADMIN PAGES
+// =========================
 import Dashboard from "./pages/Dashboard";
 import AdminUsers from "./pages/AdminUsers";
-
-// 👉 NEW PAGES (we will create next step)
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
+
+// =========================
+// OTHER ROLE DASHBOARDS
+// (Created by your friend)
+// =========================
+// import TeacherDashboard from "./pages/TeacherDashboard";
+// import StudentDashboard from "./pages/StudentDashboard";
+// import TechDashboard from "./pages/TechDashboard";
 
 // =========================
 // LAYOUT
@@ -18,26 +28,34 @@ import TechRegister from "./pages/TechRegister";
 import AdminLayout from "./layouts/AdminLayout";
 
 // =========================
-// ROUTE PROTECTION
+// PROTECTED ROUTE
 // =========================
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
+
     return (
+
         <Routes>
 
             {/* =========================
                 DEFAULT ROUTE
             ========================= */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route
+                path="/"
+                element={<Navigate to="/login" replace />}
+            />
 
             {/* =========================
                 LOGIN PAGE
             ========================= */}
-            <Route path="/login" element={<Login />} />
+            <Route
+                path="/login"
+                element={<Login />}
+            />
 
             {/* =========================
-                ADMIN PANEL (PROTECTED)
+                ADMIN PANEL
             ========================= */}
             <Route
                 path="/admin"
@@ -48,22 +66,73 @@ function App() {
                 }
             >
 
-                {/* Dashboard */}
-                <Route index element={<Dashboard />} />
+                {/* ADMIN DASHBOARD */}
+                <Route
+                    index
+                    element={<Dashboard />}
+                />
 
-                {/* =========================
-                    USER MANAGEMENT MENU
-                ========================= */}
-                <Route path="users" element={<AdminUsers />} />
+                {/* USER MANAGEMENT */}
+                <Route
+                    path="users"
+                    element={<AdminUsers />}
+                />
 
-                {/* =========================
-                    USER REGISTRATION PAGES
-                ========================= */}
-                <Route path="users/student" element={<StudentRegister />} />
-                <Route path="users/teacher" element={<TeacherRegister />} />
-                <Route path="users/tech" element={<TechRegister />} />
+                {/* REGISTER STUDENT */}
+                <Route
+                    path="users/student"
+                    element={<StudentRegister />}
+                />
+
+                {/* REGISTER TEACHER */}
+                <Route
+                    path="users/teacher"
+                    element={<TeacherRegister />}
+                />
+
+                {/* REGISTER TECHNICAL OFFICER */}
+                <Route
+                    path="users/tech"
+                    element={<TechRegister />}
+                />
 
             </Route>
+
+            {/*/!* =========================*/}
+            {/*    TEACHER DASHBOARD*/}
+            {/*========================= *!/*/}
+            {/*<Route*/}
+            {/*    path="/teacher"*/}
+            {/*    element={*/}
+            {/*        <ProtectedRoute>*/}
+            {/*            <TeacherDashboard />*/}
+            {/*        </ProtectedRoute>*/}
+            {/*    }*/}
+            {/*/>*/}
+
+            {/*/!* =========================*/}
+            {/*    STUDENT DASHBOARD*/}
+            {/*========================= *!/*/}
+            {/*<Route*/}
+            {/*    path="/student"*/}
+            {/*    element={*/}
+            {/*        <ProtectedRoute>*/}
+            {/*            <StudentDashboard />*/}
+            {/*        </ProtectedRoute>*/}
+            {/*    }*/}
+            {/*/>*/}
+
+            {/*/!* =========================*/}
+            {/*    TECHNICAL OFFICER DASHBOARD*/}
+            {/*========================= *!/*/}
+            {/*<Route*/}
+            {/*    path="/tech"*/}
+            {/*    element={*/}
+            {/*        <ProtectedRoute>*/}
+            {/*            <TechDashboard />*/}
+            {/*        </ProtectedRoute>*/}
+            {/*    }*/}
+            {/*/>*/}
 
         </Routes>
     );

@@ -31,41 +31,50 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // =========================================
-        // 1. GET REQUEST PATH
-        // =========================================
-        String path = request.getServletPath();
-
-        // =========================================
-        // 2. SKIP JWT FOR PUBLIC ENDPOINTS
-        //    (VERY IMPORTANT or login = 403)
-        // =========================================
-        if (path.equals("/user/login") ||
-                path.equals("/user/register")) {
-
+        // =========================
+        // 1. HANDLE CORS PREFLIGHT
+        // =========================
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // =========================================
-        // 3. READ AUTH HEADER
-        // =========================================
+        // =========================
+        // 2. PUBLIC ENDPOINTS SKIP JWT
+        // =========================
+        String path = request.getServletPath();
+
+        if (path.equals("/user/login") || path.equals("/user/register")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // =========================
+        // 3. GET AUTH HEADER
+        // =========================
         String authHeader = request.getHeader("Authorization");
 
         String token = null;
         String username = null;
 
-        // =========================================
-        // 4. EXTRACT TOKEN IF PRESENT
-        // =========================================
+        // =========================
+        // 4. EXTRACT TOKEN SAFELY
+        // =========================
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             token = authHeader.substring(7);
-            username = jwtUtil.extractUsername(token);
+
+            try {
+                username = jwtUtil.extractUsername(token);
+            } catch (Exception e) {
+                // invalid token → stop request
+                filterChain.doFilter(request, response);
+                return;
+            }
         }
 
-        // =========================================
-        // 5. VALIDATE TOKEN AND SET AUTH
-        // =========================================
+        // =========================
+        // 5. AUTHENTICATE USER
+        // =========================
         if (username != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
 
@@ -89,9 +98,9 @@ public class JwtFilter extends OncePerRequestFilter {
             }
         }
 
-        // =========================================
+        // =========================
         // 6. CONTINUE FILTER CHAIN
-        // =========================================
+        // =========================
         filterChain.doFilter(request, response);
     }
 }
