@@ -41,6 +41,7 @@ public class SecurityConfig {
 
                         // allow public endpoints (no token needed)
                         .requestMatchers("/user/login", "/user/register").permitAll()
+                        .requestMatchers("/api/news/**").permitAll()//vihanga
 
                         // all other APIs require JWT token
                         .anyRequest().authenticated()
