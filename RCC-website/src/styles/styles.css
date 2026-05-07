@@ -2866,10 +2866,14 @@ body {
   max-width: 80rem;
   margin: 0 auto;
   padding: 0 1rem;
+
 }
+
+
 
 .home-news-title-wrapper {
   display: inline-block;
+  
 }
 
 .home-news-icon-wrapper {
@@ -2900,6 +2904,14 @@ body {
   font-family: serif;
 }
 
+.news-title {
+  color: #002147;
+  transition: color 0.3s ease;
+}
+
+.news-card:hover .news-title {
+  color: #FFD700;
+}
 @media (min-width: 768px) {
   .home-news-title {
     font-size: 3.75rem;
