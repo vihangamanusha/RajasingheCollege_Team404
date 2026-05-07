@@ -2,6 +2,9 @@ import { useState } from "react";
 
 export default function TechRegister() {
 
+    // =========================
+    // FORM STATE
+    // =========================
     const [form, setForm] = useState({
         userId: "",
         username: "",
@@ -9,53 +12,124 @@ export default function TechRegister() {
         password: ""
     });
 
+    // MESSAGE STATE
     const [message, setMessage] = useState("");
 
+    // =========================
+    // HANDLE INPUT CHANGES
+    // =========================
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        });
     };
 
+    // =========================
+    // SUBMIT FORM
+    // =========================
     const handleSubmit = async (e) => {
+
         e.preventDefault();
 
-        const res = await fetch("http://localhost:8080/admin/users/create", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: "Bearer " + localStorage.getItem("token")
-            },
-            body: JSON.stringify({
-                ...form,
-                role: "TECH"
-            })
-        });
+        try {
 
-        const data = await res.text();
-        setMessage(data);
+            // =========================
+            // SEND REQUEST TO BACKEND
+            // =========================
+            const res = await fetch(
+                "http://localhost:8080/admin/users/create",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json",
+
+                        // SEND JWT TOKEN
+                        Authorization:
+                            "Bearer " + localStorage.getItem("token")
+                    },
+
+                    body: JSON.stringify({
+
+                        userId: form.userId,
+                        username: form.username,
+                        email: form.email,
+                        password: form.password,
+
+                        // IMPORTANT
+                        role: "ROLE_TECHNICAL_OFFICER"
+                    })
+                }
+            );
+
+            const data = await res.text();
+
+            setMessage(data);
+
+        } catch (error) {
+
+            console.log(error);
+
+            setMessage("Technical Officer registration failed");
+        }
     };
 
     return (
         <div>
+
             <h2>Register Technical Officer</h2>
 
             <form onSubmit={handleSubmit}>
 
-                <input name="userId" placeholder="User ID" onChange={handleChange} />
+                {/* USER ID */}
+                <input
+                    name="userId"
+                    placeholder="User ID"
+                    onChange={handleChange}
+                />
+
                 <br /><br />
 
-                <input name="username" placeholder="Username" onChange={handleChange} />
+                {/* USERNAME */}
+                <input
+                    name="username"
+                    placeholder="Username"
+                    onChange={handleChange}
+                />
+
                 <br /><br />
 
-                <input name="email" placeholder="Email" onChange={handleChange} />
+                {/* EMAIL */}
+                <input
+                    name="email"
+                    placeholder="Email"
+                    onChange={handleChange}
+                />
+
                 <br /><br />
 
-                <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+                {/* PASSWORD */}
+                <input
+                    name="password"
+                    type="password"
+                    placeholder="Password"
+                    onChange={handleChange}
+                />
+
                 <br /><br />
 
-                <button>Create Tech User</button>
+                {/* SUBMIT BUTTON */}
+                <button>
+                    Create Tech User
+                </button>
+
             </form>
 
+            {/* MESSAGE */}
             <p>{message}</p>
+
         </div>
     );
 }
