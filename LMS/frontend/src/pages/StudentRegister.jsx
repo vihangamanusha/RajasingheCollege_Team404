@@ -2,41 +2,60 @@ import { useState } from "react";
 
 export default function StudentRegister() {
 
+    const [form, setForm] = useState({
+        userId: "",
+        username: "",
+        email: "",
+        password: ""
+    });
+
     const [message, setMessage] = useState("");
 
-    const testAPI = async () => {
-        try {
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
-            const res = await fetch("http://localhost:8080/admin/users/all", {
-                method: "GET",
-                headers: {
-                    Authorization: "Bearer " + localStorage.getItem("token")
-                }
-            });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-            const data = await res.json();
+        const res = await fetch("http://localhost:8080/admin/users/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                ...form,
+                role: "STUDENT"
+            })
+        });
 
-            console.log("RESPONSE:", data);
-
-            setMessage("Backend connected successfully ✅");
-
-        } catch (error) {
-            console.log(error);
-            setMessage("Backend connection failed ❌");
-        }
+        const data = await res.text();
+        setMessage(data);
     };
 
     return (
         <div>
+            <h2>Register Student</h2>
 
-            <h1>Test Backend Connection</h1>
+            <form onSubmit={handleSubmit}>
 
-            <button onClick={testAPI}>
-                Click to Test
-            </button>
+                <input name="userId" placeholder="User ID" onChange={handleChange} />
+                <br /><br />
+
+                <input name="username" placeholder="Username" onChange={handleChange} />
+                <br /><br />
+
+                <input name="email" placeholder="Email" onChange={handleChange} />
+                <br /><br />
+
+                <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+                <br /><br />
+
+                <button>Create Student</button>
+            </form>
 
             <p>{message}</p>
-
         </div>
     );
 }

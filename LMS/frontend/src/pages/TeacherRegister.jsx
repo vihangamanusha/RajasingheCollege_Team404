@@ -1,40 +1,65 @@
+import { useState } from "react";
+
 export default function TeacherRegister() {
+
+    const [form, setForm] = useState({
+        userId: "",
+        username: "",
+        email: "",
+        password: "",
+        subRole: ""
+    });
+
+    const [message, setMessage] = useState("");
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const res = await fetch("http://localhost:8080/admin/users/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                ...form,
+                role: "TEACHER"
+            })
+        });
+
+        const data = await res.text();
+        setMessage(data);
+    };
 
     return (
         <div>
+            <h2>Register Teacher</h2>
 
-            {/* =========================
-                TEACHER REGISTRATION FORM
-            ========================= */}
-            <h1>Register Teacher</h1>
+            <form onSubmit={handleSubmit}>
 
-            <form>
-
-                <input placeholder="Username" />
+                <input name="userId" placeholder="User ID" onChange={handleChange} />
                 <br /><br />
 
-                <input placeholder="Email" />
+                <input name="username" placeholder="Username" onChange={handleChange} />
                 <br /><br />
 
-                {/* Sub Role (IMPORTANT for LMS system) */}
-                <select>
-                    <option value="">Select Subject / Role</option>
-                    <option>Math Teacher</option>
-                    <option>Science Teacher</option>
-                    <option>English Teacher</option>
-                </select>
-
+                <input name="email" placeholder="Email" onChange={handleChange} />
                 <br /><br />
 
-                <input placeholder="Password" type="password" />
+                <input name="password" type="password" placeholder="Password" onChange={handleChange} />
                 <br /><br />
 
-                <button type="submit">
-                    Register Teacher
-                </button>
+                <input name="subRole" placeholder="Subject (Math, Science...)" onChange={handleChange} />
+                <br /><br />
 
+                <button>Create Teacher</button>
             </form>
 
+            <p>{message}</p>
         </div>
     );
 }

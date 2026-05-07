@@ -1,30 +1,61 @@
+import { useState } from "react";
+
 export default function TechRegister() {
+
+    const [form, setForm] = useState({
+        userId: "",
+        username: "",
+        email: "",
+        password: ""
+    });
+
+    const [message, setMessage] = useState("");
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const res = await fetch("http://localhost:8080/admin/users/create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token")
+            },
+            body: JSON.stringify({
+                ...form,
+                role: "TECH"
+            })
+        });
+
+        const data = await res.text();
+        setMessage(data);
+    };
 
     return (
         <div>
+            <h2>Register Technical Officer</h2>
 
-            {/* =========================
-                TECHNICAL OFFICER REGISTRATION
-            ========================= */}
-            <h1>Register Technical Officer</h1>
+            <form onSubmit={handleSubmit}>
 
-            <form>
-
-                <input placeholder="Username" />
+                <input name="userId" placeholder="User ID" onChange={handleChange} />
                 <br /><br />
 
-                <input placeholder="Email" />
+                <input name="username" placeholder="Username" onChange={handleChange} />
                 <br /><br />
 
-                <input placeholder="Password" type="password" />
+                <input name="email" placeholder="Email" onChange={handleChange} />
                 <br /><br />
 
-                <button type="submit">
-                    Register Technical Officer
-                </button>
+                <input name="password" type="password" placeholder="Password" onChange={handleChange} />
+                <br /><br />
 
+                <button>Create Tech User</button>
             </form>
 
+            <p>{message}</p>
         </div>
     );
 }
