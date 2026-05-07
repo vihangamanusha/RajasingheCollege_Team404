@@ -3,18 +3,23 @@ package com.rcc.lms.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
+// 👇 ADD THESE IMPORTS
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    // JWT filter that checks token on every request
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -22,42 +27,43 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // -----------------------------
-                // 1. Disable CSRF (REST API only)
-                // -----------------------------
                 .csrf(csrf -> csrf.disable())
 
-                // -----------------------------
-                // 2. Make session stateless (JWT does not use session)
-                // -----------------------------
+                // ✅ IMPORTANT FIX (ADD THIS)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // -----------------------------
-                // 3. API access rules
-                // -----------------------------
                 .authorizeHttpRequests(auth -> auth
-
-                        // allow public endpoints (no token needed)
                         .requestMatchers("/user/login", "/user/register").permitAll()
-
-                        // all other APIs require JWT token
                         .anyRequest().authenticated()
                 )
 
-                // -----------------------------
-                // 4. Disable default Spring login forms
-                // -----------------------------
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
 
-        // -----------------------------
-        // 5. Add JWT filter before Spring authentication
-        // -----------------------------
         http.addFilterBefore(jwtFilter,
                 UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // ✅ ADD THIS METHOD
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.setAllowedOrigins(List.of("http://localhost:5174"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 }
