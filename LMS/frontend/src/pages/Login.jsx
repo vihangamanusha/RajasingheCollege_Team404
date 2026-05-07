@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { loginUser } from "../services/api";
 
-function Login() {
+export default function Login() {
+
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -26,7 +27,7 @@ function Login() {
 
     return (
         <div>
-            <h2>LMS Login</h2>
+            <h2>Login</h2>
 
             <form onSubmit={handleLogin}>
                 <input
@@ -47,5 +48,3 @@ function Login() {
         </div>
     );
 }
-
-export default Login;
