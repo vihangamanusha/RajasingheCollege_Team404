@@ -29,7 +29,7 @@ public class NewsController {
     }
 
     //create news
-    
+
 
     //update news
     @PutMapping("/{id}")
