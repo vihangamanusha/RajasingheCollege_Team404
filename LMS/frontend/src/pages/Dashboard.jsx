@@ -1,8 +1,14 @@
 export default function Dashboard() {
+
     return (
         <div>
+
             <h1>Admin Dashboard</h1>
-            <p>Welcome to LMS System</p>
+
+            <p>
+                Welcome to LMS System
+            </p>
+
         </div>
     );
 }
