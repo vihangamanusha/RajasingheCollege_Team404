@@ -16,16 +16,19 @@ import TechRegister from "./pages/TechRegister";
 
 // =========================
 // OTHER ROLE DASHBOARDS
-// (Created by your friend)
 // =========================
 // import TeacherDashboard from "./pages/TeacherDashboard";
-// import StudentDashboard from "./pages/StudentDashboard";
+import StudentDashboard from "./pages/student/StudentDashboard";
+import StudentMarks from "./pages/student/StudentMarks";
+import StudentMaterials from "./pages/student/StudentMaterials";
+import StudentReport from "./pages/student/StudentReport";
 // import TechDashboard from "./pages/TechDashboard";
 
 // =========================
 // LAYOUT
 // =========================
 import AdminLayout from "./layouts/AdminLayout";
+import StudentLayout from "./Component/student/StudentLayout";
 
 // =========================
 // PROTECTED ROUTE
@@ -110,17 +113,23 @@ function App() {
             {/*    }*/}
             {/*/>*/}
 
-            {/*/!* =========================*/}
-            {/*    STUDENT DASHBOARD*/}
-            {/*========================= *!/*/}
-            {/*<Route*/}
-            {/*    path="/student"*/}
-            {/*    element={*/}
-            {/*        <ProtectedRoute>*/}
-            {/*            <StudentDashboard />*/}
-            {/*        </ProtectedRoute>*/}
-            {/*    }*/}
-            {/*/>*/}
+            {/* =========================
+                STUDENT DASHBOARD
+            ========================= */}
+            <Route
+                path="/student"
+                element={
+                    <ProtectedRoute>
+                        <StudentLayout />
+                    </ProtectedRoute>
+                }
+            >
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="dashboard" element={<StudentDashboard studentId="STU001" />} />
+                <Route path="marks" element={<StudentMarks studentId="STU001" />} />
+                <Route path="materials" element={<StudentMaterials />} />
+                <Route path="report" element={<StudentReport studentId="STU001" />} />
+            </Route>
 
             {/*/!* =========================*/}
             {/*    TECHNICAL OFFICER DASHBOARD*/}
