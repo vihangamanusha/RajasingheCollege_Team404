@@ -1,8 +1,11 @@
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
+import { FiGrid, FiUsers, FiBook, FiLogOut } from "react-icons/fi";
+import "./AdminLayout.css";
 
 export default function AdminLayout() {
 
     const navigate = useNavigate();
+    const location = useLocation(); // We use this to check the current URL path
 
     // =========================
     // LOGOUT FUNCTION
@@ -10,78 +13,69 @@ export default function AdminLayout() {
     const handleLogout = () => {
         // remove JWT token from browser storage
         localStorage.removeItem("token");
+        localStorage.removeItem("role");
 
         // redirect to login page
         navigate("/login");
     };
 
+    // Helper function to check if a path is active
+    const isActive = (path) => {
+        return location.pathname === path ? "active" : "";
+    };
+
     return (
-        <div style={{ display: "flex", height: "100vh" }}>
+        <div className="admin-layout">
 
             {/* =========================
                 SIDEBAR MENU
             ========================= */}
-            <div
-                style={{
-                    width: "220px",
-                    backgroundColor: "#1e293b",
-                    color: "white",
-                    padding: "20px"
-                }}
-            >
-                <h2>LMS Admin</h2>
+            <div className="layout-sidebar">
 
-                <hr />
+                <div className="sidebar-header">
+                    <div className="sidebar-logo">LMS</div>
+                    <div className="sidebar-title">
+                        <h2>Rajasinghe<br/>Admin</h2>
+                    </div>
+                </div>
 
-                {/* =========================
-                    NAVIGATION LINKS
-                ========================= */}
+                <div className="sidebar-nav">
+                    {/* Dashboard */}
+                    <div
+                        className={`nav-item ${isActive("/admin")}`}
+                        onClick={() => navigate("/admin")}
+                    >
+                        <FiGrid className="nav-icon" /> Dashboard
+                    </div>
 
-                {/* Dashboard */}
-                <p
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/admin")}
-                >
-                    Dashboard
-                </p>
+                    {/* Users (STEP 5) */}
+                    <div
+                        className={`nav-item ${location.pathname.includes("/admin/users") ? "active" : ""}`}
+                        onClick={() => navigate("/admin/users")}
+                    >
+                        <FiUsers className="nav-icon" /> Users
+                    </div>
 
-                {/* Users (STEP 5) */}
-                <p
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate("/admin/users")}
-                >
-                    Users
-                </p>
+                    {/* Courses (future step) */}
+                    <div className="nav-item disabled">
+                        <FiBook className="nav-icon" /> Courses
+                    </div>
+                </div>
 
-                {/* Courses (future step) */}
-                <p>Courses</p>
+                <div className="sidebar-footer">
+                    {/* LOGOUT */}
+                    <div className="nav-item" onClick={handleLogout}>
+                        <FiLogOut className="nav-icon" /> Logout
+                    </div>
+                </div>
 
-                <hr />
-
-                {/* LOGOUT */}
-                <button
-                    onClick={handleLogout}
-                    style={{
-                        marginTop: "20px",
-                        padding: "8px",
-                        cursor: "pointer"
-                    }}
-                >
-                    Logout
-                </button>
             </div>
 
             {/* =========================
                 MAIN CONTENT AREA
                 (renders child routes)
             ========================= */}
-            <div
-                style={{
-                    flex: 1,
-                    padding: "30px",
-                    backgroundColor: "#f1f5f9"
-                }}
-            >
+            <div className="layout-main">
                 {/* This is where Dashboard / Users page will load */}
                 <Outlet />
             </div>

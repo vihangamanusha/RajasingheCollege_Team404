@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { FiUser, FiMail, FiLock, FiHash } from "react-icons/fi";
+import "./TechRegister.css";
 
 export default function TechRegister() {
 
@@ -14,12 +16,12 @@ export default function TechRegister() {
 
     // MESSAGE STATE
     const [message, setMessage] = useState("");
+    const [messageType, setMessageType] = useState(""); // Used to style success/error alerts
 
     // =========================
     // HANDLE INPUT CHANGES
     // =========================
     const handleChange = (e) => {
-
         setForm({
             ...form,
             [e.target.name]: e.target.value
@@ -30,11 +32,11 @@ export default function TechRegister() {
     // SUBMIT FORM
     // =========================
     const handleSubmit = async (e) => {
-
         e.preventDefault();
+        setMessage("");
+        setMessageType("");
 
         try {
-
             // =========================
             // SEND REQUEST TO BACKEND
             // =========================
@@ -42,22 +44,16 @@ export default function TechRegister() {
                 "http://localhost:8080/admin/users/create",
                 {
                     method: "POST",
-
                     headers: {
                         "Content-Type": "application/json",
-
                         // SEND JWT TOKEN
-                        Authorization:
-                            "Bearer " + localStorage.getItem("token")
+                        Authorization: "Bearer " + localStorage.getItem("token")
                     },
-
                     body: JSON.stringify({
-
                         userId: form.userId,
                         username: form.username,
                         email: form.email,
                         password: form.password,
-
                         // IMPORTANT
                         role: "ROLE_TECHNICAL_OFFICER"
                     })
@@ -65,71 +61,111 @@ export default function TechRegister() {
             );
 
             const data = await res.text();
-
             setMessage(data);
 
+            if (res.ok) {
+                setMessageType("success");
+            } else {
+                setMessageType("error");
+            }
+
         } catch (error) {
-
             console.log(error);
-
             setMessage("Technical Officer registration failed");
+            setMessageType("error");
         }
     };
 
     return (
-        <div>
+        <div className="register-container">
 
-            <h2>Register Technical Officer</h2>
+            <div className="page-header">
+                <h1>Technical Officer Registration</h1>
+                <p>Register a new system administrator or technical support member.</p>
+            </div>
 
-            <form onSubmit={handleSubmit}>
+            <div className="form-card">
+                <h2>Account Details</h2>
 
-                {/* USER ID */}
-                <input
-                    name="userId"
-                    placeholder="User ID"
-                    onChange={handleChange}
-                />
+                <form onSubmit={handleSubmit}>
 
-                <br /><br />
+                    {/* USER ID */}
+                    <div className="form-group">
+                        <label>Officer ID</label>
+                        <div className="input-container">
+                            <FiHash className="input-icon" />
+                            <input
+                                name="userId"
+                                placeholder="Enter officer ID number"
+                                value={form.userId}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                {/* USERNAME */}
-                <input
-                    name="username"
-                    placeholder="Username"
-                    onChange={handleChange}
-                />
+                    {/* USERNAME */}
+                    <div className="form-group">
+                        <label>Username</label>
+                        <div className="input-container">
+                            <FiUser className="input-icon" />
+                            <input
+                                name="username"
+                                placeholder="Enter unique username"
+                                value={form.username}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                <br /><br />
+                    {/* EMAIL */}
+                    <div className="form-group">
+                        <label>Email Address</label>
+                        <div className="input-container">
+                            <FiMail className="input-icon" />
+                            <input
+                                name="email"
+                                type="email"
+                                placeholder="tech@example.com"
+                                value={form.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                {/* EMAIL */}
-                <input
-                    name="email"
-                    placeholder="Email"
-                    onChange={handleChange}
-                />
+                    {/* PASSWORD */}
+                    <div className="form-group">
+                        <label>Password</label>
+                        <div className="input-container">
+                            <FiLock className="input-icon" />
+                            <input
+                                name="password"
+                                type="password"
+                                placeholder="Enter secure password"
+                                value={form.password}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                <br /><br />
+                    {/* SUBMIT BUTTON */}
+                    <button type="submit" className="submit-btn green-btn">
+                        Create Tech User
+                    </button>
 
-                {/* PASSWORD */}
-                <input
-                    name="password"
-                    type="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                />
+                </form>
 
-                <br /><br />
+                {/* MESSAGE */}
+                {message && (
+                    <div className={`message-box ${messageType}`}>
+                        {message}
+                    </div>
+                )}
 
-                {/* SUBMIT BUTTON */}
-                <button>
-                    Create Tech User
-                </button>
-
-            </form>
-
-            {/* MESSAGE */}
-            <p>{message}</p>
-
+            </div>
         </div>
     );
 }

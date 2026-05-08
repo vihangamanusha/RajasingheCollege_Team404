@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
+import { FiUser, FiLock } from "react-icons/fi"; // Importing the icons
+import "./Login.css"; // Importing your new styles
 
 export default function Login() {
 
@@ -11,6 +13,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
+    const [messageType, setMessageType] = useState(""); // Added to handle CSS colors without emojis
 
     const navigate = useNavigate();
 
@@ -18,14 +21,12 @@ export default function Login() {
     // LOGIN FUNCTION
     // =========================
     const handleLogin = async (e) => {
-
         e.preventDefault();
-
         setLoading(true);
         setMessage("");
+        setMessageType("");
 
         try {
-
             // =========================
             // CALL LOGIN API
             // =========================
@@ -37,129 +38,122 @@ export default function Login() {
             console.log("LOGIN RESPONSE:", res.data);
 
             // =========================
-            // SAVE TOKEN
+            // SAVE TOKEN & ROLE
             // =========================
             localStorage.setItem("token", res.data.token);
-
-            // =========================
-            // SAVE ROLE
-            // =========================
             localStorage.setItem("role", res.data.role);
 
-            setMessage("Login Successful ✅");
+            setMessage("Login Successful");
+            setMessageType("success");
 
             // =========================
             // GET USER ROLE
             // =========================
             const role = res.data.role?.toUpperCase();
-
             console.log("USER ROLE:", role);
 
             // =========================
             // ROLE BASED REDIRECT
             // =========================
-            if (
-                role === "ADMIN" ||
-                role === "ROLE_ADMIN"
-            ) {
-
+            if (role === "ADMIN" || role === "ROLE_ADMIN") {
                 navigate("/admin");
-
-            }
-
-            else if (
-                role === "TEACHER" ||
-                role === "ROLE_TEACHER"
-            ) {
-
+            } else if (role === "TEACHER" || role === "ROLE_TEACHER") {
                 navigate("/teacher");
-
-            }
-
-            else if (
-                role === "STUDENT" ||
-                role === "ROLE_STUDENT"
-            ) {
-
+            } else if (role === "STUDENT" || role === "ROLE_STUDENT") {
                 navigate("/student");
-
-            }
-
-            else if (
-                role === "TECHNICAL_OFFICER" ||
-                role === "ROLE_TECHNICAL_OFFICER"
-            ) {
-
+            } else if (role === "TECHNICAL_OFFICER" || role === "ROLE_TECHNICAL_OFFICER") {
                 navigate("/tech");
-
-            }
-
-            else {
-
+            } else {
                 setMessage("Unknown role: " + role);
+                setMessageType("error");
             }
 
         } catch (error) {
-
             console.log(error);
 
             // =========================
             // ERROR HANDLING
             // =========================
+            setMessageType("error");
+
             if (error.response?.status === 401) {
-
-                setMessage("Invalid username or password ❌");
-
+                setMessage("Invalid username or password");
             } else {
-
-                setMessage("Server error ❌");
+                setMessage("Server error");
             }
-
         } finally {
-
             setLoading(false);
         }
     };
 
     return (
+        <div className="login-wrapper">
+            <div className="login-card">
 
-        <div style={{ maxWidth: "300px", margin: "100px auto" }}>
+                {/* HEADER & LOGO */}
+                <div className="login-header">
+                    {/* Replace this placeholder src with the actual path to your logo */}
+                    <img
+                        src="/path-to-your-logo.png"
+                        alt="Rajasinghe Central College"
+                        className="login-logo"
+                    />
+                    <h2>Rajasinghe LMS</h2>
+                    <p>Learning Management System</p>
+                </div>
 
-            <h2>Login</h2>
+                {/* FORM */}
+                <form onSubmit={handleLogin}>
 
-            <form onSubmit={handleLogin}>
+                    {/* USERNAME */}
+                    <div className="form-group">
+                        <label>Username</label>
+                        <div className="input-container">
+                            <FiUser className="input-icon" />
+                            <input
+                                type="text"
+                                placeholder="Enter your username"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                {/* USERNAME */}
-                <input
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                />
+                    {/* PASSWORD */}
+                    <div className="form-group">
+                        <label>Password</label>
+                        <div className="input-container">
+                            <FiLock className="input-icon" />
+                            <input
+                                type="password"
+                                placeholder="Enter your password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
 
-                <br /><br />
+                    {/* LOGIN BUTTON */}
+                    <button type="submit" className="login-btn" disabled={loading}>
+                        {loading ? "Logging in..." : "Login"}
+                    </button>
+                </form>
 
-                {/* PASSWORD */}
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
+                {/* MESSAGE */}
+                {message && (
+                    <div className={`message ${messageType}`}>
+                        {message}
+                    </div>
+                )}
 
-                <br /><br />
+                {/* FOOTER */}
+                <div className="login-footer">
+                    <a href="#forgot">Forgot password? Contact your administrator</a>
+                </div>
 
-                {/* LOGIN BUTTON */}
-                <button disabled={loading}>
-
-                    {loading ? "Logging in..." : "Login"}
-
-                </button>
-
-            </form>
-
-            {/* MESSAGE */}
-            <p>{message}</p>
-
+            </div>
         </div>
     );
 }
