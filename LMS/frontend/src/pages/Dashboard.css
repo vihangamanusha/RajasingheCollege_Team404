@@ -1,0 +1,86 @@
+/* Dashboard.css */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background-color: #f4f7fb; /* Light grey/blue background from prototype */
+}
+
+.simple-dashboard-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Header Styles */
+.top-header {
+    height: 70px;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.header-title h3 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-info {
+    text-align: right;
+}
+
+.user-role {
+    margin: 0;
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+.user-name {
+    margin: 0;
+    font-size: 14px;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #2b55cc;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Dashboard Content Area */
+.dashboard-content {
+    padding: 40px;
+    flex-grow: 1;
+}
+
+.page-header h1 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+    font-size: 24px;
+}
+
+.page-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 16px;
+}
