@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { loginUser } from "../services/api";
 import { FiUser, FiLock } from "react-icons/fi"; // Importing the icons
 import "./Login.css"; // Importing your new styles
+import schoolLogo from "../assets/school-logo.jpeg"; // Importing school logo
 
 export default function Login() {
 
@@ -92,9 +93,8 @@ export default function Login() {
 
                 {/* HEADER & LOGO */}
                 <div className="login-header">
-                    {/* Replace this placeholder src with the actual path to your logo */}
                     <img
-                        src="/path-to-your-logo.png"
+                        src={schoolLogo}
                         alt="Rajasinghe Central College"
                         className="login-logo"
                     />

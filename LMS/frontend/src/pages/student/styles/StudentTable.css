@@ -1,0 +1,39 @@
+.data-card {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 2rem;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.student-table th {
+    text-align: left;
+    padding: 1rem;
+    color: #94a3b8;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.student-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f8fafc;
+    color: #334155;
+}
+
+.student-table tr:hover {
+    background-color: #f8fafc;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
