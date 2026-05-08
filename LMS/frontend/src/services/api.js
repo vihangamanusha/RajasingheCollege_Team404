@@ -1,9 +1,32 @@
 import axios from "axios";
 
-// Backend base URL
-const API_URL = "http://localhost:8080";
+// ======================
+// BASE API CONFIG
+// ======================
+const API = axios.create({
+    baseURL: "http://localhost:8080",
+});
 
-// Login API call
-export const loginUser = (data) => {
-    return axios.post(`${API_URL}/user/login`, data);
-};
+// ======================
+// ATTACH JWT TOKEN AUTOMATICALLY
+// ======================
+API.interceptors.request.use((config) => {
+
+    // get token from local storage
+    const token = localStorage.getItem("token");
+
+    if (token) {
+        // IMPORTANT: must include Bearer prefix
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+});
+
+// ======================
+// LOGIN API
+// ======================
+export const loginUser = (data) => API.post("/user/login", data);
+
+// export API for other calls
+export default API;

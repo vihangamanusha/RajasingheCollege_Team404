@@ -3,18 +3,23 @@ package com.rcc.lms.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    // JWT filter that checks token on every request
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -22,42 +27,73 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                // -----------------------------
-                // 1. Disable CSRF (REST API only)
-                // -----------------------------
+                // =========================
+                // DISABLE CSRF
+                // =========================
                 .csrf(csrf -> csrf.disable())
 
-                // -----------------------------
-                // 2. Make session stateless (JWT does not use session)
-                // -----------------------------
+                // =========================
+                // CORS ENABLED
+                // =========================
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+                // =========================
+                // STATELESS SESSION (JWT)
+                // =========================
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
-                // -----------------------------
-                // 3. API access rules
-                // -----------------------------
+                // =========================
+                // AUTH RULES
+                // =========================
                 .authorizeHttpRequests(auth -> auth
 
-                        // allow public endpoints (no token needed)
-                        .requestMatchers("/user/login", "/user/register","/api/v1/marks/**","/api/student/**").permitAll()
+                        // Public APIs
+                        .requestMatchers("/user/login", "/user/register").permitAll()
 
-                        // all other APIs require JWT token
+                        // Allow preflight requests (IMPORTANT FIX)
+                        .requestMatchers("/**").permitAll()
+
+                        // Everything else secured
                         .anyRequest().authenticated()
                 )
 
-                // -----------------------------
-                // 4. Disable default Spring login forms
-                // -----------------------------
+                // Disable default login form
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable());
 
-        // -----------------------------
-        // 5. Add JWT filter before Spring authentication
-        // -----------------------------
+        // Add JWT filter
         http.addFilterBefore(jwtFilter,
                 UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    // =========================
+    // CORS CONFIG
+    // =========================
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+
+        CorsConfiguration config = new CorsConfiguration();
+
+        // IMPORTANT: allow all localhost ports for now (DEV MODE FIX)
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:5174",
+                "http://localhost:3000"
+        ));
+
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        config.setAllowedHeaders(List.of("*"));
+
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+
+        return source;
     }
 }
