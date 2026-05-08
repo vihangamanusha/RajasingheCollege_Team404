@@ -34,9 +34,20 @@ export const addNews = async (data) => {
   return res.json();
 };
 
-// DELETE
-export const deleteNews = async (id) => {
-  return fetch(`${BASE_URL}/${id}`, {
-    method: "DELETE",
-  });
+// PUT (update)
+export const updateNews = async (id, data) => {
+  const options = {
+    method: "PUT",
+    body: data instanceof FormData ? data : JSON.stringify(data),
+  };
+
+  if (!(data instanceof FormData)) {
+    options.headers = { "Content-Type": "application/json" };
+  }
+
+  const res = await fetch(`${BASE_URL}/${id}`, options);
+  if (!res.ok) {
+    throw new Error(`Update failed: ${res.status} ${res.statusText}`);
+  }
+  return res.json();
 };

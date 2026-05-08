@@ -26,7 +26,6 @@ public class SecurityConfig {
                 // 1. Disable CSRF (REST API only)
                 // -----------------------------
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> {})//vihnga
 
                 // -----------------------------
                 // 2. Make session stateless (JWT does not use session)
@@ -62,20 +61,5 @@ public class SecurityConfig {
 
         return http.build();
     }
-
-    //vihanga
-    @Bean
-    public org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
-        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
-
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-
-        org.springframework.web.cors.UrlBasedCorsConfigurationSource source =
-                new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
-
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+    
 }

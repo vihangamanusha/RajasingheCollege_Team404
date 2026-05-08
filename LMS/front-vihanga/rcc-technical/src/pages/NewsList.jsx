@@ -1,32 +1,20 @@
 import { useEffect, useState } from "react";
-import { addNews, deleteNews, getNews } from "../api/newsApi";
+import { addNews, deleteNews, getNews, updateNews } from "../api/newsApi";
 
 export default function NewsList() {
   const tabs = ["News", "Sports", "Live Stream"];
   const [activeTab, setActiveTab] = useState("News");
   const [news, setNews] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [form, setForm] = useState({ title: "", content: "", date: "", image: null });
-  const [imagePreview, setImagePreview] = useState("");
+  const [form, setForm] = useState({ title: "", content: "", date: "", imageUrl: "" });
   const [statusMessage, setStatusMessage] = useState("");
+  const [editingArticle, setEditingArticle] = useState(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [articleToDelete, setArticleToDelete] = useState(null);
 
   useEffect(() => {
     loadNews();
   }, []);
-
-  const handleImageChange = (e) => {
-    const file = e.target.files?.[0] || null;
-    setForm((prev) => ({ ...prev, image: file }));
-
-    if (!file) {
-      setImagePreview("");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = () => setImagePreview(reader.result);
-    reader.readAsDataURL(file);
-  };
 
   const loadNews = async () => {
     try {
@@ -47,18 +35,36 @@ export default function NewsList() {
     }
 
     try {
-      const payload = new FormData();
-      payload.append("title", form.title);
-      payload.append("content", form.content);
-      payload.append("date", form.date);
-      if (form.image) payload.append("image", form.image);
+      const payload = {
+        title: form.title,
+        content: form.content,
+        date: form.date || new Date().toISOString().split('T')[0],
+        imageUrl: form.imageUrl || "",
+      };
 
-      const result = await addNews(payload);
-      console.log("Upload response:", result);
-      setForm({ title: "", content: "", date: "", image: null });
-      setImagePreview("");
-      setStatusMessage("Article added successfully.");
+      console.log("Sending payload:", payload);
+
+      const method = editingArticle ? "PUT" : "POST";
+      const url = editingArticle ? `http://localhost:8080/api/news/${editingArticle.id}` : "http://localhost:8080/api/news";
+
+      const response = await fetch(url, {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      console.log("Response status:", response.status);
+      const responseData = await response.json().catch(() => ({}));
+      console.log("Response data:", responseData);
+
+      if (!response.ok) {
+        throw new Error(responseData.message || `Server error: ${response.status}`);
+      }
+
+      setForm({ title: "", content: "", date: "", imageUrl: "" });
+      setStatusMessage(editingArticle ? "Article updated successfully." : "Article added successfully.");
       setShowAddForm(false);
+      setEditingArticle(null);
       await loadNews();
     } catch (error) {
       console.error("Upload error:", error);
@@ -66,9 +72,35 @@ export default function NewsList() {
     }
   };
 
-  const remove = async (id) => {
-    await deleteNews(id);
-    await loadNews();
+  const editArticle = (article) => {
+    setForm({
+      title: article.title || "",
+      content: article.content || "",
+      date: article.date || "",
+      imageUrl: article.imageUrl || "",
+    });
+    setEditingArticle(article);
+    setShowAddForm(true);
+    setStatusMessage("");
+  };
+
+  const confirmDelete = (article) => {
+    setArticleToDelete(article);
+    setShowDeleteConfirm(true);
+  };
+
+  const remove = async () => {
+    if (!articleToDelete) return;
+    
+    try {
+      await deleteNews(articleToDelete.id);
+      setShowDeleteConfirm(false);
+      setArticleToDelete(null);
+      await loadNews();
+    } catch (error) {
+      console.error("Delete error:", error);
+      setStatusMessage("Failed to delete article.");
+    }
   };
 
   return (
@@ -110,10 +142,14 @@ export default function NewsList() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <div>
-                <div className="section-label">Add Article</div>
-                <h2 className="section-title">Add New News Article</h2>
+                <div className="section-label">{editingArticle ? "Edit Article" : "Add Article"}</div>
+                <h2 className="section-title">{editingArticle ? "Edit News Article" : "Add New News Article"}</h2>
               </div>
-              <button className="close-modal" type="button" onClick={() => setShowAddForm(false)}>
+              <button className="close-modal" type="button" onClick={() => {
+                setShowAddForm(false);
+                setEditingArticle(null);
+                setForm({ title: "", content: "", date: "", imageUrl: "" });
+              }}>
                 ×
               </button>
             </div>
@@ -136,17 +172,55 @@ export default function NewsList() {
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
-              <input type="file" accept="image/*" onChange={handleImageChange} />
-              {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+              <input
+                type="text"
+                placeholder="Image URL (optional)"
+                value={form.imageUrl}
+                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+              />
               <div className="form-actions">
                 <button type="submit" className="btn primary">
-                  Save Article
+                  {editingArticle ? "Update Article" : "Save Article"}
                 </button>
-                <button type="button" className="btn secondary" onClick={() => setShowAddForm(false)}>
+                <button type="button" className="btn secondary" onClick={() => {
+                  setShowAddForm(false);
+                  setEditingArticle(null);
+                  setForm({ title: "", content: "", date: "", imageUrl: "" });
+                }}>
                   Cancel
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <div>
+                <div className="section-label">Confirm Delete</div>
+                <h2 className="section-title">Delete Article</h2>
+              </div>
+              <button className="close-modal" type="button" onClick={() => setShowDeleteConfirm(false)}>
+                ×
+              </button>
+            </div>
+
+            <div style={{ padding: "1rem" }}>
+              <p>Are you sure you want to delete the article "<strong>{articleToDelete?.title}</strong>"?</p>
+              <p style={{ color: "#721c24", marginTop: "0.5rem" }}>This action cannot be undone.</p>
+            </div>
+
+            <div className="form-actions">
+              <button type="button" className="btn primary" onClick={remove} style={{ backgroundColor: "#dc3545", borderColor: "#dc3545" }}>
+                Delete Article
+              </button>
+              <button type="button" className="btn secondary" onClick={() => setShowDeleteConfirm(false)}>
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -175,10 +249,10 @@ export default function NewsList() {
                     {article.status || "Published"}
                   </div>
                   <div className="actions">
-                    <button className="edit" type="button">
+                    <button className="edit" type="button" onClick={() => editArticle(article)}>
                       Edit
                     </button>
-                    <button className="delete" type="button" onClick={() => remove(article.id)}>
+                    <button className="delete" type="button" onClick={() => confirmDelete(article)}>
                       Delete
                     </button>
                   </div>
