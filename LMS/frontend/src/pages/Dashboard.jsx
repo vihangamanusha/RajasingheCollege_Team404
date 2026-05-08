@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import "./Dashboard.css";
 
 export default function Dashboard() {
 
@@ -25,19 +26,41 @@ export default function Dashboard() {
 
     }, []);
 
+    // Helper function to grab the first letter for the circle avatar
+    const getInitials = (name) => {
+        if (!name) return "G"; // G for Guest
+        return name.substring(0, 1).toUpperCase();
+    };
+
     return (
-        <div>
+        <div className="simple-dashboard-container">
 
-            <h1>Dashboard</h1>
+            {/* TOP HEADER */}
+            <header className="top-header">
+                <div className="header-title">
+                    <h3>Rajasinghe Central College</h3>
+                </div>
+                <div className="user-profile">
+                    <div className="user-info">
+                        <p className="user-role">Admin</p>
+                        <p className="user-name">{username || "Guest"}</p>
+                    </div>
+                    <div className="user-avatar">
+                        {getInitials(username)}
+                    </div>
+                </div>
+            </header>
 
-            <p>Welcome to LMS System 🚀</p>
+            {/* MAIN CONTENT AREA */}
+            <div className="dashboard-content">
+                <div className="page-header">
+                    <h1>Admin Dashboard</h1>
+                    <p>Welcome back, {username || "Guest"}! Here's what's happening today.</p>
+                </div>
 
-            <hr />
+                {/* Your future dashboard components will go here later */}
 
-            {/* ONLY USERNAME */}
-            <h3>
-                Welcome, {username || "Guest"}
-            </h3>
+            </div>
 
         </div>
     );
