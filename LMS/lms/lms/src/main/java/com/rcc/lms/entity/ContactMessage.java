@@ -17,6 +17,8 @@ public class ContactMessage {
         @Column(length = 2000)
         private String message;
 
+    public ContactMessage() {
+    }
     public Long getId() {
         return id;
     }

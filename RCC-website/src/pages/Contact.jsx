@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import { sendMessage } from "../api/contactApi";
 
 export function Contact() {
   const { t } = useLanguage();
@@ -66,15 +67,15 @@ if (!formData.phone.trim()) {
   };
 
   // Submit
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (validate()) {
+  if (validate()) {
+    try {
+      await sendMessage(formData);
+
       alert("Message Sent Successfully!");
 
-      console.log(formData);
-
-      // Clear form
       setFormData({
         name: "",
         email: "",
@@ -84,7 +85,11 @@ if (!formData.phone.trim()) {
       });
 
       setErrors({});
+    } catch (err) {
+      console.error(err);
+      alert("Failed to send message");
     }
+  }
   };
 
   return (
