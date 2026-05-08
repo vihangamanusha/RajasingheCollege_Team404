@@ -1,9 +1,91 @@
+import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
 
 export function Contact() {
   const { t } = useLanguage();
+const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const [errors, setErrors] = useState({});
+
+  // Handle input changes
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+
+  // Validation
+  const validate = () => {
+    let newErrors = {};
+
+    // Name
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    }
+
+    // Email
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailPattern.test(formData.email)) {
+      newErrors.email = "Enter a valid email";
+    }
+
+    // Phone
+    const phonePattern = /^[0-9]{10}$/;
+
+if (!formData.phone.trim()) {
+  newErrors.phone = "Phone number is required";
+} else if (!phonePattern.test(formData.phone)) {
+  newErrors.phone = "Phone number must be exactly 10 digits";
+}
+
+    // Subject
+    if (!formData.subject) {
+      newErrors.subject = "Please select a subject";
+    }
+
+    // Message
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    }
+
+    setErrors(newErrors);
+
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Submit
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (validate()) {
+      alert("Message Sent Successfully!");
+
+      console.log(formData);
+
+      // Clear form
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+
+      setErrors({});
+    }
+  };
 
   return (
     <div>
@@ -109,78 +191,108 @@ export function Contact() {
 
             {/* Contact Form */}
             <div className="contact-form">
-              <h3>
-                {t("contact.sendMessage")}
-              </h3>
-              <form>
-                <div>
-                  <label htmlFor="name">
-                    {t("contact.yourName")} *
-                  </label>
-                  <input
-                    type="text"
-                    id="name"
-                    placeholder={t("contact.yourName")}
-                  />
-                </div>
+      <h3>Send Message</h3>
 
-                <div>
-                  <label htmlFor="email">
-                    {t("contact.yourEmail")} *
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder={t("contact.yourEmail")}
-                  />
-                </div>
+      <form onSubmit={handleSubmit}>
 
-                <div>
-                  <label htmlFor="phone">
-                    {t("contact.phone")}
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    placeholder={t("contact.phone")}
-                  />
-                </div>
+        {/* Name */}
+        <div>
+          <label htmlFor="name">Your Name *</label>
 
-                <div>
-                  <label htmlFor="subject">
-                    {t("contact.subject")} *
-                  </label>
-                  <select
-                    id="subject"
-                  >
-                    <option value="">{t("contact.subject")}</option>
-                    <option value="admissions">Admissions Inquiry</option>
-                    <option value="academic">Academic Information</option>
-                    <option value="sports">Sports Programs</option>
-                    <option value="general">General Inquiry</option>
-                    <option value="other">Other</option>
-                  </select>
-                </div>
+          <input
+            type="text"
+            id="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Your Name"
+          />
 
-                <div>
-                  <label htmlFor="message">
-                    {t("contact.message")} *
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={5}
-                    placeholder={t("contact.message")}
-                  ></textarea>
-                </div>
+          {errors.name && (
+            <p className="error-text">{errors.name}</p>
+          )}
+        </div>
 
-                <button
-                  type="submit"
-                >
-                  <Send />
-                  <span>{t("contact.send")}</span>
-                </button>
-              </form>
-            </div>
+        {/* Email */}
+        <div>
+          <label htmlFor="email">Your Email *</label>
+
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="Your Email"
+          />
+
+          {errors.email && (
+            <p className="error-text">{errors.email}</p>
+          )}
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label htmlFor="phone">Phone *</label>
+
+          <input
+            type="tel"
+            id="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            placeholder="0771234567"
+          />
+
+           {errors.phone && (
+    <p style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
+      {errors.phone}
+    </p>
+  )}
+        </div>
+
+        {/* Subject */}
+        <div>
+          <label htmlFor="subject">Subject *</label>
+
+          <select
+            id="subject"
+            value={formData.subject}
+            onChange={handleChange}
+          >
+            <option value="">Select Subject</option>
+            <option value="admissions">Admissions Inquiry</option>
+            <option value="academic">Academic Information</option>
+            <option value="sports">Sports Programs</option>
+            <option value="general">General Inquiry</option>
+            <option value="other">Other</option>
+          </select>
+
+          {errors.subject && (
+            <p className="error-text">{errors.subject}</p>
+          )}
+        </div>
+
+        {/* Message */}
+        <div>
+          <label htmlFor="message">Message *</label>
+
+          <textarea
+            id="message"
+            rows={5}
+            value={formData.message}
+            onChange={handleChange}
+            placeholder="Enter your message"
+          ></textarea>
+
+          {errors.message && (
+            <p className="error-text">{errors.message}</p>
+          )}
+        </div>
+
+        <button type="submit">
+          <Send size={18} />
+          <span>Send Message</span>
+        </button>
+      </form>
+    </div>
           </div>
         </div>
       </section>
