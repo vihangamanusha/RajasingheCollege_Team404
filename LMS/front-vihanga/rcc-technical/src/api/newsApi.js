@@ -51,3 +51,16 @@ export const updateNews = async (id, data) => {
   }
   return res.json();
 };
+
+// DELETE
+export const deleteNews = async (id) => {
+  const res = await fetch(`${BASE_URL}/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    throw new Error(`Delete failed: ${res.status}`);
+  }
+
+  return true;
+};

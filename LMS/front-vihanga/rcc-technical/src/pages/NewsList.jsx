@@ -43,17 +43,41 @@ export default function NewsList() {
       };
 
       console.log("Sending payload:", payload);
+      console.log("Is editing:", !!editingArticle);
 
-      const method = editingArticle ? "PUT" : "POST";
-      const url = editingArticle ? `http://localhost:8080/api/news/${editingArticle.id}` : "http://localhost:8080/api/news";
+      let response;
+      if (editingArticle) {
+        // Try PUT for updates first
+        console.log("Trying PUT request for update");
+        try {
+          response = await fetch(`http://localhost:8080/api/news/${editingArticle.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          console.log("PUT response status:", response.status);
+        } catch (putError) {
+          console.log("PUT failed, trying POST with ID");
+          // If PUT fails, try POST with ID in payload
+          payload.id = editingArticle.id;
+          response = await fetch("http://localhost:8080/api/news", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+          console.log("POST update response status:", response.status);
+        }
+      } else {
+        // Create new article
+        console.log("Creating new article");
+        response = await fetch("http://localhost:8080/api/news", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        console.log("POST create response status:", response.status);
+      }
 
-      const response = await fetch(url, {
-        method: method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      console.log("Response status:", response.status);
       const responseData = await response.json().catch(() => ({}));
       console.log("Response data:", responseData);
 
@@ -73,6 +97,7 @@ export default function NewsList() {
   };
 
   const editArticle = (article) => {
+    console.log("Editing article:", article);
     setForm({
       title: article.title || "",
       content: article.content || "",
@@ -85,6 +110,7 @@ export default function NewsList() {
   };
 
   const confirmDelete = (article) => {
+    console.log("Confirming delete for article:", article);
     setArticleToDelete(article);
     setShowDeleteConfirm(true);
   };
@@ -93,10 +119,22 @@ export default function NewsList() {
     if (!articleToDelete) return;
     
     try {
-      await deleteNews(articleToDelete.id);
+      console.log("Deleting article:", articleToDelete.id);
+      
+      const response = await fetch(`http://localhost:8080/api/news/${articleToDelete.id}`, {
+        method: "DELETE",
+      });
+      
+      console.log("Delete response status:", response.status);
+      
+      if (!response.ok) {
+        throw new Error(`Delete failed: ${response.status}`);
+      }
+      
       setShowDeleteConfirm(false);
       setArticleToDelete(null);
       await loadNews();
+      setStatusMessage("Article deleted successfully.");
     } catch (error) {
       console.error("Delete error:", error);
       setStatusMessage("Failed to delete article.");
