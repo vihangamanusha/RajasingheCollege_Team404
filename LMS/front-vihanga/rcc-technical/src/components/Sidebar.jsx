@@ -20,9 +20,14 @@ export default function Sidebar() {
           Dashboard
         </NavLink>
 
-        <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
-          Student
-        </NavLink>
+        <NavLink
+  to="/student-register"
+  className={({ isActive }) =>
+    isActive ? "nav-link active" : "nav-link"
+  }
+>
+  Student
+</NavLink>
         <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           Teacher
         </NavLink>
