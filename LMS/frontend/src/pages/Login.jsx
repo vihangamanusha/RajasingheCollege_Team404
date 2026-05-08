@@ -13,6 +13,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
+    const [messageType, setMessageType] = useState(""); // Added to handle CSS colors without emojis
 
     const navigate = useNavigate();
 
@@ -23,6 +24,7 @@ export default function Login() {
         e.preventDefault();
         setLoading(true);
         setMessage("");
+        setMessageType("");
 
         try {
             // =========================
@@ -41,7 +43,8 @@ export default function Login() {
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("role", res.data.role);
 
-            setMessage("Login Successful ");
+            setMessage("Login Successful");
+            setMessageType("success");
 
             // =========================
             // GET USER ROLE
@@ -62,6 +65,7 @@ export default function Login() {
                 navigate("/tech");
             } else {
                 setMessage("Unknown role: " + role);
+                setMessageType("error");
             }
 
         } catch (error) {
@@ -70,10 +74,12 @@ export default function Login() {
             // =========================
             // ERROR HANDLING
             // =========================
+            setMessageType("error");
+
             if (error.response?.status === 401) {
-                setMessage("Invalid username or password ");
+                setMessage("Invalid username or password");
             } else {
-                setMessage("Server error ");
+                setMessage("Server error");
             }
         } finally {
             setLoading(false);
@@ -137,7 +143,7 @@ export default function Login() {
 
                 {/* MESSAGE */}
                 {message && (
-                    <div className={`message ${message.includes('') ? 'error' : 'success'}`}>
+                    <div className={`message ${messageType}`}>
                         {message}
                     </div>
                 )}
