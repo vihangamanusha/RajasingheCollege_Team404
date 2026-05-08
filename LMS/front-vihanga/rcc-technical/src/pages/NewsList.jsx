@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { addNews, deleteNews, getNews, updateNews } from "../api/newsApi";
 
 export default function NewsList() {
+  const navigate = useNavigate();
   const tabs = ["News", "Sports", "Live Stream"];
   const [activeTab, setActiveTab] = useState("News");
   const [news, setNews] = useState([]);
@@ -151,7 +153,7 @@ export default function NewsList() {
         </div>
 
         <div className="page-actions">
-          <button className="btn secondary">View Feedback</button>
+          <button className="btn secondary" onClick={() => navigate("/feedback")}>View Feedback</button>
           <button className="btn outline">Preview Website</button>
         </div>
       </div>

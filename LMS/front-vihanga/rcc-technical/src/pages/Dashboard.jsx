@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getNews } from "../api/newsApi";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const stats = [
     { label: "Total Students", value: "1,284" },
     { label: "Total Teachers", value: "87" },
@@ -75,7 +77,11 @@ export default function Dashboard() {
           </div>
 
           <div className="quick-actions-list">
-            <button className="btn secondary quick-action-button" type="button">
+            <button 
+              className="btn secondary quick-action-button" 
+              type="button"
+              onClick={() => navigate("/feedback")}
+            >
               View Feedback
             </button>
             <button className="btn outline quick-action-button" type="button">
