@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { saveMarks } from "../services/marksService";
-import "./AddMarks.css"; // ✅ import CSS
+import { saveMarks } from "../Service/TeacherMarksService";
+import "./TeacherAddMarks.css"; // ✅ import CSS
 
 const students = [
     { id: "ST001", name: "Kamal Perera" },
@@ -15,7 +15,7 @@ const subjects = [
     { id: "S004", name: "Sinhala" }
 ];
 
-function AddMarks() {
+function TeacherAddMarks() {
     const [studentId, setStudentId] = useState("");
     const [subjectId, setSubjectId] = useState("");
     const [term, setTerm] = useState("");
@@ -119,4 +119,4 @@ function AddMarks() {
     );
 }
 
-export default AddMarks;
+export default TeacherAddMarks;
