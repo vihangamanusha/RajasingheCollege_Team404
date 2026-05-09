@@ -97,7 +97,7 @@ export default function StudentDashboard({ studentId }) {
         </div>
         <div>
           <h1 style={{ margin: 0, fontSize: "1.75rem" }}>
-            Welcome Back, {student?.fullName || "John"}!
+            Welcome student {student?.fullName || ""}
           </h1>
           <p style={{ margin: "5px 0 0 0", opacity: 0.9 }}>
             {student?.classEntity?.className || "Grade 10-A"} | Student ID:{" "}
