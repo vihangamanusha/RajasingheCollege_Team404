@@ -46,8 +46,8 @@ export default function Sidebar() {
         <NavLink to="/feedback" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           User Feedback
         </NavLink>
-        <NavLink to="/feedback" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
-          User Feedback
+        <NavLink to="/event" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+          Events
         </NavLink>
         
       </nav>
