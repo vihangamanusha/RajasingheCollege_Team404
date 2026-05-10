@@ -103,6 +103,12 @@ function App() {
                     element={<AdminTeacherManagement />}
                 />
 
+                {/* REGISTER TEACHER (This was missing!) */}
+                <Route
+                    path="users/teacher"
+                    element={<TeacherRegister />}
+                />
+
                 {/* REGISTER TECHNICAL OFFICER */}
                 <Route
                     path="users/tech"
