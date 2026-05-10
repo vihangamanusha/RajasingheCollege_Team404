@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Calendar,
@@ -13,9 +14,23 @@ import schoolimg from "../assets/schoolimg.jpeg";
 import LMS from "../assets/LMS.png";
 import academic from "../assets/academic.jpeg";
 import sport from "../assets/sport.jpeg";
+import { getAllEvents } from "../api/eventApi";
+
+
 
 export function Home() {
   const { t } = useLanguage();
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+  const loadEvents = async () => {
+    const data = await getAllEvents();
+    setEvents(data);
+  };
+
+  loadEvents();
+}, []);
+
   const newsItems = [
     {
       id: 1,
@@ -52,33 +67,7 @@ export function Home() {
   ];
 
   const upcomingEvents = [
-    {
-      id: 1,
-      titleKey: "event1.title",
-      date: "May 15, 2026",
-      time: "8:00 AM",
-      locationKey: "event1.location",
-      descriptionKey: "event1.desc",
-      icon: "🏆",
-    },
-    {
-      id: 2,
-      titleKey: "event2.title",
-      date: "May 20, 2026",
-      time: "2:00 PM",
-      locationKey: "event2.location",
-      descriptionKey: "event2.desc",
-      icon: "👨‍👩‍👧‍👦",
-    },
-    {
-      id: 3,
-      titleKey: "event3.title",
-      date: "June 1-10, 2026",
-      time: "9:00 AM",
-      locationKey: "event3.location",
-      descriptionKey: "event3.desc",
-      icon: "📝",
-    },
+    
   ];
 
   return (
@@ -237,48 +226,55 @@ export function Home() {
             <div className="home-section-divider home-section-divider-mb4"></div>
           </div>
           <div className="home-events-grid">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="home-event-card"
-              >
-                <h3 className="home-event-title">
-                  {t(event.titleKey)}
-                </h3>
+  {events.map((event) => (
+    <div
+      key={event.id}
+      className="home-event-card"
+    >
+      <h3 className="home-event-title">
+        {event.topic}
+      </h3>
 
-                <p className="home-event-desc">
-                  {t(event.descriptionKey)}
-                </p>
+      <p className="home-event-desc">
+        {event.description}
+      </p>
 
-                <div className="home-event-details">
-                  <div className="home-event-detail-item">
-                    <div className="home-event-icon">
-                      📅
-                    </div>
-                    <span className="home-event-text">
-                      {event.date}
-                    </span>
-                  </div>
-                  <div className="home-event-detail-item">
-                    <div className="home-event-icon">
-                      🕐
-                    </div>
-                    <span className="home-event-text">
-                      {event.time}
-                    </span>
-                  </div>
-                  <div className="home-event-detail-item">
-                    <div className="home-event-icon">
-                      📍
-                    </div>
-                    <span className="home-event-text">
-                      {t(event.locationKey)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))}
+      <div className="home-event-details">
+
+        <div className="home-event-detail-item">
+          <div className="home-event-icon">
+            📅
           </div>
+
+          <span className="home-event-text">
+            {event.date}
+          </span>
+        </div>
+
+        <div className="home-event-detail-item">
+          <div className="home-event-icon">
+            🕐
+          </div>
+
+          <span className="home-event-text">
+            {event.time}
+          </span>
+        </div>
+
+        <div className="home-event-detail-item">
+          <div className="home-event-icon">
+            📍
+          </div>
+
+          <span className="home-event-text">
+            {event.venue}
+          </span>
+        </div>
+
+      </div>
+    </div>
+  ))}
+</div>
         </div>
         <div className="home-news-footer">
           <Link
