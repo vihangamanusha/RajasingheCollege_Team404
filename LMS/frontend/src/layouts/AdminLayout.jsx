@@ -66,7 +66,10 @@ export default function AdminLayout() {
                     </div>
 
                     {/* Teachers */}
-                    <div className="nav-item">
+                    <div
+                        className={`nav-item ${location.pathname.includes("/admin/teachers") ? "active" : ""}`}
+                        onClick={() => navigate("/admin/teachers")}
+                    >
                         <FaChalkboardTeacher className="nav-icon" /> Teachers
                     </div>
 

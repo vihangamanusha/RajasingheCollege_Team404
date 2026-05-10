@@ -16,6 +16,7 @@ import TechRegister from "./pages/TechRegister";
 
 // --> NEWLY IMPORTED STUDENT MANAGEMENT PAGE <--
 import AdminStudentManagement from "./pages/AdminStudentManagement";
+import AdminTeacherManagement from "./pages/AdminTeacherManagement";
 
 // =========================
 // OTHER ROLE DASHBOARDS
@@ -96,10 +97,10 @@ function App() {
                     element={<StudentRegister />}
                 />
 
-                {/* REGISTER TEACHER */}
+                {/* --> NEW TEACHER MANAGEMENT TABLE PAGE <-- */}
                 <Route
-                    path="users/teacher"
-                    element={<TeacherRegister />}
+                    path="teachers"
+                    element={<AdminTeacherManagement />}
                 />
 
                 {/* REGISTER TECHNICAL OFFICER */}
