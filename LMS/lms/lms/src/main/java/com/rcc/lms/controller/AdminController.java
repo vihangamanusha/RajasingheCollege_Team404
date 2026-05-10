@@ -70,13 +70,30 @@ public class AdminController {
     }
 
     // =========================================================
+    // EDIT USER API
+    // =========================================================
+    @PutMapping("/users/update/{username}")
+    public ResponseEntity<String> updateUser(
+            @PathVariable String username,
+            @RequestBody com.rcc.lms.entity.User updatedUser) {
+
+        try {
+            String response = userService.updateUser(username, updatedUser);
+            if (response.equals("User not found!")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    // =========================================================
     // PERMANENT DELETE USER API
-    // React calls: DELETE /admin/users/delete/Nimal123
     // =========================================================
     @DeleteMapping("/users/delete/{username}")
     public ResponseEntity<String> deleteUserPermanently(@PathVariable String username) {
         try {
-            // Call our new smart hard-delete method!
             String response = userService.hardDeleteUser(username);
 
             if (response.equals("User not found!")) {
