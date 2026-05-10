@@ -1,32 +1,64 @@
 import { useState } from "react";
-import API from "../services/api";
-import { FiUser, FiMail, FiLock, FiHash, FiBriefcase } from "react-icons/fi";
-import "./TeacherRegister.css";
+import { FiUser, FiMail, FiLock, FiHash, FiBook, FiPhone, FiBriefcase, FiArrowRight, FiArrowLeft } from "react-icons/fi";
+import "./StudentRegister.css"; // We can reuse the same CSS file for a consistent UI!
 
 export default function TeacherRegister() {
 
     // =========================
-    // FORM STATE
+    // STATE VARIABLES
     // =========================
-    const [formData, setFormData] = useState({
+    const [step, setStep] = useState(1);
+
+    const [form, setForm] = useState({
+        // Step 1: Professional Profile
+        fullName: "",
+        subjectSpecialization: "",
+        contactNumber: "",
+        subRole: "", // Added from your old code!
+
+        // Step 2: System Login Details
         userId: "",
         username: "",
-        password: "",
         email: "",
-        subRole: ""
+        password: ""
     });
 
     const [message, setMessage] = useState("");
-    const [messageType, setMessageType] = useState(""); // For colored alerts
+    const [messageType, setMessageType] = useState("");
 
     // =========================
-    // HANDLE INPUT CHANGE
+    // VALIDATION LOGIC
+    // =========================
+    const isStep1Valid =
+        form.fullName.trim() !== "" &&
+        form.subjectSpecialization.trim() !== "" &&
+        form.contactNumber.trim() !== "" &&
+        form.subRole.trim() !== "";
+
+    const isStep2Valid =
+        form.userId.trim() !== "" &&
+        form.username.trim() !== "" &&
+        form.email.trim() !== "" &&
+        form.password.trim() !== "";
+
+    // =========================
+    // HANDLERS
     // =========================
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setMessage("");
+    };
+
+    const handleNext = () => {
+        if (isStep1Valid) {
+            setStep(2);
+            setMessage("");
+        }
+    };
+
+    const handleBack = () => {
+        setStep(1);
+        setMessage("");
     };
 
     // =========================
@@ -38,25 +70,31 @@ export default function TeacherRegister() {
         setMessageType("");
 
         try {
-            // =========================
-            // SEND DATA TO BACKEND
-            // =========================
-            const res = await API.post("/admin/users/create", {
-                userId: formData.userId,
-                username: formData.username,
-                password: formData.password,
-                email: formData.email,
-                role: "ROLE_TEACHER",
-                subRole: formData.subRole
+            // HITTING THE NEW TEACHER ENDPOINT
+            const res = await fetch("http://localhost:8080/admin/users/teacher/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify({
+                    ...form,
+                    role: "ROLE_TEACHER"
+                })
             });
 
-            // If successful
-            setMessage(res.data || "Teacher registered successfully!");
-            setMessageType("success");
+            const data = await res.text();
+
+            if (res.ok) {
+                setMessage("Teacher successfully registered! ✅");
+                setMessageType("success");
+            } else {
+                setMessage("Registration Failed: " + data);
+                setMessageType("error");
+            }
 
         } catch (error) {
-            console.log(error);
-            setMessage("Teacher registration failed.");
+            setMessage("Failed to connect to the server.");
             setMessageType("error");
         }
     };
@@ -66,100 +104,176 @@ export default function TeacherRegister() {
 
             <div className="page-header">
                 <h1>Teacher Registration</h1>
-                <p>Enter the details below to register a new teaching staff member.</p>
+                <p>Follow the steps to create a complete teaching profile and system account.</p>
             </div>
 
             <div className="form-card">
-                <h2>Account Details</h2>
+
+                {/* STEP INDICATOR */}
+                <div className="step-indicator">
+                    {step === 1 ? "Step 1 of 2: Professional Profile" : "Step 2 of 2: System Login Details"}
+                </div>
 
                 <form onSubmit={handleSubmit}>
 
-                    {/* USER ID */}
-                    <div className="form-group">
-                        <label>Teacher ID</label>
-                        <div className="input-container">
-                            <FiHash className="input-icon" />
-                            <input
-                                type="text"
-                                name="userId"
-                                placeholder="Enter teacher ID number"
-                                value={formData.userId}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                    {/* ==========================================
+                        STEP 1: PROFESSIONAL PROFILE
+                    ========================================== */}
+                    {step === 1 && (
+                        <div className="wizard-step">
 
-                    {/* USERNAME */}
-                    <div className="form-group">
-                        <label>Username</label>
-                        <div className="input-container">
-                            <FiUser className="input-icon" />
-                            <input
-                                type="text"
-                                name="username"
-                                placeholder="Enter unique username"
-                                value={formData.username}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                            <div className="form-group">
+                                <label>Full Name</label>
+                                <div className="input-container">
+                                    <FiUser className="input-icon" />
+                                    <input
+                                        name="fullName"
+                                        placeholder="Enter teacher's full name"
+                                        value={form.fullName}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                    {/* EMAIL */}
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <div className="input-container">
-                            <FiMail className="input-icon" />
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="teacher@example.com"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                            <div className="form-group">
+                                <label>Subject Specialization</label>
+                                <div className="input-container">
+                                    <FiBook className="input-icon" />
+                                    <input
+                                        name="subjectSpecialization"
+                                        placeholder="e.g. Mathematics, Science"
+                                        value={form.subjectSpecialization}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                    {/* PASSWORD */}
-                    <div className="form-group">
-                        <label>Password</label>
-                        <div className="input-container">
-                            <FiLock className="input-icon" />
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="Enter secure password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                            <div className="form-group">
+                                <label>Contact Number</label>
+                                <div className="input-container">
+                                    <FiPhone className="input-icon" />
+                                    <input
+                                        name="contactNumber"
+                                        placeholder="e.g. 0712345678"
+                                        value={form.contactNumber}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                    {/* SUB ROLE */}
-                    <div className="form-group">
-                        <label>Teaching Role</label>
-                        <div className="input-container">
-                            <FiBriefcase className="input-icon" />
-                            <select
-                                name="subRole"
-                                value={formData.subRole}
-                                onChange={handleChange}
-                                required
+                            {/* SUB ROLE DROPDOWN (From your old code!) */}
+                            <div className="form-group">
+                                <label>Teaching Role</label>
+                                <div className="input-container">
+                                    <FiBriefcase className="input-icon" />
+                                    <select
+                                        name="subRole"
+                                        value={form.subRole}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="" disabled>Select Sub Role</option>
+                                        <option value="SECTION_HEAD">Section Head</option>
+                                        <option value="SUBJECT_TEACHER">Subject Teacher</option>
+                                        <option value="CLASS_TEACHER">Class Teacher</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                className="submit-btn"
+                                onClick={handleNext}
+                                disabled={!isStep1Valid}
+                                style={{ marginTop: '20px' }}
                             >
-                                <option value="" disabled>Select Sub Role</option>
-                                <option value="SECTION_HEAD">Section Head</option>
-                                <option value="SUBJECT_TEACHER">Subject Teacher</option>
-                                <option value="CLASS_TEACHER">Class Teacher</option>
-                            </select>
+                                Next Step <FiArrowRight style={{ marginLeft: '5px', verticalAlign: 'middle' }} />
+                            </button>
                         </div>
-                    </div>
+                    )}
 
-                    <button type="submit" className="submit-btn">
-                        Register Teacher
-                    </button>
+                    {/* ==========================================
+                        STEP 2: SYSTEM LOGIN DETAILS
+                    ========================================== */}
+                    {step === 2 && (
+                        <div className="wizard-step">
+
+                            <div className="form-group">
+                                <label>Teacher ID (Must be Unique)</label>
+                                <div className="input-container">
+                                    <FiHash className="input-icon" />
+                                    <input
+                                        name="userId"
+                                        placeholder="e.g. T-2024-001"
+                                        value={form.userId}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>System Username (Must be Unique)</label>
+                                <div className="input-container">
+                                    <FiUser className="input-icon" />
+                                    <input
+                                        name="username"
+                                        placeholder="Enter unique username"
+                                        value={form.username}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Email Address (Must be Unique)</label>
+                                <div className="input-container">
+                                    <FiMail className="input-icon" />
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        placeholder="teacher@example.com"
+                                        value={form.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Account Password</label>
+                                <div className="input-container">
+                                    <FiLock className="input-icon" />
+                                    <input
+                                        name="password"
+                                        type="password"
+                                        placeholder="Enter secure password"
+                                        value={form.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="button-group">
+                                <button type="button" className="back-btn" onClick={handleBack}>
+                                    <FiArrowLeft style={{ marginRight: '5px', verticalAlign: 'middle' }} /> Back
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="submit-btn"
+                                    disabled={!isStep2Valid}
+                                >
+                                    Register Teacher
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                 </form>
 
