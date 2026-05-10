@@ -1,4 +1,3 @@
-/* Your original CSS */
 .admin-student-management-container {
     padding: 10px 0;
 }
@@ -117,6 +116,11 @@
     color: #15803d;
 }
 
+.badge.suspended {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
 .action-icons {
     display: flex;
     gap: 15px;
@@ -140,7 +144,7 @@
 
 
 /* =========================================================
-   NEW: AUDIT TRAIL MODAL STYLING
+   AUDIT TRAIL MODAL & EDIT MODAL STYLING
 ========================================================= */
 .modal-overlay {
     position: fixed;
@@ -148,7 +152,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(15, 23, 42, 0.6); /* Dark semi-transparent background */
+    background: rgba(15, 23, 42, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -172,7 +176,6 @@
 
 .warning-icon {
     font-size: 24px;
-    color: #ef4444;
 }
 
 .modal-box h2 {
@@ -192,7 +195,7 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .modal-form-group label {
@@ -201,18 +204,34 @@
     color: #334155;
 }
 
+/* Updated styling for Inputs and Selects */
+.modal-form-group input,
+.modal-form-group select,
 .modal-form-group textarea {
     width: 100%;
     padding: 12px;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     font-family: inherit;
-    resize: none;
+    font-size: 0.95rem;
     outline: none;
+    transition: border-color 0.2s;
+    background-color: white;
+    box-sizing: border-box; /* Prevents overflow */
 }
 
+.modal-form-group input:focus,
+.modal-form-group select:focus,
 .modal-form-group textarea:focus {
     border-color: #2b55cc;
+}
+
+/* Styling for Locked Fields */
+.modal-form-group input:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
 }
 
 .modal-actions {
