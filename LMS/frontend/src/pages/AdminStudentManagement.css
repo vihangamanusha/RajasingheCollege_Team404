@@ -1,9 +1,8 @@
-/* AdminStudentManagement.css */
+/* Your original CSS */
 .admin-student-management-container {
     padding: 10px 0;
 }
 
-/* Header Section */
 .page-header-flex {
     display: flex;
     justify-content: space-between;
@@ -43,7 +42,6 @@
     background-color: #1e40af;
 }
 
-/* Main White Card */
 .table-card {
     background: white;
     border-radius: 12px;
@@ -52,7 +50,6 @@
     border: 1px solid #e2e8f0;
 }
 
-/* Search Bar */
 .search-container {
     position: relative;
     display: flex;
@@ -82,7 +79,6 @@
     border-color: #2b55cc;
 }
 
-/* Data Table */
 .student-table {
     width: 100%;
     border-collapse: collapse;
@@ -108,26 +104,19 @@
     border-bottom: none;
 }
 
-/* Badges for Medium */
 .badge {
-    padding: 4px 10px;
+    padding: 6px 12px;
     border-radius: 20px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     display: inline-block;
 }
 
-.badge.sinhala {
-    background-color: #fef08a;
-    color: #854d0e;
+.badge.active {
+    background-color: #dcfce7;
+    color: #15803d;
 }
 
-.badge.english {
-    background-color: #dbeafe;
-    color: #1e40af;
-}
-
-/* Action Icons */
 .action-icons {
     display: flex;
     gap: 15px;
@@ -148,3 +137,115 @@
 
 .edit-icon { color: #2b55cc; }
 .delete-icon { color: #ef4444; }
+
+
+/* =========================================================
+   NEW: AUDIT TRAIL MODAL STYLING
+========================================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6); /* Dark semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 450px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.warning-icon {
+    font-size: 24px;
+    color: #ef4444;
+}
+
+.modal-box h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.4rem;
+}
+
+.modal-box p {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 25px;
+}
+
+.modal-form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.modal-form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    resize: none;
+    outline: none;
+}
+
+.modal-form-group textarea:focus {
+    border-color: #2b55cc;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.cancel-btn {
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background: #f8fafc;
+}
+
+.confirm-delete-btn {
+    padding: 10px 16px;
+    background: #ef4444;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.confirm-delete-btn:disabled {
+    background: #fca5a5;
+    cursor: not-allowed;
+}
