@@ -90,8 +90,7 @@ public class UserService {
         newStudent.setFullName(request.getFullName());
         newStudent.setDateOfBirth(request.getDateOfBirth());
         newStudent.setAddress(request.getAddress());
-        // We convert the String "Sinhala" to uppercase so it matches the Enum SINHALA
-        newStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium().toUpperCase()));
+        newStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
         newStudent.setContactNumber(request.getContactNumber());
 
         // 4. THE MAGIC LINK: Link the profile to the auth user we just created
