@@ -14,9 +14,10 @@ import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
 
-// --> NEWLY IMPORTED STUDENT MANAGEMENT PAGE <--
+// --> MANAGEMENT TABLES <--
 import AdminStudentManagement from "./pages/AdminStudentManagement";
 import AdminTeacherManagement from "./pages/AdminTeacherManagement";
+import AdminTechOfficerManagement from "./pages/AdminTechOfficerManagement"; // Added this import
 
 // =========================
 // OTHER ROLE DASHBOARDS
@@ -85,31 +86,33 @@ function App() {
                     element={<AdminUsers />}
                 />
 
-                {/* --> NEW STUDENT MANAGEMENT TABLE PAGE <-- */}
+                {/* --> MANAGEMENT TABLE PAGES <-- */}
                 <Route
                     path="students"
                     element={<AdminStudentManagement />}
                 />
 
-                {/* REGISTER STUDENT */}
-                <Route
-                    path="users/student"
-                    element={<StudentRegister />}
-                />
-
-                {/* --> NEW TEACHER MANAGEMENT TABLE PAGE <-- */}
                 <Route
                     path="teachers"
                     element={<AdminTeacherManagement />}
                 />
 
-                {/* REGISTER TEACHER (This was missing!) */}
+                <Route
+                    path="tech-officers"
+                    element={<AdminTechOfficerManagement />}
+                />
+
+                {/* --> REGISTRATION FORM PAGES <-- */}
+                <Route
+                    path="users/student"
+                    element={<StudentRegister />}
+                />
+
                 <Route
                     path="users/teacher"
                     element={<TeacherRegister />}
                 />
 
-                {/* REGISTER TECHNICAL OFFICER */}
                 <Route
                     path="users/tech"
                     element={<TechRegister />}
