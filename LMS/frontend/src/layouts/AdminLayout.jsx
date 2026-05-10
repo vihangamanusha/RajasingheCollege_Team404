@@ -1,5 +1,9 @@
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
-import { FiGrid, FiUsers, FiBook, FiLogOut } from "react-icons/fi";
+// Importing icons to match the prototype
+import {
+    FiGrid, FiUsers, FiBook, FiLogOut, FiMessageSquare, FiBarChart2
+} from "react-icons/fi";
+import { FaChalkboardTeacher, FaUserShield } from "react-icons/fa";
 import "./AdminLayout.css";
 
 export default function AdminLayout() {
@@ -33,9 +37,11 @@ export default function AdminLayout() {
             <div className="layout-sidebar">
 
                 <div className="sidebar-header">
-                    <div className="sidebar-logo">LMS</div>
+                    <div className="sidebar-logo">
+                        <img src="/path-to-logo.png" alt="Logo" style={{ width: '100%', borderRadius: '50%' }} />
+                    </div>
                     <div className="sidebar-title">
-                        <h2>Rajasinghe<br/>Admin</h2>
+                        <h2>Rajasinghe<br/>LMS</h2>
                     </div>
                 </div>
 
@@ -48,23 +54,43 @@ export default function AdminLayout() {
                         <FiGrid className="nav-icon" /> Dashboard
                     </div>
 
-                    {/* Users (STEP 5) */}
+                    {/* Students (Maps to your users route) */}
                     <div
                         className={`nav-item ${location.pathname.includes("/admin/users") ? "active" : ""}`}
                         onClick={() => navigate("/admin/users")}
                     >
-                        <FiUsers className="nav-icon" /> Users
+                        <FiUsers className="nav-icon" /> Students
                     </div>
 
-                    {/* Courses (future step) */}
-                    <div className="nav-item disabled">
-                        <FiBook className="nav-icon" /> Courses
+                    {/* Teachers */}
+                    <div className="nav-item">
+                        <FaChalkboardTeacher className="nav-icon" /> Teachers
+                    </div>
+
+                    {/* TO Officers */}
+                    <div className="nav-item">
+                        <FaUserShield className="nav-icon" /> TO Officers
+                    </div>
+
+                    {/* Classes */}
+                    <div className="nav-item">
+                        <FiBook className="nav-icon" /> Classes
+                    </div>
+
+                    {/* Announcements */}
+                    <div className="nav-item">
+                        <FiMessageSquare className="nav-icon" /> Announcements
+                    </div>
+
+                    {/* Reports */}
+                    <div className="nav-item">
+                        <FiBarChart2 className="nav-icon" /> Reports
                     </div>
                 </div>
 
                 <div className="sidebar-footer">
                     {/* LOGOUT */}
-                    <div className="nav-item" onClick={handleLogout}>
+                    <div className="nav-item logout-item" onClick={handleLogout}>
                         <FiLogOut className="nav-icon" /> Logout
                     </div>
                 </div>

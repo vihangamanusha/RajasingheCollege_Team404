@@ -3,12 +3,12 @@
     display: flex;
     min-height: 100vh;
     font-family: 'Inter', 'Segoe UI', sans-serif;
-    background-color: #f4f7fb;
+    background-color: #f8fafc; /* Lighter background matching prototype */
 }
 
 /* Sidebar Styles */
 .layout-sidebar {
-    width: 260px;
+    width: 250px;
     background-color: #2b4c9b;
     color: white;
     display: flex;
@@ -21,7 +21,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sidebar-logo {
@@ -51,10 +51,12 @@
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 15px 24px;
+    padding: 12px 20px;
+    margin: 4px 16px; /* Added margin for rounded pill shape */
     color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     font-size: 15px;
+    border-radius: 8px; /* Rounded corners */
     transition: all 0.2s;
     cursor: pointer;
 }
@@ -64,21 +66,11 @@
     color: white;
 }
 
-/* The active state styling from your prototype */
+/* Updated active state to match the prototype's rounded blue button style */
 .nav-item.active {
     background-color: #3b66d4;
     color: white;
-    border-left: 4px solid white;
-}
-
-/* Optional styling for future steps */
-.nav-item.disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.nav-item.disabled:hover {
-    background-color: transparent;
+    font-weight: 500;
 }
 
 .nav-icon {
@@ -88,7 +80,7 @@
 
 .sidebar-footer {
     padding: 20px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Main Content Area */
