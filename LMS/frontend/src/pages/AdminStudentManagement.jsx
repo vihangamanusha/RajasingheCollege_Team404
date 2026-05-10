@@ -13,9 +13,18 @@ export default function AdminStudentManagement() {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Delete Modal State (Simplified for Hard Delete)
+    // Delete Modal State
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+
+    // Edit Modal State
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editFormData, setEditFormData] = useState({
+        username: "",
+        userId: "",
+        email: "",
+        status: "ACTIVE"
+    });
 
     // =========================
     // FETCH DATA FROM SPRING BOOT
@@ -44,13 +53,52 @@ export default function AdminStudentManagement() {
         }
     };
 
-    // Trigger fetch on load and whenever search term changes (with debounce)
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             fetchStudents();
         }, 300);
         return () => clearTimeout(delayDebounce);
     }, [searchTerm]);
+
+    // =========================
+    // EDIT LOGIC
+    // =========================
+    const triggerEdit = (student) => {
+        setEditFormData({
+            username: student.username,
+            userId: student.userId,
+            email: student.email || "",
+            status: student.status
+        });
+        setShowEditModal(true);
+    };
+
+    const submitEdit = async (e) => {
+        e.preventDefault();
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8080/admin/users/update/${editFormData.username}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    email: editFormData.email,
+                    status: editFormData.status
+                })
+            });
+
+            if (response.ok) {
+                setShowEditModal(false);
+                fetchStudents(); // Refresh data
+            } else {
+                alert("Failed to update user.");
+            }
+        } catch (error) {
+            console.error("Update error:", error);
+        }
+    };
 
     // =========================
     // PERMANENT DELETE LOGIC
@@ -63,8 +111,6 @@ export default function AdminStudentManagement() {
     const confirmDelete = async () => {
         try {
             const token = localStorage.getItem("token");
-
-            // Hitting the updated API without the ?note parameter
             const response = await fetch(
                 `http://localhost:8080/admin/users/delete/${userToDelete}`,
                 {
@@ -74,7 +120,6 @@ export default function AdminStudentManagement() {
             );
 
             if (response.ok) {
-                // Close modal and refresh table!
                 setShowDeleteModal(false);
                 setUserToDelete(null);
                 fetchStudents();
@@ -144,7 +189,11 @@ export default function AdminStudentManagement() {
                                 </td>
                                 <td>
                                     <div className="action-icons">
-                                        <button className="icon-btn edit-icon" title="Edit Student">
+                                        <button
+                                            className="icon-btn edit-icon"
+                                            title="Edit Student"
+                                            onClick={() => triggerEdit(student)}
+                                        >
                                             <FiEdit />
                                         </button>
                                         <button
@@ -169,6 +218,57 @@ export default function AdminStudentManagement() {
                     </p>
                 )}
             </div>
+
+            {/* =========================
+                EDIT USER MODAL
+            ========================= */}
+            {showEditModal && (
+                <div className="modal-overlay">
+                    <div className="modal-box">
+                        <div className="modal-header">
+                            <FiEdit className="warning-icon" style={{color: "#2b55cc"}} />
+                            <h2>Edit Student Account</h2>
+                        </div>
+
+                        <form onSubmit={submitEdit}>
+                            <div className="modal-form-group">
+                                <label>Student ID (Locked)</label>
+                                <input type="text" value={editFormData.userId} disabled />
+                            </div>
+
+                            <div className="modal-form-group">
+                                <label>System Username (Locked)</label>
+                                <input type="text" value={editFormData.username} disabled />
+                            </div>
+
+                            <div className="modal-form-group">
+                                <label>Email Address</label>
+                                <input
+                                    type="email"
+                                    value={editFormData.email}
+                                    onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+                                />
+                            </div>
+
+                            <div className="modal-form-group">
+                                <label>Account Status</label>
+                                <select
+                                    value={editFormData.status}
+                                    onChange={(e) => setEditFormData({...editFormData, status: e.target.value})}
+                                >
+                                    <option value="ACTIVE">ACTIVE</option>
+                                    <option value="SUSPENDED">SUSPENDED</option>
+                                </select>
+                            </div>
+
+                            <div className="modal-actions" style={{marginTop: "25px"}}>
+                                <button type="button" className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
+                                <button type="submit" className="confirm-delete-btn" style={{backgroundColor: "#2b55cc"}}>Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* =========================
                 PERMANENT DELETE MODAL
