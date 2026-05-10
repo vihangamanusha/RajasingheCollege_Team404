@@ -2,8 +2,8 @@ package com.rcc.lms.service;
 
 import com.rcc.lms.entity.User;
 import com.rcc.lms.entity.student.Student;
-import com.rcc.lms.entity.Teacher; // IMPORT TEACHER ENTITY
-import com.rcc.lms.entity.TechnicalOfficer; // IMPORT TECH OFFICER ENTITY
+import com.rcc.lms.entity.Teacher;
+import com.rcc.lms.entity.TechnicalOfficer;
 import com.rcc.lms.repository.TeacherRepository;
 import com.rcc.lms.repository.TechnicalOfficerRepository;
 import com.rcc.lms.repository.UserRepository;
@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.rcc.lms.dto.LoginRequest;
 import com.rcc.lms.dto.LoginResponse;
 import com.rcc.lms.dto.StudentRegistrationRequest;
-import com.rcc.lms.dto.TeacherRegistrationRequest; // IMPORT TEACHER DTO
-import com.rcc.lms.dto.TechRegistrationRequest; // IMPORT TECH OFFICER DTO
+import com.rcc.lms.dto.TeacherRegistrationRequest;
+import com.rcc.lms.dto.TechRegistrationRequest;
 import com.rcc.lms.security.JwtUtil;
 
 import java.time.LocalDate;
@@ -43,15 +43,15 @@ public class UserService {
     private JwtUtil jwtUtil;
 
     // =========================
-    // LOGIN USER (UNTOUCHED)
+    // LOGIN USER
     // =========================
     public LoginResponse loginUser(LoginRequest request) {
 
         User user = userRepository.findByUsername(request.getUsername())
                 .orElse(null);
 
-        if (user == null) {
-            throw new RuntimeException("Invalid username or password");
+        if (user == null || "DELETED".equals(user.getStatus())) {
+            throw new RuntimeException("Invalid username or password"); // Keep deleted users out!
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -104,35 +104,30 @@ public class UserService {
     }
 
     // ==============================================================
-    // NEW: REGISTER TEACHER WIZARD
+    // REGISTER TEACHER WIZARD
     // ==============================================================
     @Transactional
     public String registerNewTeacher(TeacherRegistrationRequest request) {
 
-        // 1. Check for duplicate username
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return "Username already exists!";
         }
 
-        // 2. Create Auth User
         User newUser = new User();
         newUser.setUserId(request.getUserId());
         newUser.setUsername(request.getUsername());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setRole(request.getRole()); // Will receive "ROLE_TEACHER"
+        newUser.setRole(request.getRole());
         newUser.setCreatedDate(LocalDate.now());
         newUser.setStatus("ACTIVE");
         userRepository.save(newUser);
 
-        // 3. Create Teacher Profile
         Teacher newTeacher = new Teacher();
         newTeacher.setTeacherId(request.getUserId());
         newTeacher.setFullName(request.getFullName());
         newTeacher.setSubjectSpecialization(request.getSubjectSpecialization());
         newTeacher.setContactNumber(request.getContactNumber());
-
-        // 4. Link them together!
         newTeacher.setUser(newUser);
 
         teacherRepository.save(newTeacher);
@@ -140,46 +135,41 @@ public class UserService {
     }
 
     // ==============================================================
-    // NEW: REGISTER TECHNICAL OFFICER WIZARD
+    // REGISTER TECHNICAL OFFICER WIZARD
     // ==============================================================
     @Transactional
     public String registerNewTechOfficer(TechRegistrationRequest request) {
 
-        // 1. Check for duplicate username
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return "Username already exists!";
         }
 
-        // 2. Create Auth User
         User newUser = new User();
         newUser.setUserId(request.getUserId());
         newUser.setUsername(request.getUsername());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setRole(request.getRole()); // Will receive "ROLE_TECHNICAL_OFFICER"
+        newUser.setRole(request.getRole());
         newUser.setCreatedDate(LocalDate.now());
         newUser.setStatus("ACTIVE");
         userRepository.save(newUser);
 
-        // 3. Create Tech Officer Profile
         TechnicalOfficer newTech = new TechnicalOfficer();
         newTech.setTechnicalOfficerId(request.getUserId());
         newTech.setFullName(request.getFullName());
-        newTech.setProfileEmail(request.getEmail()); // Copying email to profile
+        newTech.setProfileEmail(request.getEmail());
         newTech.setContactNumber(request.getContactNumber());
         newTech.setPosition(request.getPosition());
         newTech.setAssignedArea(request.getAssignedArea());
-
-        // 4. Link them together!
         newTech.setUser(newUser);
 
         technicalOfficerRepository.save(newTech);
         return "Technical Officer successfully registered!";
     }
 
-    // =========================
-    // ADMIN - CREATE GENERIC USER
-    // =========================
+    // ==============================================================
+    // ADMIN - CREATE GENERIC USER (Restored!)
+    // ==============================================================
     public String createUserByAdmin(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "Username already exists!";
@@ -205,12 +195,46 @@ public class UserService {
         return "User updated successfully!";
     }
 
-    // =========================
-    // ADMIN - DELETE USER
-    // =========================
+    // ==============================================================
+    // NEW: SEARCH USERS BY ROLE & TERM
+    // ==============================================================
+    public java.util.List<User> searchUsers(String role, String searchTerm) {
+        // If search bar is empty, return everyone in that role who isn't deleted
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return userRepository.findByRoleAndStatusNot(role, "DELETED");
+        }
+        // Otherwise, use the custom query!
+        return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
+    }
+
+    // ==============================================================
+    // NEW: SOFT DELETE USER (AUDIT TRAIL)
+    // ==============================================================
+    @Transactional
+    public String softDeleteUser(String username, String deletionNote) {
+        User existingUser = userRepository.findByUsername(username).orElse(null);
+
+        if (existingUser == null) {
+            return "User not found!";
+        }
+
+        // Lock the account and save the Admin's note
+        existingUser.setStatus("DELETED");
+        existingUser.setDeletionNote(deletionNote);
+
+        userRepository.save(existingUser);
+
+        return "User safely removed from active system!";
+    }
+
+    // ==============================================================
+    // ADMIN - HARD DELETE USER (Restored for the old controller!)
+    // ==============================================================
     public String deleteUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) return "User not found!";
+        if (user == null) {
+            return "User not found!";
+        }
         userRepository.delete(user);
         return "User deleted successfully!";
     }

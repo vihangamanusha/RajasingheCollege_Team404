@@ -53,7 +53,7 @@ public class AdminUserController {
     // DELETE USER (ADMIN ONLY)
     // =========================
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete/{username}")
+    @DeleteMapping("/delete-hard/{username}")
     public String deleteUser(@PathVariable String username) {
         return userService.deleteUser(username);
     }
