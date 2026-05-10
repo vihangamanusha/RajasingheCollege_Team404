@@ -20,6 +20,14 @@ export const addEvent = async (eventData) => {
     return res.json();
 };
 
+//delete event
+export const deleteEvent = async (Id) => {
+    await fetch(`${BASE_URL}/${Id}`,{
+        method:"DELETE"
+    });
+    return res.ok;
+}
+
 //update event
 export const updateEvent = async (Id, eventData) => {
     const res=await fetch(`${BASE_URL}/${Id}`,{
@@ -32,10 +40,4 @@ export const updateEvent = async (Id, eventData) => {
     return res.json();
 };
 
-//delete event
-export const deleteEvent = async (Id) => {
-    const res=await fetch(`${BASE_URL}/${Id}`,{
-        method:"DELETE"
-    });
-    return res.json();
-}
+

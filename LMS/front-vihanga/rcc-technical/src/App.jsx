@@ -6,6 +6,7 @@ import NewsList from "./pages/NewsList";
 import AddNews from "./pages/AddNews";
 import FeedbackList from "./pages/FeedbackList";
 import StudentRegister from "./pages/StudentRegister"; 
+import Event from "./pages/Event";
 
 export default function App() {
   return (
@@ -21,7 +22,7 @@ export default function App() {
 
       
           <Route path="student-register" element={<StudentRegister />} />
-
+          <Route path="events" element={<Event />} />
         </Route>
 
       </Routes>

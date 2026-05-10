@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  getEvents,
+  getAllEvents,
   addEvent,
   deleteEvent,
   updateEvent,
@@ -24,7 +24,7 @@ export default function Event() {
   }, []);
 
   const loadEvents = async () => {
-    const data = await getEvents();
+    const data = await getAllEvents();
     setEvents(data);
   };
 
