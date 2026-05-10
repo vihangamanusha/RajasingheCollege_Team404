@@ -1,6 +1,8 @@
 package com.rcc.lms.controller;
 
 import com.rcc.lms.dto.StudentRegistrationRequest;
+import com.rcc.lms.dto.TeacherRegistrationRequest; // IMPORT
+import com.rcc.lms.dto.TechRegistrationRequest; // IMPORT
 import com.rcc.lms.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,21 +26,51 @@ public class AdminController {
     }
 
     // =========================================================
-    // NEW: CREATE STUDENT API (2-STEP WIZARD)
-    // React automatically calls: POST /admin/users/create
+    // CREATE STUDENT API
+    // React calls: POST /admin/users/create
     // =========================================================
     @PostMapping("/users/create")
     public ResponseEntity<String> createStudent(@RequestBody StudentRegistrationRequest request) {
         try {
-            // Send the React data to the UserService to save to the database
             String response = userService.registerNewStudent(request);
-
             if (response.equals("Username already exists!")) {
                 return ResponseEntity.badRequest().body(response);
             }
-
             return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
 
+    // =========================================================
+    // NEW: CREATE TEACHER API
+    // React calls: POST /admin/users/teacher/create
+    // =========================================================
+    @PostMapping("/users/teacher/create")
+    public ResponseEntity<String> createTeacher(@RequestBody TeacherRegistrationRequest request) {
+        try {
+            String response = userService.registerNewTeacher(request);
+            if (response.equals("Username already exists!")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    // =========================================================
+    // NEW: CREATE TECH OFFICER API
+    // React calls: POST /admin/users/tech/create
+    // =========================================================
+    @PostMapping("/users/tech/create")
+    public ResponseEntity<String> createTechOfficer(@RequestBody TechRegistrationRequest request) {
+        try {
+            String response = userService.registerNewTechOfficer(request);
+            if (response.equals("Username already exists!")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
