@@ -74,7 +74,10 @@ export default function AdminLayout() {
                     </div>
 
                     {/* TO Officers */}
-                    <div className="nav-item">
+                    <div
+                        className={`nav-item ${location.pathname.includes("/admin/tech-officers") ? "active" : ""}`}
+                        onClick={() => navigate("/admin/tech-officers")}
+                    >
                         <FaUserShield className="nav-icon" /> TO Officers
                     </div>
 
