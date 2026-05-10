@@ -51,7 +51,7 @@ public class UserService {
                 .orElse(null);
 
         if (user == null || "DELETED".equals(user.getStatus())) {
-            throw new RuntimeException("Invalid username or password"); // Keep deleted users out!
+            throw new RuntimeException("Invalid username or password");
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -168,7 +168,7 @@ public class UserService {
     }
 
     // ==============================================================
-    // ADMIN - CREATE GENERIC USER (Restored!)
+    // ADMIN - CREATE GENERIC USER
     // ==============================================================
     public String createUserByAdmin(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
@@ -196,39 +196,47 @@ public class UserService {
     }
 
     // ==============================================================
-    // NEW: SEARCH USERS BY ROLE & TERM
+    // SEARCH USERS BY ROLE & TERM
     // ==============================================================
     public java.util.List<User> searchUsers(String role, String searchTerm) {
-        // If search bar is empty, return everyone in that role who isn't deleted
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return userRepository.findByRoleAndStatusNot(role, "DELETED");
         }
-        // Otherwise, use the custom query!
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
 
     // ==============================================================
-    // NEW: SOFT DELETE USER (AUDIT TRAIL)
+    // NEW: HARD DELETE USER (PERMANENT REMOVAL)
+    // Deletes the profile first to prevent MySQL Foreign Key errors!
     // ==============================================================
     @Transactional
-    public String softDeleteUser(String username, String deletionNote) {
+    public String hardDeleteUser(String username) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
 
         if (existingUser == null) {
             return "User not found!";
         }
 
-        // Lock the account and save the Admin's note
-        existingUser.setStatus("DELETED");
-        existingUser.setDeletionNote(deletionNote);
+        String role = existingUser.getRole();
+        String userId = existingUser.getUserId();
 
-        userRepository.save(existingUser);
+        // 1. Delete the specific profile first so MySQL doesn't block us
+        if ("ROLE_STUDENT".equals(role)) {
+            studentRepository.deleteById(userId);
+        } else if ("ROLE_TEACHER".equals(role)) {
+            teacherRepository.deleteById(userId);
+        } else if ("ROLE_TECHNICAL_OFFICER".equals(role)) {
+            technicalOfficerRepository.deleteById(userId);
+        }
 
-        return "User safely removed from active system!";
+        // 2. Now it is safe to permanently delete the Auth User!
+        userRepository.delete(existingUser);
+
+        return "User permanently deleted from the system!";
     }
 
     // ==============================================================
-    // ADMIN - HARD DELETE USER (Restored for the old controller!)
+    // ADMIN - GENERIC DELETE USER (Fallback for old controller)
     // ==============================================================
     public String deleteUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);

@@ -1,34 +1,84 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiSearch, FiEdit, FiTrash2, FiUserPlus } from "react-icons/fi";
-import "./AdminTeacherManagement.css";
+import { FiSearch, FiEdit, FiTrash2, FiUserPlus, FiAlertTriangle } from "react-icons/fi";
+import "./AdminTeacherManagement.css"; // Assuming you copied the modal CSS into here!
 
 export default function AdminTeacherManagement() {
     const navigate = useNavigate();
+
+    // =========================
+    // STATE MANAGEMENT
+    // =========================
     const [searchTerm, setSearchTerm] = useState("");
+    const [teachers, setTeachers] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    // Mock data for Teachers
-    const mockTeachers = [
-        { id: "T-2045", name: "Mr. Amal Perera", subject: "Mathematics", role: "SECTION_HEAD", roleLabel: "Section Head", email: "amal@example.com" },
-        { id: "T-2046", name: "Mrs. Sunethra Silva", subject: "Science", role: "SUBJECT_TEACHER", roleLabel: "Subject Teacher", email: "sunethra@example.com" },
-        { id: "T-2047", name: "Miss. Kamalini", subject: "English", role: "CLASS_TEACHER", roleLabel: "Class Teacher", email: "kamalini@example.com" },
-        { id: "T-2048", name: "Mr. Rohan Fernando", subject: "History", role: "SUBJECT_TEACHER", roleLabel: "Subject Teacher", email: "rohan@example.com" },
-        { id: "T-2049", name: "Mrs. Deepika", subject: "IT", role: "SECTION_HEAD", roleLabel: "Section Head", email: "deepika@example.com" },
-    ];
+    // Delete Modal State
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [userToDelete, setUserToDelete] = useState(null);
 
-    // Helper function to map the role to the correct CSS class
-    const getBadgeClass = (role) => {
-        if (role === "SECTION_HEAD") return "section-head";
-        if (role === "CLASS_TEACHER") return "class-teacher";
-        return "subject-teacher";
+    // =========================
+    // FETCH DATA FROM SPRING BOOT
+    // =========================
+    const fetchTeachers = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `http://localhost:8080/admin/users/search?role=ROLE_TEACHER&term=${searchTerm}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setTeachers(data);
+            }
+        } catch (error) {
+            console.error("Error connecting to server:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Simple search filter logic
-    const filteredTeachers = mockTeachers.filter((teacher) =>
-        teacher.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        teacher.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        teacher.subject.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            fetchTeachers();
+        }, 300);
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm]);
+
+    // =========================
+    // PERMANENT DELETE LOGIC
+    // =========================
+    const triggerDelete = (username) => {
+        setUserToDelete(username);
+        setShowDeleteModal(true);
+    };
+
+    const confirmDelete = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `http://localhost:8080/admin/users/delete/${userToDelete}`,
+                {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            if (response.ok) {
+                setShowDeleteModal(false);
+                setUserToDelete(null);
+                fetchTeachers(); // Refresh the table!
+            } else {
+                alert("Failed to permanently delete teacher.");
+            }
+        } catch (error) {
+            console.error("Delete error:", error);
+        }
+    };
 
     return (
         <div className="admin-teacher-management-container">
@@ -40,11 +90,7 @@ export default function AdminTeacherManagement() {
                     <p>Manage all teaching staff records and assignments</p>
                 </div>
 
-                {/* Navigates to the Add Teacher Form */}
-                <button
-                    className="add-btn teacher-btn"
-                    onClick={() => navigate("/admin/users/teacher")}
-                >
+                <button className="add-btn teacher-btn" onClick={() => navigate("/admin/users/teacher")}>
                     <FiUserPlus /> Add Teacher
                 </button>
             </div>
@@ -52,60 +98,89 @@ export default function AdminTeacherManagement() {
             {/* Main Table Card */}
             <div className="table-card">
 
-                {/* Search Bar */}
                 <div className="search-container">
                     <FiSearch className="search-icon" />
                     <input
                         type="text"
-                        placeholder="Search teachers by name, ID, or subject..."
+                        placeholder="Search active teachers by username, ID, or email..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
                 </div>
 
-                {/* Data Table */}
-                <table className="data-table">
-                    <thead>
-                    <tr>
-                        <th>Teacher ID</th>
-                        <th>Name</th>
-                        <th>Subject</th>
-                        <th>Role</th>
-                        <th>Email</th>
-                        <th>Actions</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {filteredTeachers.map((teacher, index) => (
-                        <tr key={index}>
-                            <td><strong>{teacher.id}</strong></td>
-                            <td>{teacher.name}</td>
-                            <td>{teacher.subject}</td>
-                            <td>
-                                    <span className={`role-badge ${getBadgeClass(teacher.role)}`}>
-                                        {teacher.roleLabel}
-                                    </span>
-                            </td>
-                            <td>{teacher.email}</td>
-                            <td>
-                                <div className="action-icons">
-                                    <button className="icon-btn edit-icon"><FiEdit /></button>
-                                    <button className="icon-btn delete-icon"><FiTrash2 /></button>
-                                </div>
-                            </td>
+                {loading ? (
+                    <p style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>Loading database...</p>
+                ) : (
+                    <table className="data-table student-table">
+                        <thead>
+                        <tr>
+                            <th>Teacher ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Date Created</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
-                    ))}
-                    </tbody>
-                </table>
-
-                {/* Show this if search yields no results */}
-                {filteredTeachers.length === 0 && (
-                    <p style={{ textAlign: "center", marginTop: "20px", color: "#94a3b8" }}>
-                        No teachers found matching your search.
-                    </p>
+                        </thead>
+                        <tbody>
+                        {teachers.map((teacher, index) => (
+                            <tr key={index}>
+                                <td><strong>{teacher.userId}</strong></td>
+                                <td>{teacher.username}</td>
+                                <td>{teacher.email || "N/A"}</td>
+                                <td>{teacher.createdDate}</td>
+                                <td>
+                                    <span className={`badge ${teacher.status.toLowerCase()}`}>
+                                        {teacher.status}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div className="action-icons">
+                                        <button className="icon-btn edit-icon" title="Edit Teacher"><FiEdit /></button>
+                                        <button
+                                            className="icon-btn delete-icon"
+                                            title="Permanently Delete"
+                                            onClick={() => triggerDelete(teacher.username)}
+                                        >
+                                            <FiTrash2 />
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                    </table>
                 )}
 
+                {!loading && teachers.length === 0 && (
+                    <p style={{ textAlign: "center", marginTop: "20px", color: "#94a3b8" }}>
+                        No active teachers found matching your search.
+                    </p>
+                )}
             </div>
+
+            {/* PERMANENT DELETE MODAL */}
+            {showDeleteModal && (
+                <div className="modal-overlay">
+                    <div className="modal-box">
+                        <div className="modal-header">
+                            <FiAlertTriangle className="warning-icon" style={{color: "#dc2626"}} />
+                            <h2>Permanently Delete Teacher?</h2>
+                        </div>
+                        <p>
+                            Are you sure you want to permanently delete <strong>{userToDelete}</strong>?
+                            This action will erase all of their data from the database and <strong>cannot be undone</strong>.
+                        </p>
+
+                        <div className="modal-actions" style={{marginTop: "25px"}}>
+                            <button className="cancel-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+                            <button className="confirm-delete-btn" onClick={confirmDelete}>
+                                Yes, Permanently Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

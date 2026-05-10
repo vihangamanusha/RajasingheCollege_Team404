@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FiSearch, FiEdit, FiTrash2, FiUserPlus, FiAlertCircle } from "react-icons/fi";
+import { FiSearch, FiEdit, FiTrash2, FiUserPlus, FiAlertTriangle } from "react-icons/fi";
 import "./AdminStudentManagement.css";
 
 export default function AdminStudentManagement() {
@@ -13,10 +13,9 @@ export default function AdminStudentManagement() {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Delete Modal State
+    // Delete Modal State (Simplified for Hard Delete)
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
-    const [deleteNote, setDeleteNote] = useState("");
 
     // =========================
     // FETCH DATA FROM SPRING BOOT
@@ -54,7 +53,7 @@ export default function AdminStudentManagement() {
     }, [searchTerm]);
 
     // =========================
-    // SOFT DELETE LOGIC
+    // PERMANENT DELETE LOGIC
     // =========================
     const triggerDelete = (username) => {
         setUserToDelete(username);
@@ -62,15 +61,12 @@ export default function AdminStudentManagement() {
     };
 
     const confirmDelete = async () => {
-        if (!deleteNote.trim()) {
-            alert("Please provide a reason for deletion.");
-            return;
-        }
-
         try {
             const token = localStorage.getItem("token");
+
+            // Hitting the updated API without the ?note parameter
             const response = await fetch(
-                `http://localhost:8080/admin/users/delete/${userToDelete}?note=${encodeURIComponent(deleteNote)}`,
+                `http://localhost:8080/admin/users/delete/${userToDelete}`,
                 {
                     method: "DELETE",
                     headers: { Authorization: `Bearer ${token}` },
@@ -78,13 +74,12 @@ export default function AdminStudentManagement() {
             );
 
             if (response.ok) {
-                // Close modal, clear note, and refresh table!
+                // Close modal and refresh table!
                 setShowDeleteModal(false);
-                setDeleteNote("");
                 setUserToDelete(null);
                 fetchStudents();
             } else {
-                alert("Failed to delete user.");
+                alert("Failed to permanently delete user.");
             }
         } catch (error) {
             console.error("Delete error:", error);
@@ -154,7 +149,7 @@ export default function AdminStudentManagement() {
                                         </button>
                                         <button
                                             className="icon-btn delete-icon"
-                                            title="Delete Student"
+                                            title="Permanently Delete"
                                             onClick={() => triggerDelete(student.username)}
                                         >
                                             <FiTrash2 />
@@ -176,36 +171,24 @@ export default function AdminStudentManagement() {
             </div>
 
             {/* =========================
-                SAFE-DELETE MODAL (AUDIT TRAIL)
+                PERMANENT DELETE MODAL
             ========================= */}
             {showDeleteModal && (
                 <div className="modal-overlay">
                     <div className="modal-box">
                         <div className="modal-header">
-                            <FiAlertCircle className="warning-icon" />
-                            <h2>Remove Student</h2>
+                            <FiAlertTriangle className="warning-icon" style={{color: "#dc2626"}} />
+                            <h2>Permanently Delete Student?</h2>
                         </div>
-                        <p>You are about to remove <strong>{userToDelete}</strong> from the active system. This will lock their account.</p>
+                        <p>
+                            Are you sure you want to permanently delete <strong>{userToDelete}</strong>?
+                            This action will erase all of their data from the database and <strong>cannot be undone</strong>.
+                        </p>
 
-                        <div className="modal-form-group">
-                            <label>Reason for Deletion (Required Audit Trail):</label>
-                            <textarea
-                                placeholder="e.g. Graduated, Transferred to another school..."
-                                value={deleteNote}
-                                onChange={(e) => setDeleteNote(e.target.value)}
-                                rows="3"
-                                required
-                            />
-                        </div>
-
-                        <div className="modal-actions">
+                        <div className="modal-actions" style={{marginTop: "25px"}}>
                             <button className="cancel-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
-                            <button
-                                className="confirm-delete-btn"
-                                onClick={confirmDelete}
-                                disabled={!deleteNote.trim()}
-                            >
-                                Confirm Removal
+                            <button className="confirm-delete-btn" onClick={confirmDelete}>
+                                Yes, Permanently Delete
                             </button>
                         </div>
                     </div>
