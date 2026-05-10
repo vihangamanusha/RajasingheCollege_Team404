@@ -14,6 +14,7 @@ export function Header() {
     { name: t("nav.about"), path: "/about" },
     { name: t("nav.academic"), path: "/academic" },
     { name: t("nav.news"), path: "/news" },
+    {name: t("nav.events"), path: "/events" },
     { name: t("nav.sports"), path: "/sports" },
     { name: t("nav.liveStream"), path: "/live-stream" },
     { name: t("nav.contact"), path: "/contact" },

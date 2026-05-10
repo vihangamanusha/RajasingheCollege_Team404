@@ -8,6 +8,7 @@ const translations = {
   "nav.about": { en: "About", si: "අප ගැන" },
   "nav.academic": { en: "Academic", si: "අධ්‍යයන" },
   "nav.news": { en: "News", si: "පුවත්" },
+  "nav.events": { en: "Events", si: "සිදුවීම්" },
   "nav.sports": { en: "Sports", si: "ක්‍රීඩා" },
   "nav.liveStream": { en: "Live Stream", si: "සජීවී විකාශනය" },
   "nav.contact": { en: "Contact", si: "සම්බන්ධ වන්න" },
