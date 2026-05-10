@@ -1,13 +1,16 @@
-
 package com.rcc.lms.service;
 
 import com.rcc.lms.entity.User;
+import com.rcc.lms.entity.student.Student; // IMPORT STUDENT ENTITY
 import com.rcc.lms.repository.UserRepository;
+import com.rcc.lms.repository.StudentRepository; // IMPORT STUDENT REPOSITORY
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // IMPORT TRANSACTIONAL
 import com.rcc.lms.dto.LoginRequest;
 import com.rcc.lms.dto.LoginResponse;
+import com.rcc.lms.dto.StudentRegistrationRequest; // IMPORT THE NEW DTO
 import com.rcc.lms.security.JwtUtil;
 
 import java.time.LocalDate;
@@ -18,6 +21,10 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    // Inject the new Student Repository
+    @Autowired
+    private StudentRepository studentRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -25,7 +32,7 @@ public class UserService {
     private JwtUtil jwtUtil;
 
     // =========================
-    // LOGIN USER
+    // LOGIN USER (UNTOUCHED)
     // =========================
     public LoginResponse loginUser(LoginRequest request) {
 
@@ -50,8 +57,54 @@ public class UserService {
         );
     }
 
+    // ==============================================================
+    // NEW: REGISTER STUDENT WIZARD (SAVING TO BOTH TABLES)
+    // The @Transactional ensures if one table fails, both roll back!
+    // ==============================================================
+    @Transactional
+    public String registerNewStudent(StudentRegistrationRequest request) {
+
+        // 1. Check if username exists in the system
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
+            return "Username already exists!";
+        }
+
+        // 2. Create and populate the User (Auth Table)
+        User newUser = new User();
+        newUser.setUserId(request.getUserId());
+        newUser.setUsername(request.getUsername());
+        newUser.setEmail(request.getEmail());
+        newUser.setPassword(passwordEncoder.encode(request.getPassword())); // Hash the password
+        newUser.setRole(request.getRole()); // Will receive "ROLE_STUDENT" from React
+        newUser.setCreatedDate(LocalDate.now());
+        newUser.setStatus("ACTIVE");
+
+        // Save the user first so the student table has something to link to
+        userRepository.save(newUser);
+
+        // 3. Create and populate the Student Profile (Profile Table)
+        Student newStudent = new Student();
+
+        // We use the same ID for studentId to keep things organized
+        newStudent.setStudentId(request.getUserId());
+        newStudent.setFullName(request.getFullName());
+        newStudent.setDateOfBirth(request.getDateOfBirth());
+        newStudent.setAddress(request.getAddress());
+        // We convert the String "Sinhala" to uppercase so it matches the Enum SINHALA
+        newStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium().toUpperCase()));
+        newStudent.setContactNumber(request.getContactNumber());
+
+        // 4. THE MAGIC LINK: Link the profile to the auth user we just created
+        newStudent.setUser(newUser);
+
+        // Save the profile to the database
+        studentRepository.save(newStudent);
+
+        return "Student successfully registered!";
+    }
+
     // =========================
-    // ADMIN - CREATE USER
+    // ADMIN - CREATE GENERIC USER (Keep this if you still need it)
     // =========================
     public String createUserByAdmin(User user) {
 
@@ -73,7 +126,7 @@ public class UserService {
     }
 
     // =========================
-    // ADMIN - UPDATE USER
+    // ADMIN - UPDATE USER (UNTOUCHED)
     // =========================
     public String updateUser(String username, User updatedUser) {
 
@@ -102,7 +155,7 @@ public class UserService {
     }
 
     // =========================
-    // ADMIN - DELETE USER
+    // ADMIN - DELETE USER (UNTOUCHED)
     // =========================
     public String deleteUser(String username) {
 
