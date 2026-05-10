@@ -23,10 +23,10 @@ public class AdminController {
         return "Admin Access Granted";
     }
 
-    // =========================
-    // NEW: CREATE STUDENT API
-    // React calls: POST /admin/users/create
-    // =========================
+    // =========================================================
+    // NEW: CREATE STUDENT API (2-STEP WIZARD)
+    // React automatically calls: POST /admin/users/create
+    // =========================================================
     @PostMapping("/users/create")
     public ResponseEntity<String> createStudent(@RequestBody StudentRegistrationRequest request) {
         try {

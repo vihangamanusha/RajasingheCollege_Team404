@@ -19,11 +19,13 @@ public class AdminUserController {
     @Autowired
     private UserRepository userRepository;
 
-    // =========================
-    // CREATE USER (ADMIN ONLY)
-    // =========================
+    // =========================================================
+    // CREATE USER (ADMIN ONLY) - GENERIC
+    // Changed path to "/create-generic" to prevent conflict
+    // with the new 2-Step Student Registration Wizard!
+    // =========================================================
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create")
+    @PostMapping("/create-generic")
     public String createUser(@RequestBody User user) {
         return userService.createUserByAdmin(user);
     }
