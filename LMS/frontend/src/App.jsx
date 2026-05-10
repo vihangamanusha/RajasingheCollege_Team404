@@ -14,6 +14,9 @@ import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
 
+// --> NEWLY IMPORTED STUDENT MANAGEMENT PAGE <--
+import AdminStudentManagement from "./pages/AdminStudentManagement";
+
 // =========================
 // OTHER ROLE DASHBOARDS
 // =========================
@@ -75,10 +78,16 @@ function App() {
                     element={<Dashboard />}
                 />
 
-                {/* USER MANAGEMENT */}
+                {/* USER MANAGEMENT MAIN MENU (The 3 Buttons Page) */}
                 <Route
                     path="users"
                     element={<AdminUsers />}
+                />
+
+                {/* --> NEW STUDENT MANAGEMENT TABLE PAGE <-- */}
+                <Route
+                    path="students"
+                    element={<AdminStudentManagement />}
                 />
 
                 {/* REGISTER STUDENT */}
@@ -102,15 +111,15 @@ function App() {
             </Route>
 
             {/*/!* =========================*/}
-            {/*    TEACHER DASHBOARD*/}
+            {/* TEACHER DASHBOARD*/}
             {/*========================= *!/*/}
             {/*<Route*/}
-            {/*    path="/teacher"*/}
-            {/*    element={*/}
-            {/*        <ProtectedRoute>*/}
-            {/*            <TeacherDashboard />*/}
-            {/*        </ProtectedRoute>*/}
-            {/*    }*/}
+            {/* path="/teacher"*/}
+            {/* element={*/}
+            {/* <ProtectedRoute>*/}
+            {/* <TeacherDashboard />*/}
+            {/* </ProtectedRoute>*/}
+            {/* }*/}
             {/*/>*/}
 
             {/* =========================
@@ -132,15 +141,15 @@ function App() {
             </Route>
 
             {/*/!* =========================*/}
-            {/*    TECHNICAL OFFICER DASHBOARD*/}
+            {/* TECHNICAL OFFICER DASHBOARD*/}
             {/*========================= *!/*/}
             {/*<Route*/}
-            {/*    path="/tech"*/}
-            {/*    element={*/}
-            {/*        <ProtectedRoute>*/}
-            {/*            <TechDashboard />*/}
-            {/*        </ProtectedRoute>*/}
-            {/*    }*/}
+            {/* path="/tech"*/}
+            {/* element={*/}
+            {/* <ProtectedRoute>*/}
+            {/* <TechDashboard />*/}
+            {/* </ProtectedRoute>*/}
+            {/* }*/}
             {/*/>*/}
 
         </Routes>
