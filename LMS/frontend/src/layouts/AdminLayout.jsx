@@ -23,7 +23,7 @@ export default function AdminLayout() {
         navigate("/login");
     };
 
-    // Helper function to check if a path is active
+    // Helper function to check if a path is exactly active
     const isActive = (path) => {
         return location.pathname === path ? "active" : "";
     };
@@ -54,10 +54,13 @@ export default function AdminLayout() {
                         <FiGrid className="nav-icon" /> Dashboard
                     </div>
 
-                    {/* Students (Maps to your users route) */}
+                    {/* =========================
+                        STUDENTS (UPDATED)
+                        Now points to /admin/students to load the new management table
+                    ========================= */}
                     <div
-                        className={`nav-item ${location.pathname.includes("/admin/users") ? "active" : ""}`}
-                        onClick={() => navigate("/admin/users")}
+                        className={`nav-item ${location.pathname.includes("/admin/students") ? "active" : ""}`}
+                        onClick={() => navigate("/admin/students")}
                     >
                         <FiUsers className="nav-icon" /> Students
                     </div>
@@ -102,7 +105,7 @@ export default function AdminLayout() {
                 (renders child routes)
             ========================= */}
             <div className="layout-main">
-                {/* This is where Dashboard / Users page will load */}
+                {/* This is where your nested pages (Dashboard, Student Management, etc.) will load */}
                 <Outlet />
             </div>
 
