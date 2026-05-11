@@ -268,7 +268,7 @@ export function Academic() {
                   <BookOpen className="academic-staff-icon-symbol" />
                 </div>
                 <h2 className="academic-staff-title">
-                  {t("academic.staff")}
+                  {t("academic.Allstaff")}
                 </h2>
               </div>
               <p className="academic-staff-description">
