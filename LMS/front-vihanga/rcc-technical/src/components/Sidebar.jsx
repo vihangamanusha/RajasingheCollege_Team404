@@ -34,7 +34,7 @@ export default function Sidebar() {
         <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           Classes
         </NavLink>
-        <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+        <NavLink to="/admin/announcements" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           Announcement
         </NavLink>
         <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
@@ -49,9 +49,7 @@ export default function Sidebar() {
         <NavLink to="/events" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           Events
         </NavLink>
-        <NavLink to="/admin/announcements" className={({ isActive }) =>isActive ? "nav-link active" : "nav-link" }>
-          Announcement
-        </NavLink>
+        
         
       </nav>
 

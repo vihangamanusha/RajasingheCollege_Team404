@@ -192,7 +192,7 @@ export default function AdminAnnouncements() {
             <form onSubmit={handleSubmit}>
 
               <div className="formGrid">
-
+                
                 <input
                   type="text"
                   name="title"
@@ -201,7 +201,7 @@ export default function AdminAnnouncements() {
                   onChange={handleChange}
                   required
                 />
-
+                <br />
                 <select
                   name="category"
                   value={formData.category}
@@ -214,7 +214,7 @@ export default function AdminAnnouncements() {
                   <option value="Events">Events</option>
                   <option value="Exams">Exams</option>
                 </select>
-
+<br />
                 <select
                   name="targetAudience"
                   value={formData.targetAudience}

@@ -763,8 +763,8 @@ tr:hover {
 
 .modal {
   background: white;
-  width: 800px;
-  height: auto;
+  width: 600px;
+  height: 500px;
   padding: 25px;
   border-radius: 12px;
   position: relative;
@@ -788,15 +788,16 @@ tr:hover {
 }
 
 input, select, textarea {
-  width: 100%;
+  width: 550px;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 20px;
   border: 1px solid #ccc;
   border-radius: 6px;
+  gap: 5px;
 }
 
 textarea {
-  height: 100px;
+  height: 125px;
 }
 
 .modalActions {
@@ -809,7 +810,7 @@ textarea {
 .cancelBtn {
   background: #9ca3af;
   border: none;
-  padding: 8px 14px;
+  padding: 4px 84px;
   border-radius: 6px;
   cursor: pointer;
 }
@@ -818,7 +819,7 @@ textarea {
   background: #2563eb;
   color: white;
   border: none;
-  padding: 8px 14px;
+  padding: 4px 84px;
   border-radius: 6px;
   cursor: pointer;
 }
@@ -827,6 +828,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  
 }
 
 /* CARD */
@@ -864,7 +866,7 @@ textarea {
 /* TITLE ROW */
 .titleRow {
   display: flex;
-  justify-content: space-between; /* pushes badge to right */
+  /*justify-content: space-between; /* pushes badge to right */
   align-items: center;
   width: 100%;
 }
@@ -873,6 +875,8 @@ textarea {
   margin: 0;
   font-size: 18px;
   margin-top: 20px;
+  margin-right: 700px;
+
 }
 
 /* BADGES */
@@ -885,10 +889,10 @@ textarea {
 }
 
 /* CATEGORY COLORS */
-.badge.academic { background: #dbeafe; color: #1d4ed8;align-items: right; }
-.badge.sports { background: #dcfce7; color: #16a34a;align-items: right; }
-.badge.events { background: #fce7f3; color: #db2777;align-items: right;}
-.badge.exams { background: #fee2e2; color: #dc2626; align-items: right;}
+.badge.academic { background: #dbeafe; color: #1d4ed8; }
+.badge.sports { background: #dcfce7; color: #16a34a; }
+.badge.events { background: #fce7f3; color: #db2777;}
+.badge.exams { background: #fee2e2; color: #dc2626; }
 
 /* CONTENT */
 .content {
@@ -922,6 +926,7 @@ textarea {
   color: white;
   border-radius: 6px;
   cursor: pointer;
+
   
 }
 
@@ -932,4 +937,5 @@ textarea {
   color: white;
   border-radius: 6px;
   cursor: pointer;
+  
 }
