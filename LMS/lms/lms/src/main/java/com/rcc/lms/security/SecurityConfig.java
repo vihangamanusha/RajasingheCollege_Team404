@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/api/news/**",
                                 "/api/contact/**",
                                 "/api/students/**",
-                                "/api/events/**"
+                                "/api/events/**",
+                                "/api/announcements/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
