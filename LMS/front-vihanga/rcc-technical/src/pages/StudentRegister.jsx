@@ -222,28 +222,29 @@ export default function StudentRegister() {
                 required
               />
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={form.password}
+              
+
+             <select
+                name="Grade"
+                value={form.Grade}
                 onChange={handleChange}
                 required
-              />
+              >
+                <option value="">Select Grade</option>
+                <option value="Grade 6">Grade 6</option>
+                <option value="Grade 7">Grade 7</option>
+                <option value="Grade 8">Grade 8</option>
+                <option value="Grade 9">Grade 9</option>
+                <option value="Grade 10">Grade 10</option>
+                <option value="Grade 11">Grade 11</option>
+              </select>
+
 
               <input
                 type="text"
                 name="studentClass"
                 placeholder="Class"
                 value={form.studentClass}
-                onChange={handleChange}
-                required
-              />
-
-              <input
-                type="date"
-                name="dob"
-                value={form.dob}
                 onChange={handleChange}
                 required
               />
@@ -260,6 +261,40 @@ export default function StudentRegister() {
                 <option value="Tamil">Tamil</option>
               </select>
 
+              
+              <input
+                type="date"
+                name="dob"
+                value={form.dob}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+              
+              <textarea
+                name="address"
+                placeholder="Address"
+                value={form.address}
+                onChange={handleChange}
+                required
+              />
+              <input
+                type="text"
+                name="contactName"
+                placeholder="Contact Name"
+                value={form.contactName}
+                onChange={handleChange}
+                required
+              />
+
+
               <input
                 type="text"
                 name="contactNo"
@@ -269,13 +304,7 @@ export default function StudentRegister() {
                 required
               />
 
-              <textarea
-                name="address"
-                placeholder="Address"
-                value={form.address}
-                onChange={handleChange}
-                required
-              />
+              
 
               <button type="submit" className="save-btn">
                 Save Student
