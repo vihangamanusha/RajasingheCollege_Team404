@@ -25,9 +25,9 @@ public class AnnouncementService {
     }
 
     //read by id
-    public Announcement getAnnouncement(Long id) {
-        Optional<Announcement> optional = repository.findById(id);
-        return optional.orElse(null);
+    public Announcement getAnnouncementById(Long id) {
+        Optional<Announcement> announcement = repository.findById(id);
+        return announcement.orElse(null);
     }
 
     //update
