@@ -97,52 +97,61 @@ export default function AdminAnnouncements() {
 
       {/* HEADER */}
       <div className="header">
-
+      <div className="page feedback-page">
         <div>
           <p className="org">Rajasinghe Central College</p>
           <h1>Announcements & Notices</h1>
-          <p className="subtitle">Manage school-wide announcements</p>
+          <p className="subtitle" >Manage school-wide announcements</p>
         </div>
-
+       </div>
         <button className="addBtn" onClick={() => setShowModal(true)}>
           + Add Announcement
         </button>
 
       </div>
 
-     {/* CARDS */}
-<div className="cardContainer">
+     <div className="cardContainer">
 
   {announcements.map((a) => (
 
     <div className="announcementCard" key={a.id}>
 
-      <div className="cardHeader">
-        <h3>{a.title}</h3>
-        <span className="badge">{a.category}</span>
+      {/* TOP ROW */}
+      <div className="cardTop">
+
+        <div className="iconBox">
+          📢
+        </div>
+
+        <div className="cardMain">
+
+          <div className="titleRow">
+            <h3>{a.title}</h3>
+            <span className={`badge ${a.category.toLowerCase()}`}>
+    {a.category}
+  </span>
+          </div>
+
+          <p className="content">{a.content}</p>
+
+          {/* META INFO */}
+          <div className="meta">
+            
+            <span>📅 {new Date().toLocaleDateString()}</span>
+          </div>
+
+        </div>
+
       </div>
 
-      <p className="audience">
-        👥 {a.targetAudience}
-      </p>
-
-      <p className="content">
-        {a.content}
-      </p>
-
+      {/* ACTIONS */}
       <div className="cardActions">
 
-        <button
-          className="editBtn"
-          onClick={() => handleEdit(a)}
-        >
+        <button className="editBtn" onClick={() => handleEdit(a)}>
           Edit
         </button>
 
-        <button
-          className="deleteBtn"
-          onClick={() => handleDelete(a.id)}
-        >
+        <button className="deleteBtn" onClick={() => handleDelete(a.id)}>
           Delete
         </button>
 
