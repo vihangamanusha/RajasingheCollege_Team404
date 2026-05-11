@@ -303,7 +303,10 @@ export default function StudentRegister() {
                 onChange={handleChange}
                 required
               />
-
+        
+              <button type="reset" className="clearb-btn">
+                Clear
+              </button>
               
 
               <button type="submit" className="save-btn">
