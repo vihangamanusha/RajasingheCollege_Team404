@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
+import "../index.css";
 
 export default function StudentRegister() {
+
   const [form, setForm] = useState({
     fullName: "",
     studentId: "",
@@ -12,8 +14,9 @@ export default function StudentRegister() {
     address: "",
   });
 
-  const [message, setMessage] = useState("");
   const [students, setStudents] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [search, setSearch] = useState("");
 
   // LOAD STUDENTS
   const loadStudents = async () => {
@@ -22,15 +25,15 @@ export default function StudentRegister() {
       const data = await res.json();
       setStudents(data || []);
     } catch (error) {
-      console.error("Error loading students:", error);
+      console.error(error);
     }
   };
 
-  //  LOAD ON PAGE OPEN
   useEffect(() => {
     loadStudents();
   }, []);
 
+  // HANDLE INPUT
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -38,11 +41,13 @@ export default function StudentRegister() {
     });
   };
 
+  // SAVE STUDENT
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:8080/api/students", {
+
+      await fetch("http://localhost:8080/api/students", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,13 +55,8 @@ export default function StudentRegister() {
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to register student");
-      }
+      alert("Student Registered Successfully!");
 
-      setMessage("Student registered successfully!");
-
-      // reset form
       setForm({
         fullName: "",
         studentId: "",
@@ -68,75 +68,227 @@ export default function StudentRegister() {
         address: "",
       });
 
-      // refresh list
+      setShowModal(false);
+
       loadStudents();
+
     } catch (error) {
       console.error(error);
-      setMessage("Error registering student");
     }
   };
 
+  // FILTER STUDENTS
+  const filteredStudents = students.filter((s) =>
+    s.fullName.toLowerCase().includes(search.toLowerCase()) ||
+    s.studentId.toLowerCase().includes(search.toLowerCase()) ||
+    s.studentClass.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
-    <div className="student-form">
-      <h2>Student Registration</h2>
 
-      {message && <p className="message">{message}</p>}
+    <div className="student-page">
 
-      {/* FORM */}
-      <form onSubmit={handleSubmit}>
-        <input name="fullName" placeholder="Full Name" value={form.fullName} onChange={handleChange} />
-        <input name="studentId" placeholder="Student ID" value={form.studentId} onChange={handleChange} />
-        <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} />
-        <input name="studentClass" placeholder="Class (e.g. 10-A)" value={form.studentClass} onChange={handleChange} />
-        <input type="date" name="dob" value={form.dob} onChange={handleChange} />
+      {/* HEADER */}
+          <p className="event-school-name">
+            Rajasinghe Central College
+          </p>
+      <div className="student-header">
+          
+        <div>
+          <h1>Student Management</h1>
 
-        <select name="medium" value={form.medium} onChange={handleChange}>
-          <option value="">Select Medium</option>
-          <option value="Sinhala">Sinhala</option>
-          <option value="English">English</option>
-          <option value="Tamil">Tamil</option>
-        </select>
+          <p>
+            Manage all student records and information
+          </p>
+        </div>
 
-        <input name="contactNo" placeholder="Contact Number" value={form.contactNo} onChange={handleChange} />
-        <textarea name="address" placeholder="Address" value={form.address} onChange={handleChange} />
+        <button
+          className="add-student-btn"
+          onClick={() => setShowModal(true)}
+        >
+          + Add Student
+        </button>
 
-        <button type="submit">Register Student</button>
-      </form>
-
-      {/*  STUDENT LIST */}
-      <div className="student-list">
-        <h3>Registered Students</h3>
-
-        {students.length === 0 ? (
-          <p>No students found</p>
-        ) : (
-          <table border="1" cellPadding="8">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Full Name</th>
-                <th>Student ID</th>
-                <th>Class</th>
-                <th>Medium</th>
-                <th>Contact</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {students.map((s) => (
-                <tr key={s.userId}>
-                  <td>{s.userId}</td>
-                  <td>{s.fullName}</td>
-                  <td>{s.studentId}</td>
-                  <td>{s.studentClass}</td>
-                  <td>{s.medium}</td>
-                  <td>{s.contactNo}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        )}
       </div>
+
+      {/* TABLE CARD */}
+
+      <div className="student-card">
+
+        {/* SEARCH */}
+
+        <div className="student-search-box">
+
+          <input
+            type="text"
+            placeholder="Search students by name, admission number, or grade..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+        </div>
+
+        {/* TABLE */}
+
+        <table className="student-table">
+
+          <thead>
+            <tr>
+              <th>Admission No</th>
+              <th>Name</th>
+              <th>Grade/Class</th>
+              <th>Medium</th>
+              <th>Contact</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {filteredStudents.map((s) => (
+
+              <tr key={s.userId}>
+
+                <td>{s.studentId}</td>
+
+                <td>{s.fullName}</td>
+
+                <td>{s.studentClass}</td>
+
+                <td>
+                  <span className={`medium-badge ${s.medium}`}>
+                    {s.medium}
+                  </span>
+                </td>
+
+                <td>{s.contactNo}</td>
+
+                <td>
+
+                  <button className="edit-btn">
+                    Edit
+                  </button>
+
+                  <button className="delete-btn">
+                    Delete
+                  </button>
+
+                </td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      {/* MODAL */}
+
+      {showModal && (
+
+        <div className="student-modal-overlay">
+
+          <div className="student-modal">
+
+            <button
+              className="close-btn"
+              onClick={() => setShowModal(false)}
+            >
+              ×
+            </button>
+
+            <h2>Register Student</h2>
+
+            <form onSubmit={handleSubmit}>
+
+              <input
+                type="text"
+                name="fullName"
+                placeholder="Full Name"
+                value={form.fullName}
+                onChange={handleChange}
+                required
+              />
+
+              <input
+                type="text"
+                name="studentId"
+                placeholder="Admission Number"
+                value={form.studentId}
+                onChange={handleChange}
+                required
+              />
+
+              <input
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                required
+              />
+
+              <input
+                type="text"
+                name="studentClass"
+                placeholder="Class"
+                value={form.studentClass}
+                onChange={handleChange}
+                required
+              />
+
+              <input
+                type="date"
+                name="dob"
+                value={form.dob}
+                onChange={handleChange}
+                required
+              />
+
+              <select
+                name="medium"
+                value={form.medium}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Select Medium</option>
+                <option value="Sinhala">Sinhala</option>
+                <option value="English">English</option>
+                <option value="Tamil">Tamil</option>
+              </select>
+
+              <input
+                type="text"
+                name="contactNo"
+                placeholder="Contact Number"
+                value={form.contactNo}
+                onChange={handleChange}
+                required
+              />
+
+              <textarea
+                name="address"
+                placeholder="Address"
+                value={form.address}
+                onChange={handleChange}
+                required
+              />
+
+              <button type="submit" className="save-btn">
+                Save Student
+              </button>
+
+            </form>
+
+          </div>
+
+        </div>
+
+      )}
+
     </div>
   );
 }
