@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+
 export default function AdminAnnouncements() {
 
   const [announcements, setAnnouncements] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -16,7 +18,6 @@ export default function AdminAnnouncements() {
 
   const API_URL = "http://localhost:8080/api/announcements";
 
-  // LOAD ALL ANNOUNCEMENTS
   useEffect(() => {
     fetchAnnouncements();
   }, []);
@@ -30,7 +31,6 @@ export default function AdminAnnouncements() {
     }
   };
 
-  // HANDLE INPUT
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -38,27 +38,15 @@ export default function AdminAnnouncements() {
     });
   };
 
-  // ADD OR UPDATE
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-
       if (editingId) {
-
-        // UPDATE
-        await axios.put(
-          `${API_URL}/${editingId}`,
-          formData
-        );
-
+        await axios.put(`${API_URL}/${editingId}`, formData);
         alert("Announcement Updated");
-
       } else {
-
-        // ADD
         await axios.post(API_URL, formData);
-
         alert("Announcement Added");
       }
 
@@ -70,7 +58,7 @@ export default function AdminAnnouncements() {
       });
 
       setEditingId(null);
-
+      setShowModal(false);
       fetchAnnouncements();
 
     } catch (error) {
@@ -78,31 +66,20 @@ export default function AdminAnnouncements() {
     }
   };
 
-  // DELETE
   const handleDelete = async (id) => {
-
-    const confirmDelete = window.confirm(
-      "Are you sure?"
-    );
-
+    const confirmDelete = window.confirm("Are you sure?");
     if (!confirmDelete) return;
 
     try {
-
       await axios.delete(`${API_URL}/${id}`);
-
       alert("Deleted Successfully");
-
       fetchAnnouncements();
-
     } catch (error) {
       console.log(error);
     }
   };
 
-  // EDIT
   const handleEdit = (announcement) => {
-
     setEditingId(announcement.id);
 
     setFormData({
@@ -111,157 +88,169 @@ export default function AdminAnnouncements() {
       targetAudience: announcement.targetAudience,
       content: announcement.content
     });
+
+    setShowModal(true);
   };
 
   return (
-    <div className="p-8">
+    <div className="container">
 
-      <div className="page-header">
+      {/* HEADER */}
+      <div className="header">
+
         <div>
-          <p className="page-org">Rajasinghe Central College</p>
+          <p className="org">Rajasinghe Central College</p>
           <h1>Announcements & Notices</h1>
-          <p className="page-subtitle">
-            Manage school-wide announcements
-          </p>
-        </div>
-      </div>
-      {/* FORM */}
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white shadow-lg rounded-lg p-6 mb-10"
-      >
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-          <input
-            type="text"
-            name="title"
-            placeholder="Announcement Title"
-            value={formData.title}
-            onChange={handleChange}
-            className="border p-3 rounded"
-            required
-          />
-
-          {/* CATEGORY */}
-
-          <select
-            name="category"
-            value={formData.category}
-            onChange={handleChange}
-            className="border p-3 rounded"
-            required
-          >
-            <option value="">Select Category</option>
-            <option value="Academic">Academic</option>
-            <option value="Sports">Sports</option>
-            <option value="Events">Events</option>
-            <option value="Exams">Exams</option>
-          </select>
-
-          {/* TARGET */}
-
-          <select
-            name="targetAudience"
-            value={formData.targetAudience}
-            onChange={handleChange}
-            className="border p-3 rounded"
-            required
-          >
-            <option value="">Select Audience</option>
-            <option value="Students">Students</option>
-            <option value="Teachers">Teachers</option>
-            <option value="Parents">Parents</option>
-            <option value="All">All</option>
-          </select>
-
+          <p className="subtitle">Manage school-wide announcements</p>
         </div>
 
-        {/* CONTENT */}
-
-        <textarea
-          name="content"
-          placeholder="Announcement Content"
-          value={formData.content}
-          onChange={handleChange}
-          className="border p-3 rounded w-full mt-4 h-32"
-          required
-        />
-
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-6 py-3 rounded mt-4"
-        >
-          {editingId ? "Update Announcement" : "Add Announcement"}
+        <button className="addBtn" onClick={() => setShowModal(true)}>
+          + Add Announcement
         </button>
 
-      </form>
+      </div>
 
-      {/* TABLE */}
+     {/* CARDS */}
+<div className="cardContainer">
 
-      <div className="overflow-x-auto">
+  {announcements.map((a) => (
 
-        <table className="w-full border-collapse border">
+    <div className="announcementCard" key={a.id}>
 
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="border p-3">Title</th>
-              <th className="border p-3">Category</th>
-              <th className="border p-3">Audience</th>
-              <th className="border p-3">Content</th>
-              <th className="border p-3">Actions</th>
-            </tr>
-          </thead>
+      <div className="cardHeader">
+        <h3>{a.title}</h3>
+        <span className="badge">{a.category}</span>
+      </div>
 
-          <tbody>
+      <p className="audience">
+        👥 {a.targetAudience}
+      </p>
 
-            {announcements.map((announcement) => (
+      <p className="content">
+        {a.content}
+      </p>
 
-              <tr key={announcement.id}>
+      <div className="cardActions">
 
-                <td className="border p-3">
-                  {announcement.title}
-                </td>
+        <button
+          className="editBtn"
+          onClick={() => handleEdit(a)}
+        >
+          Edit
+        </button>
 
-                <td className="border p-3">
-                  {announcement.category}
-                </td>
-
-                <td className="border p-3">
-                  {announcement.targetAudience}
-                </td>
-
-                <td className="border p-3">
-                  {announcement.content}
-                </td>
-
-                <td className="border p-3 flex gap-2">
-
-                  <button
-                    onClick={() => handleEdit(announcement)}
-                    className="bg-yellow-500 text-white px-4 py-2 rounded"
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(announcement.id)}
-                    className="bg-red-600 text-white px-4 py-2 rounded"
-                  >
-                    Delete
-                  </button>
-
-                </td>
-
-              </tr>
-            ))}
-
-          </tbody>
-
-        </table>
+        <button
+          className="deleteBtn"
+          onClick={() => handleDelete(a.id)}
+        >
+          Delete
+        </button>
 
       </div>
+
+    </div>
+
+  ))}
+
+</div>
+
+      {/* MODAL */}
+      {showModal && (
+        <div className="modalOverlay">
+
+          <div className="modal">
+
+            <button
+              className="closeBtn"
+              onClick={() => {
+                setShowModal(false);
+                setEditingId(null);
+                setFormData({
+                  title: "",
+                  category: "",
+                  targetAudience: "",
+                  content: ""
+                });
+              }}
+            >
+              ×
+            </button>
+
+            <h2>
+              {editingId ? "Update Announcement" : "Create Announcement"}
+            </h2>
+
+            <form onSubmit={handleSubmit}>
+
+              <div className="formGrid">
+
+                <input
+                  type="text"
+                  name="title"
+                  placeholder="Announcement Title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                />
+
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Category</option>
+                  <option value="Academic">Academic</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Events">Events</option>
+                  <option value="Exams">Exams</option>
+                </select>
+
+                <select
+                  name="targetAudience"
+                  value={formData.targetAudience}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Select Audience</option>
+                  <option value="Students">Students</option>
+                  <option value="Teachers">Teachers</option>
+                  <option value="Parents">Parents</option>
+                  <option value="All">All</option>
+                </select>
+
+              </div>
+
+              <textarea
+                name="content"
+                placeholder="Announcement Content"
+                value={formData.content}
+                onChange={handleChange}
+                required
+              />
+
+              <div className="modalActions">
+
+                <button
+                  type="button"
+                  className="cancelBtn"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancel
+                </button>
+
+                <button type="submit" className="saveBtn">
+                  {editingId ? "Update" : "Add Announcement"}
+                </button>
+
+              </div>
+
+            </form>
+
+          </div>
+
+        </div>
+      )}
 
     </div>
   );

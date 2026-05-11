@@ -15,7 +15,7 @@ export default function StudentRegister() {
   const [message, setMessage] = useState("");
   const [students, setStudents] = useState([]);
 
-  // ✅ LOAD STUDENTS
+  // LOAD STUDENTS
   const loadStudents = async () => {
     try {
       const res = await fetch("http://localhost:8080/api/students");
@@ -26,7 +26,7 @@ export default function StudentRegister() {
     }
   };
 
-  // ✅ LOAD ON PAGE OPEN
+  //  LOAD ON PAGE OPEN
   useEffect(() => {
     loadStudents();
   }, []);
@@ -68,7 +68,7 @@ export default function StudentRegister() {
         address: "",
       });
 
-      // ✅ refresh list
+      // refresh list
       loadStudents();
     } catch (error) {
       console.error(error);
@@ -103,7 +103,7 @@ export default function StudentRegister() {
         <button type="submit">Register Student</button>
       </form>
 
-      {/* ✅ STUDENT LIST */}
+      {/*  STUDENT LIST */}
       <div className="student-list">
         <h3>Registered Students</h3>
 
