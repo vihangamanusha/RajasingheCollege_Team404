@@ -116,10 +116,15 @@ export default function AdminAnnouncements() {
   return (
     <div className="p-8">
 
-      <h1 className="text-3xl font-bold mb-6">
-        Admin Announcement Panel
-      </h1>
-
+      <div className="page-header">
+        <div>
+          <p className="page-org">Rajasinghe Central College</p>
+          <h1>Announcements & Notices</h1>
+          <p className="page-subtitle">
+            Manage school-wide announcements
+          </p>
+        </div>
+      </div>
       {/* FORM */}
 
       <form
