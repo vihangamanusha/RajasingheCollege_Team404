@@ -20,13 +20,17 @@ public class Student {
 
     private String password;
 
-    
+    private String grade;
 
     private String studentClass;
 
+    private String medium;
+
     private String dob;
 
-    private String medium;
+    private String gender;
+
+    private String gname;
 
     private String contactNo;
 
@@ -102,5 +106,29 @@ public class Student {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getGrade() {
+        return grade;
+    }
+
+    public void setGrade(String grade) {
+        this.grade = grade;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getGname() {
+        return gname;
+    }
+
+    public void setGname(String gname) {
+        this.gname = gname;
     }
 }
