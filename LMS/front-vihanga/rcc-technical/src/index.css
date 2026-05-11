@@ -37,12 +37,13 @@ button {
 /* SIDEBAR */
 .sidebar {
   width: 260px;
-  min-height: 100vh;
+  height: 100vh;
   background: #1e3a8a;
   color: #f5f8ff;
   padding: 28px 22px;
   position: sticky;
   top: 0;
+  overflow-y: auto;  
 }
 
 .sidebar .logo {
@@ -55,9 +56,10 @@ button {
 }
 
 .sidebar nav {
-  display: flex;
+  display:flex;
   flex-direction: column;
   gap: 10px;
+  
 }
 
 .nav-link {
@@ -810,7 +812,7 @@ textarea {
 .cancelBtn {
   background: #9ca3af;
   border: none;
-  padding: 4px 84px;
+  padding: 8px 94px;
   border-radius: 6px;
   cursor: pointer;
 }
@@ -819,7 +821,7 @@ textarea {
   background: #2563eb;
   color: white;
   border: none;
-  padding: 4px 84px;
+  padding: 8px 74px;
   border-radius: 6px;
   cursor: pointer;
 }
