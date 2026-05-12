@@ -3,7 +3,8 @@ package com.rcc.lms.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import com.rcc.lms.entity.student.Student; // Check your actual package path here
-import com.rcc.lms.entity.Subject;         // Check your actual package path here
+import com.rcc.lms.entity.Subject;// Check your actual package path here
+import com.rcc.lms.entity.student.ClassEntity;
 
 @Entity
 @Table(name = "marks")

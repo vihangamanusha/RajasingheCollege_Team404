@@ -1,4 +1,5 @@
 package com.rcc.lms.entity;
+import com.rcc.lms.entity.student.ClassEntity;
 
 import jakarta.persistence.*;
 import java.util.List;
