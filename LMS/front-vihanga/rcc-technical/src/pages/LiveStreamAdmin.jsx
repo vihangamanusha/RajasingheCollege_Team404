@@ -451,35 +451,35 @@ export default function LiveStreamAdmin() {
               {/* BUTTONS */}
               <div className="card-buttons">
 
-                <button
-                  className="update-btn"
-                  onClick={() => editStream(stream)}
-                >
-                  Update
-                </button>
+              <button
+                 className="update-btn"
+                 onClick={() => editStream(stream)}
+             >
+                 Update
+              </button>
 
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteStream(stream.id)}
-                >
+              <button
+                 className="delete-btn"
+                 onClick={() => deleteStream(stream.id)}
+              >
                   Delete
-                </button>
+              </button>
 
-                <button
-                  className="live-btn"
-                  onClick={() => startStreaming(stream.id)}
-                >
-                  Start Streaming
-                </button>
+              <button
+                 className="live-btn"
+                 onClick={() => startStreaming(stream.id)}
+             >
+                 Start Streaming
+              </button>
 
-                <button
-                  className="stop-btn"
-                  onClick={() => stopStreaming(stream.id)}
-                >
-                  Stop Streaming
-                </button>
+              <button
+                 className="stop-btn"
+                 onClick={() => stopStreaming(stream.id)}
+              >
+                 Stop Streaming
+              </button>
 
-              </div>
+            </div>
 
             </div>
 
