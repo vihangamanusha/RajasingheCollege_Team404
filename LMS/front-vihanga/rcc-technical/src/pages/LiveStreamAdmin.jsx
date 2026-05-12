@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import "../index.css";
 
 export default function LiveStreamAdmin() {
-
   const [streams, setStreams] = useState([]);
 
   const [form, setForm] = useState({
@@ -13,6 +13,7 @@ export default function LiveStreamAdmin() {
   });
 
   const [message, setMessage] = useState("");
+  const [showForm, setShowForm] = useState(false);
 
   // LOAD STREAMS
   useEffect(() => {
@@ -53,11 +54,12 @@ export default function LiveStreamAdmin() {
           videoUrl: "",
         });
 
+        setShowForm(false);
+
         loadStreams();
       } else {
         setMessage("Failed to add stream");
       }
-
     } catch (error) {
       console.log(error);
       setMessage("Server error");
@@ -72,7 +74,6 @@ export default function LiveStreamAdmin() {
       });
 
       loadStreams();
-
     } catch (error) {
       console.log(error);
     }
@@ -81,96 +82,138 @@ export default function LiveStreamAdmin() {
   return (
     <div className="livestream-admin">
 
-      <h1>Live Stream Admin Panel</h1>
+      {/* HEADER */}
+      <div className="live-header">
+        <div>
+          <p className="live-org">Rajasinghe Central College</p>
+          <h1>Live Stream Management</h1>
+          <p className="live-subtitle">
+            Manage school live streams, online events, and video broadcasts.
+          </p>
+        </div>
 
-      {message && <p>{message}</p>}
-
-      {/* FORM */}
-
-      <form onSubmit={handleSubmit} className="stream-form">
-
-        <input
-          type="text"
-          placeholder="Title"
-          value={form.title}
-          onChange={(e) =>
-            setForm({ ...form, title: e.target.value })
-          }
-          required
-        />
-
-        <input
-          type="date"
-          value={form.date}
-          onChange={(e) =>
-            setForm({ ...form, date: e.target.value })
-          }
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="Time"
-          value={form.time}
-          onChange={(e) =>
-            setForm({ ...form, time: e.target.value })
-          }
-          required
-        />
-
-        <textarea
-          placeholder="Description"
-          value={form.description}
-          onChange={(e) =>
-            setForm({ ...form, description: e.target.value })
-          }
-          required
-        />
-
-        <input
-          type="text"
-          placeholder="YouTube / Facebook Embed URL"
-          value={form.videoUrl}
-          onChange={(e) =>
-            setForm({ ...form, videoUrl: e.target.value })
-          }
-          required
-        />
-
-        <button type="submit">
-          Add Live Stream
+        <button
+          className="add-stream-btn"
+          onClick={() => setShowForm(true)}
+        >
+          + Add Live Stream
         </button>
+      </div>
 
-      </form>
+      {message && <p className="message">{message}</p>}
 
-      {/* STREAM LIST */}
+      {/* POPUP FORM */}
+      {showForm && (
+        <div
+          className="popup-overlay"
+          onClick={() => setShowForm(false)}
+        >
+          <div
+            className="popup-form"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="popup-header">
+              <h2>Add Live Stream</h2>
 
+              <button
+                className="close-btn"
+                onClick={() => setShowForm(false)}
+              >
+                ×
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="stream-form">
+
+              <input
+                type="text"
+                placeholder="Title"
+                value={form.title}
+                onChange={(e) =>
+                  setForm({ ...form, title: e.target.value })
+                }
+                required
+              />
+
+              <input
+                type="date"
+                value={form.date}
+                onChange={(e) =>
+                  setForm({ ...form, date: e.target.value })
+                }
+                required
+              />
+
+              <input
+                type="text"
+                placeholder="Time"
+                value={form.time}
+                onChange={(e) =>
+                  setForm({ ...form, time: e.target.value })
+                }
+                required
+              />
+
+              <textarea
+                placeholder="Description"
+                value={form.description}
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
+                required
+              />
+
+              <input
+                type="text"
+                placeholder="YouTube / Facebook Embed URL"
+                value={form.videoUrl}
+                onChange={(e) =>
+                  setForm({ ...form, videoUrl: e.target.value })
+                }
+                required
+              />
+
+              <button type="submit" className="submit-btn">
+                Save Live Stream
+              </button>
+
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* STREAM CARDS */}
       <div className="stream-list">
 
         {streams.map((stream) => (
           <div key={stream.id} className="stream-card">
 
-            <h2>{stream.title}</h2>
+            <div className="stream-video">
+              <iframe
+                src={stream.videoUrl}
+                title={stream.title}
+                allowFullScreen
+              ></iframe>
+            </div>
 
-            <p>{stream.date}</p>
+            <div className="stream-content">
+              <h2>{stream.title}</h2>
 
-            <p>{stream.time}</p>
+              <p className="stream-date">
+                {stream.date} | {stream.time}
+              </p>
 
-            <p>{stream.description}</p>
+              <p className="stream-description">
+                {stream.description}
+              </p>
 
-            <iframe
-              width="300"
-              height="200"
-              src={stream.videoUrl}
-              title={stream.title}
-              allowFullScreen
-            ></iframe>
-
-            <br />
-
-            <button onClick={() => deleteStream(stream.id)}>
-              Delete
-            </button>
+              <button
+                className="delete-btn"
+                onClick={() => deleteStream(stream.id)}
+              >
+                Delete
+              </button>
+            </div>
 
           </div>
         ))}
