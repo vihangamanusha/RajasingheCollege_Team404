@@ -1304,3 +1304,37 @@ textarea {
   border-radius: 10px;
   cursor: pointer;
 }
+
+/*love stream page*/
+
+.livestream-admin {
+  padding: 20px;
+}
+
+.stream-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 400px;
+}
+
+.stream-form input,
+.stream-form textarea {
+  padding: 10px;
+}
+
+.stream-form button {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.stream-list {
+  margin-top: 40px;
+  display: grid;
+  gap: 20px;
+}
+
+.stream-card {
+  border: 1px solid #ccc;
+  padding: 20px;
+}

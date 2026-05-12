@@ -8,7 +8,7 @@ export default function NewsList() {
   const tabs = [
   { name: "News", path: "/news" },
   { name: "Sports", path: "/sports" },
-  { name: "Live Stream", path: "/live" },
+  { name: "Live Stream", path: "LiveStreamAdmin" },
   { name: "Events", path: "/events" }
 ];
   const [activeTab, setActiveTab] = useState("News");
