@@ -25,7 +25,7 @@ export default function AdminTechOfficerManagement() {
     // =========================
     const [showEditModal, setShowEditModal] = useState(false);
     const [editMessage, setEditMessage] = useState({ text: "", type: "" });
-    const [originalEditData, setOriginalEditData] = useState(null);
+    const [originalEditData, setOriginalEditData] = useState(null); // Tracks changes
     const [editFormData, setEditFormData] = useState({
         username: "", userId: "", email: "", password: "",
         fullName: "", position: "", assignedArea: "", contactNumber: ""
@@ -66,12 +66,20 @@ export default function AdminTechOfficerManagement() {
         setEditMessage({ text: "", type: "" });
         setShowEditModal(true);
 
+        // 1. Instantly load table data and lock the ID/Username
         const initialData = {
-            username: officer.username, userId: officer.userId, email: officer.email || "",
-            password: "", fullName: "Loading...", position: "", assignedArea: "", contactNumber: ""
+            username: officer.username, // Locked
+            userId: officer.userId,     // Locked
+            email: officer.email || "",
+            password: "",
+            fullName: "Loading...",
+            position: "Loading...",
+            assignedArea: "Loading...",
+            contactNumber: "Loading..."
         };
         setEditFormData(initialData);
 
+        // 2. Fetch the rest of their profile from the database
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/admin/users/tech/${officer.username}`, {
@@ -81,8 +89,8 @@ export default function AdminTechOfficerManagement() {
             if (response.ok) {
                 const fullProfile = await response.json();
                 const completeData = {
-                    username: officer.username,
-                    userId: officer.userId,
+                    username: officer.username, // Keep Locked
+                    userId: officer.userId,     // Keep Locked
                     email: officer.email || "",
                     password: "",
                     fullName: fullProfile.fullName || "",
@@ -91,10 +99,12 @@ export default function AdminTechOfficerManagement() {
                     contactNumber: fullProfile.contactNumber || ""
                 };
                 setEditFormData(completeData);
-                setOriginalEditData(completeData);
+                setOriginalEditData(completeData); // Save snapshot for Change Tracker
+            } else {
+                setEditMessage({ text: "Failed to load full details from server.", type: "error" });
             }
         } catch (error) {
-            setEditMessage({ text: "Failed to fetch full profile data.", type: "error" });
+            setEditMessage({ text: "Server connection error.", type: "error" });
         }
     };
 
@@ -102,6 +112,7 @@ export default function AdminTechOfficerManagement() {
         e.preventDefault();
         setEditMessage({ text: "", type: "" });
 
+        // Change Tracker: Prevent saving if nothing was altered
         const hasChanges = Object.keys(originalEditData).some(key => {
             if (key === 'password') return editFormData.password.trim() !== "";
             return originalEditData[key] !== editFormData[key];
@@ -133,7 +144,7 @@ export default function AdminTechOfficerManagement() {
             if (response.ok) {
                 setEditMessage({ text: "Officer profile successfully updated!", type: "success" });
                 fetchOfficers();
-                setTimeout(() => setShowEditModal(false), 1500);
+                setTimeout(() => setShowEditModal(false), 1500); // Wait so admin can read success message
             } else {
                 setEditMessage({ text: "Failed to update officer profile.", type: "error" });
             }
@@ -177,7 +188,6 @@ export default function AdminTechOfficerManagement() {
 
     return (
         <div className="admin-tech-management-container">
-
             <div className="page-header-flex">
                 <div className="header-text">
                     <h1>Technical Officer Management</h1>
@@ -307,6 +317,7 @@ export default function AdminTechOfficerManagement() {
                                 />
                             </div>
 
+                            {/* INLINE FORM MESSAGE */}
                             {editMessage.text && (
                                 <div className={`inline-form-message ${editMessage.type}`}>
                                     {editMessage.text}
@@ -332,6 +343,7 @@ export default function AdminTechOfficerManagement() {
                         </div>
                         <p>Are you sure you want to permanently delete <strong>{userToDelete}</strong>? This action cannot be undone.</p>
 
+                        {/* INLINE FORM MESSAGE */}
                         {deleteMessage.text && (
                             <div className={`inline-form-message ${deleteMessage.type}`}>
                                 {deleteMessage.text}
