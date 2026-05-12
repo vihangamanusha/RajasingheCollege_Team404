@@ -65,4 +65,17 @@ public class LiveStreamController {
                 })
                 .orElseThrow(() -> new RuntimeException("Stream not found"));
     }
+    @PutMapping("/{id}/stop")
+    public Livestream stopStream(@PathVariable Long id) {
+
+        return repository.findById(id)
+                .map(stream -> {
+
+                    stream.setLive(false);
+
+                    return repository.save(stream);
+
+                })
+                .orElseThrow(() -> new RuntimeException("Stream not found"));
+    }
 }
