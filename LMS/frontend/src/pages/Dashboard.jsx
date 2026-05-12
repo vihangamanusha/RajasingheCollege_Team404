@@ -1,19 +1,23 @@
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate for button routing
 import { FiUsers, FiBook, FiGrid, FiUserPlus, FiPlus } from "react-icons/fi";
 import { FaGraduationCap } from "react-icons/fa";
 import "./Dashboard.css";
 
 export default function Dashboard() {
+    // 2. Initialize the navigation hook
+    const navigate = useNavigate();
+
     const [username, setUsername] = useState("");
 
-    // NEW: State to hold dynamic dashboard statistics
+    // 3. State to hold dynamic statistics and activity feed
     const [stats, setStats] = useState({
         totalStudents: 0,
         totalTeachers: 0,
         totalClasses: 0,
         totalSubjects: 0,
-        recentActivities: [] // Array of recent system actions
+        recentActivities: [] // This will be populated by your API
     });
 
     useEffect(() => {
@@ -21,10 +25,11 @@ export default function Dashboard() {
 
         if (token) {
             try {
+                // Decode the JWT to show the logged-in Admin's name
                 const decoded = jwtDecode(token);
                 setUsername(decoded.sub);
 
-                // Fetch dynamic stats once user is authenticated
+                // 4. Trigger the data fetch as soon as the component loads
                 fetchDashboardStats(token);
             } catch (error) {
                 console.log("Invalid token or connection error");
@@ -32,7 +37,7 @@ export default function Dashboard() {
         }
     }, []);
 
-    // NEW: Function to fetch live data from Spring Boot
+    // 5. Function to fetch live data from your AdminController endpoint
     const fetchDashboardStats = async (token) => {
         try {
             const response = await fetch("http://localhost:8080/admin/dashboard/stats", {
@@ -40,6 +45,7 @@ export default function Dashboard() {
             });
             if (response.ok) {
                 const data = await response.json();
+                // Update our state with real numbers from the database
                 setStats(data);
             }
         } catch (error) {
@@ -47,6 +53,7 @@ export default function Dashboard() {
         }
     };
 
+    // Helper to generate initials for the avatar
     const getInitials = (name) => {
         if (!name) return "AD";
         return name.substring(0, 2).toUpperCase();
@@ -77,7 +84,7 @@ export default function Dashboard() {
                     <p>Welcome back! Here's what's happening today.</p>
                 </div>
 
-                {/* STATS ROW - NOW DYNAMIC */}
+                {/* STATS ROW - Data mapped from stats state */}
                 <div className="stats-row">
                     <div className="stat-card">
                         <div className="stat-info">
@@ -114,13 +121,14 @@ export default function Dashboard() {
 
                 {/* BOTTOM GRID */}
                 <div className="content-grid">
-                    {/* RECENT ACTIVITY - NOW DYNAMIC */}
+                    {/* RECENT ACTIVITY - Mapping data from database logs */}
                     <div className="content-card activity-card">
                         <h3>Recent Activity</h3>
 
                         {stats.recentActivities.length > 0 ? (
                             stats.recentActivities.map((activity, index) => (
                                 <div className="activity-item" key={index}>
+                                    {/* The initial is calculated in the backend DTO */}
                                     <div className="activity-avatar">{activity.initial}</div>
                                     <div className="activity-details">
                                         <p><strong>{activity.name}</strong> {activity.action}</p>
@@ -133,12 +141,33 @@ export default function Dashboard() {
                         )}
                     </div>
 
-                    {/* QUICK ACTIONS */}
+                    {/* QUICK ACTIONS - Functional buttons for fast navigation */}
                     <div className="content-card quick-actions-card">
                         <h3>Quick Actions</h3>
-                        <button className="action-btn blue"><FiUserPlus /> Add Student</button>
-                        <button className="action-btn yellow"><FaGraduationCap /> Add Teacher</button>
-                        <button className="action-btn green"><FiPlus /> Manage Classes</button>
+
+                        {/* 6. Navigate to the Student Management page */}
+                        <button
+                            className="action-btn blue"
+                            onClick={() => navigate("/admin/users/student")}
+                        >
+                            <FiUserPlus /> Add Student
+                        </button>
+
+                        {/* 7. Navigate to the Teacher Management page */}
+                        <button
+                            className="action-btn yellow"
+                            onClick={() => navigate("/admin/users/teacher")}
+                        >
+                            <FaGraduationCap /> Add Teacher
+                        </button>
+
+                        {/* 8. Navigate to the Classes Management page (built by your friend) */}
+                        <button
+                            className="action-btn green"
+                            onClick={() => navigate("/admin/classes")}
+                        >
+                            <FiPlus /> Manage Classes
+                        </button>
                     </div>
                 </div>
             </div>

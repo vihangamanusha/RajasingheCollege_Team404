@@ -1,21 +1,52 @@
 package com.rcc.lms.dto;
 
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
+/**
+ * Data Transfer Object for Student Registration.
+ * Includes validation constraints to ensure data integrity.
+ */
 public class StudentRegistrationRequest {
 
     // --- Auth Fields (users table) ---
+
+    @NotBlank(message = "Student ID is required")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Student ID must contain only letters and numbers (no symbols)")
     private String userId;
+
+    @NotBlank(message = "Username is required")
+    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Username must contain only letters and numbers (no symbols)")
     private String username;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email format (e.g., user@example.com)")
     private String email;
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
+
     private String role;
 
     // --- Profile Fields (student table) ---
+
+    @NotBlank(message = "Full Name is required")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Full Name can only contain letters and spaces")
     private String fullName;
+
+    @NotNull(message = "Date of Birth is required")
     private LocalDate dateOfBirth;
+
+    @NotBlank(message = "Address is required")
+    @Pattern(regexp = "^[a-zA-Z0-9\\s,]+$", message = "Address can only contain letters, numbers, and commas")
     private String address;
+
+    @NotBlank(message = "Contact Number is required")
+    @Pattern(regexp = "^\\d+$", message = "Contact Number must contain only digits")
     private String contactNumber;
+
+    @NotBlank(message = "Medium is required")
     private String medium;
 
     // ===== GETTERS AND SETTERS =====
