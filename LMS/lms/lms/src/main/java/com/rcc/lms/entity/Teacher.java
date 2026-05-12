@@ -1,6 +1,7 @@
 package com.rcc.lms.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore; // Added import!
 
 @Entity
 @Table(name = "teacher")
@@ -10,6 +11,10 @@ public class Teacher {
     @Column(name = "teacher_id", length = 20)
     private String teacherId;
 
+    // ==========================================
+    // @JsonIgnore stops the infinite JSON loop!
+    // ==========================================
+    @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, unique = true)
     private User user;
