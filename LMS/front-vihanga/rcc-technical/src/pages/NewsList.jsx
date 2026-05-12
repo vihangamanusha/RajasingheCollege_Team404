@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { addNews, deleteNews, getNews, updateNews } from "../api/newsApi";
+
 
 export default function NewsList() {
   const navigate = useNavigate();
-  const tabs = ["News", "Sports", "Live Stream","Events"];
+  const tabs = [
+  { name: "News", path: "/news" },
+  { name: "Sports", path: "/sports" },
+  { name: "Live Stream", path: "/live" },
+  { name: "Events", path: "/events" }
+];
   const [activeTab, setActiveTab] = useState("News");
   const [news, setNews] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -17,6 +23,7 @@ export default function NewsList() {
   useEffect(() => {
     loadNews();
   }, []);
+
 
   const loadNews = async () => {
     try {
@@ -161,14 +168,14 @@ export default function NewsList() {
       <div className="dashboard-topbar">
         <div className="tabs">
           {tabs.map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              className={tab === activeTab ? "tab active" : "tab"}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab}
-            </button>
+           <button
+    key={tab.name}
+    type="button"
+    className="tab"
+    onClick={() => navigate(tab.path)}
+  >
+    {tab.name}
+  </button>
           ))}
         </div>
 
