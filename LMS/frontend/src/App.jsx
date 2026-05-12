@@ -13,57 +13,47 @@ import AdminUsers from "./pages/AdminUsers";
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
+// Importing the new Academic Analytics page
+import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics";
 
 // --> MANAGEMENT TABLES <--
 import AdminStudentManagement from "./pages/AdminStudentManagement";
 import AdminTeacherManagement from "./pages/AdminTeacherManagement";
-import AdminTechOfficerManagement from "./pages/AdminTechOfficerManagement"; // Added this import
+import AdminTechOfficerManagement from "./pages/AdminTechOfficerManagement";
 
 // =========================
-// OTHER ROLE DASHBOARDS
+// STUDENT ROLE PAGES
 // =========================
-// import TeacherDashboard from "./pages/TeacherDashboard";
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentMarks from "./pages/student/StudentMarks";
 import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
-// import TechDashboard from "./pages/TechDashboard";
 
 // =========================
-// LAYOUT
+// LAYOUT & SECURITY
 // =========================
 import AdminLayout from "./layouts/AdminLayout";
 import StudentLayout from "./Component/student/StudentLayout";
-
-// =========================
-// PROTECTED ROUTE
-// =========================
 import ProtectedRoute from "./routes/ProtectedRoute";
 
 function App() {
 
     return (
-
         <Routes>
-
-            {/* =========================
-                DEFAULT ROUTE
-            ========================= */}
+            {/* DEFAULT ROUTE: Send users to login */}
             <Route
                 path="/"
                 element={<Navigate to="/login" replace />}
             />
 
-            {/* =========================
-                LOGIN PAGE
-            ========================= */}
+            {/* LOGIN PAGE */}
             <Route
                 path="/login"
                 element={<Login />}
             />
 
             {/* =========================
-                ADMIN PANEL
+                ADMIN PANEL (PROTECTED)
             ========================= */}
             <Route
                 path="/admin"
@@ -73,67 +63,28 @@ function App() {
                     </ProtectedRoute>
                 }
             >
+                {/* Default view is the Main Dashboard */}
+                <Route index element={<Dashboard />} />
 
-                {/* ADMIN DASHBOARD */}
-                <Route
-                    index
-                    element={<Dashboard />}
-                />
+                {/* Main Menu for choosing user types */}
+                <Route path="users" element={<AdminUsers />} />
 
-                {/* USER MANAGEMENT MAIN MENU (The 3 Buttons Page) */}
-                <Route
-                    path="users"
-                    element={<AdminUsers />}
-                />
+                {/* Management Data Tables */}
+                <Route path="students" element={<AdminStudentManagement />} />
+                <Route path="teachers" element={<AdminTeacherManagement />} />
+                <Route path="tech-officers" element={<AdminTechOfficerManagement />} />
 
-                {/* --> MANAGEMENT TABLE PAGES <-- */}
-                <Route
-                    path="students"
-                    element={<AdminStudentManagement />}
-                />
+                {/* New: Academic Reports & Performance Intelligence */}
+                <Route path="analytics" element={<AdminAcademicAnalytics />} />
 
-                <Route
-                    path="teachers"
-                    element={<AdminTeacherManagement />}
-                />
-
-                <Route
-                    path="tech-officers"
-                    element={<AdminTechOfficerManagement />}
-                />
-
-                {/* --> REGISTRATION FORM PAGES <-- */}
-                <Route
-                    path="users/student"
-                    element={<StudentRegister />}
-                />
-
-                <Route
-                    path="users/teacher"
-                    element={<TeacherRegister />}
-                />
-
-                <Route
-                    path="users/tech"
-                    element={<TechRegister />}
-                />
-
+                {/* Registration Forms */}
+                <Route path="users/student" element={<StudentRegister />} />
+                <Route path="users/teacher" element={<TeacherRegister />} />
+                <Route path="users/tech" element={<TechRegister />} />
             </Route>
 
-            {/*/!* =========================*/}
-            {/* TEACHER DASHBOARD*/}
-            {/*========================= *!/*/}
-            {/*<Route*/}
-            {/* path="/teacher"*/}
-            {/* element={*/}
-            {/* <ProtectedRoute>*/}
-            {/* <TeacherDashboard />*/}
-            {/* </ProtectedRoute>*/}
-            {/* }*/}
-            {/*/>*/}
-
             {/* =========================
-                STUDENT DASHBOARD
+                STUDENT PANEL (PROTECTED)
             ========================= */}
             <Route
                 path="/student"
@@ -149,19 +100,6 @@ function App() {
                 <Route path="materials" element={<StudentMaterials />} />
                 <Route path="report" element={<StudentReport studentId="STU001" />} />
             </Route>
-
-            {/*/!* =========================*/}
-            {/* TECHNICAL OFFICER DASHBOARD*/}
-            {/*========================= *!/*/}
-            {/*<Route*/}
-            {/* path="/tech"*/}
-            {/* element={*/}
-            {/* <ProtectedRoute>*/}
-            {/* <TechDashboard />*/}
-            {/* </ProtectedRoute>*/}
-            {/* }*/}
-            {/*/>*/}
-
         </Routes>
     );
 }
