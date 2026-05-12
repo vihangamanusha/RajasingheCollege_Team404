@@ -22,6 +22,10 @@ export function Home() {
   const { t } = useLanguage();
   const [events, setEvents] = useState([]);
 
+  /*pagination componenet*/
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 3;
+
   useEffect(() => {
   const loadEvents = async () => {
     const data = await getAllEvents();
@@ -69,7 +73,12 @@ export function Home() {
   const upcomingEvents = [
     
   ];
+const indexOfLastEvent = currentPage * eventsPerPage;
+const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
 
+const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
+
+const totalPages = Math.ceil(events.length / eventsPerPage);
   return (
     <div>
       {/* Hero Section */}
@@ -226,7 +235,7 @@ export function Home() {
             <div className="home-section-divider home-section-divider-mb4"></div>
           </div>
           <div className="home-events-grid">
-  {events.map((event) => (
+            {currentEvents.map((event) => (
     <div
       key={event.id}
       className="home-event-card"
@@ -274,17 +283,40 @@ export function Home() {
       </div>
     </div>
   ))}
+          </div>
+          <div className="pagination">
+
+  <button
+    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+    disabled={currentPage === 1}
+    className="page-btn"
+  >
+    Prev
+  </button>
+
+  {Array.from({ length: totalPages }, (_, i) => (
+    <button
+      key={i}
+      onClick={() => setCurrentPage(i + 1)}
+      className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
+    >
+      {i + 1}
+    </button>
+  ))}
+
+  <button
+    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+    disabled={currentPage === totalPages}
+    className="page-btn"
+  >
+    Next
+  </button>
+
 </div>
-        </div>
-        <div className="home-news-footer">
-          <Link
-            to="/news"
-            className="btn btn-primary"
-          >
-            <span className="btn-text">{t("home.viewAll")}</span>
-            <ArrowRight className="icon-lg" />
-          </Link>
-        </div>
+ 
+</div>
+        
+        
       </section>
       {/* LMS Section */}
       <section className="home-lms-section">

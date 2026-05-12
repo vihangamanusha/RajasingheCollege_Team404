@@ -3969,9 +3969,9 @@ body {
 }
 
 .page-btn.active {
-  background: #0d6efd;
+  background:#002147;
   color: white;
-  border-color: #0d6efd;
+  border-color: #002147;
 }
 
 .page-btn:disabled {
