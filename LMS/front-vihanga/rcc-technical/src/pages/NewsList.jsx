@@ -4,7 +4,7 @@ import { addNews, deleteNews, getNews, updateNews } from "../api/newsApi";
 
 export default function NewsList() {
   const navigate = useNavigate();
-  const tabs = ["News", "Sports", "Live Stream"];
+  const tabs = ["News", "Sports", "Live Stream","Events"];
   const [activeTab, setActiveTab] = useState("News");
   const [news, setNews] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
