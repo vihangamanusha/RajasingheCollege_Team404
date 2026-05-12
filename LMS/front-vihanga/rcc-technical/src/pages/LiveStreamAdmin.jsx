@@ -247,7 +247,7 @@ export default function LiveStreamAdmin() {
               />
 
               <input
-                type="text"
+                type="Time"
                 placeholder="Time"
                 value={form.time}
                 onChange={(e) =>
