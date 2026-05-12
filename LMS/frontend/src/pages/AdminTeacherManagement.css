@@ -1,9 +1,13 @@
 /* AdminTeacherManagement.css */
+
 .admin-teacher-management-container {
     padding: 10px 0;
 }
 
-/* Header Section */
+/* =========================================
+   HEADER
+========================================= */
+
 .page-header-flex {
     display: flex;
     justify-content: space-between;
@@ -12,128 +16,124 @@
 }
 
 .header-text h1 {
-    margin: 0 0 8px 0;
+    margin: 0;
+    font-size: 26px;
     color: #0f172a;
-    font-size: 24px;
-    font-weight: 600;
 }
 
 .header-text p {
-    margin: 0;
     color: #64748b;
-    font-size: 15px;
+    margin-top: 5px;
 }
 
-/* Teacher Add Button (Yellow to match the teacher theme) */
+/* =========================================
+   BUTTON
+========================================= */
+
 .add-btn.teacher-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background-color: #f59e0b;
+    gap: 10px;
+
+    background: #f59e0b;
     color: white;
+
     border: none;
     border-radius: 8px;
+
     padding: 12px 20px;
-    font-size: 14px;
-    font-weight: 600;
+
     cursor: pointer;
-    transition: background-color 0.2s;
+
+    font-weight: 600;
 }
 
 .add-btn.teacher-btn:hover {
-    background-color: #d97706;
+    background: #d97706;
 }
 
-/* Main White Card */
+/* =========================================
+   TABLE CARD
+========================================= */
+
 .table-card {
     background: white;
-    border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
     border: 1px solid #e2e8f0;
 }
 
-/* Search Bar */
+/* =========================================
+   SEARCH
+========================================= */
+
 .search-container {
     position: relative;
-    display: flex;
-    align-items: center;
     margin-bottom: 25px;
 }
 
 .search-icon {
     position: absolute;
+    top: 14px;
     left: 14px;
     color: #94a3b8;
-    font-size: 18px;
 }
 
 .search-container input {
     width: 100%;
-    padding: 14px 14px 14px 45px;
-    border: 1px solid #e2e8f0;
+    padding: 14px 14px 14px 42px;
+
+    border: 1px solid #cbd5e1;
     border-radius: 8px;
-    font-size: 14px;
-    color: #334155;
+
     outline: none;
-    transition: border-color 0.2s;
 }
 
 .search-container input:focus {
     border-color: #f59e0b;
 }
 
-/* Data Table */
+/* =========================================
+   TABLE
+========================================= */
+
 .data-table {
     width: 100%;
     border-collapse: collapse;
-    text-align: left;
 }
 
 .data-table th {
+    text-align: left;
+    padding: 15px;
     color: #64748b;
-    font-weight: 600;
-    font-size: 14px;
-    padding: 16px 10px;
     border-bottom: 1px solid #e2e8f0;
 }
 
 .data-table td {
-    color: #334155;
-    font-size: 14px;
-    padding: 16px 10px;
+    padding: 15px;
     border-bottom: 1px solid #f1f5f9;
 }
 
-.data-table tr:last-child td {
-    border-bottom: none;
-}
+/* =========================================
+   BADGES
+========================================= */
 
-/* Role Badges */
 .role-badge {
-    padding: 4px 10px;
-    border-radius: 20px;
+    padding: 5px 12px;
+    border-radius: 30px;
     font-size: 12px;
-    font-weight: 500;
-    display: inline-block;
+    font-weight: 600;
 }
 
-.role-badge.section-head {
-    background-color: #fce7f3;
-    color: #be185d;
+.subject-teacher {
+    background: #dcfce7;
+    color: #15803d;
 }
 
-.role-badge.class-teacher {
-    background-color: #e0e7ff;
-    color: #4338ca;
-}
+/* =========================================
+   ACTION BUTTONS
+========================================= */
 
-.role-badge.subject-teacher {
-    background-color: #d1fae5;
-    color: #047857;
-}
-
-/* Action Icons */
 .action-icons {
     display: flex;
     gap: 15px;
@@ -143,180 +143,231 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 16px;
-    transition: opacity 0.2s;
-    padding: 0;
+    font-size: 18px;
 }
 
-.icon-btn:hover {
-    opacity: 0.7;
+.edit-icon {
+    color: #f59e0b;
 }
 
-.edit-icon { color: #f59e0b; }
-.delete-icon { color: #ef4444; }
+.delete-icon {
+    color: #ef4444;
+}
 
-/* =========================================================
-   AUDIT TRAIL MODAL & EDIT MODAL STYLING
-========================================================= */
+/* =========================================
+   MODAL
+========================================= */
+
 .modal-overlay {
     position: fixed;
+
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(15, 23, 42, 0.6);
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(15, 23, 42, 0.65);
+
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+
+    z-index: 999;
 }
 
 .modal-box {
     background: white;
     padding: 30px;
-    border-radius: 12px;
-    width: 450px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
 }
 
 .scrollable-modal {
+    width: 700px;
     max-height: 90vh;
     overflow-y: auto;
-    width: 600px;
 }
+
+/* =========================================
+   MODAL HEADER
+========================================= */
 
 .modal-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
+    gap: 10px;
+
+    margin-bottom: 25px;
 }
 
 .warning-icon {
+    color: #f59e0b;
     font-size: 24px;
 }
 
-.modal-box h2 {
-    margin: 0;
-    color: #0f172a;
-    font-size: 1.4rem;
-}
-
-.modal-box p {
-    color: #475569;
-    font-size: 0.95rem;
-    line-height: 1.5;
-    margin-bottom: 20px;
-}
+/* =========================================
+   FORM
+========================================= */
 
 .modal-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 20px;
 }
 
 .modal-form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     margin-bottom: 20px;
 }
 
 .modal-form-group label {
-    font-size: 0.9rem;
+    margin-bottom: 8px;
     font-weight: 600;
     color: #334155;
 }
 
 .modal-form-group input,
-.modal-form-group select,
-.modal-form-group textarea {
-    width: 100%;
+.modal-form-group select {
     padding: 12px;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
-    font-family: inherit;
-    font-size: 0.95rem;
     outline: none;
-    transition: border-color 0.2s;
-    background-color: white;
-    box-sizing: border-box;
 }
 
 .modal-form-group input:focus,
-.modal-form-group select:focus,
-.modal-form-group textarea:focus {
+.modal-form-group select:focus {
     border-color: #f59e0b;
 }
 
 .modal-form-group input:disabled {
-    background-color: #f1f5f9;
-    color: #94a3b8;
-    cursor: not-allowed;
-    border-color: #e2e8f0;
+    background: #f1f5f9;
 }
+
+/* =========================================
+   SUBJECT CHECKBOXES
+========================================= */
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: #f8fafc;
+
+    padding: 10px;
+    border-radius: 8px;
+
+    border: 1px solid #e2e8f0;
+}
+
+.checkbox-item:hover {
+    border-color: #f59e0b;
+    background: #fef3c7;
+}
+
+/* =========================================
+   PASSWORD SECTION
+========================================= */
+
+.password-section {
+    margin-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+}
+
+.password-title {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.password-description {
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.inline-form-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.inline-form-message.success {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.inline-form-message.error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
 
 .modal-actions {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
+
+    margin-top: 25px;
 }
 
 .cancel-btn {
     padding: 10px 16px;
-    background: white;
+
     border: 1px solid #cbd5e1;
     border-radius: 8px;
-    color: #475569;
-    font-weight: 600;
-    cursor: pointer;
-}
 
-.cancel-btn:hover {
-    background: #f8fafc;
+    background: white;
+    cursor: pointer;
 }
 
 .confirm-delete-btn {
     padding: 10px 16px;
-    background: #ef4444;
+
     border: none;
     border-radius: 8px;
+
+    background: #f59e0b;
     color: white;
-    font-weight: 600;
+
     cursor: pointer;
 }
 
-.confirm-delete-btn:disabled {
-    background: #fca5a5;
-    cursor: not-allowed;
+.confirm-delete-btn:hover {
+    background: #d97706;
 }
 
-/* =========================================================
-   INLINE FORM MESSAGES
-========================================================= */
-.inline-form-message {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    font-weight: 600;
+/* =========================================
+   SMALL NOTE
+========================================= */
+
+.field-note {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-text {
     text-align: center;
-    animation: fadeIn 0.3s ease-in-out;
-}
-
-.inline-form-message.success {
-    background-color: #dcfce7;
-    color: #15803d;
-    border: 1px solid #bbf7d0;
-}
-
-.inline-form-message.error {
-    background-color: #fee2e2;
-    color: #b91c1c;
-    border: 1px solid #fecaca;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
+    padding: 30px;
+    color: #64748b;
 }
