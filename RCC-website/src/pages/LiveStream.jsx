@@ -1,9 +1,12 @@
 import { Radio, Calendar, Clock } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import "../styles/index.css";
 
 export function LiveStream() {
+
   const { t } = useLanguage();
+
   const upcomingStreams = [
     {
       titleKey: "stream1.title",
@@ -26,87 +29,132 @@ export function LiveStream() {
   ];
 
   return (
-    <div>
-      {/* Hero Banner */}
-      <section className="relative h-80 overflow-hidden">
+    <div className="live-page">
+
+      {/* HERO */}
+      <section className="live-hero">
+
         <ImageWithFallback
           src="https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=1920&h=1080&fit=crop"
           alt="Live Stream"
-          className="w-full h-full object-cover"
+          className="live-hero-image"
         />
 
-        <div className="absolute inset-0 bg-[#002147]/70 flex items-center justify-center">
-          <h1 className="text-5xl md:text-6xl text-white">
+        <div className="live-hero-overlay">
+          <h1 className="live-hero-title">
             {t("livestream.title")}
           </h1>
         </div>
+
       </section>
 
-      {/* Current Live Stream */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="bg-gradient-to-br from-[#002147] to-[#003366] rounded-lg overflow-hidden shadow-2xl">
-            <div className="aspect-video bg-black/50 flex items-center justify-center">
-              <div className="text-center">
-                <Radio className="w-24 h-24 text-[#FFD700] mx-auto mb-6 animate-pulse" />
-                <p className="text-2xl text-white mb-4">
+      {/* LIVE SECTION */}
+      <section className="live-current-section">
+
+        <div className="live-container">
+
+          <div className="live-card">
+
+            <div className="live-video-box">
+
+              <div className="live-video-content">
+
+                <Radio className="live-radio-icon" />
+
+                <p className="live-offline-text">
                   {t("livestream.noLive")}
                 </p>
+
               </div>
+
             </div>
-            <div className="p-8 text-white">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="px-4 py-2 bg-red-600 rounded-full text-sm flex items-center gap-2">
-                  <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                  <span>OFFLINE</span>
-                </div>
+
+            <div className="live-details">
+
+              <div className="live-status">
+
+                <span className="live-dot"></span>
+
+                <span>OFFLINE</span>
+
               </div>
-              <h2 className="text-3xl mb-4">School Events Live Stream</h2>
-              <p className="text-gray-300">
+
+              <h2 className="live-heading">
+                School Events Live Stream
+              </h2>
+
+              <p className="live-description">
                 Stay connected with RRCC by watching our live streams of major
-                school events, ceremonies, and competitions. Enable
-                notifications to never miss a stream!
+                school events, ceremonies, and competitions.
               </p>
+
             </div>
+
           </div>
+
         </div>
+
       </section>
 
-      {/* Upcoming Streams */}
-      <section className="py-20 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-[#002147] mb-4">
+      {/* UPCOMING */}
+      <section className="upcoming-section">
+
+        <div className="live-container">
+
+          <div className="upcoming-header">
+
+            <h2 className="upcoming-title">
               {t("livestream.upcoming")}
             </h2>
-            <div className="w-24 h-1 bg-[#FFD700] mx-auto"></div>
+
+            <div className="upcoming-line"></div>
+
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <div className="upcoming-grid">
+
             {upcomingStreams.map((stream, index) => (
-              <div
-                key={index}
-                className="bg-white p-8 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              >
-                <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center mb-6">
-                  <Calendar className="w-8 h-8 text-[#FFD700]" />
+
+              <div key={index} className="upcoming-card">
+
+                <div className="upcoming-icon-box">
+
+                  <Calendar className="upcoming-icon" />
+
                 </div>
-                <h3 className="text-[#002147] mb-4">{t(stream.titleKey)}</h3>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-3 text-gray-600">
-                    <Calendar className="w-5 h-5" />
+
+                <h3 className="upcoming-card-title">
+                  {t(stream.titleKey)}
+                </h3>
+
+                <div className="upcoming-info">
+
+                  <div className="upcoming-info-row">
+                    <Calendar className="small-icon" />
                     <span>{stream.date}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-gray-600">
-                    <Clock className="w-5 h-5" />
+
+                  <div className="upcoming-info-row">
+                    <Clock className="small-icon" />
                     <span>{stream.time}</span>
                   </div>
+
                 </div>
-                <p className="text-gray-700">{t(stream.descriptionKey)}</p>
+
+                <p className="upcoming-description">
+                  {t(stream.descriptionKey)}
+                </p>
+
               </div>
+
             ))}
+
           </div>
+
         </div>
+
       </section>
+
     </div>
   );
 }
