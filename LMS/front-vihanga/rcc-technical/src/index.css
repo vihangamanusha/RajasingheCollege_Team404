@@ -702,24 +702,33 @@ body {
 .form-group {
   display: flex;
   flex-direction: column;
-  
+  gap: 4px;
 }
 
 .form-group label {
   font-size: 16px;
   font-weight: 600;
-  margin-bottom: 10px;
-  color: #334155;
+  color: #242d3b;
 }
-
+.student-modal .form-group label {
+  display: block;
+  margin-bottom: 0px !important;
+  padding-bottom: 0px !important;
+  line-height: 2.3;
+}
+.student-modal .form-group input,
+.student-modal .form-group select,
+.student-modal .form-group textarea {
+  margin-top: 0px !important;
+}
 /* INPUTS */
 
 .student-modal input,
 .student-modal select,
 .student-modal textarea {
   width: 100%;
-  height: 55px;
-  padding: 16px;
+  height: 45px;
+  padding: 13px;
   border: 1px solid #dbe2ea;
   border-radius: 14px;
   font-size: 14px;
@@ -739,7 +748,7 @@ body {
 /* TEXTAREA */
 
 .student-modal textarea {
-  min-height: 120px;
+  min-height: 100px;
   resize: none;
 }
 
@@ -763,6 +772,7 @@ body {
   border-radius: 12px;
   font-size: 16px;
   cursor: pointer;
+  
 }
 
 /* SAVE BUTTON */
@@ -792,6 +802,7 @@ body {
   border-radius: 12px;
   font-size: 16px;
   cursor: pointer;
+  width:150px;
 }
 
 .clearb-btn:hover{

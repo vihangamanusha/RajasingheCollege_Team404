@@ -202,118 +202,167 @@ export default function StudentRegister() {
 
             <h2>Register Student</h2>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="student-form-grid">
 
-              <input
-                type="text"
-                name="fullName"
-                placeholder="Full Name"
-                value={form.fullName}
-                onChange={handleChange}
-                required
-              />
+  {/* FULL NAME */}
+  <div className="form-group">
+    <label>Full Name</label>
+    <input
+      type="text"
+      name="fullName"
+      placeholder="Enter full name"
+      value={form.fullName}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-              <input
-                type="text"
-                name="studentId"
-                placeholder="Admission Number"
-                value={form.studentId}
-                onChange={handleChange}
-                required
-              />
+  {/* ADMISSION NUMBER */}
+  <div className="form-group">
+    <label>Admission Number</label>
+    <input
+      type="text"
+      name="studentId"
+      placeholder="Enter admission number"
+      value={form.studentId}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-              
+  {/* GRADE */}
+  <div className="form-group">
+    <label>Grade</label>
+    <select
+      name="Grade"
+      value={form.Grade}
+      onChange={handleChange}
+      required
+    >
+      <option value="">Select Grade</option>
+      <option value="Grade 6">Grade 6</option>
+      <option value="Grade 7">Grade 7</option>
+      <option value="Grade 8">Grade 8</option>
+      <option value="Grade 9">Grade 9</option>
+      <option value="Grade 10">Grade 10</option>
+      <option value="Grade 11">Grade 11</option>
+    </select>
+  </div>
 
-             <select
-                name="Grade"
-                value={form.Grade}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Grade</option>
-                <option value="Grade 6">Grade 6</option>
-                <option value="Grade 7">Grade 7</option>
-                <option value="Grade 8">Grade 8</option>
-                <option value="Grade 9">Grade 9</option>
-                <option value="Grade 10">Grade 10</option>
-                <option value="Grade 11">Grade 11</option>
-              </select>
+  {/* CLASS */}
+  <div className="form-group">
+    <label>Class</label>
+    <input
+      type="text"
+      name="studentClass"
+      placeholder="Class"
+      value={form.studentClass}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
+  {/* MEDIUM */}
+  <div className="form-group">
+    <label>Medium</label>
+    <select
+      name="medium"
+      value={form.medium}
+      onChange={handleChange}
+      required
+    >
+      <option value="">Select Medium</option>
+      <option value="Sinhala">Sinhala</option>
+      <option value="English">English</option>
+      <option value="Tamil">Tamil</option>
+    </select>
+  </div>
 
-              <input
-                type="text"
-                name="studentClass"
-                placeholder="Class"
-                value={form.studentClass}
-                onChange={handleChange}
-                required
-              />
+  {/* DATE OF BIRTH */}
+  <div className="form-group">
+    <label>Date of Birth</label>
+    <input
+      type="date"
+      name="dob"
+      value={form.dob}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-              <select
-                name="medium"
-                value={form.medium}
-                onChange={handleChange}
-                required
-              >
-                <option value="">Select Medium</option>
-                <option value="Sinhala">Sinhala</option>
-                <option value="English">English</option>
-                <option value="Tamil">Tamil</option>
-              </select>
+  {/* PASSWORD */}
+  <div className="form-group full-width">
+    <label>Password</label>
+    <input
+      type="password"
+      name="password"
+      placeholder="Create password for LMS access"
+      value={form.password}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-              
-              <input
-                type="date"
-                name="dob"
-                value={form.dob}
-                onChange={handleChange}
-                required
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={form.password}
-                onChange={handleChange}
-                required
-              />
-              
-              <textarea
-                name="address"
-                placeholder="Address"
-                value={form.address}
-                onChange={handleChange}
-                required
-              />
-              <input
-                type="text"
-                name="contactName"
-                placeholder="Contact Name"
-                value={form.contactName}
-                onChange={handleChange}
-                required
-              />
+  {/* ADDRESS */}
+  <div className="form-group full-width">
+    <label>Address</label>
+    <textarea
+      name="address"
+      placeholder="Enter address"
+      value={form.address}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
+  {/* GUARDIAN NAME */}
+  <div className="form-group">
+    <label>Guardian Name</label>
+    <input
+      type="text"
+      name="contactName"
+      placeholder="Guardian name"
+      value={form.contactName}
+      onChange={handleChange}
+      required
+    />
+  </div>
 
-              <input
-                type="text"
-                name="contactNo"
-                placeholder="Contact Number"
-                value={form.contactNo}
-                onChange={handleChange}
-                required
-              />
+  {/* CONTACT NUMBER */}
+  <div className="form-group">
+    <label>Guardian Contact Number</label>
+    <input
+      type="text"
+      name="contactNo"
+      placeholder="Phone number"
+      value={form.contactNo}
+      onChange={handleChange}
+      required
+    />
+  </div>
+
+  {/* BUTTONS */}
+  <div className="modal-btns">
+
+    <button
+      type="reset"
+      className="clearb-btn"
+    >
+      Clear
+    </button>
+
+    <button
+      type="submit"
+      className="save-btn"
+    >
+      Save Student
+    </button>
+
+  </div>
+
+</form>
         
-              <button type="reset" className="clearb-btn">
-                Clear
-              </button>
               
-
-              <button type="submit" className="save-btn">
-                Save Student
-              </button>
-
-            </form>
 
           </div>
 
