@@ -140,15 +140,20 @@ const getEmbedUrl = (url) => {
         <div className="live-container">
 
           {liveStream ? (
-            <div className="live-card">
 
-              {/* VIDEO */}
-              <iframe
-  width="100%"
-  height="800"
-  src={getEmbedUrl(liveStream.videoUrl)}
-  allowFullScreen
-/>
+  <iframe
+    width="100%"
+    height="450"
+    src={getEmbedUrl(liveStream.videoURL)}
+    title={liveStream.title}
+    allowFullScreen
+  />
+
+) : (
+
+  <p>No Live Stream</p>
+
+
 
               {/* DETAILS */}
               <div className="live-details">

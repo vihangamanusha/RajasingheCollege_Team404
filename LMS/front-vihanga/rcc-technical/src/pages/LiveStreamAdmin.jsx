@@ -1,24 +1,22 @@
 import { useEffect, useState } from "react";
 import "../index.css";
 
-
-// CONVERT YOUTUBE URL
-
+// CONVERT YOUTUBE URL TO EMBED
 const getEmbedUrl = (url) => {
   if (!url) return "";
 
   url = url.trim();
 
-  // already embed link
+  // already embed
   if (url.includes("embed")) return url;
 
-  // youtube watch?v=
+  // watch?v=
   if (url.includes("watch?v=")) {
     const id = url.split("watch?v=")[1].split("&")[0];
     return `https://www.youtube.com/embed/${id}`;
   }
 
-  // youtu.be short link
+  // youtu.be
   if (url.includes("youtu.be/")) {
     const id = url.split("youtu.be/")[1].split("?")[0];
     return `https://www.youtube.com/embed/${id}`;
@@ -40,19 +38,18 @@ export default function LiveStreamAdmin() {
   });
 
   const [message, setMessage] = useState("");
+
   const [showForm, setShowForm] = useState(false);
 
-  // UPDATE MODE
   const [editingId, setEditingId] = useState(null);
 
-
   // LOAD STREAMS
- 
   useEffect(() => {
     loadStreams();
   }, []);
 
   const loadStreams = async () => {
+
     try {
 
       const response = await fetch(
@@ -68,9 +65,49 @@ export default function LiveStreamAdmin() {
     }
   };
 
+  // START STREAMING
+  const startStreaming = async (id) => {
 
-  // ADD OR UPDATE STREAM
+    try {
 
+      await fetch(
+        `http://localhost:8080/api/livestreams/${id}/start`,
+        {
+          method: "PUT",
+        }
+      );
+
+      loadStreams();
+
+      setMessage("Streaming started");
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // STOP STREAMING
+  const stopStreaming = async (id) => {
+
+    try {
+
+      await fetch(
+        `http://localhost:8080/api/livestreams/${id}/stop`,
+        {
+          method: "PUT",
+        }
+      );
+
+      loadStreams();
+
+      setMessage("Streaming stopped");
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // ADD OR UPDATE
   const handleSubmit = async (e) => {
 
     e.preventDefault();
@@ -79,7 +116,6 @@ export default function LiveStreamAdmin() {
 
       let response;
 
-      // UPDATE
       if (editingId) {
 
         response = await fetch(
@@ -95,7 +131,6 @@ export default function LiveStreamAdmin() {
 
       } else {
 
-        // ADD
         response = await fetch(
           "http://localhost:8080/api/livestreams",
           {
@@ -112,8 +147,8 @@ export default function LiveStreamAdmin() {
 
         setMessage(
           editingId
-            ? "Live stream updated successfully"
-            : "Live stream added successfully"
+            ? "Stream updated successfully"
+            : "Stream added successfully"
         );
 
         setForm({
@@ -131,6 +166,7 @@ export default function LiveStreamAdmin() {
         loadStreams();
 
       } else {
+
         setMessage("Operation failed");
       }
 
@@ -142,9 +178,7 @@ export default function LiveStreamAdmin() {
     }
   };
 
-
   // DELETE STREAM
-
   const deleteStream = async (id) => {
 
     try {
@@ -163,9 +197,7 @@ export default function LiveStreamAdmin() {
     }
   };
 
-
   // EDIT STREAM
-
   const editStream = (stream) => {
 
     setForm({
@@ -185,7 +217,7 @@ export default function LiveStreamAdmin() {
 
     <div className="livestream-admin">
 
-
+      {/* HEADER */}
       <div className="live-header">
 
         <div>
@@ -200,7 +232,7 @@ export default function LiveStreamAdmin() {
 
           <p className="live-subtitle">
             Manage school live streams,
-            online events, and video broadcasts.
+            online events, and broadcasts.
           </p>
 
         </div>
@@ -214,16 +246,14 @@ export default function LiveStreamAdmin() {
 
       </div>
 
-      
-
+      {/* MESSAGE */}
       {message && (
         <p className="message">
           {message}
         </p>
       )}
 
-      {/* POPUP FORM  */}
-
+      {/* POPUP */}
       {showForm && (
 
         <div
@@ -240,8 +270,8 @@ export default function LiveStreamAdmin() {
 
               <h2>
                 {editingId
-                  ? "Update Live Stream"
-                  : "Add Live Stream"}
+                  ? "Update Stream"
+                  : "Add Stream"}
               </h2>
 
               <button
@@ -251,7 +281,6 @@ export default function LiveStreamAdmin() {
                   setShowForm(false);
 
                   setEditingId(null);
-
                 }}
               >
                 ×
@@ -259,8 +288,7 @@ export default function LiveStreamAdmin() {
 
             </div>
 
-  
-
+            {/* FORM */}
             <form
               onSubmit={handleSubmit}
               className="stream-form"
@@ -270,7 +298,7 @@ export default function LiveStreamAdmin() {
 
               <input
                 type="text"
-                placeholder="Enter stream title"
+                placeholder="Enter title"
                 value={form.title}
                 onChange={(e) =>
                   setForm({
@@ -312,7 +340,7 @@ export default function LiveStreamAdmin() {
               <label>Description</label>
 
               <textarea
-                placeholder="Enter stream description"
+                placeholder="Description"
                 value={form.description}
                 onChange={(e) =>
                   setForm({
@@ -338,8 +366,7 @@ export default function LiveStreamAdmin() {
                 required
               />
 
-              
-
+              {/* BUTTONS */}
               <div className="form-buttons">
 
                 <button
@@ -383,8 +410,7 @@ export default function LiveStreamAdmin() {
 
       )}
 
-    
-
+      {/* STREAM LIST */}
       <div className="stream-list">
 
         {streams.map((stream) => (
@@ -394,28 +420,22 @@ export default function LiveStreamAdmin() {
             className="stream-card"
           >
 
-     
-
+            {/* VIDEO */}
             <div className="stream-video">
 
-              <div className="stream-video">
-
-  <iframe
-    width="100%"
-    height="450"
-    src={getEmbedUrl(stream.videoURL)}
-    title={stream.title}
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    allowFullScreen
-    frameBorder="0"
-  ></iframe>
-
-</div>
+              <iframe
+                width="100%"
+                height="250"
+                src={getEmbedUrl(stream.videoURL)}
+                title={stream.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                frameBorder="0"
+              ></iframe>
 
             </div>
 
-            {/*  CONTENT  */}
-
+            {/* CONTENT */}
             <div className="stream-content">
 
               <h2>{stream.title}</h2>
@@ -428,8 +448,7 @@ export default function LiveStreamAdmin() {
                 {stream.description}
               </p>
 
-              
-
+              {/* BUTTONS */}
               <div className="card-buttons">
 
                 <button
@@ -454,10 +473,10 @@ export default function LiveStreamAdmin() {
                 </button>
 
                 <button
-                   className="stop-btn"
-                   onClick={() => stopStreaming(stream.id)}
+                  className="stop-btn"
+                  onClick={() => stopStreaming(stream.id)}
                 >
-                   Stop Streaming
+                  Stop Streaming
                 </button>
 
               </div>
