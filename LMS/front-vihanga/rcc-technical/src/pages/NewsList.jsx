@@ -169,13 +169,13 @@ export default function NewsList() {
         <div className="tabs">
           {tabs.map((tab) => (
            <button
-    key={tab.name}
-    type="button"
-    className="tab"
-    onClick={() => navigate(tab.path)}
-  >
-    {tab.name}
-  </button>
+             key={tab.name}
+             type="button"
+             className="tab"
+             onClick={() => navigate(tab.path)}
+           >
+             {tab.name}
+           </button>
           ))}
         </div>
 

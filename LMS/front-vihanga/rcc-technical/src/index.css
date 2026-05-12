@@ -194,6 +194,11 @@ button {
   font-weight: 600;
 }
 
+.tab:hover {
+  background: white;
+  color: #1c2f55;
+} 
+
 .tab.active {
   background: #ffffff;
   color: #1c2f55;
