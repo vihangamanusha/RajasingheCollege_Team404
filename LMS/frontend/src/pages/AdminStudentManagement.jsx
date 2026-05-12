@@ -6,24 +6,25 @@ import "./AdminStudentManagement.css";
 export default function AdminStudentManagement() {
     const navigate = useNavigate();
 
+    // =========================
     // STATE MANAGEMENT
+    // =========================
     const [searchTerm, setSearchTerm] = useState("");
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // =========================
-    // DELETE MODAL STATE
-    // =========================
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
-    const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" }); // Inline message state
+    const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" });
 
-    // =========================
-    // EDIT MODAL STATE
-    // =========================
     const [showEditModal, setShowEditModal] = useState(false);
-    const [editMessage, setEditMessage] = useState({ text: "", type: "" }); // Inline message state
-    const [originalEditData, setOriginalEditData] = useState(null); // Change Tracker
+
+    // NEW: fieldErrors stores specific messages for each input (e.g., { fullName: "Error..." })
+    const [fieldErrors, setFieldErrors] = useState({});
+    // generalMessage handles success or server-wide errors
+    const [generalMessage, setGeneralMessage] = useState({ text: "", type: "" });
+
+    const [originalEditData, setOriginalEditData] = useState(null);
     const [editFormData, setEditFormData] = useState({
         username: "", userId: "", email: "", password: "",
         fullName: "", dateOfBirth: "", address: "", medium: "Sinhala", contactNumber: ""
@@ -58,18 +59,15 @@ export default function AdminStudentManagement() {
     }, [searchTerm]);
 
     // =========================
-    // FULL PROFILE EDIT LOGIC
+    // EDIT LOGIC & FIELD VALIDATION
     // =========================
     const triggerEdit = async (student) => {
-        setEditMessage({ text: "", type: "" }); // Clear old messages
+        setFieldErrors({}); // Clear old errors
+        setGeneralMessage({ text: "", type: "" });
         setShowEditModal(true);
 
-        const initialData = {
-            username: student.username, userId: student.userId, email: student.email || "",
-            password: "", fullName: "Loading...", dateOfBirth: "", address: "",
-            medium: "Sinhala", contactNumber: ""
-        };
-        setEditFormData(initialData);
+        // Placeholder while fetching full profile
+        setEditFormData({ ...student, password: "", fullName: "Loading..." });
 
         try {
             const token = localStorage.getItem("token");
@@ -80,9 +78,7 @@ export default function AdminStudentManagement() {
             if (response.ok) {
                 const fullProfile = await response.json();
                 const completeData = {
-                    username: student.username,
-                    userId: student.userId,
-                    email: student.email || "",
+                    ...student,
                     password: "",
                     fullName: fullProfile.fullName || "",
                     dateOfBirth: fullProfile.dateOfBirth || "",
@@ -91,29 +87,66 @@ export default function AdminStudentManagement() {
                     contactNumber: fullProfile.contactNumber || ""
                 };
                 setEditFormData(completeData);
-                setOriginalEditData(completeData); // Save snapshot for change tracking
+                setOriginalEditData(completeData);
             }
         } catch (error) {
-            setEditMessage({ text: "Failed to fetch full profile data.", type: "error" });
+            setGeneralMessage({ text: "Failed to fetch full profile data.", type: "error" });
         }
     };
 
     const submitEdit = async (e) => {
         e.preventDefault();
-        setEditMessage({ text: "", type: "" }); // Clear previous messages
+        setFieldErrors({}); // Reset field errors
+        setGeneralMessage({ text: "", type: "" }); // Reset general message
 
-        // 1. CHECK FOR CHANGES (Compare current form with original data)
+        const errors = {};
+
+        // 1. Name Check: Letters and spaces only
+        if (!/^[a-zA-Z\s]+$/.test(editFormData.fullName)) {
+            errors.fullName = "Student Name can only contain letters and spaces.";
+        }
+
+        // 2. Address Check: Letters, numbers, and commas only
+        if (!/^[a-zA-Z0-9\s,]+$/.test(editFormData.address)) {
+            errors.address = "Address can only contain letters, numbers, and commas.";
+        }
+
+        // 3. Contact Check: Exactly 10 digits
+        if (!/^\d{10}$/.test(editFormData.contactNumber)) {
+            errors.contactNumber = "Contact number must be exactly 10 digits.";
+        }
+
+        // 4. Email Check
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (editFormData.email && !emailPattern.test(editFormData.email)) {
+            errors.email = "Please enter a valid email address.";
+        }
+
+        // 5. Password Check (only if they are changing it)
+        if (editFormData.password.trim() !== "" && editFormData.password.length < 8) {
+            errors.password = "New password must be at least 8 characters.";
+        }
+
+        // If any errors were found, update state and STOP the submission
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
+            return;
+        }
+
+        // 6. Change Detection
         const hasChanges = Object.keys(originalEditData).some(key => {
-            if (key === 'password') return editFormData.password.trim() !== ""; // Password is a special case
+            if (key === 'password') return editFormData.password.trim() !== "";
             return originalEditData[key] !== editFormData[key];
         });
 
         if (!hasChanges) {
-            setEditMessage({ text: "No changes detected. Please edit a field to save.", type: "error" });
+            setGeneralMessage({ text: "No changes detected to save.", type: "error" });
             return;
         }
 
-        // 2. SUBMIT IF CHANGED
+        // ---------------------------------------------------------
+        // API SUBMISSION
+        // ---------------------------------------------------------
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/admin/users/student/update/${editFormData.username}`, {
@@ -122,44 +155,31 @@ export default function AdminStudentManagement() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                // FIXED JSON BODY: Include userId/username and handle empty dates!
                 body: JSON.stringify({
-                    userId: editFormData.userId,
-                    username: editFormData.username,
-                    email: editFormData.email,
-                    password: editFormData.password,
-                    fullName: editFormData.fullName,
-                    dateOfBirth: editFormData.dateOfBirth === "" ? null : editFormData.dateOfBirth,
-                    address: editFormData.address,
-                    medium: editFormData.medium,
-                    contactNumber: editFormData.contactNumber
+                    ...editFormData,
+                    dateOfBirth: editFormData.dateOfBirth === "" ? null : editFormData.dateOfBirth
                 })
             });
 
             if (response.ok) {
-                setEditMessage({ text: "Student profile successfully updated!", type: "success" });
+                setGeneralMessage({ text: "Student profile updated successfully! ✅", type: "success" });
                 fetchStudents();
-
-                // Wait 1.5 seconds, then close modal
-                setTimeout(() => {
-                    setShowEditModal(false);
-                }, 1500);
+                setTimeout(() => setShowEditModal(false), 1500);
             } else {
-                // Fetch the actual text from the backend so we know exactly why it failed
                 const errorText = await response.text();
-                setEditMessage({ text: `Failed to update: ${errorText}`, type: "error" });
+                setGeneralMessage({ text: `Update failed: ${errorText}`, type: "error" });
             }
         } catch (error) {
-            setEditMessage({ text: "Server error during update.", type: "error" });
+            setGeneralMessage({ text: "Server error during update.", type: "error" });
         }
     };
 
     // =========================
-    // PERMANENT DELETE LOGIC
+    // DELETE LOGIC
     // =========================
     const triggerDelete = (username) => {
         setUserToDelete(username);
-        setDeleteMessage({ text: "", type: "" }); // Clear old messages
+        setDeleteMessage({ text: "", type: "" });
         setShowDeleteModal(true);
     };
 
@@ -175,8 +195,6 @@ export default function AdminStudentManagement() {
             if (response.ok) {
                 setDeleteMessage({ text: "Student permanently deleted.", type: "success" });
                 fetchStudents();
-
-                // Wait 1.5 seconds, then close modal
                 setTimeout(() => {
                     setShowDeleteModal(false);
                     setUserToDelete(null);
@@ -191,7 +209,7 @@ export default function AdminStudentManagement() {
 
     return (
         <div className="admin-student-management-container">
-
+            {/* Header section */}
             <div className="page-header-flex">
                 <div className="header-text">
                     <h1>Student Management</h1>
@@ -202,12 +220,13 @@ export default function AdminStudentManagement() {
                 </button>
             </div>
 
+            {/* Table section */}
             <div className="table-card">
                 <div className="search-container">
                     <FiSearch className="search-icon" />
                     <input
                         type="text"
-                        placeholder="Search active students by username, ID, or email..."
+                        placeholder="Search active students..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -235,12 +254,8 @@ export default function AdminStudentManagement() {
                                 <td>{student.createdDate}</td>
                                 <td>
                                     <div className="action-icons">
-                                        <button className="icon-btn edit-icon" title="Edit Student" onClick={() => triggerEdit(student)}>
-                                            <FiEdit />
-                                        </button>
-                                        <button className="icon-btn delete-icon" title="Permanently Delete" onClick={() => triggerDelete(student.username)}>
-                                            <FiTrash2 />
-                                        </button>
+                                        <button className="icon-btn edit-icon" onClick={() => triggerEdit(student)}><FiEdit /></button>
+                                        <button className="icon-btn delete-icon" onClick={() => triggerDelete(student.username)}><FiTrash2 /></button>
                                     </div>
                                 </td>
                             </tr>
@@ -248,15 +263,9 @@ export default function AdminStudentManagement() {
                         </tbody>
                     </table>
                 )}
-
-                {!loading && students.length === 0 && (
-                    <p style={{ textAlign: "center", marginTop: "20px", color: "#94a3b8" }}>
-                        No students found matching your search.
-                    </p>
-                )}
             </div>
 
-            {/* EXPANDED EDIT MODAL */}
+            {/* EDIT MODAL WITH FIELD-SPECIFIC ERRORS */}
             {showEditModal && (
                 <div className="modal-overlay">
                     <div className="modal-box scrollable-modal">
@@ -272,14 +281,21 @@ export default function AdminStudentManagement() {
                                     <input type="text" value={editFormData.userId} disabled />
                                 </div>
                                 <div className="modal-form-group">
-                                    <label>System Username (Locked)</label>
+                                    <label>Username (Locked)</label>
                                     <input type="text" value={editFormData.username} disabled />
                                 </div>
                             </div>
 
+                            {/* FULL NAME FIELD */}
                             <div className="modal-form-group">
                                 <label>Full Name</label>
-                                <input type="text" value={editFormData.fullName} onChange={(e) => setEditFormData({...editFormData, fullName: e.target.value})} required />
+                                <input
+                                    type="text"
+                                    className={fieldErrors.fullName ? "error-input" : ""}
+                                    value={editFormData.fullName}
+                                    onChange={(e) => setEditFormData({...editFormData, fullName: e.target.value})}
+                                />
+                                {fieldErrors.fullName && <span className="error-text">{fieldErrors.fullName}</span>}
                             </div>
 
                             <div className="modal-grid">
@@ -287,46 +303,69 @@ export default function AdminStudentManagement() {
                                     <label>Date of Birth</label>
                                     <input type="date" value={editFormData.dateOfBirth} onChange={(e) => setEditFormData({...editFormData, dateOfBirth: e.target.value})} required />
                                 </div>
+                                {/* CONTACT NUMBER FIELD */}
                                 <div className="modal-form-group">
                                     <label>Contact Number</label>
-                                    <input type="text" value={editFormData.contactNumber} onChange={(e) => setEditFormData({...editFormData, contactNumber: e.target.value})} required />
+                                    <input
+                                        type="text"
+                                        className={fieldErrors.contactNumber ? "error-input" : ""}
+                                        value={editFormData.contactNumber}
+                                        onChange={(e) => setEditFormData({...editFormData, contactNumber: e.target.value})}
+                                    />
+                                    {fieldErrors.contactNumber && <span className="error-text">{fieldErrors.contactNumber}</span>}
                                 </div>
                             </div>
 
+                            {/* ADDRESS FIELD */}
                             <div className="modal-form-group">
                                 <label>Home Address</label>
-                                <textarea value={editFormData.address} onChange={(e) => setEditFormData({...editFormData, address: e.target.value})} rows="2" required />
+                                <textarea
+                                    className={fieldErrors.address ? "error-input" : ""}
+                                    value={editFormData.address}
+                                    onChange={(e) => setEditFormData({...editFormData, address: e.target.value})}
+                                    rows="2"
+                                />
+                                {fieldErrors.address && <span className="error-text">{fieldErrors.address}</span>}
                             </div>
 
                             <div className="modal-grid">
                                 <div className="modal-form-group">
                                     <label>Study Medium</label>
                                     <select value={editFormData.medium} onChange={(e) => setEditFormData({...editFormData, medium: e.target.value})}>
-                                        <option value="Sinhala">Sinhala</option>
-                                        <option value="English">English</option>
+                                        <option value="SINHALA">Sinhala</option>
+                                        <option value="ENGLISH">English</option>
                                     </select>
                                 </div>
+                                {/* EMAIL FIELD */}
                                 <div className="modal-form-group">
                                     <label>Email Address</label>
-                                    <input type="email" value={editFormData.email} onChange={(e) => setEditFormData({...editFormData, email: e.target.value})} />
+                                    <input
+                                        type="email"
+                                        className={fieldErrors.email ? "error-input" : ""}
+                                        value={editFormData.email}
+                                        onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+                                    />
+                                    {fieldErrors.email && <span className="error-text">{fieldErrors.email}</span>}
                                 </div>
                             </div>
 
-                            <div className="modal-form-group" style={{borderTop: "1px solid #e2e8f0", paddingTop: "15px", marginTop: "10px"}}>
-                                <label style={{color: "#dc2626"}}>Administrative Password Reset (Optional)</label>
-                                <p style={{fontSize: "0.8rem", color: "#64748b", margin: "2px 0 8px 0"}}>For security, current passwords are encrypted. Type a new password here to overwrite the current one.</p>
+                            {/* PASSWORD RESET FIELD */}
+                            <div className="modal-form-group" style={{borderTop: "1px solid #e2e8f0", paddingTop: "10px"}}>
+                                <label style={{color: "#dc2626"}}>Password Overwrite (Optional)</label>
                                 <input
                                     type="password"
-                                    placeholder="Leave blank to keep current password"
+                                    className={fieldErrors.password ? "error-input" : ""}
+                                    placeholder="Min 8 characters"
                                     value={editFormData.password}
                                     onChange={(e) => setEditFormData({...editFormData, password: e.target.value})}
                                 />
+                                {fieldErrors.password && <span className="error-text">{fieldErrors.password}</span>}
                             </div>
 
-                            {/* INLINE FORM MESSAGE (EDIT) */}
-                            {editMessage.text && (
-                                <div className={`inline-form-message ${editMessage.type}`}>
-                                    {editMessage.text}
+                            {/* SUCCESS/ERROR NOTIFICATION AT BOTTOM */}
+                            {generalMessage.text && (
+                                <div className={`inline-form-message ${generalMessage.type}`}>
+                                    {generalMessage.text}
                                 </div>
                             )}
 
@@ -339,7 +378,7 @@ export default function AdminStudentManagement() {
                 </div>
             )}
 
-            {/* PERMANENT DELETE MODAL */}
+            {/* DELETE MODAL */}
             {showDeleteModal && (
                 <div className="modal-overlay">
                     <div className="modal-box">
@@ -347,23 +386,11 @@ export default function AdminStudentManagement() {
                             <FiAlertTriangle className="warning-icon" style={{color: "#dc2626"}} />
                             <h2>Permanently Delete Student?</h2>
                         </div>
-                        <p>
-                            Are you sure you want to permanently delete <strong>{userToDelete}</strong>?
-                            This action will erase all of their data from the database and <strong>cannot be undone</strong>.
-                        </p>
-
-                        {/* INLINE FORM MESSAGE (DELETE) */}
-                        {deleteMessage.text && (
-                            <div className={`inline-form-message ${deleteMessage.type}`}>
-                                {deleteMessage.text}
-                            </div>
-                        )}
-
-                        <div className="modal-actions" style={{marginTop: "25px"}}>
+                        <p>Are you sure you want to delete <strong>{userToDelete}</strong>?</p>
+                        {deleteMessage.text && <div className={`inline-form-message ${deleteMessage.type}`}>{deleteMessage.text}</div>}
+                        <div className="modal-actions">
                             <button className="cancel-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
-                            <button className="confirm-delete-btn" onClick={confirmDelete}>
-                                Yes, Permanently Delete
-                            </button>
+                            <button className="confirm-delete-btn" onClick={confirmDelete}>Delete</button>
                         </div>
                     </div>
                 </div>
