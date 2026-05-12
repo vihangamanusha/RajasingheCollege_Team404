@@ -15,6 +15,8 @@ public class Livestream {
     private String description;
     private String videoURL;
 
+    private boolean isLive = false;
+
     public Livestream() {}
 
     public Livestream(Long id, String title, String date, String time, String description, String videoURL) {
@@ -72,5 +74,13 @@ public class Livestream {
 
     public void setVideoURL(String videoURL) {
         this.videoURL = videoURL;
+    }
+
+    public boolean isLive() {
+        return isLive;
+    }
+
+    public void setLive(boolean live) {
+        isLive = live;
     }
 }
