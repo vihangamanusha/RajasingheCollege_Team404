@@ -1,6 +1,32 @@
 import { useEffect, useState } from "react";
 import "../index.css";
 
+
+// CONVERT YOUTUBE URL
+
+const getEmbedUrl = (url) => {
+  if (!url) return "";
+
+  url = url.trim();
+
+  // already embed link
+  if (url.includes("embed")) return url;
+
+  // youtube watch?v=
+  if (url.includes("watch?v=")) {
+    const id = url.split("watch?v=")[1].split("&")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  // youtu.be short link
+  if (url.includes("youtu.be/")) {
+    const id = url.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  return url;
+};
+
 export default function LiveStreamAdmin() {
 
   const [streams, setStreams] = useState([]);
@@ -10,23 +36,28 @@ export default function LiveStreamAdmin() {
     date: "",
     time: "",
     description: "",
-    videoUrl: "",
+    videoURL: "",
   });
 
   const [message, setMessage] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  // UPDATE STATE
+  // UPDATE MODE
   const [editingId, setEditingId] = useState(null);
 
+
   // LOAD STREAMS
+ 
   useEffect(() => {
     loadStreams();
   }, []);
 
   const loadStreams = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/livestreams");
+
+      const response = await fetch(
+        "http://localhost:8080/api/livestreams"
+      );
 
       const data = await response.json();
 
@@ -37,8 +68,11 @@ export default function LiveStreamAdmin() {
     }
   };
 
+
   // ADD OR UPDATE STREAM
+
   const handleSubmit = async (e) => {
+
     e.preventDefault();
 
     try {
@@ -61,7 +95,7 @@ export default function LiveStreamAdmin() {
 
       } else {
 
-        // ADD NEW
+        // ADD
         response = await fetch(
           "http://localhost:8080/api/livestreams",
           {
@@ -87,7 +121,7 @@ export default function LiveStreamAdmin() {
           date: "",
           time: "",
           description: "",
-          videoUrl: "",
+          videoURL: "",
         });
 
         setEditingId(null);
@@ -101,13 +135,18 @@ export default function LiveStreamAdmin() {
       }
 
     } catch (error) {
+
       console.log(error);
+
       setMessage("Server error");
     }
   };
 
+
   // DELETE STREAM
+
   const deleteStream = async (id) => {
+
     try {
 
       await fetch(
@@ -124,7 +163,9 @@ export default function LiveStreamAdmin() {
     }
   };
 
+
   // EDIT STREAM
+
   const editStream = (stream) => {
 
     setForm({
@@ -132,7 +173,7 @@ export default function LiveStreamAdmin() {
       date: stream.date,
       time: stream.time,
       description: stream.description,
-      videoUrl: stream.videoUrl,
+      videoURL: stream.videoURL,
     });
 
     setEditingId(stream.id);
@@ -144,10 +185,11 @@ export default function LiveStreamAdmin() {
 
     <div className="livestream-admin">
 
-      {/* HEADER */}
+
       <div className="live-header">
 
         <div>
+
           <p className="live-org">
             Rajasinghe Central College
           </p>
@@ -160,6 +202,7 @@ export default function LiveStreamAdmin() {
             Manage school live streams,
             online events, and video broadcasts.
           </p>
+
         </div>
 
         <button
@@ -171,13 +214,15 @@ export default function LiveStreamAdmin() {
 
       </div>
 
+      
+
       {message && (
         <p className="message">
           {message}
         </p>
       )}
 
-      {/* POPUP FORM */}
+      {/* POPUP FORM  */}
 
       {showForm && (
 
@@ -214,16 +259,18 @@ export default function LiveStreamAdmin() {
 
             </div>
 
-            {/* FORM */}
+  
 
             <form
               onSubmit={handleSubmit}
               className="stream-form"
             >
+
               <label>Title</label>
+
               <input
                 type="text"
-                placeholder="Title"
+                placeholder="Enter stream title"
                 value={form.title}
                 onChange={(e) =>
                   setForm({
@@ -234,7 +281,8 @@ export default function LiveStreamAdmin() {
                 required
               />
 
-                <label>Date</label>     
+              <label>Date</label>
+
               <input
                 type="date"
                 value={form.date}
@@ -246,10 +294,11 @@ export default function LiveStreamAdmin() {
                 }
                 required
               />
-                <label>Time</label>
+
+              <label>Time</label>
+
               <input
-                type="Time"
-                placeholder="Time"
+                type="time"
                 value={form.time}
                 onChange={(e) =>
                   setForm({
@@ -259,9 +308,11 @@ export default function LiveStreamAdmin() {
                 }
                 required
               />
-                <label>Description</label>
+
+              <label>Description</label>
+
               <textarea
-                placeholder="Description"
+                placeholder="Enter stream description"
                 value={form.description}
                 onChange={(e) =>
                   setForm({
@@ -271,21 +322,23 @@ export default function LiveStreamAdmin() {
                 }
                 required
               />
-                <label>Video URL</label>
+
+              <label>Video URL</label>
+
               <input
                 type="text"
-                placeholder="YouTube / Facebook Embed URL"
-                value={form.videoUrl}
+                placeholder="Paste YouTube URL"
+                value={form.videoURL}
                 onChange={(e) =>
                   setForm({
                     ...form,
-                    videoUrl: e.target.value,
+                    videoURL: e.target.value,
                   })
                 }
                 required
               />
 
-              {/* BUTTONS */}
+              
 
               <div className="form-buttons">
 
@@ -295,7 +348,7 @@ export default function LiveStreamAdmin() {
                 >
                   {editingId
                     ? "Update Stream"
-                    : "Save Live Stream"}
+                    : "Save Stream"}
                 </button>
 
                 <button
@@ -312,7 +365,7 @@ export default function LiveStreamAdmin() {
                       date: "",
                       time: "",
                       description: "",
-                      videoUrl: "",
+                      videoURL: "",
                     });
 
                   }}
@@ -330,7 +383,7 @@ export default function LiveStreamAdmin() {
 
       )}
 
-      {/* STREAM LIST */}
+    
 
       <div className="stream-list">
 
@@ -341,19 +394,27 @@ export default function LiveStreamAdmin() {
             className="stream-card"
           >
 
-            {/* VIDEO */}
+     
 
             <div className="stream-video">
 
-              <iframe
-                src={stream.videoUrl}
-                title={stream.title}
-                allowFullScreen
-              ></iframe>
+              <div className="stream-video">
+
+  <iframe
+    width="100%"
+    height="450"
+    src={getEmbedUrl(stream.videoURL)}
+    title={stream.title}
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowFullScreen
+    frameBorder="0"
+  ></iframe>
+
+</div>
 
             </div>
 
-            {/* CONTENT */}
+            {/*  CONTENT  */}
 
             <div className="stream-content">
 
@@ -367,7 +428,7 @@ export default function LiveStreamAdmin() {
                 {stream.description}
               </p>
 
-              {/* BUTTONS */}
+              
 
               <div className="card-buttons">
 
