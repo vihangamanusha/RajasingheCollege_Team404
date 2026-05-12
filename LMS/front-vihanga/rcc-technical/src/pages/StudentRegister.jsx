@@ -157,8 +157,9 @@ const handleSubmit = async (e) => {
 };
 
 /*edit */
-const handleEdit = (student) => {
 
+
+  const handleEdit = (student) => {
   setForm({
     fullName: student.fullName || "",
     studentId: student.studentId || "",
@@ -170,10 +171,10 @@ const handleEdit = (student) => {
     contactNo: student.contactNo || "",
     gname: student.gname || "",
     address: student.address || "",
+    gender: student.gender || "",
   });
 
   setEditingId(student.userId);
-
   setShowModal(true);
 };
   return (

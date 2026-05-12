@@ -52,7 +52,7 @@ public class StudentController {
         existing.setGname(student.getGname());
         existing.setAddress(student.getAddress());
 
-        return service.register(existing);
+        return service.save(existing);
     }
 
     // DELETE

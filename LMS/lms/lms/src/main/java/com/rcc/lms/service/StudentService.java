@@ -21,7 +21,9 @@ public class StudentService {
 
         return repo.save(student);
     }
-
+    public com.rcc.lms.student.Student save(com.rcc.lms.student.Student student) {
+        return repo.save(student);
+    }
     public List<com.rcc.lms.student.Student> getAllStudents() {
         return repo.findAll();
     }

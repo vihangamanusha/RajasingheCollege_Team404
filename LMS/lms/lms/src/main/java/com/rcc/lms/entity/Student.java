@@ -116,7 +116,7 @@ public class Student {
         this.grade = grade;
     }
 
-    
+
 
     public String getGname() {
         return gname;
