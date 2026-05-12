@@ -28,7 +28,7 @@ public class Student {
 
     private String dob;
 
-    private String gender;
+
 
     private String gname;
 
@@ -116,13 +116,7 @@ public class Student {
         this.grade = grade;
     }
 
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
+    
 
     public String getGname() {
         return gname;

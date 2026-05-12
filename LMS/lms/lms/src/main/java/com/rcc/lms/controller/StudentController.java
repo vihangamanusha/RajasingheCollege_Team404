@@ -33,9 +33,31 @@ public class StudentController {
         return service.getById(id);
     }
 
+    // UPDATE
+    @PutMapping("/{id}")
+    public com.rcc.lms.student.Student updateStudent(
+            @PathVariable Long id,
+            @RequestBody com.rcc.lms.student.Student student) {
+
+        com.rcc.lms.student.Student existing = service.getById(id);
+
+        existing.setFullName(student.getFullName());
+        existing.setStudentId(student.getStudentId());
+        existing.setPassword(student.getPassword());
+        existing.setStudentClass(student.getStudentClass());
+        existing.setGrade(student.getGrade());
+        existing.setDob(student.getDob());
+        existing.setMedium(student.getMedium());
+        existing.setContactNo(student.getContactNo());
+        existing.setGname(student.getGname());
+        existing.setAddress(student.getAddress());
+
+        return service.register(existing);
+    }
+
     // DELETE
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void deleteStudent(@PathVariable Long id) {
         service.delete(id);
     }
 }

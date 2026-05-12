@@ -4,19 +4,22 @@ import "../index.css";
 export default function StudentRegister() {
 
   const [form, setForm] = useState({
-    fullName: "",
-    studentId: "",
-    password: "",
-    studentClass: "",
-    dob: "",
-    medium: "",
-    contactNo: "",
-    address: "",
-  });
+  fullName: "",
+  studentId: "",
+  password: "",
+  studentClass: "",
+  grade: "",
+  dob: "",
+  medium: "",
+  contactNo: "",
+  gname: "",
+  address: "",
+});
 
   const [students, setStudents] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState("");
+  const [editingId, setEditingId] = useState(null);
 
   // LOAD STUDENTS
   const loadStudents = async () => {
@@ -33,6 +36,7 @@ export default function StudentRegister() {
     loadStudents();
   }, []);
 
+  
   // HANDLE INPUT
   const handleChange = (e) => {
     setForm({
@@ -41,41 +45,84 @@ export default function StudentRegister() {
     });
   };
 
-  // SAVE STUDENT
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+// SAVE STUDENT
+const handleSubmit = async (e) => {
 
-    try {
+  e.preventDefault();
 
-      await fetch("http://localhost:8080/api/students", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
+  try {
 
-      alert("Student Registered Successfully!");
+    let response;
 
-      setForm({
-        fullName: "",
-        studentId: "",
-        password: "",
-        studentClass: "",
-        dob: "",
-        medium: "",
-        contactNo: "",
-        address: "",
-      });
+    if (editingId) {
 
-      setShowModal(false);
+      // UPDATE
+      response = await fetch(
+        `http://localhost:8080/api/students/${editingId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
 
-      loadStudents();
+    } else {
 
-    } catch (error) {
-      console.error(error);
+      // CREATE
+      response = await fetch(
+        "http://localhost:8080/api/students",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
     }
-  };
+
+    if (!response.ok) {
+      throw new Error("Failed to save student");
+    }
+
+    alert(
+      editingId
+        ? "Student Updated Successfully!"
+        : "Student Registered Successfully!"
+    );
+
+    // CLEAR FORM
+    setForm({
+      fullName: "",
+      studentId: "",
+      password: "",
+      studentClass: "",
+      grade: "",
+      dob: "",
+      medium: "",
+      contactNo: "",
+      gname: "",
+      address: "",
+    });
+
+    // RESET EDITING
+    setEditingId(null);
+
+    // CLOSE MODAL
+    setShowModal(false);
+
+    // RELOAD TABLE
+    loadStudents();
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Error saving student");
+  }
+};
 
   // FILTER STUDENTS
   const filteredStudents = students.filter((s) =>
@@ -83,7 +130,52 @@ export default function StudentRegister() {
     s.studentId.toLowerCase().includes(search.toLowerCase()) ||
     s.studentClass.toLowerCase().includes(search.toLowerCase())
   );
+  const handleDelete = async (id) => {
 
+  const confirmDelete = window.confirm(
+    "Are you sure you want to delete?"
+  );
+
+  if (!confirmDelete) return;
+
+  try {
+
+    await fetch(
+      `http://localhost:8080/api/students/${id}`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    alert("Student Deleted!");
+
+    loadStudents();
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+/*edit */
+const handleEdit = (student) => {
+
+  setForm({
+    fullName: student.fullName || "",
+    studentId: student.studentId || "",
+    password: student.password || "",
+    studentClass: student.studentClass || "",
+    grade: student.grade || "",
+    dob: student.dob || "",
+    medium: student.medium || "",
+    contactNo: student.contactNo || "",
+    gname: student.gname || "",
+    address: student.address || "",
+  });
+
+  setEditingId(student.userId);
+
+  setShowModal(true);
+};
   return (
 
     <div className="student-page">
@@ -153,7 +245,9 @@ export default function StudentRegister() {
 
                 <td>{s.fullName}</td>
 
-                <td>{s.studentClass}</td>
+                <td>
+                    {s.grade} - {s.studentClass}
+                </td>
 
                 <td>
                   <span className={`medium-badge ${s.medium}`}>
@@ -165,13 +259,19 @@ export default function StudentRegister() {
 
                 <td>
 
-                  <button className="edit-btn">
-                    Edit
-                  </button>
+                 <button
+    className="edit-btn"
+    onClick={() => handleEdit(s)}
+  >
+    Edit
+  </button>
 
-                  <button className="delete-btn">
-                    Delete
-                  </button>
+  <button
+    className="delete-btn"
+    onClick={() => handleDelete(s.userId)}
+  >
+    Delete
+  </button>
 
                 </td>
 
@@ -234,8 +334,8 @@ export default function StudentRegister() {
   <div className="form-group">
     <label>Grade</label>
     <select
-      name="Grade"
-      value={form.Grade}
+      name="grade"
+      value={form.grade}
       onChange={handleChange}
       required
     >
@@ -274,7 +374,7 @@ export default function StudentRegister() {
       <option value="">Select Medium</option>
       <option value="Sinhala">Sinhala</option>
       <option value="English">English</option>
-      <option value="Tamil">Tamil</option>
+     
     </select>
   </div>
 
@@ -320,9 +420,9 @@ export default function StudentRegister() {
     <label>Guardian Name</label>
     <input
       type="text"
-      name="contactName"
+      name="gname"
+      value={form.gname}
       placeholder="Guardian name"
-      value={form.contactName}
       onChange={handleChange}
       required
     />
