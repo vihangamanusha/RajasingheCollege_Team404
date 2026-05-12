@@ -43,9 +43,6 @@ export default function Sidebar() {
         <NavLink to="/news" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           Website Content
         </NavLink>
-        <NavLink to="/feedback" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
-          User Feedback
-        </NavLink>
         <NavLink to="/events" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
           Events
         </NavLink>
