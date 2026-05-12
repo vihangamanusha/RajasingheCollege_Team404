@@ -2172,7 +2172,7 @@ body {
   background-color: #f5f5f5;
 }
 
-.academic-facilities-section{
+.academic-facilities-section {
   background-color: #ffffff;
 }
 
@@ -2247,6 +2247,7 @@ body {
   font-style: italic;
   font-family: 'Times New Roman', Times, serif;
 }
+
 @media (min-width: 768px) {
   .academic-section-heading {
     font-size: 3rem;
@@ -2268,6 +2269,7 @@ body {
 }
 
 @media (min-width: 768px) {
+
   .academic-program-grid,
   .academic-facility-grid,
   .academic-stat-grid {
@@ -2402,15 +2404,15 @@ body {
   align-items: center;
   justify-content: center;
   color: #FFD700;
-  margin-top:-40px;
+  margin-top: -40px;
 }
 
 .academic-staff-title {
   font-size: 2.5rem;
   color: #002147;
-  margin-top:-40px;
-  
-  
+  margin-top: -40px;
+
+
 }
 
 .academic-staff-description {
@@ -2438,7 +2440,7 @@ body {
 .academic-button:hover {
   transform: translateY(-5px);
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-  color:#FFD700 ;
+  color: #FFD700;
 }
 
 .academic-button-icon {
@@ -2448,7 +2450,7 @@ body {
 
 .academic-lms-section {
   padding: 5rem 0;
-  background:#002147;
+  background: #002147;
   color: #ffffff;
 }
 
@@ -2876,8 +2878,8 @@ body {
 
 .contact-form {
   width: 600px;
-  height:800px;
-  
+  height: 800px;
+
 }
 
 .contact-info {
@@ -3129,7 +3131,7 @@ body {
 
 .home-news-title-wrapper {
   display: inline-block;
-  
+
 }
 
 .home-news-icon-wrapper {
@@ -3168,6 +3170,7 @@ body {
 .news-card:hover .news-title {
   color: #FFD700;
 }
+
 @media (min-width: 768px) {
   .home-news-title {
     font-size: 3.75rem;
@@ -3484,4 +3487,218 @@ body {
   border-radius: 0.5rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   margin-left: 60px;
+}
+
+
+/*livstream page*/
+.live-page {
+  width: 100%;
+}
+
+/* HERO */
+
+.live-hero {
+  position: relative;
+  height: 320px;
+  overflow: hidden;
+}
+
+.live-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.live-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 33, 71, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live-hero-title {
+  font-size: 60px;
+  color: white;
+}
+
+/* COMMON */
+
+.live-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* CURRENT LIVE */
+
+.live-current-section {
+  padding: 80px 0;
+  background: white;
+}
+
+.live-card {
+  background: linear-gradient(to bottom right, #002147, #003366);
+  border-radius: 15px;
+  overflow: hidden;
+  color: white;
+}
+
+.live-video-box {
+  height: 450px;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.live-video-content {
+  text-align: center;
+}
+
+.live-radio-icon {
+  width: 100px;
+  height: 100px;
+  color: gold;
+  animation: pulse 1.5s infinite;
+}
+
+.live-offline-text {
+  font-size: 28px;
+  margin-top: 20px;
+}
+
+.live-details {
+  padding: 40px;
+}
+
+.live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: red;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.live-dot {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+}
+
+.live-heading {
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+
+.live-description {
+  color: #d1d1d1;
+  line-height: 1.7;
+}
+
+/* UPCOMING */
+
+.upcoming-section {
+  padding: 80px 0;
+  background: #f5f5f5;
+}
+
+.upcoming-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.upcoming-title {
+  font-size: 48px;
+  color: #002147;
+}
+
+.upcoming-line {
+  width: 100px;
+  height: 4px;
+  background: gold;
+  margin: 15px auto;
+}
+
+.upcoming-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.upcoming-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  transition: 0.3s;
+}
+
+.upcoming-card:hover {
+  transform: translateY(-5px);
+}
+
+.upcoming-icon-box {
+  width: 70px;
+  height: 70px;
+  background: #002147;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.upcoming-icon {
+  color: gold;
+  width: 35px;
+  height: 35px;
+}
+
+.upcoming-card-title {
+  color: #002147;
+  margin-bottom: 20px;
+}
+
+.upcoming-info {
+  margin-bottom: 20px;
+}
+
+.upcoming-info-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: gray;
+  margin-bottom: 10px;
+}
+
+.small-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.upcoming-description {
+  color: #555;
+  line-height: 1.6;
+}
+
+/* ANIMATION */
+
+@keyframes pulse {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
