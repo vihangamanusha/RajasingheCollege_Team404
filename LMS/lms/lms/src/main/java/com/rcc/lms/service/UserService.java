@@ -75,21 +75,13 @@ public class UserService {
     // DYNAMIC DASHBOARD LOGIC
     // ==============================================================
 
-    /**
-     * Aggregates real-time data for the Admin Dashboard overview.
-     */
     public DashboardStatsDTO getAdminDashboardStats() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
-
-        // 1. Fetch live counts from the User table (excluding deleted users)
         stats.setTotalStudents(userRepository.countByRoleAndStatusNot("ROLE_STUDENT", "DELETED"));
         stats.setTotalTeachers(userRepository.countByRoleAndStatusNot("ROLE_TEACHER", "DELETED"));
-
-        // 2. Placeholder data for Class and Subject modules (update once peers finish their parts)
         stats.setTotalClasses(42);
         stats.setTotalSubjects(24);
 
-        // 3. Map the 4 most recently registered users to the Activity Feed
         List<RecentActivityDTO> activityList = userRepository.findTop4ByStatusNotOrderByCreatedDateDesc("DELETED")
                 .stream()
                 .map(u -> new RecentActivityDTO(
@@ -105,15 +97,23 @@ public class UserService {
     }
 
     // ==============================================================
-    // REGISTER USER WIZARDS (Student, Teacher, Tech Officer)
+    // REGISTER USER WIZARDS WITH UNIQUENESS CHECKS
     // ==============================================================
 
     @Transactional
     public String registerNewStudent(StudentRegistrationRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return "Username already exists!";
+        // 1. Uniqueness Checks
+        if (userRepository.existsByUserId(request.getUserId())) {
+            return "Error: Student ID already exists!";
+        }
+        if (userRepository.existsByUsername(request.getUsername())) {
+            return "Error: Username already exists!";
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return "Error: Email is already registered!";
         }
 
+        // 2. Create Auth User
         User newUser = new User();
         newUser.setUserId(request.getUserId());
         newUser.setUsername(request.getUsername());
@@ -124,6 +124,7 @@ public class UserService {
         newUser.setStatus("ACTIVE");
         userRepository.save(newUser);
 
+        // 3. Create Student Profile
         Student newStudent = new Student();
         newStudent.setStudentId(request.getUserId());
         newStudent.setFullName(request.getFullName());
@@ -139,8 +140,15 @@ public class UserService {
 
     @Transactional
     public String registerNewTeacher(TeacherRegistrationRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return "Username already exists!";
+        // 1. Uniqueness Checks
+        if (userRepository.existsByUserId(request.getUserId())) {
+            return "Error: Teacher ID already exists!";
+        }
+        if (userRepository.existsByUsername(request.getUsername())) {
+            return "Error: Username already exists!";
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return "Error: Email is already registered!";
         }
 
         User newUser = new User();
@@ -166,8 +174,15 @@ public class UserService {
 
     @Transactional
     public String registerNewTechOfficer(TechRegistrationRequest request) {
-        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
-            return "Username already exists!";
+        // 1. Uniqueness Checks
+        if (userRepository.existsByUserId(request.getUserId())) {
+            return "Error: Technical Officer ID already exists!";
+        }
+        if (userRepository.existsByUsername(request.getUsername())) {
+            return "Error: Username already exists!";
+        }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return "Error: Email is already registered!";
         }
 
         User newUser = new User();
@@ -194,8 +209,9 @@ public class UserService {
     }
 
     // ==============================================================
-    // SEARCH USERS BY ROLE & TERM
+    // SEARCH, PROFILE UPDATES & ADMIN ACTIONS (Remain the same)
     // ==============================================================
+
     public java.util.List<User> searchUsers(String role, String searchTerm) {
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return userRepository.findByRoleAndStatusNot(role, "DELETED");
@@ -203,9 +219,6 @@ public class UserService {
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
 
-    // ==============================================================
-    // STUDENT PROFILE MANAGEMENT
-    // ==============================================================
     public Student getStudentProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
@@ -239,9 +252,6 @@ public class UserService {
         return "Student profile updated successfully!";
     }
 
-    // ==============================================================
-    // TEACHER PROFILE MANAGEMENT
-    // ==============================================================
     public Teacher getTeacherProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
@@ -254,13 +264,8 @@ public class UserService {
     public String updateTeacherProfile(String username, TeacherRegistrationRequest request) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
-
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
-
-        if (request.getSubRole() != null) {
-            existingUser.setSubRole(request.getSubRole());
-        }
-
+        if (request.getSubRole() != null) existingUser.setSubRole(request.getSubRole());
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
         }
@@ -276,9 +281,6 @@ public class UserService {
         return "Teacher profile updated successfully!";
     }
 
-    // ==============================================================
-    // TECH OFFICER PROFILE MANAGEMENT
-    // ==============================================================
     public TechnicalOfficer getTechOfficerProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
@@ -291,7 +293,6 @@ public class UserService {
     public String updateTechOfficerProfile(String username, TechRegistrationRequest request) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
-
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -309,10 +310,6 @@ public class UserService {
         return "Technical Officer profile updated successfully!";
     }
 
-    // ==============================================================
-    // ADMIN ACTIONS
-    // ==============================================================
-
     public String updateUser(String username, User updatedUser) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
@@ -328,14 +325,11 @@ public class UserService {
     public String hardDeleteUser(String username) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
-
         String role = existingUser.getRole();
         String userId = existingUser.getUserId();
-
         if ("ROLE_STUDENT".equals(role)) studentRepository.deleteById(userId);
         else if ("ROLE_TEACHER".equals(role)) teacherRepository.deleteById(userId);
         else if ("ROLE_TECHNICAL_OFFICER".equals(role)) technicalOfficerRepository.deleteById(userId);
-
         userRepository.delete(existingUser);
         return "User permanently deleted from the system!";
     }
