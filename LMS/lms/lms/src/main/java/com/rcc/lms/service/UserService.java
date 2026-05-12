@@ -219,14 +219,20 @@ public class UserService {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
 
-        // Update User Account Details
+        // 1. Update Authentication & Role Details
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
+
+        // SAVE THE SUB-ROLE HERE!
+        if (request.getSubRole() != null) {
+            existingUser.setSubRole(request.getSubRole());
+        }
+
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         userRepository.save(existingUser);
 
-        // Update Teacher Professional Details
+        // 2. Update Teacher Professional Details
         Teacher existingTeacher = teacherRepository.findById(existingUser.getUserId()).orElse(null);
         if (existingTeacher != null) {
             existingTeacher.setFullName(request.getFullName());
