@@ -51,4 +51,18 @@ public class LiveStreamController {
     public void deleteStream(@PathVariable Long id) {
         repository.deleteById(id);
     }
+
+    @PutMapping("/{id}/start")
+    public Livestream startStream(@PathVariable Long id) {
+
+        return repository.findById(id)
+                .map(stream -> {
+
+                    stream.setLive(true);
+
+                    return repository.save(stream);
+
+                })
+                .orElseThrow(() -> new RuntimeException("Stream not found"));
+    }
 }
