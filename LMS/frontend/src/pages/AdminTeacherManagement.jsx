@@ -13,22 +13,17 @@ export default function AdminTeacherManagement() {
     const [teachers, setTeachers] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // =========================
-    // DELETE MODAL STATE
-    // =========================
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
     const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" });
 
-    // =========================
-    // EDIT MODAL STATE
-    // =========================
     const [showEditModal, setShowEditModal] = useState(false);
     const [editMessage, setEditMessage] = useState({ text: "", type: "" });
-    const [originalEditData, setOriginalEditData] = useState(null); // Tracks changes
+    const [originalEditData, setOriginalEditData] = useState(null);
     const [editFormData, setEditFormData] = useState({
         username: "", userId: "", email: "", password: "",
-        fullName: "", subjectSpecialization: "", contactNumber: ""
+        fullName: "", subjectSpecialization: "", contactNumber: "",
+        subRole: "" // ADDED: subRole state
     });
 
     // =========================
@@ -68,13 +63,14 @@ export default function AdminTeacherManagement() {
 
         // 1. Instantly load table data and lock the ID/Username
         const initialData = {
-            username: teacher.username, // Locked
-            userId: teacher.userId,     // Locked
+            username: teacher.username,
+            userId: teacher.userId,
             email: teacher.email || "",
             password: "",
             fullName: "Loading...",
             subjectSpecialization: "Loading...",
-            contactNumber: "Loading..."
+            contactNumber: "Loading...",
+            subRole: teacher.subRole || "" // LOADED: subRole from table data
         };
         setEditFormData(initialData);
 
@@ -88,16 +84,17 @@ export default function AdminTeacherManagement() {
             if (response.ok) {
                 const fullProfile = await response.json();
                 const completeData = {
-                    username: teacher.username, // Keep Locked
-                    userId: teacher.userId,     // Keep Locked
+                    username: teacher.username,
+                    userId: teacher.userId,
                     email: teacher.email || "",
                     password: "",
                     fullName: fullProfile.fullName || "",
                     subjectSpecialization: fullProfile.subjectSpecialization || "",
-                    contactNumber: fullProfile.contactNumber || ""
+                    contactNumber: fullProfile.contactNumber || "",
+                    subRole: teacher.subRole || "" // MAINTAINED: subRole from user data
                 };
                 setEditFormData(completeData);
-                setOriginalEditData(completeData); // Save snapshot for the Change Tracker!
+                setOriginalEditData(completeData);
             } else {
                 setEditMessage({ text: "Failed to load full details from server.", type: "error" });
             }
@@ -115,7 +112,6 @@ export default function AdminTeacherManagement() {
             return;
         }
 
-        // Change Tracker: Prevent saving if nothing was altered
         const hasChanges = Object.keys(originalEditData).some(key => {
             if (key === 'password') return editFormData.password.trim() !== "";
             return originalEditData[key] !== editFormData[key];
@@ -126,7 +122,6 @@ export default function AdminTeacherManagement() {
             return;
         }
 
-        // Submit the update
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/admin/users/teacher/update/${editFormData.username}`, {
@@ -135,7 +130,6 @@ export default function AdminTeacherManagement() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                // ADDED userId AND username HERE TO SATISFY THE BACKEND DTO!
                 body: JSON.stringify({
                     userId: editFormData.userId,
                     username: editFormData.username,
@@ -143,20 +137,16 @@ export default function AdminTeacherManagement() {
                     password: editFormData.password,
                     fullName: editFormData.fullName,
                     subjectSpecialization: editFormData.subjectSpecialization,
-                    contactNumber: editFormData.contactNumber
+                    contactNumber: editFormData.contactNumber,
+                    subRole: editFormData.subRole // ADDED: subRole to payload
                 })
             });
 
             if (response.ok) {
                 setEditMessage({ text: "Teacher profile successfully updated!", type: "success" });
                 fetchTeachers();
-
-                // Wait 1.5s so admin can see the success message, then close
-                setTimeout(() => {
-                    setShowEditModal(false);
-                }, 1500);
+                setTimeout(() => setShowEditModal(false), 1500);
             } else {
-                // Catch the exact error text just like the Student page!
                 const errorText = await response.text();
                 setEditMessage({ text: `Failed to update: ${errorText}`, type: "error" });
             }
@@ -301,15 +291,31 @@ export default function AdminTeacherManagement() {
                                     <label>Subject Specialization</label>
                                     <input type="text" value={editFormData.subjectSpecialization} onChange={(e) => setEditFormData({...editFormData, subjectSpecialization: e.target.value})} required />
                                 </div>
+                                {/* ADDED: Sub-Role Selection Dropdown */}
+                                <div className="modal-form-group">
+                                    <label>Designation (Sub-Role)</label>
+                                    <select
+                                        value={editFormData.subRole}
+                                        onChange={(e) => setEditFormData({...editFormData, subRole: e.target.value})}
+                                        required
+                                    >
+                                        <option value="">Select Designation</option>
+                                        <option value="Subject Teacher">Subject Teacher</option>
+                                        <option value="Section Head">Section Head</option>
+                                        <option value="Grade Coordinator">Grade Coordinator</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className="modal-grid">
                                 <div className="modal-form-group">
                                     <label>Contact Number</label>
                                     <input type="text" value={editFormData.contactNumber} onChange={(e) => setEditFormData({...editFormData, contactNumber: e.target.value})} required />
                                 </div>
-                            </div>
-
-                            <div className="modal-form-group">
-                                <label>Email Address</label>
-                                <input type="email" value={editFormData.email} onChange={(e) => setEditFormData({...editFormData, email: e.target.value})} />
+                                <div className="modal-form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" value={editFormData.email} onChange={(e) => setEditFormData({...editFormData, email: e.target.value})} />
+                                </div>
                             </div>
 
                             <div className="modal-form-group" style={{borderTop: "1px solid #e2e8f0", paddingTop: "15px", marginTop: "10px"}}>
@@ -323,7 +329,6 @@ export default function AdminTeacherManagement() {
                                 />
                             </div>
 
-                            {/* INLINE FORM MESSAGE */}
                             {editMessage.text && (
                                 <div className={`inline-form-message ${editMessage.type}`}>
                                     {editMessage.text}
@@ -349,7 +354,6 @@ export default function AdminTeacherManagement() {
                         </div>
                         <p>Are you sure you want to permanently delete <strong>{userToDelete}</strong>? This action cannot be undone.</p>
 
-                        {/* INLINE FORM MESSAGE */}
                         {deleteMessage.text && (
                             <div className={`inline-form-message ${deleteMessage.type}`}>
                                 {deleteMessage.text}
