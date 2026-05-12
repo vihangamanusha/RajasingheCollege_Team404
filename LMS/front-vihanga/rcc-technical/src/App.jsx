@@ -8,6 +8,7 @@ import FeedbackList from "./pages/FeedbackList";
 import StudentRegister from "./pages/StudentRegister"; 
 import Event from "./pages/Event";
 import AdminAnnouncements from "./pages/AdminAnnouncements";
+import LiveStreamAdmin from "./pages/LiveStreamAdmin";
 
 export default function App() {
   return (
@@ -25,6 +26,8 @@ export default function App() {
           <Route path="student-register" element={<StudentRegister />} />
           <Route path="events" element={<Event />} />
           <Route path="/admin/announcements"element={<AdminAnnouncements />}/>
+          <Route path="livestream-admin" element={<LiveStreamAdmin />} />
+          
         </Route>
 
       </Routes>
