@@ -26,7 +26,7 @@ export default function AdminStudentManagement() {
     const [originalEditData, setOriginalEditData] = useState(null); // Change Tracker
     const [editFormData, setEditFormData] = useState({
         username: "", userId: "", email: "", password: "",
-        fullName: "", dateOfBirth: "", address: "", medium: "SINHALA", contactNumber: ""
+        fullName: "", dateOfBirth: "", address: "", medium: "Sinhala", contactNumber: ""
     });
 
     // =========================
@@ -67,7 +67,7 @@ export default function AdminStudentManagement() {
         const initialData = {
             username: student.username, userId: student.userId, email: student.email || "",
             password: "", fullName: "Loading...", dateOfBirth: "", address: "",
-            medium: "SINHALA", contactNumber: ""
+            medium: "Sinhala", contactNumber: ""
         };
         setEditFormData(initialData);
 
