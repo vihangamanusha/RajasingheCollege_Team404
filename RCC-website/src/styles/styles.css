@@ -3607,6 +3607,7 @@ body {
 .upcoming-section {
   padding: 80px 0;
   background: #f5f5f5;
+  
 }
 
 .upcoming-header {
@@ -3630,9 +3631,11 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
+  
 }
 
 .upcoming-card {
+  
   background: white;
   padding: 30px;
   border-radius: 15px;
