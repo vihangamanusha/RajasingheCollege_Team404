@@ -122,10 +122,17 @@ export default function AdminStudentManagement() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
+                // FIXED JSON BODY: Include userId/username and handle empty dates!
                 body: JSON.stringify({
-                    email: editFormData.email, password: editFormData.password,
-                    fullName: editFormData.fullName, dateOfBirth: editFormData.dateOfBirth,
-                    address: editFormData.address, medium: editFormData.medium, contactNumber: editFormData.contactNumber
+                    userId: editFormData.userId,
+                    username: editFormData.username,
+                    email: editFormData.email,
+                    password: editFormData.password,
+                    fullName: editFormData.fullName,
+                    dateOfBirth: editFormData.dateOfBirth === "" ? null : editFormData.dateOfBirth,
+                    address: editFormData.address,
+                    medium: editFormData.medium,
+                    contactNumber: editFormData.contactNumber
                 })
             });
 
@@ -138,7 +145,9 @@ export default function AdminStudentManagement() {
                     setShowEditModal(false);
                 }, 1500);
             } else {
-                setEditMessage({ text: "Failed to update student profile.", type: "error" });
+                // Fetch the actual text from the backend so we know exactly why it failed
+                const errorText = await response.text();
+                setEditMessage({ text: `Failed to update: ${errorText}`, type: "error" });
             }
         } catch (error) {
             setEditMessage({ text: "Server error during update.", type: "error" });
@@ -293,8 +302,8 @@ export default function AdminStudentManagement() {
                                 <div className="modal-form-group">
                                     <label>Study Medium</label>
                                     <select value={editFormData.medium} onChange={(e) => setEditFormData({...editFormData, medium: e.target.value})}>
-                                        <option value="SINHALA">Sinhala</option>
-                                        <option value="ENGLISH">English</option>
+                                        <option value="Sinhala">Sinhala</option>
+                                        <option value="English">English</option>
                                     </select>
                                 </div>
                                 <div className="modal-form-group">
