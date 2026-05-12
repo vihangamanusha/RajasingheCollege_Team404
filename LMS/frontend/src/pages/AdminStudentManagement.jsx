@@ -6,33 +6,31 @@ import "./AdminStudentManagement.css";
 export default function AdminStudentManagement() {
     const navigate = useNavigate();
 
-    // =========================
     // STATE MANAGEMENT
-    // =========================
     const [searchTerm, setSearchTerm] = useState("");
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Delete Modal State
+    // =========================
+    // DELETE MODAL STATE
+    // =========================
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
+    const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" }); // Inline message state
 
-    // Expanded Edit Modal State
+    // =========================
+    // EDIT MODAL STATE
+    // =========================
     const [showEditModal, setShowEditModal] = useState(false);
+    const [editMessage, setEditMessage] = useState({ text: "", type: "" }); // Inline message state
+    const [originalEditData, setOriginalEditData] = useState(null); // Change Tracker
     const [editFormData, setEditFormData] = useState({
-        username: "",
-        userId: "",
-        email: "",
-        password: "",
-        fullName: "",
-        dateOfBirth: "",
-        address: "",
-        medium: "SINHALA",
-        contactNumber: ""
+        username: "", userId: "", email: "", password: "",
+        fullName: "", dateOfBirth: "", address: "", medium: "SINHALA", contactNumber: ""
     });
 
     // =========================
-    // FETCH DATA FROM SPRING BOOT
+    // FETCH DATA
     // =========================
     const fetchStudents = async () => {
         setLoading(true);
@@ -40,16 +38,12 @@ export default function AdminStudentManagement() {
             const token = localStorage.getItem("token");
             const response = await fetch(
                 `http://localhost:8080/admin/users/search?role=ROLE_STUDENT&term=${searchTerm}`,
-                {
-                    headers: { Authorization: `Bearer ${token}` },
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (response.ok) {
                 const data = await response.json();
                 setStudents(data);
-            } else {
-                console.error("Failed to fetch students");
             }
         } catch (error) {
             console.error("Error connecting to server:", error);
@@ -59,9 +53,7 @@ export default function AdminStudentManagement() {
     };
 
     useEffect(() => {
-        const delayDebounce = setTimeout(() => {
-            fetchStudents();
-        }, 300);
+        const delayDebounce = setTimeout(() => fetchStudents(), 300);
         return () => clearTimeout(delayDebounce);
     }, [searchTerm]);
 
@@ -69,21 +61,16 @@ export default function AdminStudentManagement() {
     // FULL PROFILE EDIT LOGIC
     // =========================
     const triggerEdit = async (student) => {
-        // Lock basic table data, start with empty password, open modal immediately
-        setEditFormData({
-            username: student.username,
-            userId: student.userId,
-            email: student.email || "",
-            password: "",
-            fullName: "Loading...",
-            dateOfBirth: "",
-            address: "",
-            medium: "SINHALA",
-            contactNumber: ""
-        });
+        setEditMessage({ text: "", type: "" }); // Clear old messages
         setShowEditModal(true);
 
-        // Fetch remaining student details from DB
+        const initialData = {
+            username: student.username, userId: student.userId, email: student.email || "",
+            password: "", fullName: "Loading...", dateOfBirth: "", address: "",
+            medium: "SINHALA", contactNumber: ""
+        };
+        setEditFormData(initialData);
+
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/admin/users/student/${student.username}`, {
@@ -92,22 +79,41 @@ export default function AdminStudentManagement() {
 
             if (response.ok) {
                 const fullProfile = await response.json();
-                setEditFormData(prev => ({
-                    ...prev,
+                const completeData = {
+                    username: student.username,
+                    userId: student.userId,
+                    email: student.email || "",
+                    password: "",
                     fullName: fullProfile.fullName || "",
                     dateOfBirth: fullProfile.dateOfBirth || "",
                     address: fullProfile.address || "",
                     medium: fullProfile.medium || "SINHALA",
                     contactNumber: fullProfile.contactNumber || ""
-                }));
+                };
+                setEditFormData(completeData);
+                setOriginalEditData(completeData); // Save snapshot for change tracking
             }
         } catch (error) {
-            console.error("Failed to fetch full profile", error);
+            setEditMessage({ text: "Failed to fetch full profile data.", type: "error" });
         }
     };
 
     const submitEdit = async (e) => {
         e.preventDefault();
+        setEditMessage({ text: "", type: "" }); // Clear previous messages
+
+        // 1. CHECK FOR CHANGES (Compare current form with original data)
+        const hasChanges = Object.keys(originalEditData).some(key => {
+            if (key === 'password') return editFormData.password.trim() !== ""; // Password is a special case
+            return originalEditData[key] !== editFormData[key];
+        });
+
+        if (!hasChanges) {
+            setEditMessage({ text: "No changes detected. Please edit a field to save.", type: "error" });
+            return;
+        }
+
+        // 2. SUBMIT IF CHANGED
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/admin/users/student/update/${editFormData.username}`, {
@@ -116,26 +122,26 @@ export default function AdminStudentManagement() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
-                // Send the full DTO (Notice we completely removed "status")
                 body: JSON.stringify({
-                    email: editFormData.email,
-                    password: editFormData.password,
-                    fullName: editFormData.fullName,
-                    dateOfBirth: editFormData.dateOfBirth,
-                    address: editFormData.address,
-                    medium: editFormData.medium,
-                    contactNumber: editFormData.contactNumber
+                    email: editFormData.email, password: editFormData.password,
+                    fullName: editFormData.fullName, dateOfBirth: editFormData.dateOfBirth,
+                    address: editFormData.address, medium: editFormData.medium, contactNumber: editFormData.contactNumber
                 })
             });
 
             if (response.ok) {
-                setShowEditModal(false);
-                fetchStudents(); // Refresh data
+                setEditMessage({ text: "Student profile successfully updated!", type: "success" });
+                fetchStudents();
+
+                // Wait 1.5 seconds, then close modal
+                setTimeout(() => {
+                    setShowEditModal(false);
+                }, 1500);
             } else {
-                alert("Failed to update user.");
+                setEditMessage({ text: "Failed to update student profile.", type: "error" });
             }
         } catch (error) {
-            console.error("Update error:", error);
+            setEditMessage({ text: "Server error during update.", type: "error" });
         }
     };
 
@@ -144,50 +150,50 @@ export default function AdminStudentManagement() {
     // =========================
     const triggerDelete = (username) => {
         setUserToDelete(username);
+        setDeleteMessage({ text: "", type: "" }); // Clear old messages
         setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
+        setDeleteMessage({ text: "", type: "" });
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(
-                `http://localhost:8080/admin/users/delete/${userToDelete}`,
-                {
-                    method: "DELETE",
-                    headers: { Authorization: `Bearer ${token}` },
-                }
-            );
+            const response = await fetch(`http://localhost:8080/admin/users/delete/${userToDelete}`, {
+                method: "DELETE",
+                headers: { Authorization: `Bearer ${token}` },
+            });
 
             if (response.ok) {
-                setShowDeleteModal(false);
-                setUserToDelete(null);
+                setDeleteMessage({ text: "Student permanently deleted.", type: "success" });
                 fetchStudents();
+
+                // Wait 1.5 seconds, then close modal
+                setTimeout(() => {
+                    setShowDeleteModal(false);
+                    setUserToDelete(null);
+                }, 1500);
             } else {
-                alert("Failed to permanently delete user.");
+                setDeleteMessage({ text: "Failed to delete student.", type: "error" });
             }
         } catch (error) {
-            console.error("Delete error:", error);
+            setDeleteMessage({ text: "Server error during deletion.", type: "error" });
         }
     };
 
     return (
         <div className="admin-student-management-container">
 
-            {/* Header Area */}
             <div className="page-header-flex">
                 <div className="header-text">
                     <h1>Student Management</h1>
                     <p>Manage all student records and information</p>
                 </div>
-
                 <button className="add-btn" onClick={() => navigate("/admin/users/student")}>
-                    <FiUserPlus /> Add Student
+                    <FiUserPlus style={{marginRight: '8px'}} /> Add Student
                 </button>
             </div>
 
-            {/* Main Table Card */}
             <div className="table-card">
-
                 <div className="search-container">
                     <FiSearch className="search-icon" />
                     <input
@@ -220,18 +226,10 @@ export default function AdminStudentManagement() {
                                 <td>{student.createdDate}</td>
                                 <td>
                                     <div className="action-icons">
-                                        <button
-                                            className="icon-btn edit-icon"
-                                            title="Edit Student"
-                                            onClick={() => triggerEdit(student)}
-                                        >
+                                        <button className="icon-btn edit-icon" title="Edit Student" onClick={() => triggerEdit(student)}>
                                             <FiEdit />
                                         </button>
-                                        <button
-                                            className="icon-btn delete-icon"
-                                            title="Permanently Delete"
-                                            onClick={() => triggerDelete(student.username)}
-                                        >
+                                        <button className="icon-btn delete-icon" title="Permanently Delete" onClick={() => triggerDelete(student.username)}>
                                             <FiTrash2 />
                                         </button>
                                     </div>
@@ -249,9 +247,7 @@ export default function AdminStudentManagement() {
                 )}
             </div>
 
-            {/* =========================
-                EXPANDED EDIT MODAL
-            ========================= */}
+            {/* EXPANDED EDIT MODAL */}
             {showEditModal && (
                 <div className="modal-overlay">
                     <div className="modal-box scrollable-modal">
@@ -266,7 +262,6 @@ export default function AdminStudentManagement() {
                                     <label>Student ID (Locked)</label>
                                     <input type="text" value={editFormData.userId} disabled />
                                 </div>
-
                                 <div className="modal-form-group">
                                     <label>System Username (Locked)</label>
                                     <input type="text" value={editFormData.username} disabled />
@@ -283,7 +278,6 @@ export default function AdminStudentManagement() {
                                     <label>Date of Birth</label>
                                     <input type="date" value={editFormData.dateOfBirth} onChange={(e) => setEditFormData({...editFormData, dateOfBirth: e.target.value})} required />
                                 </div>
-
                                 <div className="modal-form-group">
                                     <label>Contact Number</label>
                                     <input type="text" value={editFormData.contactNumber} onChange={(e) => setEditFormData({...editFormData, contactNumber: e.target.value})} required />
@@ -303,7 +297,6 @@ export default function AdminStudentManagement() {
                                         <option value="ENGLISH">English</option>
                                     </select>
                                 </div>
-
                                 <div className="modal-form-group">
                                     <label>Email Address</label>
                                     <input type="email" value={editFormData.email} onChange={(e) => setEditFormData({...editFormData, email: e.target.value})} />
@@ -311,7 +304,8 @@ export default function AdminStudentManagement() {
                             </div>
 
                             <div className="modal-form-group" style={{borderTop: "1px solid #e2e8f0", paddingTop: "15px", marginTop: "10px"}}>
-                                <label style={{color: "#dc2626"}}>Reset Password (Optional)</label>
+                                <label style={{color: "#dc2626"}}>Administrative Password Reset (Optional)</label>
+                                <p style={{fontSize: "0.8rem", color: "#64748b", margin: "2px 0 8px 0"}}>For security, current passwords are encrypted. Type a new password here to overwrite the current one.</p>
                                 <input
                                     type="password"
                                     placeholder="Leave blank to keep current password"
@@ -319,6 +313,13 @@ export default function AdminStudentManagement() {
                                     onChange={(e) => setEditFormData({...editFormData, password: e.target.value})}
                                 />
                             </div>
+
+                            {/* INLINE FORM MESSAGE (EDIT) */}
+                            {editMessage.text && (
+                                <div className={`inline-form-message ${editMessage.type}`}>
+                                    {editMessage.text}
+                                </div>
+                            )}
 
                             <div className="modal-actions" style={{marginTop: "20px"}}>
                                 <button type="button" className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
@@ -329,9 +330,7 @@ export default function AdminStudentManagement() {
                 </div>
             )}
 
-            {/* =========================
-                PERMANENT DELETE MODAL
-            ========================= */}
+            {/* PERMANENT DELETE MODAL */}
             {showDeleteModal && (
                 <div className="modal-overlay">
                     <div className="modal-box">
@@ -344,6 +343,13 @@ export default function AdminStudentManagement() {
                             This action will erase all of their data from the database and <strong>cannot be undone</strong>.
                         </p>
 
+                        {/* INLINE FORM MESSAGE (DELETE) */}
+                        {deleteMessage.text && (
+                            <div className={`inline-form-message ${deleteMessage.type}`}>
+                                {deleteMessage.text}
+                            </div>
+                        )}
+
                         <div className="modal-actions" style={{marginTop: "25px"}}>
                             <button className="cancel-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
                             <button className="confirm-delete-btn" onClick={confirmDelete}>
@@ -353,7 +359,6 @@ export default function AdminStudentManagement() {
                     </div>
                 </div>
             )}
-
         </div>
     );
 }

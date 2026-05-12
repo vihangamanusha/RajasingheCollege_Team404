@@ -2,6 +2,9 @@
     padding: 10px 0;
 }
 
+/* =========================================================
+   REST OF THE PAGE STYLING
+========================================================= */
 .page-header-flex {
     display: flex;
     justify-content: space-between;
@@ -103,24 +106,6 @@
     border-bottom: none;
 }
 
-.badge {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-block;
-}
-
-.badge.active {
-    background-color: #dcfce7;
-    color: #15803d;
-}
-
-.badge.suspended {
-    background-color: #fef3c7;
-    color: #b45309;
-}
-
 .action-icons {
     display: flex;
     gap: 15px;
@@ -141,7 +126,6 @@
 
 .edit-icon { color: #2b55cc; }
 .delete-icon { color: #ef4444; }
-
 
 /* =========================================================
    AUDIT TRAIL MODAL & EDIT MODAL STYLING
@@ -167,7 +151,6 @@
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
-/* Make sure the form doesn't stretch past the screen! */
 .scrollable-modal {
     max-height: 90vh;
     overflow-y: auto;
@@ -198,7 +181,6 @@
     margin-bottom: 20px;
 }
 
-/* Place inputs side by side */
 .modal-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -279,4 +261,34 @@
 .confirm-delete-btn:disabled {
     background: #fca5a5;
     cursor: not-allowed;
+}
+
+/* =========================================================
+   NEW: INLINE FORM MESSAGES
+========================================================= */
+.inline-form-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.inline-form-message.success {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.inline-form-message.error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
