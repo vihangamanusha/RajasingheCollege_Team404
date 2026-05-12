@@ -1305,36 +1305,209 @@ textarea {
   cursor: pointer;
 }
 
-/*love stream page*/
+/*live stream page*/
 
 .livestream-admin {
-  padding: 20px;
+  padding: 30px;
+  background: #f4f7fb;
+  min-height: 100vh;
 }
+
+/* HEADER */
+
+.live-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.live-org {
+  color: #777;
+  font-size: 14px;
+}
+
+.live-subtitle {
+  color: #666;
+  margin-top: 5px;
+}
+
+.add-stream-btn {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.add-stream-btn:hover {
+  background: #0b5ed7;
+}
+
+/* POPUP */
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-form {
+  background: white;
+  width: 500px;
+  padding: 25px;
+  border-radius: 12px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+/* FORM */
 
 .stream-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 400px;
+  gap: 15px;
 }
 
 .stream-form input,
 .stream-form textarea {
-  padding: 10px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
 }
 
-.stream-form button {
-  padding: 10px;
+.stream-form textarea {
+  height: 120px;
+  resize: none;
+}
+
+.submit-btn {
+  background: #198754;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
+.submit-btn:hover {
+  background: #157347;
+}
+
+/* STREAM CARDS */
+
 .stream-list {
-  margin-top: 40px;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 20px;
 }
 
 .stream-card {
-  border: 1px solid #ccc;
+  display: flex;
+  gap: 20px;
+  background: white;
+  border-radius: 12px;
   padding: 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+
+.stream-video iframe {
+  width: 320px;
+  height: 200px;
+  border-radius: 10px;
+  border: none;
+}
+
+.stream-content {
+  flex: 1;
+}
+
+.stream-content h2 {
+  margin-bottom: 10px;
+}
+
+.stream-date {
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.stream-description {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #bb2d3b;
+}
+
+.message {
+  margin-bottom: 20px;
+  color: green;
+}
+.form-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background: #5c636a;
+}
+
+.card-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.update-btn {
+  background: #0d6efd;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.update-btn:hover {
+  background: #0b5ed7;
 }
