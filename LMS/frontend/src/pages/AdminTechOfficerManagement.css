@@ -24,12 +24,12 @@
     font-size: 15px;
 }
 
-/* Tech Add Button (Green theme) */
+/* Tech Add Button */
 .add-btn.tech-btn {
     display: flex;
     align-items: center;
     gap: 8px;
-    background-color: #22c55e;
+    background-color: #0f766e;
     color: white;
     border: none;
     border-radius: 8px;
@@ -41,7 +41,7 @@
 }
 
 .add-btn.tech-btn:hover {
-    background-color: #16a34a;
+    background-color: #115e59;
 }
 
 /* Main White Card */
@@ -80,7 +80,7 @@
 }
 
 .search-container input:focus {
-    border-color: #22c55e;
+    border-color: #0f766e;
 }
 
 /* Data Table */
@@ -105,6 +105,28 @@
     border-bottom: 1px solid #f1f5f9;
 }
 
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge.active {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.badge.suspended {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
 /* Action Icons */
 .action-icons {
     display: flex;
@@ -117,7 +139,182 @@
     cursor: pointer;
     font-size: 16px;
     transition: opacity 0.2s;
+    padding: 0;
 }
 
-.edit-icon { color: #2b55cc; }
+.icon-btn:hover {
+    opacity: 0.7;
+}
+
+.edit-icon { color: #0f766e; }
 .delete-icon { color: #ef4444; }
+
+/* =========================================================
+   AUDIT TRAIL MODAL & EDIT MODAL STYLING
+========================================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 450px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.scrollable-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 600px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.warning-icon {
+    font-size: 24px;
+}
+
+.modal-box h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.4rem;
+}
+
+.modal-box p {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.modal-form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.modal-form-group input,
+.modal-form-group select,
+.modal-form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+.modal-form-group input:focus,
+.modal-form-group select:focus,
+.modal-form-group textarea:focus {
+    border-color: #0f766e;
+}
+
+.modal-form-group input:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.cancel-btn {
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background: #f8fafc;
+}
+
+.confirm-delete-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.confirm-delete-btn:disabled {
+    background: #fca5a5;
+    cursor: not-allowed;
+}
+
+/* Red generic background applied inline for delete button, explicitly making default red */
+.confirm-delete-btn {
+    background-color: #ef4444;
+}
+
+/* =========================================================
+   INLINE FORM MESSAGES
+========================================================= */
+.inline-form-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.inline-form-message.success {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.inline-form-message.error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
