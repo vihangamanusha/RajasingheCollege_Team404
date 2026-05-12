@@ -13,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByUsername(String username);
 
     // ========================================================================
-    // NEW: CUSTOM SEARCH ENGINE FOR ADMIN DASHBOARD
+    // CUSTOM SEARCH ENGINE FOR ADMIN DASHBOARD
     // 1. Checks that the user matches the requested tab (Student, Teacher, Tech)
     // 2. Ensures we do NOT return 'DELETED' users
     // 3. Searches the term inside the Username, Email, OR UserID
@@ -26,4 +26,20 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     // Fallback: Just get all active users for a specific role when the search bar is empty
     List<User> findByRoleAndStatusNot(String role, String status);
+
+    // ========================================================================
+    // NEW: DYNAMIC DASHBOARD STATS & ACTIVITY
+    // ========================================================================
+
+    /**
+     * Used to calculate the real-time count of Students, Teachers, etc.
+     * It counts users by their role but ignores anyone marked as 'DELETED'.
+     */
+    long countByRoleAndStatusNot(String role, String status);
+
+    /**
+     * Fetches the 4 most recently created users who are not deleted.
+     * This powers the "Recent Activity" feed so it's always up-to-date.
+     */
+    List<User> findTop4ByStatusNotOrderByCreatedDateDesc(String status);
 }
