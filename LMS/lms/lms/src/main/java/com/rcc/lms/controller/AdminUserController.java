@@ -43,7 +43,7 @@ public class AdminUserController {
     // UPDATE USER (ADMIN ONLY)
     // =========================
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/update/{username}")
+    @PutMapping("/update-old/{username}")
     public String updateUser(@PathVariable String username,
                              @RequestBody User user) {
         return userService.updateUser(username, user);
