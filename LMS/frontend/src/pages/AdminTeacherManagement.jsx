@@ -110,6 +110,11 @@ export default function AdminTeacherManagement() {
         e.preventDefault();
         setEditMessage({ text: "", type: "" });
 
+        if (!originalEditData) {
+            setEditMessage({ text: "Cannot save. Original data failed to load from server.", type: "error" });
+            return;
+        }
+
         // Change Tracker: Prevent saving if nothing was altered
         const hasChanges = Object.keys(originalEditData).some(key => {
             if (key === 'password') return editFormData.password.trim() !== "";
@@ -130,7 +135,10 @@ export default function AdminTeacherManagement() {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
+                // ADDED userId AND username HERE TO SATISFY THE BACKEND DTO!
                 body: JSON.stringify({
+                    userId: editFormData.userId,
+                    username: editFormData.username,
                     email: editFormData.email,
                     password: editFormData.password,
                     fullName: editFormData.fullName,
@@ -148,7 +156,9 @@ export default function AdminTeacherManagement() {
                     setShowEditModal(false);
                 }, 1500);
             } else {
-                setEditMessage({ text: "Failed to update teacher profile.", type: "error" });
+                // Catch the exact error text just like the Student page!
+                const errorText = await response.text();
+                setEditMessage({ text: `Failed to update: ${errorText}`, type: "error" });
             }
         } catch (error) {
             setEditMessage({ text: "Server error during update.", type: "error" });

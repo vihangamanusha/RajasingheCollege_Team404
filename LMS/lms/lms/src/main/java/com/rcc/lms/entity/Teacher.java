@@ -1,7 +1,7 @@
 package com.rcc.lms.entity;
 
 import jakarta.persistence.*;
-import com.fasterxml.jackson.annotation.JsonIgnore; // Added import!
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties; // Updated import!
 
 @Entity
 @Table(name = "teacher")
@@ -12,9 +12,9 @@ public class Teacher {
     private String teacherId;
 
     // ==========================================
-    // @JsonIgnore stops the infinite JSON loop!
+    // This absolutely guarantees no infinite loops!
     // ==========================================
-    @JsonIgnore
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "teacher", "student", "technicalOfficer"})
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, unique = true)
     private User user;

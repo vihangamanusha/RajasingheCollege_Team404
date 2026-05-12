@@ -51,7 +51,7 @@ public class UserService {
                 .orElse(null);
 
         if (user == null || "DELETED".equals(user.getStatus())) {
-            throw new RuntimeException("Invalid username or password"); // Keep deleted users out!
+            throw new RuntimeException("Invalid username or password");
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -69,11 +69,11 @@ public class UserService {
     }
 
     // ==============================================================
-    // REGISTER STUDENT WIZARD
+    // REGISTER USER WIZARDS (Student, Teacher, Tech Officer)
     // ==============================================================
+
     @Transactional
     public String registerNewStudent(StudentRegistrationRequest request) {
-
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return "Username already exists!";
         }
@@ -86,7 +86,6 @@ public class UserService {
         newUser.setRole(request.getRole());
         newUser.setCreatedDate(LocalDate.now());
         newUser.setStatus("ACTIVE");
-
         userRepository.save(newUser);
 
         Student newStudent = new Student();
@@ -97,18 +96,13 @@ public class UserService {
         newStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
         newStudent.setContactNumber(request.getContactNumber());
         newStudent.setUser(newUser);
-
         studentRepository.save(newStudent);
 
         return "Student successfully registered!";
     }
 
-    // ==============================================================
-    // REGISTER TEACHER WIZARD
-    // ==============================================================
     @Transactional
     public String registerNewTeacher(TeacherRegistrationRequest request) {
-
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return "Username already exists!";
         }
@@ -129,17 +123,13 @@ public class UserService {
         newTeacher.setSubjectSpecialization(request.getSubjectSpecialization());
         newTeacher.setContactNumber(request.getContactNumber());
         newTeacher.setUser(newUser);
-
         teacherRepository.save(newTeacher);
+
         return "Teacher successfully registered!";
     }
 
-    // ==============================================================
-    // REGISTER TECHNICAL OFFICER WIZARD
-    // ==============================================================
     @Transactional
     public String registerNewTechOfficer(TechRegistrationRequest request) {
-
         if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             return "Username already exists!";
         }
@@ -162,53 +152,23 @@ public class UserService {
         newTech.setPosition(request.getPosition());
         newTech.setAssignedArea(request.getAssignedArea());
         newTech.setUser(newUser);
-
         technicalOfficerRepository.save(newTech);
+
         return "Technical Officer successfully registered!";
     }
 
     // ==============================================================
-    // ADMIN - CREATE GENERIC USER (Restored!)
-    // ==============================================================
-    public String createUserByAdmin(User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            return "Username already exists!";
-        }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setCreatedDate(LocalDate.now());
-        user.setStatus("ACTIVE");
-        userRepository.save(user);
-        return "User created successfully by admin!";
-    }
-
-    // =========================
-    // ADMIN - UPDATE USER
-    // =========================
-    public String updateUser(String username, User updatedUser) {
-        User existingUser = userRepository.findByUsername(username).orElse(null);
-        if (existingUser == null) return "User not found!";
-        if (updatedUser.getRole() != null) existingUser.setRole(updatedUser.getRole());
-        if (updatedUser.getSubRole() != null) existingUser.setSubRole(updatedUser.getSubRole());
-        if (updatedUser.getEmail() != null) existingUser.setEmail(updatedUser.getEmail());
-        if (updatedUser.getStatus() != null) existingUser.setStatus(updatedUser.getStatus());
-        userRepository.save(existingUser);
-        return "User updated successfully!";
-    }
-
-    // ==============================================================
-    // NEW: SEARCH USERS BY ROLE & TERM
+    // SEARCH USERS BY ROLE & TERM
     // ==============================================================
     public java.util.List<User> searchUsers(String role, String searchTerm) {
-        // If search bar is empty, return everyone in that role who isn't deleted
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return userRepository.findByRoleAndStatusNot(role, "DELETED");
         }
-        // Otherwise, use the custom query!
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
 
     // ==============================================================
-    // GET SPECIFIC STUDENT PROFILE (For the Edit Modal)
+    // STUDENT PROFILE MANAGEMENT
     // ==============================================================
     public Student getStudentProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
@@ -218,25 +178,17 @@ public class UserService {
         return null;
     }
 
-    // ==============================================================
-    // UPDATE FULL STUDENT PROFILE
-    // Updates the User table (Email, Pass) AND Student table (Name, Address, etc.)
-    // ==============================================================
     @Transactional
     public String updateStudentProfile(String username, StudentRegistrationRequest request) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
 
-        // 1. Update Authentication Data (User Table)
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
-
-        // Only update the password if the Admin actually typed a new one!
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         userRepository.save(existingUser);
 
-        // 2. Update Personal Details (Student Table)
         Student existingStudent = studentRepository.findById(existingUser.getUserId()).orElse(null);
         if (existingStudent != null) {
             existingStudent.setFullName(request.getFullName());
@@ -248,47 +200,125 @@ public class UserService {
             }
             studentRepository.save(existingStudent);
         }
-
         return "Student profile updated successfully!";
     }
 
     // ==============================================================
-    // NEW: HARD DELETE USER (PERMANENT REMOVAL)
+    // TEACHER PROFILE MANAGEMENT (FIXES "CANNOT FIND SYMBOL" ERROR)
     // ==============================================================
+    public Teacher getTeacherProfile(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user != null) {
+            return teacherRepository.findById(user.getUserId()).orElse(null);
+        }
+        return null;
+    }
+
+    @Transactional
+    public String updateTeacherProfile(String username, TeacherRegistrationRequest request) {
+        User existingUser = userRepository.findByUsername(username).orElse(null);
+        if (existingUser == null) return "User not found!";
+
+        // Update User Account Details
+        if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        userRepository.save(existingUser);
+
+        // Update Teacher Professional Details
+        Teacher existingTeacher = teacherRepository.findById(existingUser.getUserId()).orElse(null);
+        if (existingTeacher != null) {
+            existingTeacher.setFullName(request.getFullName());
+            existingTeacher.setSubjectSpecialization(request.getSubjectSpecialization());
+            existingTeacher.setContactNumber(request.getContactNumber());
+            teacherRepository.save(existingTeacher);
+        }
+        return "Teacher profile updated successfully!";
+    }
+
+    // ==============================================================
+    // TECH OFFICER PROFILE MANAGEMENT (FIXES "CANNOT FIND SYMBOL" ERROR)
+    // ==============================================================
+    public TechnicalOfficer getTechOfficerProfile(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user != null) {
+            return technicalOfficerRepository.findById(user.getUserId()).orElse(null);
+        }
+        return null;
+    }
+
+    @Transactional
+    public String updateTechOfficerProfile(String username, TechRegistrationRequest request) {
+        User existingUser = userRepository.findByUsername(username).orElse(null);
+        if (existingUser == null) return "User not found!";
+
+        // Update User Account Details
+        if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        userRepository.save(existingUser);
+
+        // Update Tech Officer Details
+        TechnicalOfficer existingTech = technicalOfficerRepository.findById(existingUser.getUserId()).orElse(null);
+        if (existingTech != null) {
+            existingTech.setFullName(request.getFullName());
+            existingTech.setPosition(request.getPosition());
+            existingTech.setAssignedArea(request.getAssignedArea());
+            existingTech.setContactNumber(request.getContactNumber());
+            technicalOfficerRepository.save(existingTech);
+        }
+        return "Technical Officer profile updated successfully!";
+    }
+
+    // ==============================================================
+    // ADMIN ACTIONS (Updates, Generic Creation, and Deletion)
+    // ==============================================================
+
+    public String updateUser(String username, User updatedUser) {
+        User existingUser = userRepository.findByUsername(username).orElse(null);
+        if (existingUser == null) return "User not found!";
+        if (updatedUser.getRole() != null) existingUser.setRole(updatedUser.getRole());
+        if (updatedUser.getSubRole() != null) existingUser.setSubRole(updatedUser.getSubRole());
+        if (updatedUser.getEmail() != null) existingUser.setEmail(updatedUser.getEmail());
+        if (updatedUser.getStatus() != null) existingUser.setStatus(updatedUser.getStatus());
+        userRepository.save(existingUser);
+        return "User updated successfully!";
+    }
+
     @Transactional
     public String hardDeleteUser(String username) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
-
-        if (existingUser == null) {
-            return "User not found!";
-        }
+        if (existingUser == null) return "User not found!";
 
         String role = existingUser.getRole();
         String userId = existingUser.getUserId();
 
-        // 1. Delete the specific profile first so MySQL doesn't block us
-        if ("ROLE_STUDENT".equals(role)) {
-            studentRepository.deleteById(userId);
-        } else if ("ROLE_TEACHER".equals(role)) {
-            teacherRepository.deleteById(userId);
-        } else if ("ROLE_TECHNICAL_OFFICER".equals(role)) {
-            technicalOfficerRepository.deleteById(userId);
-        }
+        // 1. Delete specialized profile first (Foreign Key Safety)
+        if ("ROLE_STUDENT".equals(role)) studentRepository.deleteById(userId);
+        else if ("ROLE_TEACHER".equals(role)) teacherRepository.deleteById(userId);
+        else if ("ROLE_TECHNICAL_OFFICER".equals(role)) technicalOfficerRepository.deleteById(userId);
 
-        // 2. Now it is safe to permanently delete the Auth User!
+        // 2. Delete the Authentication User
         userRepository.delete(existingUser);
-
         return "User permanently deleted from the system!";
     }
 
-    // ==============================================================
-    // ADMIN - HARD DELETE USER (Restored for the old controller!)
-    // ==============================================================
+    public String createUserByAdmin(User user) {
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            return "Username already exists!";
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCreatedDate(LocalDate.now());
+        user.setStatus("ACTIVE");
+        userRepository.save(user);
+        return "User created successfully by admin!";
+    }
+
     public String deleteUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
-        if (user == null) {
-            return "User not found!";
-        }
+        if (user == null) return "User not found!";
         userRepository.delete(user);
         return "User deleted successfully!";
     }
