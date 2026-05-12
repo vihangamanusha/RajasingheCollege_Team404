@@ -446,6 +446,13 @@ export default function LiveStreamAdmin() {
                   Delete
                 </button>
 
+                <button
+                  className="live-btn"
+                  onClick={() => startStreaming(stream.id)}
+                >
+                  Start Streaming
+                </button>
+
               </div>
 
             </div>
