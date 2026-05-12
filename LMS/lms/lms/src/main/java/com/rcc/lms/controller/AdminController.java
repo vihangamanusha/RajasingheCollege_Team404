@@ -89,6 +89,40 @@ public class AdminController {
     }
 
     // =========================================================
+    // GET STUDENT FULL PROFILE API
+    // =========================================================
+    @GetMapping("/users/student/{username}")
+    public ResponseEntity<?> getStudentProfile(@PathVariable String username) {
+        try {
+            com.rcc.lms.entity.student.Student student = userService.getStudentProfile(username);
+            if (student == null) {
+                return ResponseEntity.badRequest().body("Student profile not found!");
+            }
+            return ResponseEntity.ok(student);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    // =========================================================
+    // UPDATE FULL STUDENT PROFILE API
+    // =========================================================
+    @PutMapping("/users/student/update/{username}")
+    public ResponseEntity<String> updateStudentProfile(
+            @PathVariable String username,
+            @RequestBody StudentRegistrationRequest request) {
+        try {
+            String response = userService.updateStudentProfile(username, request);
+            if (response.equals("User not found!")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    // =========================================================
     // PERMANENT DELETE USER API
     // =========================================================
     @DeleteMapping("/users/delete/{username}")

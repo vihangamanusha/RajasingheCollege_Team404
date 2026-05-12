@@ -51,7 +51,7 @@ public class UserService {
                 .orElse(null);
 
         if (user == null || "DELETED".equals(user.getStatus())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new RuntimeException("Invalid username or password"); // Keep deleted users out!
         }
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -168,7 +168,7 @@ public class UserService {
     }
 
     // ==============================================================
-    // ADMIN - CREATE GENERIC USER
+    // ADMIN - CREATE GENERIC USER (Restored!)
     // ==============================================================
     public String createUserByAdmin(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
@@ -196,18 +196,64 @@ public class UserService {
     }
 
     // ==============================================================
-    // SEARCH USERS BY ROLE & TERM
+    // NEW: SEARCH USERS BY ROLE & TERM
     // ==============================================================
     public java.util.List<User> searchUsers(String role, String searchTerm) {
+        // If search bar is empty, return everyone in that role who isn't deleted
         if (searchTerm == null || searchTerm.trim().isEmpty()) {
             return userRepository.findByRoleAndStatusNot(role, "DELETED");
         }
+        // Otherwise, use the custom query!
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
 
     // ==============================================================
+    // GET SPECIFIC STUDENT PROFILE (For the Edit Modal)
+    // ==============================================================
+    public Student getStudentProfile(String username) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user != null) {
+            return studentRepository.findById(user.getUserId()).orElse(null);
+        }
+        return null;
+    }
+
+    // ==============================================================
+    // UPDATE FULL STUDENT PROFILE
+    // Updates the User table (Email, Pass) AND Student table (Name, Address, etc.)
+    // ==============================================================
+    @Transactional
+    public String updateStudentProfile(String username, StudentRegistrationRequest request) {
+        User existingUser = userRepository.findByUsername(username).orElse(null);
+        if (existingUser == null) return "User not found!";
+
+        // 1. Update Authentication Data (User Table)
+        if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
+
+        // Only update the password if the Admin actually typed a new one!
+        if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+        userRepository.save(existingUser);
+
+        // 2. Update Personal Details (Student Table)
+        Student existingStudent = studentRepository.findById(existingUser.getUserId()).orElse(null);
+        if (existingStudent != null) {
+            existingStudent.setFullName(request.getFullName());
+            existingStudent.setDateOfBirth(request.getDateOfBirth());
+            existingStudent.setAddress(request.getAddress());
+            existingStudent.setContactNumber(request.getContactNumber());
+            if (request.getMedium() != null) {
+                existingStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
+            }
+            studentRepository.save(existingStudent);
+        }
+
+        return "Student profile updated successfully!";
+    }
+
+    // ==============================================================
     // NEW: HARD DELETE USER (PERMANENT REMOVAL)
-    // Deletes the profile first to prevent MySQL Foreign Key errors!
     // ==============================================================
     @Transactional
     public String hardDeleteUser(String username) {
@@ -236,7 +282,7 @@ public class UserService {
     }
 
     // ==============================================================
-    // ADMIN - GENERIC DELETE USER (Fallback for old controller)
+    // ADMIN - HARD DELETE USER (Restored for the old controller!)
     // ==============================================================
     public String deleteUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
