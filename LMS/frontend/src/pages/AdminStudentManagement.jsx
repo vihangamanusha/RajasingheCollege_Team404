@@ -17,13 +17,18 @@ export default function AdminStudentManagement() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
 
-    // Edit Modal State
+    // Expanded Edit Modal State
     const [showEditModal, setShowEditModal] = useState(false);
     const [editFormData, setEditFormData] = useState({
         username: "",
         userId: "",
         email: "",
-        status: "ACTIVE"
+        password: "",
+        fullName: "",
+        dateOfBirth: "",
+        address: "",
+        medium: "SINHALA",
+        contactNumber: ""
     });
 
     // =========================
@@ -61,31 +66,65 @@ export default function AdminStudentManagement() {
     }, [searchTerm]);
 
     // =========================
-    // EDIT LOGIC
+    // FULL PROFILE EDIT LOGIC
     // =========================
-    const triggerEdit = (student) => {
+    const triggerEdit = async (student) => {
+        // Lock basic table data, start with empty password, open modal immediately
         setEditFormData({
             username: student.username,
             userId: student.userId,
             email: student.email || "",
-            status: student.status
+            password: "",
+            fullName: "Loading...",
+            dateOfBirth: "",
+            address: "",
+            medium: "SINHALA",
+            contactNumber: ""
         });
         setShowEditModal(true);
+
+        // Fetch remaining student details from DB
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`http://localhost:8080/admin/users/student/${student.username}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                const fullProfile = await response.json();
+                setEditFormData(prev => ({
+                    ...prev,
+                    fullName: fullProfile.fullName || "",
+                    dateOfBirth: fullProfile.dateOfBirth || "",
+                    address: fullProfile.address || "",
+                    medium: fullProfile.medium || "SINHALA",
+                    contactNumber: fullProfile.contactNumber || ""
+                }));
+            }
+        } catch (error) {
+            console.error("Failed to fetch full profile", error);
+        }
     };
 
     const submitEdit = async (e) => {
         e.preventDefault();
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/update/${editFormData.username}`, {
+            const response = await fetch(`http://localhost:8080/admin/users/student/update/${editFormData.username}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`
                 },
+                // Send the full DTO (Notice we completely removed "status")
                 body: JSON.stringify({
                     email: editFormData.email,
-                    status: editFormData.status
+                    password: editFormData.password,
+                    fullName: editFormData.fullName,
+                    dateOfBirth: editFormData.dateOfBirth,
+                    address: editFormData.address,
+                    medium: editFormData.medium,
+                    contactNumber: editFormData.contactNumber
                 })
             });
 
@@ -149,7 +188,6 @@ export default function AdminStudentManagement() {
             {/* Main Table Card */}
             <div className="table-card">
 
-                {/* Search Bar */}
                 <div className="search-container">
                     <FiSearch className="search-icon" />
                     <input
@@ -160,7 +198,6 @@ export default function AdminStudentManagement() {
                     />
                 </div>
 
-                {/* Data Table */}
                 {loading ? (
                     <p style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>Loading database...</p>
                 ) : (
@@ -171,7 +208,6 @@ export default function AdminStudentManagement() {
                             <th>Username</th>
                             <th>Email</th>
                             <th>Date Created</th>
-                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                         </thead>
@@ -182,11 +218,6 @@ export default function AdminStudentManagement() {
                                 <td>{student.username}</td>
                                 <td>{student.email || "N/A"}</td>
                                 <td>{student.createdDate}</td>
-                                <td>
-                                    <span className={`badge ${student.status.toLowerCase()}`}>
-                                        {student.status}
-                                    </span>
-                                </td>
                                 <td>
                                     <div className="action-icons">
                                         <button
@@ -211,7 +242,6 @@ export default function AdminStudentManagement() {
                     </table>
                 )}
 
-                {/* No Results Message */}
                 {!loading && students.length === 0 && (
                     <p style={{ textAlign: "center", marginTop: "20px", color: "#94a3b8" }}>
                         No students found matching your search.
@@ -220,48 +250,77 @@ export default function AdminStudentManagement() {
             </div>
 
             {/* =========================
-                EDIT USER MODAL
+                EXPANDED EDIT MODAL
             ========================= */}
             {showEditModal && (
                 <div className="modal-overlay">
-                    <div className="modal-box">
+                    <div className="modal-box scrollable-modal">
                         <div className="modal-header">
                             <FiEdit className="warning-icon" style={{color: "#2b55cc"}} />
-                            <h2>Edit Student Account</h2>
+                            <h2>Edit Student Profile</h2>
                         </div>
 
                         <form onSubmit={submitEdit}>
-                            <div className="modal-form-group">
-                                <label>Student ID (Locked)</label>
-                                <input type="text" value={editFormData.userId} disabled />
+                            <div className="modal-grid">
+                                <div className="modal-form-group">
+                                    <label>Student ID (Locked)</label>
+                                    <input type="text" value={editFormData.userId} disabled />
+                                </div>
+
+                                <div className="modal-form-group">
+                                    <label>System Username (Locked)</label>
+                                    <input type="text" value={editFormData.username} disabled />
+                                </div>
                             </div>
 
                             <div className="modal-form-group">
-                                <label>System Username (Locked)</label>
-                                <input type="text" value={editFormData.username} disabled />
+                                <label>Full Name</label>
+                                <input type="text" value={editFormData.fullName} onChange={(e) => setEditFormData({...editFormData, fullName: e.target.value})} required />
+                            </div>
+
+                            <div className="modal-grid">
+                                <div className="modal-form-group">
+                                    <label>Date of Birth</label>
+                                    <input type="date" value={editFormData.dateOfBirth} onChange={(e) => setEditFormData({...editFormData, dateOfBirth: e.target.value})} required />
+                                </div>
+
+                                <div className="modal-form-group">
+                                    <label>Contact Number</label>
+                                    <input type="text" value={editFormData.contactNumber} onChange={(e) => setEditFormData({...editFormData, contactNumber: e.target.value})} required />
+                                </div>
                             </div>
 
                             <div className="modal-form-group">
-                                <label>Email Address</label>
+                                <label>Home Address</label>
+                                <textarea value={editFormData.address} onChange={(e) => setEditFormData({...editFormData, address: e.target.value})} rows="2" required />
+                            </div>
+
+                            <div className="modal-grid">
+                                <div className="modal-form-group">
+                                    <label>Study Medium</label>
+                                    <select value={editFormData.medium} onChange={(e) => setEditFormData({...editFormData, medium: e.target.value})}>
+                                        <option value="SINHALA">Sinhala</option>
+                                        <option value="ENGLISH">English</option>
+                                    </select>
+                                </div>
+
+                                <div className="modal-form-group">
+                                    <label>Email Address</label>
+                                    <input type="email" value={editFormData.email} onChange={(e) => setEditFormData({...editFormData, email: e.target.value})} />
+                                </div>
+                            </div>
+
+                            <div className="modal-form-group" style={{borderTop: "1px solid #e2e8f0", paddingTop: "15px", marginTop: "10px"}}>
+                                <label style={{color: "#dc2626"}}>Reset Password (Optional)</label>
                                 <input
-                                    type="email"
-                                    value={editFormData.email}
-                                    onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+                                    type="password"
+                                    placeholder="Leave blank to keep current password"
+                                    value={editFormData.password}
+                                    onChange={(e) => setEditFormData({...editFormData, password: e.target.value})}
                                 />
                             </div>
 
-                            <div className="modal-form-group">
-                                <label>Account Status</label>
-                                <select
-                                    value={editFormData.status}
-                                    onChange={(e) => setEditFormData({...editFormData, status: e.target.value})}
-                                >
-                                    <option value="ACTIVE">ACTIVE</option>
-                                    <option value="SUSPENDED">SUSPENDED</option>
-                                </select>
-                            </div>
-
-                            <div className="modal-actions" style={{marginTop: "25px"}}>
+                            <div className="modal-actions" style={{marginTop: "20px"}}>
                                 <button type="button" className="cancel-btn" onClick={() => setShowEditModal(false)}>Cancel</button>
                                 <button type="submit" className="confirm-delete-btn" style={{backgroundColor: "#2b55cc"}}>Save Changes</button>
                             </div>
