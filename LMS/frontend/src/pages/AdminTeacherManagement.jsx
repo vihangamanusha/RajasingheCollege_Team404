@@ -18,21 +18,21 @@ export default function AdminTeacherManagement() {
     // =========================
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState(null);
-    const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" }); // Inline message state
+    const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" });
 
     // =========================
     // EDIT MODAL STATE
     // =========================
     const [showEditModal, setShowEditModal] = useState(false);
-    const [editMessage, setEditMessage] = useState({ text: "", type: "" }); // Inline message state
-    const [originalEditData, setOriginalEditData] = useState(null); // Change Tracker
+    const [editMessage, setEditMessage] = useState({ text: "", type: "" });
+    const [originalEditData, setOriginalEditData] = useState(null); // Tracks changes
     const [editFormData, setEditFormData] = useState({
         username: "", userId: "", email: "", password: "",
         fullName: "", subjectSpecialization: "", contactNumber: ""
     });
 
     // =========================
-    // FETCH DATA FROM SPRING BOOT
+    // FETCH DATA
     // =========================
     const fetchTeachers = async () => {
         setLoading(true);
@@ -63,17 +63,22 @@ export default function AdminTeacherManagement() {
     // FULL PROFILE EDIT LOGIC
     // =========================
     const triggerEdit = async (teacher) => {
-        setEditMessage({ text: "", type: "" }); // Clear old messages
+        setEditMessage({ text: "", type: "" });
         setShowEditModal(true);
 
-        // Lock in basic table data immediately
+        // 1. Instantly load table data and lock the ID/Username
         const initialData = {
-            username: teacher.username, userId: teacher.userId, email: teacher.email || "",
-            password: "", fullName: "Loading...", subjectSpecialization: "", contactNumber: ""
+            username: teacher.username, // Locked
+            userId: teacher.userId,     // Locked
+            email: teacher.email || "",
+            password: "",
+            fullName: "Loading...",
+            subjectSpecialization: "Loading...",
+            contactNumber: "Loading..."
         };
         setEditFormData(initialData);
 
-        // Fetch remaining teacher details from DB
+        // 2. Fetch the rest of their profile from the database
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/admin/users/teacher/${teacher.username}`, {
@@ -83,8 +88,8 @@ export default function AdminTeacherManagement() {
             if (response.ok) {
                 const fullProfile = await response.json();
                 const completeData = {
-                    username: teacher.username,
-                    userId: teacher.userId,
+                    username: teacher.username, // Keep Locked
+                    userId: teacher.userId,     // Keep Locked
                     email: teacher.email || "",
                     password: "",
                     fullName: fullProfile.fullName || "",
@@ -92,10 +97,12 @@ export default function AdminTeacherManagement() {
                     contactNumber: fullProfile.contactNumber || ""
                 };
                 setEditFormData(completeData);
-                setOriginalEditData(completeData); // Save snapshot for change tracking
+                setOriginalEditData(completeData); // Save snapshot for the Change Tracker!
+            } else {
+                setEditMessage({ text: "Failed to load full details from server.", type: "error" });
             }
         } catch (error) {
-            setEditMessage({ text: "Failed to fetch full profile data.", type: "error" });
+            setEditMessage({ text: "Server connection error.", type: "error" });
         }
     };
 
@@ -103,7 +110,7 @@ export default function AdminTeacherManagement() {
         e.preventDefault();
         setEditMessage({ text: "", type: "" });
 
-        // 1. CHECK FOR CHANGES
+        // Change Tracker: Prevent saving if nothing was altered
         const hasChanges = Object.keys(originalEditData).some(key => {
             if (key === 'password') return editFormData.password.trim() !== "";
             return originalEditData[key] !== editFormData[key];
@@ -114,7 +121,7 @@ export default function AdminTeacherManagement() {
             return;
         }
 
-        // 2. SUBMIT CHANGES
+        // Submit the update
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(`http://localhost:8080/admin/users/teacher/update/${editFormData.username}`, {
@@ -135,7 +142,11 @@ export default function AdminTeacherManagement() {
             if (response.ok) {
                 setEditMessage({ text: "Teacher profile successfully updated!", type: "success" });
                 fetchTeachers();
-                setTimeout(() => setShowEditModal(false), 1500); // Wait so admin can read success message
+
+                // Wait 1.5s so admin can see the success message, then close
+                setTimeout(() => {
+                    setShowEditModal(false);
+                }, 1500);
             } else {
                 setEditMessage({ text: "Failed to update teacher profile.", type: "error" });
             }
@@ -179,15 +190,13 @@ export default function AdminTeacherManagement() {
 
     return (
         <div className="admin-teacher-management-container">
-
             <div className="page-header-flex">
                 <div className="header-text">
                     <h1>Teacher Management</h1>
                     <p>Manage all teaching staff records and assignments</p>
                 </div>
-
                 <button className="add-btn teacher-btn" onClick={() => navigate("/admin/users/teacher")}>
-                    <FiUserPlus /> Add Teacher
+                    <FiUserPlus style={{marginRight: '8px'}} /> Add Teacher
                 </button>
             </div>
 
@@ -304,7 +313,7 @@ export default function AdminTeacherManagement() {
                                 />
                             </div>
 
-                            {/* INLINE FORM MESSAGE FOR EDIT */}
+                            {/* INLINE FORM MESSAGE */}
                             {editMessage.text && (
                                 <div className={`inline-form-message ${editMessage.type}`}>
                                     {editMessage.text}
@@ -330,7 +339,7 @@ export default function AdminTeacherManagement() {
                         </div>
                         <p>Are you sure you want to permanently delete <strong>{userToDelete}</strong>? This action cannot be undone.</p>
 
-                        {/* INLINE FORM MESSAGE FOR DELETE */}
+                        {/* INLINE FORM MESSAGE */}
                         {deleteMessage.text && (
                             <div className={`inline-form-message ${deleteMessage.type}`}>
                                 {deleteMessage.text}
