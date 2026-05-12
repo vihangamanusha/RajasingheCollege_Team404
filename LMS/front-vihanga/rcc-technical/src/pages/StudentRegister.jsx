@@ -356,7 +356,7 @@ const handleSubmit = async (e) => {
     <input
       type="text"
       name="studentClass"
-      placeholder="Class"
+      placeholder="Enter class (e.g. A, B, C)"
       value={form.studentClass}
       onChange={handleChange}
       required
