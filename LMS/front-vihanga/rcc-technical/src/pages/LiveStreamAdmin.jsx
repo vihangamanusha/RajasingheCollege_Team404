@@ -220,7 +220,7 @@ export default function LiveStreamAdmin() {
               onSubmit={handleSubmit}
               className="stream-form"
             >
-
+              <label>Title</label>
               <input
                 type="text"
                 placeholder="Title"
@@ -234,6 +234,7 @@ export default function LiveStreamAdmin() {
                 required
               />
 
+                <label>Date</label>     
               <input
                 type="date"
                 value={form.date}
@@ -245,7 +246,7 @@ export default function LiveStreamAdmin() {
                 }
                 required
               />
-
+                <label>Time</label>
               <input
                 type="Time"
                 placeholder="Time"
@@ -258,7 +259,7 @@ export default function LiveStreamAdmin() {
                 }
                 required
               />
-
+                <label>Description</label>
               <textarea
                 placeholder="Description"
                 value={form.description}
@@ -270,7 +271,7 @@ export default function LiveStreamAdmin() {
                 }
                 required
               />
-
+                <label>Video URL</label>
               <input
                 type="text"
                 placeholder="YouTube / Facebook Embed URL"

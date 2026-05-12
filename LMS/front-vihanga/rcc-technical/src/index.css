@@ -1305,48 +1305,83 @@ textarea {
   cursor: pointer;
 }
 
-/*live stream page*/
+/* =========================
+   LIVE STREAM ADMIN PAGE
+========================= */
 
 .livestream-admin {
   padding: 30px;
   background: #f4f7fb;
   min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 
 .live-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  gap: 20px;
 }
 
 .live-org {
   color: #777;
   font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.live-header h1 {
+  font-size: 32px;
+  color: #1e293b;
+  margin-bottom: 8px;
 }
 
 .live-subtitle {
   color: #666;
-  margin-top: 5px;
+  font-size: 15px;
 }
+
+/* =========================
+   ADD BUTTON
+========================= */
 
 .add-stream-btn {
   background: #0d6efd;
   color: white;
   border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
+  padding: 12px 22px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 15px;
+  font-weight: 600;
+  transition: 0.2s ease;
 }
 
 .add-stream-btn:hover {
   background: #0b5ed7;
+  transform: translateY(-2px);
 }
 
-/* POPUP */
+/* =========================
+   SUCCESS / ERROR MESSAGE
+========================= */
+
+.message {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: #d1e7dd;
+  color: #0f5132;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* =========================
+   POPUP OVERLAY
+========================= */
 
 .popup-overlay {
   position: fixed;
@@ -1354,160 +1389,323 @@ textarea {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   z-index: 999;
 }
+
+/* =========================
+   POPUP FORM
+========================= */
 
 .popup-form {
   background: white;
   width: 500px;
+  max-width: 95%;
+  height: 700px;
   padding: 25px;
-  border-radius: 12px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
+
+/* =========================
+   POPUP HEADER
+========================= */
 
 .popup-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
+
+.popup-header h2 {
+  color: #1e293b;
+  font-size: 24px;
+}
+
+/* =========================
+   CLOSE BUTTON
+========================= */
 
 .close-btn {
   background: none;
   border: none;
-  font-size: 28px;
+  font-size: 30px;
   cursor: pointer;
+  color: #555;
+  transition: 0.2s ease;
 }
 
-/* FORM */
+.close-btn:hover {
+  color: red;
+}
+
+/* =========================
+   FORM
+========================= */
 
 .stream-form {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  
+  
 }
+
+/* LABELS */
+
+.stream-form label {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+/* INPUTS */
 
 .stream-form input,
 .stream-form textarea {
   padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid #d0d7de;
+  border-radius: 10px;
   font-size: 14px;
+  outline: none;
+  transition: 0.2s ease;
+  margin-bottom:0;
+  background: #fff;
+  width: 450px;
 }
 
-.stream-form textarea {
-  height: 120px;
-  resize: none;
+/* FOCUS EFFECT */
+
+.stream-form input:focus,
+.stream-form textarea:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
 }
+
+/* TEXTAREA */
+
+.stream-form textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* =========================
+   FORM BUTTONS
+========================= */
+
+.form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 25px;
+  
+}
+
+/* SAVE BUTTON */
 
 .submit-btn {
   background: #198754;
   color: white;
   border: none;
-  padding: 12px;
-  border-radius: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
+  width: 220px;
 }
 
 .submit-btn:hover {
   background: #157347;
 }
 
-/* STREAM CARDS */
-
-.stream-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.stream-card {
-  display: flex;
-  gap: 20px;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-}
-
-.stream-video iframe {
-  width: 320px;
-  height: 200px;
-  border-radius: 10px;
-  border: none;
-}
-
-.stream-content {
-  flex: 1;
-}
-
-.stream-content h2 {
-  margin-bottom: 10px;
-}
-
-.stream-date {
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.stream-description {
-  margin-bottom: 20px;
-  line-height: 1.6;
-}
-
-.delete-btn {
-  background: #dc3545;
-  color: white;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.delete-btn:hover {
-  background: #bb2d3b;
-}
-
-.message {
-  margin-bottom: 20px;
-  color: green;
-}
-.form-buttons {
-  display: flex;
-  gap: 10px;
-}
+/* CANCEL BUTTON */
 
 .cancel-btn {
   background: #6c757d;
   color: white;
   border: none;
   padding: 12px 18px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
+  width: 220px;
 }
 
 .cancel-btn:hover {
   background: #5c636a;
 }
 
+/* =========================
+   STREAM LIST
+========================= */
+
+.stream-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* =========================
+   STREAM CARD
+========================= */
+
+.stream-card {
+  display: flex;
+  gap: 24px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: 0.2s ease;
+}
+
+.stream-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* =========================
+   VIDEO
+========================= */
+
+.stream-video iframe {
+  width: 340px;
+  height: 210px;
+  border: none;
+  border-radius: 12px;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.stream-content {
+  flex: 1;
+}
+
+.stream-content h2 {
+  color: #1e293b;
+  margin-bottom: 12px;
+  font-size: 26px;
+}
+
+.stream-date {
+  color: #666;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.stream-description {
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 22px;
+}
+
+/* =========================
+   CARD BUTTONS
+========================= */
+
 .card-buttons {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
 }
+
+/* UPDATE BUTTON */
 
 .update-btn {
   background: #0d6efd;
   color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
+  padding: 10px 18px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
 }
 
 .update-btn:hover {
   background: #0b5ed7;
+}
+
+/* DELETE BUTTON */
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #bb2d3b;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+
+  .stream-card {
+    flex-direction: column;
+  }
+
+  .stream-video iframe {
+    width: 100%;
+    height: 250px;
+  }
+
+  .live-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .add-stream-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+
+  .livestream-admin {
+    padding: 20px;
+  }
+
+  .popup-form {
+    padding: 20px;
+  }
+
+  .form-buttons {
+    flex-direction: column;
+  }
+
+  .submit-btn,
+  .cancel-btn {
+    width: 100%;
+  }
+
+  .card-buttons {
+    flex-direction: column;
+  }
+
+  .update-btn,
+  .delete-btn {
+    width: 100%;
+  }
 }
