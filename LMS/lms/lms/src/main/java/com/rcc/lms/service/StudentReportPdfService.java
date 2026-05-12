@@ -34,12 +34,14 @@ public class StudentReportPdfService {
             title.setSpacingAfter(20);
             document.add(title);
 
-            // Student Info
+            // Student Information
             document.add(new Paragraph("Student ID: " + student.getStudentId(), normalFont));
             document.add(new Paragraph("Student Name: " + student.getFullName(), normalFont));
+
             if (student.getClassEntity() != null) {
                 document.add(new Paragraph("Class: " + student.getClassEntity().getClassName(), normalFont));
             }
+
             document.add(new Paragraph("Term: " + (report != null ? report.getTerm() : "N/A"), normalFont));
             document.add(new Paragraph(" ", normalFont));
 
@@ -54,21 +56,35 @@ public class StudentReportPdfService {
             table.addCell(cell2);
 
             for (StudentMarks m : marks) {
-                table.addCell(new Phrase(m.getSubjectName() != null ? m.getSubjectName() : "Unknown", normalFont));
-                table.addCell(new Phrase(String.valueOf(m.getAssignmentMark()), normalFont));
+                // Subject name comes from the Subject entity FK
+                String subjectName = (m.getSubject() != null && m.getSubject().getSubjectName() != null)
+                        ? m.getSubject().getSubjectName() : "Unknown";
+                table.addCell(new Phrase(subjectName, normalFont));
+                table.addCell(new Phrase(
+                        m.getAssignmentMark() != null ? String.valueOf(m.getAssignmentMark()) : "—",
+                        normalFont
+                ));
             }
 
             document.add(table);
 
-            // Summary Info
+            // Report Summary — uses the real DB columns: total_marks, average, rank_position
             if (report != null) {
                 document.add(new Paragraph(" ", normalFont));
-                document.add(new Paragraph("Attendance: " + report.getAttendancePercentage() + "%", normalFont));
-                document.add(new Paragraph("Overall Grade: " + report.getOverallGrade(), normalFont));
-                document.add(new Paragraph("Teacher's Comments: " + report.getTeacherComments(), normalFont));
+
+                if (report.getTotalMarks() != null) {
+                    document.add(new Paragraph("Total Marks: " + report.getTotalMarks(), normalFont));
+                }
+                if (report.getAverage() != null) {
+                    document.add(new Paragraph("Average: " + report.getAverage() + "%", normalFont));
+                }
+                if (report.getRankPosition() != null) {
+                    document.add(new Paragraph("Class Rank: " + report.getRankPosition(), normalFont));
+                }
             }
 
             document.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -8,35 +8,30 @@ import java.time.LocalDate;
 public class User {
 
     @Id
-    @Column(name = "user_id", length = 20)
+    @Column(length = 20)
     private String userId;
 
-    @Column(name = "username", unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String username;
 
-    @Column(name = "password", nullable = false)
+    @Column(nullable = false)
     private String password;
 
-    @Column(name = "role")
     private String role;
 
-    //  Sub role (Deputy Principal, Section Head, etc.)
-    @Column(name = "sub_role")
+    // Sub role (Deputy Principal, Section Head, etc.) — DB column: sub_role
     private String subRole;
 
-    @Column(name = "email", length = 100)
+    @Column(length = 100)
     private String email;
 
-    @Column(name = "created_date")
     private LocalDate createdDate;
 
-    @Column(name = "status", length = 20)
+    @Column(length = 20)
     private String status;
 
     // ===== CONSTRUCTORS =====
-
-    public User() {
-    }
+    public User() {}
 
     public User(String userId, String username, String password, String role,
                 String subRole, String email, LocalDate createdDate, String status) {
@@ -51,69 +46,27 @@ public class User {
     }
 
     // ===== GETTERS AND SETTERS =====
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public String getUserId() {
-        return userId;
-    }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
-    public String getUsername() {
-        return username;
-    }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    public String getSubRole() { return subRole; }
+    public void setSubRole(String subRole) { this.subRole = subRole; }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public LocalDate getCreatedDate() { return createdDate; }
+    public void setCreatedDate(LocalDate createdDate) { this.createdDate = createdDate; }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    //  SUB ROLE GETTER/SETTER
-    public String getSubRole() {
-        return subRole;
-    }
-
-    public void setSubRole(String subRole) {
-        this.subRole = subRole;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public LocalDate getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDate createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 }
