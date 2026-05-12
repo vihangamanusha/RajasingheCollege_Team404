@@ -1,5 +1,6 @@
 package com.rcc.lms.controller;
 
+import com.rcc.lms.dto.DashboardStatsDTO; // Ensure this DTO exists
 import com.rcc.lms.dto.StudentRegistrationRequest;
 import com.rcc.lms.dto.TeacherRegistrationRequest;
 import com.rcc.lms.dto.TechRegistrationRequest;
@@ -19,21 +20,25 @@ public class AdminController {
     private UserService userService;
 
     // =========================================================
-    // SYSTEM HEALTH / TEST
+    // NEW: DYNAMIC DASHBOARD DATA
     // =========================================================
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    @GetMapping("/test")
-    public String adminTest() {
-        return "Admin Access Granted";
+    /**
+     * Fetches real-time counts and the latest activity logs for the dashboard.
+     */
+    @GetMapping("/dashboard/stats")
+    public ResponseEntity<DashboardStatsDTO> getDashboardStats() {
+        try {
+            // Calls the service method we created to aggregate database counts
+            return ResponseEntity.ok(userService.getAdminDashboardStats());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     // =========================================================
     // USER REGISTRATION (WIZARDS)
     // =========================================================
 
-    /**
-     * Creates a new student record and their corresponding auth user.
-     */
     @PostMapping("/users/create")
     public ResponseEntity<String> createStudent(@RequestBody StudentRegistrationRequest request) {
         try {
@@ -47,9 +52,6 @@ public class AdminController {
         }
     }
 
-    /**
-     * Creates a new teacher record and their corresponding auth user.
-     */
     @PostMapping("/users/teacher/create")
     public ResponseEntity<String> createTeacher(@RequestBody TeacherRegistrationRequest request) {
         try {
@@ -63,9 +65,6 @@ public class AdminController {
         }
     }
 
-    /**
-     * Creates a new technical officer record and their corresponding auth user.
-     */
     @PostMapping("/users/tech/create")
     public ResponseEntity<String> createTechOfficer(@RequestBody TechRegistrationRequest request) {
         try {
@@ -80,12 +79,9 @@ public class AdminController {
     }
 
     // =========================================================
-    // SEARCH & GENERAL UPDATES
+    // SEARCH, UPDATES & PROFILE MANAGEMENT
     // =========================================================
 
-    /**
-     * Search for users based on their role and a search term (ID, Email, or Username).
-     */
     @GetMapping("/users/search")
     public ResponseEntity<List<com.rcc.lms.entity.User>> searchUsers(
             @RequestParam String role,
@@ -93,9 +89,6 @@ public class AdminController {
         return ResponseEntity.ok(userService.searchUsers(role, term));
     }
 
-    /**
-     * Updates general User account data (Email, Status, Role).
-     */
     @PutMapping("/users/update/{username}")
     public ResponseEntity<String> updateUser(
             @PathVariable String username,
@@ -110,10 +103,6 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-
-    // =========================================================
-    // STUDENT PROFILE MANAGEMENT
-    // =========================================================
 
     @GetMapping("/users/student/{username}")
     public ResponseEntity<?> getStudentProfile(@PathVariable String username) {
@@ -143,13 +132,6 @@ public class AdminController {
         }
     }
 
-    // =========================================================
-    // TEACHER PROFILE MANAGEMENT (FIXES 404/500 Errors)
-    // =========================================================
-
-    /**
-     * Fetches the full teacher profile including professional details.
-     */
     @GetMapping("/users/teacher/{username}")
     public ResponseEntity<?> getTeacherProfile(@PathVariable String username) {
         try {
@@ -163,9 +145,6 @@ public class AdminController {
         }
     }
 
-    /**
-     * Updates teacher professional details and auth data.
-     */
     @PutMapping("/users/teacher/update/{username}")
     public ResponseEntity<String> updateTeacherProfile(
             @PathVariable String username,
@@ -181,13 +160,6 @@ public class AdminController {
         }
     }
 
-    // =========================================================
-    // TECHNICAL OFFICER PROFILE MANAGEMENT (FIXES 404/500 Errors)
-    // =========================================================
-
-    /**
-     * Fetches the full technical officer profile.
-     */
     @GetMapping("/users/tech/{username}")
     public ResponseEntity<?> getTechOfficerProfile(@PathVariable String username) {
         try {
@@ -201,9 +173,6 @@ public class AdminController {
         }
     }
 
-    /**
-     * Updates technical officer details and auth data.
-     */
     @PutMapping("/users/tech/update/{username}")
     public ResponseEntity<String> updateTechOfficerProfile(
             @PathVariable String username,
@@ -219,13 +188,6 @@ public class AdminController {
         }
     }
 
-    // =========================================================
-    // PERMANENT ACCOUNT DELETION
-    // =========================================================
-
-    /**
-     * Removes the user and their specific profile (Student/Teacher/Tech) permanently.
-     */
     @DeleteMapping("/users/delete/{username}")
     public ResponseEntity<String> deleteUserPermanently(@PathVariable String username) {
         try {

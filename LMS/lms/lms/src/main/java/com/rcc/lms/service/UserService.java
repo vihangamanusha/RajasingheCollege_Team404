@@ -17,9 +17,13 @@ import com.rcc.lms.dto.LoginResponse;
 import com.rcc.lms.dto.StudentRegistrationRequest;
 import com.rcc.lms.dto.TeacherRegistrationRequest;
 import com.rcc.lms.dto.TechRegistrationRequest;
+import com.rcc.lms.dto.DashboardStatsDTO;
+import com.rcc.lms.dto.RecentActivityDTO;
 import com.rcc.lms.security.JwtUtil;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -46,7 +50,6 @@ public class UserService {
     // LOGIN USER
     // =========================
     public LoginResponse loginUser(LoginRequest request) {
-
         User user = userRepository.findByUsername(request.getUsername())
                 .orElse(null);
 
@@ -66,6 +69,39 @@ public class UserService {
                 user.getRole(),
                 token
         );
+    }
+
+    // ==============================================================
+    // DYNAMIC DASHBOARD LOGIC
+    // ==============================================================
+
+    /**
+     * Aggregates real-time data for the Admin Dashboard overview.
+     */
+    public DashboardStatsDTO getAdminDashboardStats() {
+        DashboardStatsDTO stats = new DashboardStatsDTO();
+
+        // 1. Fetch live counts from the User table (excluding deleted users)
+        stats.setTotalStudents(userRepository.countByRoleAndStatusNot("ROLE_STUDENT", "DELETED"));
+        stats.setTotalTeachers(userRepository.countByRoleAndStatusNot("ROLE_TEACHER", "DELETED"));
+
+        // 2. Placeholder data for Class and Subject modules (update once peers finish their parts)
+        stats.setTotalClasses(42);
+        stats.setTotalSubjects(24);
+
+        // 3. Map the 4 most recently registered users to the Activity Feed
+        List<RecentActivityDTO> activityList = userRepository.findTop4ByStatusNotOrderByCreatedDateDesc("DELETED")
+                .stream()
+                .map(u -> new RecentActivityDTO(
+                        u.getUsername(),
+                        "was registered as a " + u.getRole().replace("ROLE_", "").toLowerCase(),
+                        "Recently",
+                        u.getUsername().substring(0, 1).toUpperCase()
+                ))
+                .collect(Collectors.toList());
+
+        stats.setRecentActivities(activityList);
+        return stats;
     }
 
     // ==============================================================
@@ -204,7 +240,7 @@ public class UserService {
     }
 
     // ==============================================================
-    // TEACHER PROFILE MANAGEMENT (FIXES "CANNOT FIND SYMBOL" ERROR)
+    // TEACHER PROFILE MANAGEMENT
     // ==============================================================
     public Teacher getTeacherProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
@@ -219,10 +255,8 @@ public class UserService {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
 
-        // 1. Update Authentication & Role Details
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
 
-        // SAVE THE SUB-ROLE HERE!
         if (request.getSubRole() != null) {
             existingUser.setSubRole(request.getSubRole());
         }
@@ -232,7 +266,6 @@ public class UserService {
         }
         userRepository.save(existingUser);
 
-        // 2. Update Teacher Professional Details
         Teacher existingTeacher = teacherRepository.findById(existingUser.getUserId()).orElse(null);
         if (existingTeacher != null) {
             existingTeacher.setFullName(request.getFullName());
@@ -244,7 +277,7 @@ public class UserService {
     }
 
     // ==============================================================
-    // TECH OFFICER PROFILE MANAGEMENT (FIXES "CANNOT FIND SYMBOL" ERROR)
+    // TECH OFFICER PROFILE MANAGEMENT
     // ==============================================================
     public TechnicalOfficer getTechOfficerProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
@@ -259,14 +292,12 @@ public class UserService {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
 
-        // Update User Account Details
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
         }
         userRepository.save(existingUser);
 
-        // Update Tech Officer Details
         TechnicalOfficer existingTech = technicalOfficerRepository.findById(existingUser.getUserId()).orElse(null);
         if (existingTech != null) {
             existingTech.setFullName(request.getFullName());
@@ -279,7 +310,7 @@ public class UserService {
     }
 
     // ==============================================================
-    // ADMIN ACTIONS (Updates, Generic Creation, and Deletion)
+    // ADMIN ACTIONS
     // ==============================================================
 
     public String updateUser(String username, User updatedUser) {
@@ -301,12 +332,10 @@ public class UserService {
         String role = existingUser.getRole();
         String userId = existingUser.getUserId();
 
-        // 1. Delete specialized profile first (Foreign Key Safety)
         if ("ROLE_STUDENT".equals(role)) studentRepository.deleteById(userId);
         else if ("ROLE_TEACHER".equals(role)) teacherRepository.deleteById(userId);
         else if ("ROLE_TECHNICAL_OFFICER".equals(role)) technicalOfficerRepository.deleteById(userId);
 
-        // 2. Delete the Authentication User
         userRepository.delete(existingUser);
         return "User permanently deleted from the system!";
     }
