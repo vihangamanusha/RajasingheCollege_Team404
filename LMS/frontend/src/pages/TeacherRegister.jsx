@@ -1,25 +1,23 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
-    FiUser, FiMail, FiLock, FiHash, FiBook, FiPhone,
-    FiBriefcase, FiArrowRight, FiArrowLeft, FiCheckSquare,
-    FiSquare, FiChevronDown, FiChevronUp, FiAlertCircle, FiX
+    FiUser,
+    FiMail,
+    FiLock,
+    FiHash,
+    FiBookOpen,
+    FiPhone,
+    FiArrowRight,
+    FiArrowLeft,
+    FiBriefcase,
+    FiCheckSquare,
+    FiSquare
 } from "react-icons/fi";
+
 import "./TeacherRegister.css";
 
 export default function TeacherRegister() {
-    const [step, setStep] = useState(1);
-    const [showPicker, setShowPicker] = useState(false);
-    const [errors, setErrors] = useState({});
-    const pickerRef = useRef(null);
 
-    const availableSubjects = ["Mathematics", "Science", "English", "Sinhala", "History", "ICT", "Geography", "Commerce", "Art", "Music"];
-    const roles = [
-        "Vice Principal (Development)", "Vice Principal (Administrative)",
-        "Deputy Principal (Grade 6-11)", "Deputy Principal (Administrative)",
-        "Section Head Grade 6", "Section Head Grade 7", "Section Head Grade 8",
-        "Section Head Grade 9", "Section Head Grade 10", "Section Head Grade 11",
-        "Subject Teacher", "Class Teacher"
-    ];
+    const [step, setStep] = useState(1);
 
     const [form, setForm] = useState({
         fullName: "",
@@ -32,206 +30,453 @@ export default function TeacherRegister() {
         password: ""
     });
 
-    const [message, setMessage] = useState({ text: "", type: "" });
+    const [message, setMessage] = useState("");
+    const [messageType, setMessageType] = useState("");
 
-    useEffect(() => {
-        const handleClickOutside = (e) => {
-            if (pickerRef.current && !pickerRef.current.contains(e.target)) {
-                setShowPicker(false);
+    const availableSubjects = [
+        "Mathematics",
+        "Science",
+        "English",
+        "Sinhala",
+        "History",
+        "ICT",
+        "Geography",
+        "Commerce",
+        "Art",
+        "Music"
+    ];
+
+    const roles = [
+        "Vice Principal (Development)",
+        "Vice Principal (Administrative)",
+        "Deputy Principal (Grade 6-11)",
+        "Deputy Principal (Administrative)",
+        "Section Head Grade 6",
+        "Section Head Grade 7",
+        "Section Head Grade 8",
+        "Section Head Grade 9",
+        "Section Head Grade 10",
+        "Section Head Grade 11",
+        "Subject Teacher",
+        "Class Teacher"
+    ];
+
+    // =========================
+    // VALIDATION
+    // =========================
+
+    const validateStep = () => {
+
+        if (step === 1) {
+
+            if (!/^[a-zA-Z\s.]+$/.test(form.fullName)) {
+                setMessage("Full Name can only contain letters.");
+                setMessageType("error");
+                return false;
             }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
+
+            if (form.subjectSpecialization.length === 0) {
+                setMessage("Please select at least one subject.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!form.subRole) {
+                setMessage("Please select a designation.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^\d{10}$/.test(form.contactNumber)) {
+                setMessage("Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+        }
+
+        if (step === 2) {
+
+            const alphaNum = /^[a-zA-Z0-9]+$/;
+
+            if (!alphaNum.test(form.userId)) {
+                setMessage("Teacher ID cannot contain symbols.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!alphaNum.test(form.username)) {
+                setMessage("Username cannot contain symbols.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+                setMessage("Please enter a valid email address.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (form.password.length < 8) {
+                setMessage("Password must be at least 8 characters.");
+                setMessageType("error");
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    // =========================
+    // HANDLE CHANGE
+    // =========================
+
+    const handleChange = (e) => {
+        setForm({
+            ...form,
+            [e.target.name]: e.target.value
+        });
+
+        setMessage("");
+    };
+
+    // =========================
+    // SUBJECT TOGGLE
+    // =========================
 
     const handleSubjectToggle = (subject) => {
-        setForm(prev => {
-            const isSelected = prev.subjectSpecialization.includes(subject);
-            const updated = isSelected
-                ? prev.subjectSpecialization.filter(s => s !== subject)
-                : [...prev.subjectSpecialization, subject];
-            return { ...prev, subjectSpecialization: updated };
-        });
+
+        const exists = form.subjectSpecialization.includes(subject);
+
+        if (exists) {
+            setForm({
+                ...form,
+                subjectSpecialization:
+                    form.subjectSpecialization.filter(s => s !== subject)
+            });
+        } else {
+            setForm({
+                ...form,
+                subjectSpecialization: [
+                    ...form.subjectSpecialization,
+                    subject
+                ]
+            });
+        }
     };
 
-    const validateStep1 = () => {
-        let errs = {};
-        if (!form.fullName.trim()) errs.fullName = "Full Name is required";
-        if (form.subjectSpecialization.length === 0) errs.subjects = "Select at least one subject";
-        if (!form.subRole) errs.subRole = "Select a designation";
-        if (!/^\d{10}$/.test(form.contactNumber)) errs.contactNumber = "Enter a valid 10-digit number";
-        setErrors(errs);
-        return Object.keys(errs).length === 0;
+    // =========================
+    // NEXT STEP
+    // =========================
+
+    const handleNext = () => {
+
+        if (validateStep()) {
+            setStep(2);
+            setMessage("");
+        }
     };
 
-    const handleNext = () => { if (validateStep1()) setStep(2); };
+    // =========================
+    // SUBMIT
+    // =========================
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setMessage({ text: "", type: "" });
 
-        const payload = {
-            ...form,
-            subjectSpecialization: form.subjectSpecialization.join(", "),
-            role: "ROLE_TEACHER"
-        };
+        e.preventDefault();
+
+        if (!validateStep()) return;
 
         try {
-            const res = await fetch("http://localhost:8080/admin/users/teacher/create", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer " + localStorage.getItem("token")
-                },
-                body: JSON.stringify(payload)
-            });
+
+            const payload = {
+                ...form,
+                subjectSpecialization:
+                    form.subjectSpecialization.join(", "),
+                role: "ROLE_TEACHER"
+            };
+
+            const res = await fetch(
+                "http://localhost:8080/admin/users/teacher/create",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization:
+                            "Bearer " + localStorage.getItem("token")
+                    },
+                    body: JSON.stringify(payload)
+                }
+            );
+
+            const data = await res.text();
 
             if (res.ok) {
-                setMessage({ text: "Teacher successfully registered! ✅", type: "success" });
-                setForm({ fullName: "", subjectSpecialization: [], contactNumber: "", subRole: "", userId: "", username: "", email: "", password: "" });
-                setTimeout(() => setStep(1), 2000);
+
+                setMessage("Teacher successfully registered! ✅");
+                setMessageType("success");
+
+                setForm({
+                    fullName: "",
+                    subjectSpecialization: [],
+                    contactNumber: "",
+                    subRole: "",
+                    userId: "",
+                    username: "",
+                    email: "",
+                    password: ""
+                });
+
+                setStep(1);
+
             } else {
-                const data = await res.text();
-                setMessage({ text: "Registration Failed: " + data, type: "error" });
+
+                setMessage(data);
+                setMessageType("error");
             }
+
         } catch {
-            setMessage({ text: "Server connection failed", type: "error" });
+
+            setMessage("Failed to connect to server.");
+            setMessageType("error");
         }
     };
 
     return (
+
         <div className="register-container">
+
             <div className="page-header">
                 <h1>Teacher Registration</h1>
-                <p>Initialize professional staff profiles with hierarchical roles.</p>
+                <p>Create professional teacher accounts securely.</p>
             </div>
 
             <div className="form-card">
-                {/* MODERN PROGRESS TRACKER */}
-                <div className="progress-bar-container">
-                    <div className={`progress-step ${step >= 1 ? "active" : ""}`}>1</div>
-                    <div className={`progress-line ${step === 2 ? "active" : ""}`}></div>
-                    <div className={`progress-step ${step === 2 ? "active" : ""}`}>2</div>
+
+                <div className="step-indicator">
+                    {step === 1
+                        ? "Step 1: Teacher Information"
+                        : "Step 2: Account Security"}
                 </div>
 
                 <form onSubmit={handleSubmit}>
+
+                    {/* STEP 1 */}
+
                     {step === 1 && (
-                        <div className="wizard-step animate-in">
+
+                        <div className="wizard-step">
+
                             <div className="form-group">
                                 <label>Full Name</label>
-                                <div className="input-wrapper">
+
+                                <div className="input-container">
                                     <FiUser className="input-icon" />
+
                                     <input
-                                        placeholder="e.g. B.K.N.S. Lakmal"
+                                        name="fullName"
                                         value={form.fullName}
-                                        onChange={(e) => setForm({...form, fullName: e.target.value})}
+                                        onChange={handleChange}
+                                        required
                                     />
                                 </div>
-                                {errors.fullName && <p className="err-msg"><FiAlertCircle /> {errors.fullName}</p>}
-                            </div>
-
-                            {/* PROFESSIONAL MULTI-SELECT CHIP INPUT */}
-                            <div className="form-group" ref={pickerRef}>
-                                <label>Subject Specialization</label>
-                                <div
-                                    className={`multi-select-field ${showPicker ? 'focused' : ''}`}
-                                    onClick={() => setShowPicker(!showPicker)}
-                                >
-                                    <FiBook className="input-icon" />
-                                    <div className="chips-container">
-                                        {form.subjectSpecialization.length > 0 ? (
-                                            form.subjectSpecialization.map(sub => (
-                                                <span key={sub} className="subject-chip" onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    handleSubjectToggle(sub);
-                                                }}>
-                                                    {sub} <FiX className="chip-remove" />
-                                                </span>
-                                            ))
-                                        ) : (
-                                            <span className="placeholder">Select assigned subjects...</span>
-                                        )}
-                                    </div>
-                                    <FiChevronDown className={`chevron ${showPicker ? 'rotated' : ''}`} />
-                                </div>
-
-                                {showPicker && (
-                                    <div className="subject-dropdown shadow-lg">
-                                        {availableSubjects.map(sub => (
-                                            <div
-                                                key={sub}
-                                                className={`dropdown-item ${form.subjectSpecialization.includes(sub) ? "selected" : ""}`}
-                                                onClick={() => handleSubjectToggle(sub)}
-                                            >
-                                                {form.subjectSpecialization.includes(sub) ? <FiCheckSquare className="chk active"/> : <FiSquare className="chk"/>}
-                                                <span>{sub}</span>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                                {errors.subjects && <p className="err-msg"><FiAlertCircle /> {errors.subjects}</p>}
                             </div>
 
                             <div className="form-group">
-                                <label>Designation / Sub-Role</label>
-                                <div className="input-wrapper">
-                                    <FiBriefcase className="input-icon" />
-                                    <select value={form.subRole} onChange={(e) => setForm({...form, subRole: e.target.value})}>
-                                        <option value="" disabled>Choose Designation</option>
-                                        {roles.map(r => <option key={r} value={r}>{r}</option>)}
-                                    </select>
+                                <label>Subject Specialization</label>
+
+                                <div className="subject-list">
+
+                                    {availableSubjects.map(subject => (
+
+                                        <div
+                                            key={subject}
+                                            className={`subject-option ${
+                                                form.subjectSpecialization.includes(subject)
+                                                    ? "picked"
+                                                    : ""
+                                            }`}
+                                            onClick={() => handleSubjectToggle(subject)}
+                                        >
+
+                                            {form.subjectSpecialization.includes(subject)
+                                                ? <FiCheckSquare />
+                                                : <FiSquare />
+                                            }
+
+                                            {subject}
+
+                                        </div>
+
+                                    ))}
+
                                 </div>
-                                {errors.subRole && <p className="err-msg"><FiAlertCircle /> {errors.subRole}</p>}
+                            </div>
+
+                            <div className="form-group">
+                                <label>Designation</label>
+
+                                <div className="input-container">
+
+                                    <FiBriefcase className="input-icon" />
+
+                                    <select
+                                        name="subRole"
+                                        value={form.subRole}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option value="" disabled>
+                                            Select Designation
+                                        </option>
+
+                                        {roles.map(role => (
+                                            <option key={role} value={role}>
+                                                {role}
+                                            </option>
+                                        ))}
+
+                                    </select>
+
+                                </div>
                             </div>
 
                             <div className="form-group">
                                 <label>Contact Number</label>
-                                <div className="input-wrapper">
+
+                                <div className="input-container">
+
                                     <FiPhone className="input-icon" />
+
                                     <input
+                                        name="contactNumber"
                                         value={form.contactNumber}
-                                        onChange={(e) => setForm({...form, contactNumber: e.target.value})}
-                                        placeholder="07XXXXXXXX"
+                                        onChange={handleChange}
+                                        required
                                     />
+
                                 </div>
-                                {errors.contactNumber && <p className="err-msg"><FiAlertCircle /> {errors.contactNumber}</p>}
                             </div>
 
-                            <button type="button" className="main-action-btn" onClick={handleNext}>
-                                Continue to Account <FiArrowRight />
+                            <button
+                                type="button"
+                                className="submit-btn"
+                                onClick={handleNext}
+                            >
+                                Next Step
+                                <FiArrowRight style={{ marginLeft: "5px" }} />
                             </button>
+
                         </div>
                     )}
+
+                    {/* STEP 2 */}
 
                     {step === 2 && (
-                        <div className="wizard-step animate-in">
-                            <div className="grid-2">
-                                <div className="form-group">
-                                    <label>Teacher ID</label>
-                                    <div className="input-wrapper"><FiHash className="input-icon" /><input value={form.userId} onChange={(e) => setForm({...form, userId: e.target.value})} placeholder="T-101" /></div>
-                                </div>
-                                <div className="form-group">
-                                    <label>Username</label>
-                                    <div className="input-wrapper"><FiUser className="input-icon" /><input value={form.username} onChange={(e) => setForm({...form, username: e.target.value})} placeholder="Login Username" /></div>
+
+                        <div className="wizard-step">
+
+                            <div className="form-group">
+                                <label>Teacher ID</label>
+
+                                <div className="input-container">
+
+                                    <FiHash className="input-icon" />
+
+                                    <input
+                                        name="userId"
+                                        value={form.userId}
+                                        onChange={handleChange}
+                                        required
+                                    />
+
                                 </div>
                             </div>
+
+                            <div className="form-group">
+                                <label>Username</label>
+
+                                <div className="input-container">
+
+                                    <FiUser className="input-icon" />
+
+                                    <input
+                                        name="username"
+                                        value={form.username}
+                                        onChange={handleChange}
+                                        required
+                                    />
+
+                                </div>
+                            </div>
+
                             <div className="form-group">
                                 <label>Email Address</label>
-                                <div className="input-wrapper"><FiMail className="input-icon" /><input type="email" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} placeholder="email@school.lk" /></div>
+
+                                <div className="input-container">
+
+                                    <FiMail className="input-icon" />
+
+                                    <input
+                                        name="email"
+                                        type="email"
+                                        value={form.email}
+                                        onChange={handleChange}
+                                        required
+                                    />
+
+                                </div>
                             </div>
+
                             <div className="form-group">
-                                <label>Secure Password</label>
-                                <div className="input-wrapper"><FiLock className="input-icon" /><input type="password" value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} placeholder="••••••••" /></div>
+                                <label>Password</label>
+
+                                <div className="input-container">
+
+                                    <FiLock className="input-icon" />
+
+                                    <input
+                                        name="password"
+                                        type="password"
+                                        value={form.password}
+                                        onChange={handleChange}
+                                        required
+                                    />
+
+                                </div>
                             </div>
-                            <div className="flex-buttons">
-                                <button type="button" className="secondary-btn" onClick={() => setStep(1)}><FiArrowLeft /> Back</button>
-                                <button type="submit" className="main-action-btn">Finalize Registration</button>
+
+                            <div className="button-group">
+
+                                <button
+                                    type="button"
+                                    className="back-btn"
+                                    onClick={() => setStep(1)}
+                                >
+                                    <FiArrowLeft /> Back
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    className="submit-btn"
+                                >
+                                    Complete Registration
+                                </button>
+
                             </div>
+
                         </div>
                     )}
+
                 </form>
-                {message.text && <div className={`alert-box ${message.type}`}>{message.text}</div>}
+
+                {message && (
+                    <div className={`message-box ${messageType}`}>
+                        {message}
+                    </div>
+                )}
+
             </div>
+
         </div>
     );
 }
