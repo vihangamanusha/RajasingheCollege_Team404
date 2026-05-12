@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Radio, Calendar, Clock } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import LiveStreamImage from "../assets/livestream.jpeg";
 import "../styles/styles.css";
 
 // YOUTUBE URL → EMBED URL
@@ -73,7 +74,7 @@ export function LiveStream() {
       <section className="live-hero">
 
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=1920&h=1080&fit=crop"
+          src={LiveStreamImage}
           className="live-hero-image"
           alt="Live Stream"
         />

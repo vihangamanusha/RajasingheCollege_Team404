@@ -2,6 +2,7 @@ import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import ContactImage from "../assets/contact.jpeg";
 import { sendMessage } from "../api/contactApi";
 
 export function Contact() {
@@ -97,7 +98,7 @@ if (!formData.phone.trim()) {
       {/* Hero Banner */}
       <section className="contact-hero">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&h=1080&fit=crop"
+          src={ContactImage}
           alt="Contact Us"
         />
 
