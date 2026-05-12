@@ -453,6 +453,13 @@ export default function LiveStreamAdmin() {
                   Start Streaming
                 </button>
 
+                <button
+                   className="stop-btn"
+                   onClick={() => stopStreaming(stream.id)}
+                >
+                   Stop Streaming
+                </button>
+
               </div>
 
             </div>
