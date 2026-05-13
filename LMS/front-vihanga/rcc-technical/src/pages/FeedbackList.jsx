@@ -11,11 +11,17 @@ export default function FeedbackList() {
   }, []);
 
   const loadFeedback = async () => {
-    setLoading(true);
-    const data = await getFeedback();
-    setFeedback(data || []);
-    setLoading(false);
-  };
+  setLoading(true);
+
+  const data = await getFeedback();
+
+  // NEWEST FIRST (by id or createdAt)
+  const sorted = (data || []).sort((a, b) => b.id - a.id);
+
+  setFeedback(sorted);
+
+  setLoading(false);
+};
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this feedback?")) {

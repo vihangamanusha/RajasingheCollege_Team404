@@ -43,33 +43,31 @@ export default function AdminAnnouncements() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      if (editingId) {
-        await axios.put(`${API_URL}/${editingId}`, formData);
-        alert("Announcement Updated");
-      } else {
-        await axios.post(API_URL, formData);
-        alert("Announcement Added");
-      }
-
-      setFormData({
-        title: "",
-        category: "",
-        targetAudience: "",
-        content: ""
-      });
-
-      setEditingId(null);
-      setShowModal(false);
-      fetchAnnouncements();
-
-    } catch (error) {
-      console.log(error);
+  try {
+    if (editingId) {
+      await axios.put(`${API_URL}/${editingId}`, formData);
+    } else {
+      await axios.post(API_URL, formData);
     }
-  };
 
+    setFormData({
+      title: "",
+      category: "",
+      targetAudience: "",
+      content: ""
+    });
+
+    setEditingId(null);
+    setShowModal(false);
+
+    fetchAnnouncements(); // reload updated data
+
+  } catch (error) {
+    console.log(error);
+  }
+};
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure?");
     if (!confirmDelete) return;
@@ -84,18 +82,17 @@ export default function AdminAnnouncements() {
   };
 
   const handleEdit = (announcement) => {
-    setEditingId(announcement.id);
+  setEditingId(announcement.id);
 
-    setFormData({
-      title: announcement.title,
-      category: announcement.category,
-      targetAudience: announcement.targetAudience,
-      content: announcement.content
-    });
+  setFormData({
+    title: announcement.title || "",
+    category: announcement.category || "",
+    targetAudience: announcement.targetAudience || "",
+    content: announcement.content || ""
+  });
 
-    setShowModal(true);
-  };
-
+  setShowModal(true);
+};
   return (
     <div className="container">
 

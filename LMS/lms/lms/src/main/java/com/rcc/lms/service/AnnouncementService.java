@@ -31,18 +31,17 @@ public class AnnouncementService {
     }
 
     //update
-    public Announcement updateAnnouncement(Long id,Announcement updatedAnnouncement) {
-        Announcement existing=repository.findById(id).get();
+    public Announcement updateAnnouncement(Long id, Announcement newData) {
 
-        if(existing==null) {
-            existing.setTitle(updatedAnnouncement.getTitle());
-            existing.setCategory(updatedAnnouncement.getCategory());
-            existing.setTargetAudeience(updatedAnnouncement.getTargetAudeience());
-            existing.setContent(updatedAnnouncement.getContent());
+        Announcement existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Not found"));
 
-            return repository.save(existing);
-        }
-        return null;
+        existing.setTitle(newData.getTitle());
+        existing.setCategory(newData.getCategory());
+        existing.setTargetAudeience(newData.getTargetAudeience());
+        existing.setContent(newData.getContent());
+
+        return repository.save(existing);
     }
 
     //delete
