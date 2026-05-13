@@ -11,7 +11,6 @@ export function News() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // LOAD NEWS FROM DATABASE
   useEffect(() => {
     fetchNews();
   }, []);
@@ -26,9 +25,10 @@ export function News() {
 
       const data = await response.json();
 
-      console.log("News from database:", data);
+      // ✅ SORT LATEST FIRST
+      const sorted = (data || []).sort((a, b) => b.id - a.id);
 
-      setAllNews(data);
+      setAllNews(sorted);
     } catch (err) {
       console.error(err);
       setError("Failed to load news");
@@ -39,7 +39,8 @@ export function News() {
 
   return (
     <div className="news-page">
-      {/* HERO SECTION */}
+
+      {/* HERO */}
       <section className="news-hero">
         <ImageWithFallback
           src={newsImage}
@@ -48,7 +49,9 @@ export function News() {
         />
 
         <div className="news-hero__overlay">
-          <h1 className="news-hero__title">{t("news.latest")}</h1>
+          <h1 className="news-hero__title">
+            {t("news.latest")}
+          </h1>
         </div>
       </section>
 
@@ -70,7 +73,7 @@ export function News() {
             </div>
           )}
 
-          {/* NEWS GRID */}
+          {/* GRID */}
           {!loading && !error && (
             <div className="news-grid">
 
@@ -90,19 +93,21 @@ export function News() {
                     <div className="news-card__image-wrapper">
 
                       <ImageWithFallback
-                        src={
-                          news.image
-                            ? news.image
-                            : "https://via.placeholder.com/800x600?text=No+Image"
-                        }
-                        alt={news.title}
-                        className="news-card__image"
-                      />
-
+                         src={
+                           news.image
+                           ? news.image.startsWith("http")
+                           ? news.image
+                           : `http://localhost:8080/${news.image.replace(/^\/+/, "")}`
+                           : "https://via.placeholder.com/800x600?text=No+Image"
+                         }
+                            alt={news.title}
+                             className="news-card__image"
+                       />
+ 
                       <div className="news-card__image-overlay"></div>
 
+                      {/* DATE */}
                       <div className="news-card__meta-row">
-
                         <div className="news-card__date">
                           <Calendar className="news-card__icon" />
 
@@ -112,8 +117,8 @@ export function News() {
                               : "No Date"}
                           </span>
                         </div>
-
                       </div>
+
                     </div>
 
                     {/* CONTENT */}
@@ -123,13 +128,13 @@ export function News() {
                         {news.title}
                       </h3>
 
-                      <p className="news-card__excerpt line-clamp-2">
-                        {news.content?.substring(0, 100)}...
+                      <p className="news-card__excerpt">
+                        {news.content?.substring(0, 120)}...
                       </p>
 
                       <div className="news-card__divider"></div>
 
-                      <p className="news-card__body line-clamp-3">
+                      <p className="news-card__body">
                         {news.content}
                       </p>
 
@@ -140,8 +145,10 @@ export function News() {
 
             </div>
           )}
+
         </div>
       </section>
+
     </div>
   );
 }
