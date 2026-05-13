@@ -89,7 +89,7 @@ export function Academic() {
           <div className="academic-program-grid">
             {/* Grades 6-9 */}
             <Link
-              to="/academic/grades-6-9"
+              /*to="/academic/grades-6-9"*/
               className="academic-program-card"
             >
               <div className="academic-program-image-wrap">
@@ -111,7 +111,7 @@ export function Academic() {
 
             {/* Ordinary Level */}
             <Link
-              to="/academic/ordinary-level"
+              /*to="/academic/ordinary-level"*/
               className="academic-program-card"
             >
               <div className="academic-program-image-wrap">
@@ -133,7 +133,7 @@ export function Academic() {
 
             {/* Advanced Level */}
             <Link
-              to="/academic/advanced-level"
+              /*to="/academic/advanced-level"*/
               className="academic-program-card"
             >
               <div className="academic-program-image-wrap">
