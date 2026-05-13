@@ -332,8 +332,8 @@ export default function AdminStudentManagement() {
                                 <div className="modal-form-group">
                                     <label>Study Medium</label>
                                     <select value={editFormData.medium} onChange={(e) => setEditFormData({...editFormData, medium: e.target.value})}>
-                                        <option value="SINHALA">Sinhala</option>
-                                        <option value="ENGLISH">English</option>
+                                        <option value="Sinhala">Sinhala</option>
+                                        <option value="English">English</option>
                                     </select>
                                 </div>
                                 {/* EMAIL FIELD */}

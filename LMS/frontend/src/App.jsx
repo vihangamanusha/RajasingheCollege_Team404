@@ -14,6 +14,8 @@ import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
 import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
+// --> NEW: ANNOUNCEMENTS <--
+import Announcement from "./pages/Announcements";
 
 // --> MANAGEMENT TABLES <--
 import AdminStudentManagement from "./pages/AdminStudentManagement";
@@ -73,6 +75,10 @@ function App() {
                 <Route path="users/student" element={<StudentRegister />} />
                 <Route path="users/teacher" element={<TeacherRegister />} />
                 <Route path="users/tech" element={<TechRegister />} />
+
+                {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- */}
+                <Route path="announcements" element={<Announcement />} />
+
             </Route>
 
             {/* ============================================================
