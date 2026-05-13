@@ -169,12 +169,14 @@ const totalPages = Math.ceil(events.length / eventsPerPage);
             <img
               src={
                 news.image
-                  ? `http://localhost:8080${news.image}`
-                  : "https://via.placeholder.com/400x250"
-              }
-              alt={news.title}
-              className="home-news-img"
-            />
+                ? news.image.startsWith("http")
+                ? news.image
+                : `http://localhost:8080${news.image.startsWith("/") ? news.image : "/" + news.image}`
+                : "https://via.placeholder.com/400x250"
+             }
+               alt={news.title}
+               className="home-news-img"
+           />
           </div>
 
           <div className="news-content">
