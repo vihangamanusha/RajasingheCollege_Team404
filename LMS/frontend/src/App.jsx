@@ -13,6 +13,10 @@ import AdminUsers from "./pages/AdminUsers";
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
+import AdminStudentManagement from "./pages/AdminStudentManagement";
+import AdminTeacherManagement from "./pages/AdminTeacherManagement";
+import AdminTechOfficerManagement from "./pages/AdminTechOfficerManagement";
+import ManageUsers from "./pages/ManageUsers";
 
 // =========================
 // STUDENT PAGES
@@ -22,6 +26,11 @@ import StudentMarks from "./pages/student/StudentMarks";
 import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
 import MySubjects from "./pages/student/MySubjects";
+
+// =========================
+// TEACHER PAGES
+// =========================
+import TeacherDashboard from "./pages/TeacherDashboard";
 
 // =========================
 // LAYOUTS
@@ -65,7 +74,21 @@ function App() {
                 <Route path="users/student" element={<StudentRegister />} />
                 <Route path="users/teacher" element={<TeacherRegister />} />
                 <Route path="users/tech" element={<TechRegister />} />
+                <Route path="students" element={<AdminStudentManagement />} />
+                <Route path="teachers" element={<AdminTeacherManagement />} />
+                <Route path="tech-officers" element={<AdminTechOfficerManagement />} />
+                <Route path="manage-users" element={<ManageUsers />} />
             </Route>
+
+            {/* TEACHER PANEL */}
+            <Route
+                path="/teacher"
+                element={
+                    <ProtectedRoute>
+                        <TeacherDashboard />
+                    </ProtectedRoute>
+                }
+            />
 
             {/* STUDENT PANEL */}
             <Route

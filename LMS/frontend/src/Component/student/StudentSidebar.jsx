@@ -11,7 +11,7 @@ import {
   Library,
 } from "lucide-react";
 
-import schoolLogo from "../../assets/school-logo.png";
+import schoolLogo from "../../assets/school-logo.jpeg";
 const StudentSidebar = () => {
   const menuItems = [
     {
