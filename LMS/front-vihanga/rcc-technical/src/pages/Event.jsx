@@ -28,8 +28,11 @@ export default function Event() {
   }, []);
 
   const loadEvents = async () => {
-    const data = await getAllEvents();
-    setEvents(data);
+     const data = await getAllEvents();
+
+  const sorted = (data || []).sort((a, b) => b.id - a.id);
+
+  setEvents(sorted);
   };
 
   const handleSubmit = async (e) => {
@@ -88,6 +91,18 @@ export default function Event() {
 
     setShowModal(true);
   };
+
+const deleteEvent = async (id) => {
+  const response = await fetch(`http://localhost:8080/api/events/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to delete event");
+  }
+
+  return response;
+};
 
   return (
 

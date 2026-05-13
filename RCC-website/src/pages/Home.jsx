@@ -49,8 +49,16 @@ export function Home() {
 
   useEffect(() => {
   const loadEvents = async () => {
-    const data = await getAllEvents();
-    setEvents(data);
+    try {
+      const data = await getAllEvents();
+
+      // newest first
+      const sorted = (data || []).sort((a, b) => b.id - a.id);
+
+      setEvents(sorted);
+    } catch (err) {
+      console.error("Event load error:", err);
+    }
   };
 
   loadEvents();
