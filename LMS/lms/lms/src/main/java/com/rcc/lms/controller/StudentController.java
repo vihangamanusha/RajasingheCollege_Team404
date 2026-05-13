@@ -1,13 +1,17 @@
 package com.rcc.lms.controller;
 
+import com.rcc.lms.dto.StudentMarksDTO;
+import com.rcc.lms.dto.StudentProfileDTO;
 import com.rcc.lms.entity.student.Student;
 import com.rcc.lms.entity.student.StudentDocument;
 import com.rcc.lms.entity.student.StudentMarks;
 import com.rcc.lms.entity.student.StudentReport;
+import com.rcc.lms.entity.student.Subject;
 import com.rcc.lms.repository.StudentDocumentRepository;
 import com.rcc.lms.repository.StudentMarksRepository;
 import com.rcc.lms.repository.StudentReportRepository;
 import com.rcc.lms.repository.StudentRepository;
+import com.rcc.lms.repository.SubjectRepository;
 import com.rcc.lms.service.StudentReportPdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +19,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/student")
@@ -35,8 +41,87 @@ public class StudentController {
     private StudentDocumentRepository documentRepository;
 
     @Autowired
+    private SubjectRepository subjectRepository;
+
+    @Autowired
     private StudentReportPdfService pdfService;
 
+    // =============================================
+    // GET /api/student/{id}
+    // Returns a flat StudentProfileDTO
+    // =============================================
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentProfileDTO> getStudent(@PathVariable String id) {
+        return studentRepository.findById(id)
+                .map(this::toProfileDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    // =============================================
+    // GET /api/student/{id}/marks
+    // Returns list of StudentMarksDTOs
+    // =============================================
+    @GetMapping("/{id}/marks")
+    public List<StudentMarksDTO> getStudentMarks(@PathVariable String id) {
+        List<StudentMarks> marksList = marksRepository.findByStudentStudentId(id);
+        return marksList.stream()
+                .map(m -> new StudentMarksDTO(
+                        m.getMarkId(),
+                        m.getSubject() != null ? m.getSubject().getSubjectName() : "Unknown",
+                        m.getTerm(),
+                        m.getAssignmentMark()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    // =============================================
+    // GET /api/student/{id}/report
+    // Returns list of StudentReport objects
+    // =============================================
+    @GetMapping("/{id}/report")
+    public List<StudentReport> getStudentReport(@PathVariable String id) {
+        return reportRepository.findByStudentStudentId(id);
+    }
+
+    // =============================================
+    // GET /api/student/documents
+    // Returns all documents
+    // =============================================
+    @GetMapping("/documents")
+    public List<StudentDocument> getStudentDocuments() {
+        return documentRepository.findAll();
+    }
+
+    // =============================================
+    // GET /api/student/{id}/subjects
+    // Returns subjects for the student's class
+    // =============================================
+    @GetMapping("/{id}/subjects")
+    public List<Subject> getStudentSubjects(@PathVariable String id) {
+        return studentRepository.findById(id)
+                .map(student -> {
+                    if (student.getClassEntity() != null) {
+                        return subjectRepository.findByClassId(student.getClassEntity().getClassId());
+                    }
+                    return Collections.<Subject>emptyList();
+                })
+                .orElse(Collections.emptyList());
+    }
+
+    // =============================================
+    // GET /api/student/subjects/{subjectId}/documents
+    // Returns documents for a specific subject
+    // =============================================
+    @GetMapping("/subjects/{subjectId}/documents")
+    public List<StudentDocument> getSubjectDocuments(@PathVariable String subjectId) {
+        return documentRepository.findBySubjectId(subjectId);
+    }
+
+    // =============================================
+    // GET /api/student/{id}/report/pdf
+    // Generates and streams a PDF report
+    // =============================================
     @GetMapping("/{id}/report/pdf")
     public ResponseEntity<byte[]> downloadReportPdf(@PathVariable String id) {
         Student student = studentRepository.findById(id).orElse(null);
@@ -44,7 +129,8 @@ public class StudentController {
 
         List<StudentMarks> marks = marksRepository.findByStudentStudentId(id);
         List<StudentReport> reports = reportRepository.findByStudentStudentId(id);
-        StudentReport report = (reports != null && !reports.isEmpty()) ? reports.get(reports.size() - 1) : null;
+        StudentReport report = (reports != null && !reports.isEmpty())
+                ? reports.get(reports.size() - 1) : null;
 
         byte[] pdfBytes = pdfService.generateReportPdf(student, report, marks);
 
@@ -54,25 +140,29 @@ public class StudentController {
                 .body(pdfBytes);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Student> getStudent(@PathVariable String id) {
-        return studentRepository.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
+    // =============================================
+    // Helper: Convert Student entity → ProfileDTO
+    // =============================================
+    private StudentProfileDTO toProfileDTO(Student s) {
+        StudentProfileDTO dto = new StudentProfileDTO();
+        dto.setStudentId(s.getStudentId());
+        dto.setFullName(s.getFullName());
+        dto.setDateOfBirth(s.getDateOfBirth() != null ? s.getDateOfBirth().toString() : null);
+        dto.setAddress(s.getAddress());
+        dto.setMedium(s.getMedium() != null ? s.getMedium().name() : null);
+        dto.setContactNumber(s.getContactNumber());
 
-    @GetMapping("/{id}/marks")
-    public List<StudentMarks> getStudentMarks(@PathVariable String id) {
-        return marksRepository.findByStudentStudentId(id);
-    }
+        if (s.getClassEntity() != null) {
+            dto.setClassId(s.getClassEntity().getClassId());
+            dto.setClassName(s.getClassEntity().getClassName());
+            dto.setClassYear(s.getClassEntity().getYear());
+        }
 
-    @GetMapping("/{id}/report")
-    public List<StudentReport> getStudentReport(@PathVariable String id) {
-        return reportRepository.findByStudentStudentId(id);
-    }
+        if (s.getUser() != null) {
+            dto.setEmail(s.getUser().getEmail());
+            dto.setStatus(s.getUser().getStatus());
+        }
 
-    @GetMapping("/documents")
-    public List<StudentDocument> getStudentDocuments() {
-        return documentRepository.findAll();
+        return dto;
     }
 }
