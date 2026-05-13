@@ -1,5 +1,6 @@
 import React from "react";
 import { createBrowserRouter } from "react-router";
+
 import { RootLayout } from "./components/RootLayout";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
@@ -38,7 +39,7 @@ export const router = createBrowserRouter([
       { path: "academic/staff/ordinary-level", element: <StaffOLevel /> },
       { path: "academic/staff/advanced-level", element: <StaffALevel /> },
       { path: "academic/staff/science", element: <StaffScience /> },
-      { path: "staff", element: <AllStaff /> },
+      { path: "academic/AllStaff", element: <AllStaff /> },
       { path: "news", element: <News /> },
       { path: "sports", element: <Sports /> },
       { path: "sports/volleyball", element: <SportVolleyball /> },

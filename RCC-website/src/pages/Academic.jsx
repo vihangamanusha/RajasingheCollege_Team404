@@ -251,7 +251,8 @@ export function Academic() {
           </a>
         </div>
       </section>
-      {/* Academic Staff Section */}
+      
+    {/* Academic Staff Section */}
       <section className="academic-staff-section">
         <div className="academic-section-wrapper">
           <div className="academic-staff-grid">
@@ -275,9 +276,9 @@ export function Academic() {
                 {t("academic.staffDesc")}
               </p>
               <Link
-                to="/academic/all-staff"
-                className="academic-button"
-              >
+  to="/academic/AllStaff"
+  className="academic-button"
+>
                 <span>{t("academic.seeAllStaff")}</span>
                 <BookOpen className="academic-button-icon" />
               </Link>
@@ -285,7 +286,6 @@ export function Academic() {
           </div>
         </div>
       </section>
-
       
     </div>
   );
