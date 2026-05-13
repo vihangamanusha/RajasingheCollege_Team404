@@ -26,15 +26,18 @@ export default function NewsList() {
 
 
   const loadNews = async () => {
-    try {
-      const data = await getNews();
-      console.log("Setting news to:", data);
-      setNews(data || []);
-    } catch (error) {
-      console.error("Error loading news:", error);
-      setStatusMessage("Failed to load articles");
-    }
-  };
+  try {
+    const data = await getNews();
+
+    const sortedNews = (data || [])
+      .sort((a, b) => b.id - a.id); // newest first
+
+    setNews(sortedNews);
+  } catch (error) {
+    console.error("Error loading news:", error);
+    setStatusMessage("Failed to load articles");
+  }
+};
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -296,6 +299,19 @@ export default function NewsList() {
           ) : (
             news.map((article) => (
               <div key={article.id ?? article.title} className="news-card">
+                <div className="news-image-wrapper">
+  <img
+    src={
+      article.image?.startsWith("http")
+        ? article.image
+        : article.image
+        ? `http://localhost:8080${article.image.startsWith("/") ? "" : "/"}${article.image}`
+        : "https://via.placeholder.com/400"
+    }
+    alt={article.title}
+    className="news-image"
+  />
+</div>
                 <div>
                   <h2>{article.title}</h2>
                   <p className="meta">{article.date || "No date provided"}</p>

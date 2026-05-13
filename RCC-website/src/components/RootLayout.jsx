@@ -3,6 +3,7 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 
 export function RootLayout() {
+  
   return (
     <div className="layout-wrapper">
       <Header />
