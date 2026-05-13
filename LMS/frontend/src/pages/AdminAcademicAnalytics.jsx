@@ -1,144 +1,218 @@
 import React, { useState, useEffect } from "react";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
-    Tooltip, Legend, ResponsiveContainer
+    Tooltip, ResponsiveContainer
 } from "recharts";
 import {
-    FiPrinter, FiFilter, FiLayers, FiBookOpen, FiUser, FiActivity, FiUsers
+    FiPrinter, FiLayers, FiActivity
 } from "react-icons/fi";
 import "./AdminAcademicAnalytics.css";
 
 export default function AdminAcademicAnalytics() {
     // ==========================================
-    // 1. STATE MANAGEMENT (Hierarchical Filters)
+    // STATE MANAGEMENT
     // ==========================================
-    const [reportType, setReportType] = useState("ACADEMIC_RESULTS");
     const [year, setYear] = useState(2026);
     const [grade, setGrade] = useState("10");
     const [selectedClass, setSelectedClass] = useState("ALL");
     const [term, setTerm] = useState("Term 1");
     const [loading, setLoading] = useState(false);
 
+    const [processedData, setProcessedData] = useState([]);
+    const [dynamicSubjects, setDynamicSubjects] = useState([]);
+
     // ==========================================
-    // 2. DYNAMIC CONTENT RENDERING
+    // FETCH AND PROCESS DATA
+    // ==========================================
+    useEffect(() => {
+        fetchReportData();
+    }, [year, term, selectedClass, grade]);
+
+    const fetchReportData = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `http://localhost:8080/admin/reports/marks?year=${year}&term=${term}&section=${selectedClass}`,
+                {
+                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                }
+            );
+
+            if (response.ok) {
+                const rawData = await response.json();
+
+                const grouped = rawData.reduce((acc, curr) => {
+                    if (!acc[curr.studentName]) {
+                        acc[curr.studentName] = { name: curr.studentName, subjects: {}, total: 0, count: 0 };
+                    }
+                    acc[curr.studentName].subjects[curr.subjectName] = curr.mark;
+                    acc[curr.studentName].total += curr.mark;
+                    acc[curr.studentName].count += 1;
+                    return acc;
+                }, {});
+
+                const subjectsSet = new Set();
+                rawData.forEach(item => subjectsSet.add(item.subjectName));
+                setDynamicSubjects(Array.from(subjectsSet));
+
+                const finalArray = Object.values(grouped).map(student => ({
+                    ...student,
+                    avg: student.count > 0 ? (student.total / student.count).toFixed(1) : 0
+                })).sort((a, b) => b.avg - a.avg);
+
+                setProcessedData(finalArray);
+            }
+        } catch (error) {
+            console.error("Failed to fetch report data", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ==========================================
+    // DYNAMIC CONTENT RENDERING
     // ==========================================
     const renderReportBody = () => {
-        switch (reportType) {
-            case "ACADEMIC_RESULTS":
-                return (
-                    <>
-                        {selectedClass === "ALL" ? (
-                            <div className="chart-card">
-                                <h3>Grade {grade} - Section Comparison (Avg Marks)</h3>
-                                <ResponsiveContainer width="100%" height={350}>
-                                    <BarChart data={[{name: 'A', avg: 74}, {name: 'B', avg: 68}, {name: 'C', avg: 82}]}>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                        <XAxis dataKey="name" />
-                                        <YAxis domain={[0, 100]} />
-                                        <Tooltip />
-                                        <Bar dataKey="avg" fill="#2b55cc" radius={[4, 4, 0, 0]} barSize={60} />
-                                    </BarChart>
-                                </ResponsiveContainer>
-                            </div>
-                        ) : (
-                            <div className="table-card">
-                                <h3>Student Ranking Sheet - Class {selectedClass}</h3>
-                                <table className="report-table">
-                                    <thead>
-                                    <tr>
-                                        <th>Rank</th>
-                                        <th>Student Name</th>
-                                        <th>Mathematics</th>
-                                        <th>Science</th>
-                                        <th>English</th>
-                                        <th>Avg</th>
-                                        <th>Status</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>B.K.N.S. Lakmal</td>
-                                        <td>95</td><td>92</td><td>88</td>
-                                        <td>91.6%</td>
-                                        <td><span className="badge pass">Pass</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Sample Student</td>
-                                        <td>82</td><td>78</td><td>75</td>
-                                        <td>78.3%</td>
-                                        <td><span className="badge pass">Pass</span></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        )}
-                    </>
-                );
+        if (selectedClass === "ALL") {
+            const comparisonData = [
+                { name: 'Class A', avg: 74.2 },
+                { name: 'Class B', avg: 68.5 },
+                { name: 'Class C', avg: 82.1 }
+            ];
 
-            case "STUDENT_ENROLLMENT":
-                return (
-                    <div className="enrollment-view">
-                        <div className="stats-grid">
-                            <div className="stat-card"><h5>Total Students</h5><p>1,420</p></div>
-                            <div className="stat-card"><h5>New Admissions ({year})</h5><p>156</p></div>
-                        </div>
-                        <div className="chart-card">
-                            <h3>Student Distribution Across Grades</h3>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <BarChart data={[{g: '6', c: 210}, {g: '7', c: 195}, {g: '8', c: 220}, {g: '9', c: 205}, {g: '10', c: 190}, {g: '11', c: 200}]}>
-                                    <XAxis dataKey="g" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Bar dataKey="c" fill="#10b981" radius={[4, 4, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+            return (
+                <div className="overall-report-wrapper">
+                    <div className="chart-card">
+                        {/* Renamed to Class Comparison */}
+                        <h3>Grade {grade} - Class Comparison (Avg Marks)</h3>
+                        <ResponsiveContainer width="100%" height={350}>
+                            <BarChart data={comparisonData}>
+                                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                                <XAxis dataKey="name" />
+                                <YAxis domain={[0, 100]} />
+                                <Tooltip />
+                                <Bar
+                                    dataKey="avg"
+                                    fill="#2b55cc"
+                                    radius={[4, 4, 0, 0]}
+                                    barSize={60}
+                                    isAnimationActive={false}
+                                    label={{ position: 'top', fill: '#1e293b', fontWeight: 'bold', formatter: (val) => `${val}%` }}
+                                />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
-                );
 
-            case "TEACHER_LOAD":
-                return (
                     <div className="table-card">
-                        <h3>Staff Subject Allocation & Workload</h3>
+                        <h3>Class Summary Table</h3>
                         <table className="report-table">
                             <thead>
                             <tr>
-                                <th>Teacher Name</th>
-                                <th>Subject</th>
-                                <th>Classes Assigned</th>
-                                <th>Weekly Periods</th>
+                                {/* Renamed Header to Class */}
+                                <th>Class</th>
+                                <th>Average Mark</th>
+                                <th>Performance Status</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr><td>Mr. Aruna Bandara</td><td>Mathematics</td><td>10-A, 10-B, 11-A</td><td>28</td></tr>
-                            <tr><td>Mrs. Priyanthi</td><td>Science</td><td>9-A, 9-B, 10-C</td><td>24</td></tr>
+                            {comparisonData.map(sec => (
+                                <tr key={sec.name}>
+                                    <td><strong>{sec.name}</strong></td>
+                                    <td>{sec.avg}%</td>
+                                    <td>
+                                            <span className={`badge ${sec.avg >= 75 ? 'pass' : 'neutral'}`}
+                                                  style={{ backgroundColor: sec.avg >= 75 ? '#dcfce7' : '#f1f5f9', color: sec.avg >= 75 ? '#15803d' : '#475569' }}>
+                                                {sec.avg >= 75 ? 'Above Target' : 'On Track'}
+                                            </span>
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
-                );
-            default: return null;
+                </div>
+            );
         }
+
+        const totalStudents = processedData.length;
+        const passedStudents = processedData.filter(s => parseFloat(s.avg) >= 40).length;
+        const passRate = totalStudents > 0 ? ((passedStudents / totalStudents) * 100).toFixed(1) : 0;
+        const classTotalAvg = totalStudents > 0 ? (processedData.reduce((sum, s) => sum + parseFloat(s.avg), 0) / totalStudents).toFixed(1) : 0;
+        const highestAvg = totalStudents > 0 ? Math.max(...processedData.map(s => parseFloat(s.avg))).toFixed(1) : 0;
+
+        return (
+            <div className="section-report-wrapper">
+                {!loading && processedData.length > 0 && (
+                    <div className="decision-metrics-grid">
+                        <div className="stat-card">
+                            <h5>Total Students</h5>
+                            <p className="stat-value">{totalStudents}</p>
+                        </div>
+                        <div className="stat-card">
+                            <h5>Class Average</h5>
+                            <p className="stat-value" style={{color: classTotalAvg >= 50 ? '#15803d' : '#b91c1c'}}>{classTotalAvg}%</p>
+                        </div>
+                        <div className="stat-card">
+                            <h5>Pass Rate</h5>
+                            <p className="stat-value" style={{color: passRate >= 75 ? '#15803d' : '#b91c1c'}}>{passRate}%</p>
+                        </div>
+                        <div className="stat-card">
+                            <h5>Highest Average</h5>
+                            <p className="stat-value" style={{color: '#2b55cc'}}>{highestAvg}%</p>
+                        </div>
+                    </div>
+                )}
+
+                <div className="table-card">
+                    <h3>Student Ranking & Academic Sheet</h3>
+                    {loading ? (
+                        <p style={{textAlign: 'center', padding: '20px', color: '#64748b'}}>Generating Report...</p>
+                    ) : processedData.length === 0 ? (
+                        <p style={{textAlign: 'center', padding: '20px', color: '#64748b'}}>No marks recorded for this selection yet.</p>
+                    ) : (
+                        <table className="report-table">
+                            <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Student Name</th>
+                                {dynamicSubjects.map(sub => (
+                                    <th key={sub}>{sub}</th>
+                                ))}
+                                <th>Avg</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {processedData.map((student, index) => (
+                                <tr key={student.name}>
+                                    <td><strong>{index + 1}</strong></td>
+                                    <td>{student.name}</td>
+                                    {dynamicSubjects.map(sub => (
+                                        <td key={sub}>{student.subjects[sub] !== undefined ? student.subjects[sub] : '-'}</td>
+                                    ))}
+                                    <td><strong>{student.avg}%</strong></td>
+                                    <td>
+                                        <span className={`badge ${student.avg >= 40 ? 'pass' : 'fail'}`}
+                                              style={{
+                                                  backgroundColor: student.avg >= 40 ? '#dcfce7' : '#fee2e2',
+                                                  color: student.avg >= 40 ? '#15803d' : '#b91c1c'
+                                              }}>
+                                            {student.avg >= 40 ? 'Pass' : 'Needs Help'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    )}
+                </div>
+            </div>
+        );
     };
 
     return (
         <div className="analytics-container">
-
-            {/* 3. REPORT TYPE SELECTOR (Hidden on Print) */}
-            <div className="report-tabs no-print">
-                <button className={reportType === "ACADEMIC_RESULTS" ? "active" : ""} onClick={() => setReportType("ACADEMIC_RESULTS")}>
-                    <FiActivity /> Academic Results
-                </button>
-                <button className={reportType === "STUDENT_ENROLLMENT" ? "active" : ""} onClick={() => setReportType("STUDENT_ENROLLMENT")}>
-                    <FiUsers /> Enrollment
-                </button>
-                <button className={reportType === "TEACHER_LOAD" ? "active" : ""} onClick={() => setReportType("TEACHER_LOAD")}>
-                    <FiBookOpen /> Staff Workload
-                </button>
-            </div>
-
-            {/* 4. CONTROL PANEL / FILTERS (Hidden on Print) */}
             <div className="report-controls no-print">
                 <div className="control-header">
                     <h2><FiLayers /> Filter Insights</h2>
@@ -151,7 +225,8 @@ export default function AdminAcademicAnalytics() {
                     <div className="filter-group">
                         <label>Year</label>
                         <select value={year} onChange={(e) => setYear(e.target.value)}>
-                            <option value="2026">2026</option><option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
                         </select>
                     </div>
 
@@ -162,44 +237,38 @@ export default function AdminAcademicAnalytics() {
                         </select>
                     </div>
 
-                    {reportType === "ACADEMIC_RESULTS" && (
-                        <>
-                            <div className="filter-group">
-                                <label>Section</label>
-                                <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)}>
-                                    <option value="ALL">Overall Grade {grade}</option>
-                                    <option value={`${grade}-A`}>{grade}-A</option>
-                                    <option value={`${grade}-B`}>{grade}-B</option>
-                                    <option value={`${grade}-C`}>{grade}-C</option>
-                                </select>
-                            </div>
-                            <div className="filter-group">
-                                <label>Exam Term</label>
-                                <select value={term} onChange={(e) => setTerm(e.target.value)}>
-                                    <option value="Term 1">1st Term Test</option>
-                                    <option value="Term 2">2nd Term Test</option>
-                                    <option value="Term 3">3rd Term Test</option>
-                                </select>
-                            </div>
-                        </>
-                    )}
+                    <div className="filter-group">
+                        {/* Renamed Filter Label to Class */}
+                        <label>Class</label>
+                        <select value={selectedClass} onChange={(e) => setSelectedClass(e.target.value)}>
+                            <option value="ALL">Overall Grade {grade}</option>
+                            <option value={`${grade}-A`}>{grade}-A</option>
+                            <option value={`${grade}-B`}>{grade}-B</option>
+                            <option value={`${grade}-C`}>{grade}-C</option>
+                        </select>
+                    </div>
+
+                    <div className="filter-group">
+                        <label>Exam Term</label>
+                        <select value={term} onChange={(e) => setTerm(e.target.value)}>
+                            <option value="Term 1">1st Term Test</option>
+                            <option value="Term 2">2nd Term Test</option>
+                            <option value="Term 3">3rd Term Test</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            {/* 5. OFFICIAL REPORT LAYOUT (Visible for View & Print) */}
             <div className="official-document">
                 <div className="official-report-header">
                     <h1>RAJASINGHE CENTRAL COLLEGE</h1>
-                    <h3>{reportType.replace("_", " ")} REPORT</h3>
+                    <h3><FiActivity style={{marginRight: '8px'}}/> ACADEMIC RESULTS REPORT</h3>
                     <div className="report-meta">
                         <span><strong>Year:</strong> {year}</span>
                         <span><strong>Grade:</strong> {grade}</span>
-                        {reportType === "ACADEMIC_RESULTS" && (
-                            <>
-                                <span><strong>Section:</strong> {selectedClass}</span>
-                                <span><strong>Term:</strong> {term}</span>
-                            </>
-                        )}
+                        {/* Renamed Metadata Label to Class */}
+                        <span><strong>Class:</strong> {selectedClass}</span>
+                        <span><strong>Term:</strong> {term}</span>
                     </div>
                 </div>
 
@@ -207,10 +276,8 @@ export default function AdminAcademicAnalytics() {
                     {renderReportBody()}
                 </div>
 
-                {/* 6. SIGNATURE FOOTER (Visible on Print) */}
                 <div className="print-footer">
                     <div className="sig-box">..........................................<br/>Principal Signature</div>
-                    <div className="sig-box">..........................................<br/>System Generated: {new Date().toLocaleDateString()}</div>
                 </div>
             </div>
         </div>

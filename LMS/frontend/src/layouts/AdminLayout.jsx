@@ -4,6 +4,7 @@ import {
 } from "react-icons/fi";
 import { FaChalkboardTeacher, FaUserShield } from "react-icons/fa";
 import "./AdminLayout.css";
+import schoolLogo from "../assets/school-logo.jpeg";
 
 export default function AdminLayout() {
     const navigate = useNavigate();
@@ -13,36 +14,35 @@ export default function AdminLayout() {
     // LOGOUT LOGIC
     // =========================
     const handleLogout = () => {
-        // Clear security tokens
         localStorage.removeItem("token");
         localStorage.removeItem("role");
-        // Return to login
         navigate("/login");
     };
 
     /**
-     * Industry Standard Helper:
-     * Checks if a specific path or sub-path is active to highlight sidebar items.
+     * Corrected Helper Logic:
+     * 1. Dashboard ("/admin") now requires an EXACT match.
+     * 2. Other routes use .startsWith() to ensure they stay active even on sub-pages.
      */
     const isActive = (path) => {
-        // For the main dashboard (index)
-        if (path === "/admin" && location.pathname === "/admin") return "active";
-        // For other routes, check if the current URL includes the path
-        return location.pathname.includes(path) ? "active" : "";
+        if (path === "/admin") {
+            return location.pathname === "/admin" ? "active" : "";
+        }
+        return location.pathname.startsWith(path) ? "active" : "";
     };
 
     return (
         <div className="admin-layout">
-
-            {/* =========================
-                SIDEBAR NAVIGATION
-            ========================= */}
+            {/* SIDEBAR NAVIGATION */}
             <div className="layout-sidebar">
-
                 <div className="sidebar-header">
                     <div className="sidebar-logo">
-                        {/* Ensure your logo path is correct in the public folder */}
-                        <img src="/logo.png" alt="RCC Logo" style={{ width: '100%', borderRadius: '50%' }} />
+                        {/* 2. Fix: Use the variable name in curly braces */}
+                        <img
+                            src={schoolLogo}
+                            alt="RCC Logo"
+                            style={{ width: '100%', borderRadius: '50%' }}
+                        />
                     </div>
                     <div className="sidebar-title">
                         <h2>Rajasinghe<br/>LMS</h2>
@@ -50,7 +50,7 @@ export default function AdminLayout() {
                 </div>
 
                 <div className="sidebar-nav">
-                    {/* 1. Dashboard */}
+                    {/* 1. Dashboard - Only active if exactly /admin */}
                     <div
                         className={`nav-item ${isActive("/admin")}`}
                         onClick={() => navigate("/admin")}
@@ -82,20 +82,14 @@ export default function AdminLayout() {
                         <FaUserShield className="nav-icon" /> TO Officers
                     </div>
 
-                    {/* 5. Classes Management (Link logic to be built) */}
                     <div className="nav-item">
                         <FiBook className="nav-icon" /> Classes
                     </div>
 
-                    {/* 6. Announcements (Link logic to be built) */}
                     <div className="nav-item">
                         <FiMessageSquare className="nav-icon" /> Announcements
                     </div>
 
-                    {/* ============================================================
-                        7. REPORTS & ANALYTICS (UPDATED)
-                        Now navigates to the Academic Intelligence Hub
-                    ============================================================ */}
                     <div
                         className={`nav-item ${isActive("/admin/analytics")}`}
                         onClick={() => navigate("/admin/analytics")}
@@ -109,17 +103,12 @@ export default function AdminLayout() {
                         <FiLogOut className="nav-icon" /> Logout
                     </div>
                 </div>
-
             </div>
 
-            {/* =========================
-                MAIN CONTENT AREA
-                This is where Dashboard, Analytics, etc., load.
-            ========================= */}
+            {/* MAIN CONTENT AREA */}
             <div className="layout-main">
                 <Outlet />
             </div>
-
         </div>
     );
 }

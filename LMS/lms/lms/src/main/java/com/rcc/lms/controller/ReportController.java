@@ -1,5 +1,6 @@
 package com.rcc.lms.controller;
 
+import com.rcc.lms.dto.AdminSectionMarkDTO; // <-- NEW: Imported our backpack!
 import com.rcc.lms.repository.MarksRepository;
 import com.rcc.lms.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,10 @@ public class ReportController {
 
     /**
      * Endpoint for Class-wise Performance with "Alert" Logic.
-     * This combines the Repository data with your Service logic.
      */
     @GetMapping("/class-performance/{classId}")
     public ResponseEntity<Map<String, Object>> getClassStatus(
-            @RequestParam String classId,
+            @PathVariable String classId, // <-- FIXED: Changed to @PathVariable because it's in the URL path /{classId}
             @RequestParam String currentTerm,
             @RequestParam String previousTerm,
             @RequestParam int year) {
@@ -58,5 +58,22 @@ public class ReportController {
         response.put("status", status); // Returns "ALERT", "GROWTH", or "STABLE"
 
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * ==========================================
+     * NEW STEP 3: Endpoint for the Section Marks Report
+     * ==========================================
+     * URL: http://localhost:8080/admin/reports/marks?year=2026&term=Term 1&section=10-A
+     */
+    @GetMapping("/marks")
+    public ResponseEntity<List<AdminSectionMarkDTO>> getMarksReport(
+            @RequestParam int year,
+            @RequestParam String term,
+            @RequestParam String section) {
+
+        // Calls the query we wrote in Step 2!
+        List<AdminSectionMarkDTO> reportData = marksRepository.getAdminSectionMarksReport(year, term, section);
+        return ResponseEntity.ok(reportData);
     }
 }
