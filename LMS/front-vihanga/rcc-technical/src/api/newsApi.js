@@ -2,21 +2,17 @@ const BASE_URL = "http://localhost:8080/api/news";
 
 // GET all
 export const getNews = async () => {
-  try {
-    const res = await fetch(BASE_URL);
-    if (!res.ok) {
-      throw new Error(`Failed to fetch: ${res.status} ${res.statusText}`);
-    }
-    const data = await res.json();
-    console.log("Fetched news:", data);
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    console.error("Error fetching news:", error);
-    return [];
+  const res = await fetch(BASE_URL);
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(errorText || `Failed to fetch: ${res.status}`);
   }
+
+  return res.json();
 };
 
-// POST
+// POST (create)
 export const addNews = async (data) => {
   const options = {
     method: "POST",
@@ -24,13 +20,18 @@ export const addNews = async (data) => {
   };
 
   if (!(data instanceof FormData)) {
-    options.headers = { "Content-Type": "application/json" };
+    options.headers = {
+      "Content-Type": "application/json",
+    };
   }
 
   const res = await fetch(BASE_URL, options);
+
   if (!res.ok) {
-    throw new Error(`Upload failed: ${res.status} ${res.statusText}`);
+    const errorText = await res.text();
+    throw new Error(errorText || `Create failed: ${res.status}`);
   }
+
   return res.json();
 };
 
@@ -42,13 +43,18 @@ export const updateNews = async (id, data) => {
   };
 
   if (!(data instanceof FormData)) {
-    options.headers = { "Content-Type": "application/json" };
+    options.headers = {
+      "Content-Type": "application/json",
+    };
   }
 
   const res = await fetch(`${BASE_URL}/${id}`, options);
+
   if (!res.ok) {
-    throw new Error(`Update failed: ${res.status} ${res.statusText}`);
+    const errorText = await res.text();
+    throw new Error(errorText || `Update failed: ${res.status}`);
   }
+
   return res.json();
 };
 
@@ -59,7 +65,8 @@ export const deleteNews = async (id) => {
   });
 
   if (!res.ok) {
-    throw new Error(`Delete failed: ${res.status}`);
+    const errorText = await res.text();
+    throw new Error(errorText || `Delete failed: ${res.status}`);
   }
 
   return true;

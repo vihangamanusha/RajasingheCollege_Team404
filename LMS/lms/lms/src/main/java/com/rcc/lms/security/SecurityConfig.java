@@ -42,7 +42,10 @@ public class SecurityConfig {
                                 "/api/students/**",
                                 "/api/events/**",
                                 "/api/announcements/**",
-                                "/api/livestreams/**"
+                                "/api/livestreams/**",
+                                "/api/files/**",
+                                "/uploads/**"
+
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

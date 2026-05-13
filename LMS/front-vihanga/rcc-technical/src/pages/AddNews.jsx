@@ -32,7 +32,7 @@ export default function AddNews() {
           setForm({ ...form, date: e.target.value })
         } />
 
-        <input placeholder="Image URL" onChange={(e) =>
+        <input placeholder="Image UR777L" onChange={(e) =>
           setForm({ ...form, imageUrl: e.target.value })
         } />
 

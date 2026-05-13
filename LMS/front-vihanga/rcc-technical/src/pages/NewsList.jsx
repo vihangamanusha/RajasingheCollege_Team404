@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 import { addNews, deleteNews, getNews, updateNews } from "../api/newsApi";
 
 
@@ -14,7 +14,7 @@ export default function NewsList() {
   const [activeTab, setActiveTab] = useState("News");
   const [news, setNews] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [form, setForm] = useState({ title: "", content: "", date: "", imageUrl: "" });
+  const [form, setForm] = useState({ title: "", content: "", date: "", image: null });
   const [statusMessage, setStatusMessage] = useState("");
   const [editingArticle, setEditingArticle] = useState(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -47,7 +47,7 @@ export default function NewsList() {
   try {
     let imageUrl = "";
 
-    // 1. upload image if file selected
+    // upload image
     if (form.image instanceof File) {
       const formData = new FormData();
       formData.append("file", form.image);
@@ -58,21 +58,20 @@ export default function NewsList() {
       });
 
       if (!res.ok) {
-        throw new Error("Image upload failed");
+        const err = await res.text();
+        setStatusMessage("Image upload failed: " + err);
+        return;
       }
-
-      imageUrl = await res.text(); // backend returns URL
+      const data = await res.text();
+      imageUrl = data;
     }
 
-    // 2. create payload
     const payload = {
       title: form.title,
       content: form.content,
       date: form.date || new Date().toISOString().split("T")[0],
       image: imageUrl,
     };
-
-    console.log("Saving news:", payload);
 
     let response;
 
@@ -90,19 +89,27 @@ export default function NewsList() {
       });
     }
 
+    //  IMPORTANT CHECK
     if (!response.ok) {
-      throw new Error("Failed to save news");
+      const errorText = await response.text();
+      setStatusMessage("Save failed: " + errorText);
+      return;
     }
 
-    setForm({ title: "", content: "", date: "", image: "" });
+    // SUCCESS ONLY HERE
+    setForm({ title: "", content: "", date: "", image: null });
     setShowAddForm(false);
     setEditingArticle(null);
+
     await loadNews();
 
-    setStatusMessage(editingArticle ? "Updated successfully" : "Created successfully");
+    setStatusMessage(
+      editingArticle ? "Updated successfully" : "Created successfully"
+    );
+
   } catch (error) {
     console.error(error);
-    setStatusMessage(error.message);
+    setStatusMessage("Server error: " + error.message);
   }
 };
 
@@ -112,7 +119,7 @@ export default function NewsList() {
       title: article.title || "",
       content: article.content || "",
       date: article.date || "",
-      image: article.image || "",
+      image: article.image || null,
     });
     setEditingArticle(article);
     setShowAddForm(true);
@@ -220,10 +227,13 @@ export default function NewsList() {
                 value={form.date}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
-              <input
+             <input
+                key={form.image ? "file-selected" : "file-empty"}
                 type="file"
                 accept="image/*"
-                onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
+                onChange={(e) =>
+                setForm({ ...form, image: e.target.files[0] })
+               }
               />
               <div className="form-actions">
                 <button type="submit" className="btn primary">
@@ -232,7 +242,7 @@ export default function NewsList() {
                 <button type="button" className="btn secondary" onClick={() => {
                   setShowAddForm(false);
                   setEditingArticle(null);
-                  setForm({ title: "", content: "", date: "", image: "" });
+                  setForm({ title: "", content: "", date: "", image: null });
                 }}>
                   Cancel
                 </button>
