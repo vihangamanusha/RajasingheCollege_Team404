@@ -48,7 +48,7 @@ export default function NewsList() {
         title: form.title,
         content: form.content,
         date: form.date || new Date().toISOString().split('T')[0],
-        imageUrl: form.imageUrl || "",
+        image: form.image || "",
       };
 
       console.log("Sending payload:", payload);
@@ -94,7 +94,7 @@ export default function NewsList() {
         throw new Error(responseData.message || `Server error: ${response.status}`);
       }
 
-      setForm({ title: "", content: "", date: "", imageUrl: "" });
+      setForm({ title: "", content: "", date: "", image: "" });
       setStatusMessage(editingArticle ? "Article updated successfully." : "Article added successfully.");
       setShowAddForm(false);
       setEditingArticle(null);
@@ -111,7 +111,7 @@ export default function NewsList() {
       title: article.title || "",
       content: article.content || "",
       date: article.date || "",
-      imageUrl: article.imageUrl || "",
+      image: article.image || "",
     });
     setEditingArticle(article);
     setShowAddForm(true);
@@ -195,7 +195,7 @@ export default function NewsList() {
               <button className="close-modal" type="button" onClick={() => {
                 setShowAddForm(false);
                 setEditingArticle(null);
-                setForm({ title: "", content: "", date: "", imageUrl: "" });
+                setForm({ title: "", content: "", date: "", image: "" });
               }}>
                 ×
               </button>
@@ -222,8 +222,8 @@ export default function NewsList() {
               <input
                 type="text"
                 placeholder="Image URL (optional)"
-                value={form.imageUrl}
-                onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+                value={form.image}
+                onChange={(e) => setForm({ ...form, image: e.target.value })}
               />
               <div className="form-actions">
                 <button type="submit" className="btn primary">
@@ -232,7 +232,7 @@ export default function NewsList() {
                 <button type="button" className="btn secondary" onClick={() => {
                   setShowAddForm(false);
                   setEditingArticle(null);
-                  setForm({ title: "", content: "", date: "", imageUrl: "" });
+                  setForm({ title: "", content: "", date: "", image: "" });
                 }}>
                   Cancel
                 </button>

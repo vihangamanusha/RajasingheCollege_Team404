@@ -1,20 +1,20 @@
+import { useEffect, useState } from "react";
 import { Users } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { useLanguage } from "../contexts/LanguageContext";
-import { Link } from "react-router";
 import "../styles/styles.css";
+import { getAllTeachers } from "../api/teacherApi";
 
 export function AllStaff() {
-  const { t } = useLanguage();
+  const [teachers, setTeachers] = useState([]);
 
-  const staff = [
-    { name: "Principal M.S. Jayasooriya", role: "Principal", dept: "Administration" },
-    { name: "Mr. K.D. Silva", role: "Deputy Principal", dept: "Academic" },
-    { name: "Mrs. R.P. Fernando", role: "HOD - English", dept: "Languages" },
-    { name: "Mr. A.K. Perera", role: "HOD - Science", dept: "Science" },
-    { name: "Mr. D.S. Silva", role: "Sports Director", dept: "Sports" },
-    { name: "Mrs. N.K. Perera", role: "Counselor", dept: "Student Affairs" },
-  ];
+  useEffect(() => {
+    loadTeachers();
+  }, []);
+
+  const loadTeachers = async () => {
+    const data = await getAllTeachers();
+    setTeachers(data);
+  };
 
   return (
     <div className="staff-page">
@@ -37,16 +37,16 @@ export function AllStaff() {
         <div className="staff-container">
 
           <div className="staff-grid">
-            {staff.map((member, index) => (
-              <div key={index} className="staff-card">
+            {teachers.map((t) => (
+              <div key={t.teacher_id} className="staff-card">
 
                 <div className="staff-icon">
                   <Users />
                 </div>
 
-                <h3 className="staff-name">{member.name}</h3>
-                <p className="staff-role">{member.role}</p>
-                <p className="staff-dept">{member.dept}</p>
+                <h3 className="staff-name">{t.full_name}</h3>
+                <p className="staff-role">{t.subject_specialization}</p>
+                <p className="staff-dept">{t.contact_number}</p>
 
               </div>
             ))}
