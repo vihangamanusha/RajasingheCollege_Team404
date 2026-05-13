@@ -49,22 +49,22 @@ export default function LiveStreamAdmin() {
   }, []);
 
   const loadStreams = async () => {
+  try {
+    const response = await fetch(
+      "http://localhost:8080/api/livestreams"
+    );
 
-    try {
+    const data = await response.json();
 
-      const response = await fetch(
-        "http://localhost:8080/api/livestreams"
-      );
+    // NEWEST FIRST
+    const sorted = (data || []).sort((a, b) => b.id - a.id);
 
-      const data = await response.json();
+    setStreams(sorted);
 
-      setStreams(data);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  } catch (error) {
+    console.log(error);
+  }
+};
   // START STREAMING
   const startStreaming = async (id) => {
 

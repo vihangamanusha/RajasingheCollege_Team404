@@ -63,20 +63,24 @@ export default function Event() {
   };
 
   const handleDelete = async (id) => {
+  console.log("Deleting ID:", id);
 
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete?"
-    );
+  const confirmDelete = window.confirm("Are you sure you want to delete?");
+  if (!confirmDelete) return;
 
-    if (!confirmDelete) return;
+  try {
+    await deleteEvent(id);   //api  call
 
-    await deleteEvent(id);
+    console.log("Deleted successfully");
 
     alert("Event Deleted!");
 
-    loadEvents();
-  };
-
+    loadEvents(); // refresh list
+  } catch (error) {
+    console.error("Delete failed:", error);
+    alert("Delete failed! Check backend or API.");
+  }
+};
   const handleEdit = (event) => {
 
     setForm({

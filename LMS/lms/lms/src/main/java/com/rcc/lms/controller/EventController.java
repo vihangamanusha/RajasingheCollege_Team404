@@ -38,6 +38,7 @@ public class EventController {
     }
 
     //delete event
+    @DeleteMapping("/{id}")
     public void deleteEvent(@PathVariable Long id){
         service.deleteEvent(id);
     }
