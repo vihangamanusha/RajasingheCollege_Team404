@@ -2345,7 +2345,13 @@ body {
   background-image: linear-gradient(to bottom right, #002147, #003366);
   color: #ffffff;
   text-align: center;
+  transition: transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
 }
+
+.academic-stat-card:hover {
+ transform: scale(1.05);
+}
+
 
 .academic-stat-value {
   font-size: 3rem;
