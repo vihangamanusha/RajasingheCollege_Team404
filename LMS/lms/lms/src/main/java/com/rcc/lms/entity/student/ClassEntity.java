@@ -1,28 +1,31 @@
 package com.rcc.lms.entity.student;
 
 import jakarta.persistence.*;
+import com.rcc.lms.entity.Teacher; // Import your teacher entity
 
 @Entity
-@Table(name = "class")
+@Table(name = "class") // Align this with your actual SQL table name
 public class ClassEntity {
 
     @Id
-    @Column(length = 20)
+    @Column(name = "class_id")
     private String classId;
 
-    @Column(nullable = false, length = 50)
+    @Column(name = "class_name")
     private String className;
 
-    @Column(nullable = false)
+    @Column(name = "year")
     private int year;
 
-    @Column(length = 20)
-    private String teacherId;
+    // ADD THIS: For your Admin Reports to track Teacher performance
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 
-    // Constructors
-    public ClassEntity() {}
+    // =========================
+    // GETTERS & SETTERS
+    // =========================
 
-    // Getters and Setters
     public String getClassId() { return classId; }
     public void setClassId(String classId) { this.classId = classId; }
 
@@ -32,6 +35,6 @@ public class ClassEntity {
     public int getYear() { return year; }
     public void setYear(int year) { this.year = year; }
 
-    public String getTeacherId() { return teacherId; }
-    public void setTeacherId(String teacherId) { this.teacherId = teacherId; }
+    public Teacher getTeacher() { return teacher; }
+    public void setTeacher(Teacher teacher) { this.teacher = teacher; }
 }

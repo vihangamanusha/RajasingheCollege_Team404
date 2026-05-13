@@ -14,6 +14,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    /* Added relative positioning for the mobile handle */
+    position: relative;
 }
 
 .sidebar-header {
@@ -89,4 +91,73 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+}
+
+/* ==========================================
+   PRINT OPTIMIZATION FOR LAYOUT
+========================================== */
+@media print {
+    /* 1. Hide the sidebar completely when printing */
+    .layout-sidebar {
+        display: none !important;
+    }
+
+    /* 2. Let the main content area expand to the full page */
+    .layout-main {
+        overflow: visible !important;
+        display: block !important;
+        flex: none !important;
+        width: 100% !important;
+    }
+}
+
+/* ==========================================
+   MOBILE RESPONSIVENESS: AUTO SLIDE-OUT SIDEBAR
+   (Pure CSS - No React Logic Changes Required!)
+========================================== */
+@media screen and (max-width: 768px) {
+    /* 1. Hide the sidebar mostly off-screen, leaving a 20px "handle" visible */
+    .layout-sidebar {
+        position: fixed;
+        top: 0;
+        left: -230px; /* 250px width minus 20px handle = -230px */
+        height: 100vh;
+        z-index: 1000;
+        transition: left 0.3s ease-in-out;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 2. When the user taps or hovers over the 20px handle, slide the menu out! */
+    .layout-sidebar:hover,
+    .layout-sidebar:active,
+    .layout-sidebar:focus-within {
+        left: 0;
+        box-shadow: 100vw 0 0 rgba(15, 23, 42, 0.4); /* Creates a neat dark overlay effect over the screen */
+    }
+
+    /* 3. Add a visual "handle" (a tiny double arrow) so users know to swipe/tap */
+    .layout-sidebar::after {
+        content: "»";
+        position: absolute;
+        top: 50%;
+        right: 4px;
+        transform: translateY(-50%);
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 24px;
+        font-weight: bold;
+        pointer-events: none; /* So it doesn't block clicks */
+        transition: opacity 0.2s;
+    }
+
+    /* Hide the arrow when the menu is fully open */
+    .layout-sidebar:hover::after,
+    .layout-sidebar:active::after,
+    .layout-sidebar:focus-within::after {
+        opacity: 0;
+    }
+
+    /* 4. Shift the main content slightly so the 20px handle doesn't cover your data */
+    .layout-main {
+        margin-left: 20px;
+    }
 }

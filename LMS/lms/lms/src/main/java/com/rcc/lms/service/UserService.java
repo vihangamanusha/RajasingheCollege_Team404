@@ -140,7 +140,7 @@ public class UserService {
 
     @Transactional
     public String registerNewTeacher(TeacherRegistrationRequest request) {
-        // 1. Uniqueness Checks
+        // 1. Check for existing IDs/Users to prevent duplicates
         if (userRepository.existsByUserId(request.getUserId())) {
             return "Error: Teacher ID already exists!";
         }
@@ -151,20 +151,24 @@ public class UserService {
             return "Error: Email is already registered!";
         }
 
+        // 2. Create the Auth User (Security Credentials)
         User newUser = new User();
         newUser.setUserId(request.getUserId());
         newUser.setUsername(request.getUsername());
         newUser.setEmail(request.getEmail());
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setRole(request.getRole());
+        newUser.setRole("ROLE_TEACHER");
+        newUser.setSubRole(request.getSubRole()); // Saves designation to User table
         newUser.setCreatedDate(LocalDate.now());
         newUser.setStatus("ACTIVE");
         userRepository.save(newUser);
 
+        // 3. Create the Teacher Profile (Professional Details)
         Teacher newTeacher = new Teacher();
         newTeacher.setTeacherId(request.getUserId());
         newTeacher.setFullName(request.getFullName());
-        newTeacher.setSubjectSpecialization(request.getSubjectSpecialization());
+        newTeacher.setSubjectSpecialization(request.getSubjectSpecialization()); // Comma-separated string from frontend
+        newTeacher.setSubRole(request.getSubRole()); // Saves designation to Teacher table
         newTeacher.setContactNumber(request.getContactNumber());
         newTeacher.setUser(newUser);
         teacherRepository.save(newTeacher);
