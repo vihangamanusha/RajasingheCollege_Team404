@@ -23,14 +23,18 @@ export default function AdminAnnouncements() {
   }, []);
 
   const fetchAnnouncements = async () => {
-    try {
-      const response = await axios.get(API_URL);
-      setAnnouncements(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  try {
+    const response = await axios.get(API_URL);
 
+    const sorted = (response.data || []).sort(
+      (a, b) => b.id - a.id
+    );
+
+    setAnnouncements(sorted);
+  } catch (error) {
+    console.log(error);
+  }
+};
   const handleChange = (e) => {
     setFormData({
       ...formData,
