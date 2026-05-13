@@ -1,22 +1,27 @@
 import { useState } from "react";
-import { FiUser, FiMail, FiLock, FiHash, FiBriefcase, FiMapPin, FiPhone, FiArrowRight, FiArrowLeft } from "react-icons/fi";
-import "./StudentRegister.css"; // Reusing the exact same CSS for a perfect match!
+import {
+    FiUser,
+    FiMail,
+    FiLock,
+    FiHash,
+    FiBriefcase,
+    FiMapPin,
+    FiPhone,
+    FiArrowRight,
+    FiArrowLeft
+} from "react-icons/fi";
+
+import "./StudentRegister.css";
 
 export default function TechRegister() {
 
-    // =========================
-    // STATE VARIABLES
-    // =========================
     const [step, setStep] = useState(1);
 
     const [form, setForm] = useState({
-        // Step 1: Professional Profile (Tech table)
         fullName: "",
-        position: "",      // e.g., System Admin, Lab Assistant
-        assignedArea: "",  // e.g., Main IT Lab, Network Room
+        position: "",
+        assignedArea: "",
         contactNumber: "",
-
-        // Step 2: System Login Details (Users table)
         userId: "",
         username: "",
         email: "",
@@ -27,50 +32,112 @@ export default function TechRegister() {
     const [messageType, setMessageType] = useState("");
 
     // =========================
-    // VALIDATION LOGIC
+    // DROPDOWN OPTIONS
     // =========================
-    const isStep1Valid =
-        form.fullName.trim() !== "" &&
-        form.position.trim() !== "" &&
-        form.assignedArea.trim() !== "" &&
-        form.contactNumber.trim() !== "";
-
-    const isStep2Valid =
-        form.userId.trim() !== "" &&
-        form.username.trim() !== "" &&
-        form.email.trim() !== "" &&
-        form.password.trim() !== "";
+    const positionList = ["Lab Assistant 01", "Lab Assistant 02"];
+    const areaList = ["Computer Lab"];
 
     // =========================
-    // HANDLERS
+    // VALIDATION (LIKE STUDENT FORM STYLE)
+    // =========================
+    const validateStep = () => {
+
+        // STEP 1 VALIDATION
+        if (step === 1) {
+
+            if (!/^[a-zA-Z\s]+$/.test(form.fullName)) {
+                setMessage("Full Name can only contain letters and spaces.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!form.position) {
+                setMessage("Please select a Job Position.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!form.assignedArea) {
+                setMessage("Please select Assigned Area.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^\d{10}$/.test(form.contactNumber)) {
+                setMessage("Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+        }
+
+        // STEP 2 VALIDATION
+        if (step === 2) {
+
+            const alphaNum = /^[a-zA-Z0-9]+$/;
+
+            if (!alphaNum.test(form.userId)) {
+                setMessage("User ID must be alphanumeric only.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!alphaNum.test(form.username)) {
+                setMessage("Username must be alphanumeric only.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+                setMessage("Invalid email format.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (form.password.length < 8) {
+                setMessage("Password must be at least 8 characters.");
+                setMessageType("error");
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    // =========================
+    // HANDLE CHANGE
     // =========================
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
         setMessage("");
     };
 
+    // =========================
+    // NEXT STEP
+    // =========================
     const handleNext = () => {
-        if (isStep1Valid) {
+        if (validateStep()) {
             setStep(2);
             setMessage("");
         }
     };
 
+    // =========================
+    // BACK STEP
+    // =========================
     const handleBack = () => {
         setStep(1);
         setMessage("");
     };
 
     // =========================
-    // SUBMIT FORM
+    // SUBMIT
     // =========================
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage("");
-        setMessageType("");
+
+        if (!validateStep()) return;
 
         try {
-            // HITTING THE NEW TECH OFFICER ENDPOINT!
             const res = await fetch("http://localhost:8080/admin/users/tech/create", {
                 method: "POST",
                 headers: {
@@ -79,22 +146,35 @@ export default function TechRegister() {
                 },
                 body: JSON.stringify({
                     ...form,
-                    role: "ROLE_TECHNICAL_OFFICER" // This sets their specific access level
+                    role: "ROLE_TECHNICAL_OFFICER"
                 })
             });
 
             const data = await res.text();
 
             if (res.ok) {
-                setMessage("Technical Officer successfully registered! ✅");
+                setMessage("Technical Officer registered successfully! ✅");
                 setMessageType("success");
+
+                setForm({
+                    fullName: "",
+                    position: "",
+                    assignedArea: "",
+                    contactNumber: "",
+                    userId: "",
+                    username: "",
+                    email: "",
+                    password: ""
+                });
+
+                setStep(1);
             } else {
-                setMessage("Registration Failed: " + data);
+                setMessage(data);
                 setMessageType("error");
             }
 
-        } catch (error) {
-            setMessage("Failed to connect to the server.");
+        } catch (err) {
+            setMessage("Server connection failed.");
             setMessageType("error");
         }
     };
@@ -104,175 +184,141 @@ export default function TechRegister() {
 
             <div className="page-header">
                 <h1>Technical Officer Registration</h1>
-                <p>Follow the steps to create a complete technical staff profile and system account.</p>
+                <p>Create system account for technical staff</p>
             </div>
 
             <div className="form-card">
 
-                {/* STEP INDICATOR */}
                 <div className="step-indicator">
-                    {step === 1 ? "Step 1 of 2: Professional Profile" : "Step 2 of 2: System Login Details"}
+                    {step === 1 ? "Step 1: Professional Info" : "Step 2: Account Setup"}
                 </div>
 
                 <form onSubmit={handleSubmit}>
 
-                    {/* ==========================================
-                        STEP 1: PROFESSIONAL PROFILE
-                    ========================================== */}
+                    {/* ================= STEP 1 ================= */}
                     {step === 1 && (
                         <div className="wizard-step">
 
+                            {/* FULL NAME */}
                             <div className="form-group">
                                 <label>Full Name</label>
                                 <div className="input-container">
                                     <FiUser className="input-icon" />
                                     <input
                                         name="fullName"
-                                        placeholder="Enter officer's full name"
                                         value={form.fullName}
                                         onChange={handleChange}
-                                        required
                                     />
                                 </div>
                             </div>
 
+                            {/* POSITION */}
                             <div className="form-group">
                                 <label>Job Position</label>
                                 <div className="input-container">
                                     <FiBriefcase className="input-icon" />
-                                    <input
+                                    <select
                                         name="position"
-                                        placeholder="e.g. System Administrator, Lab Technician"
                                         value={form.position}
                                         onChange={handleChange}
-                                        required
-                                    />
+                                    >
+                                        <option value="">Select Position</option>
+                                        {positionList.map((p) => (
+                                            <option key={p} value={p}>{p}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
 
+                            {/* AREA */}
                             <div className="form-group">
                                 <label>Assigned Area</label>
                                 <div className="input-container">
                                     <FiMapPin className="input-icon" />
-                                    <input
+                                    <select
                                         name="assignedArea"
-                                        placeholder="e.g. Main Computer Lab, Server Room"
                                         value={form.assignedArea}
                                         onChange={handleChange}
-                                        required
-                                    />
+                                    >
+                                        <option value="">Select Area</option>
+                                        {areaList.map((a) => (
+                                            <option key={a} value={a}>{a}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
 
+                            {/* CONTACT */}
                             <div className="form-group">
                                 <label>Contact Number</label>
                                 <div className="input-container">
                                     <FiPhone className="input-icon" />
                                     <input
                                         name="contactNumber"
-                                        placeholder="e.g. 0712345678"
                                         value={form.contactNumber}
                                         onChange={handleChange}
-                                        required
                                     />
                                 </div>
                             </div>
 
-                            <button
-                                type="button"
-                                className="submit-btn"
-                                onClick={handleNext}
-                                disabled={!isStep1Valid}
-                                style={{ marginTop: '20px' }}
-                            >
-                                Next Step <FiArrowRight style={{ marginLeft: '5px', verticalAlign: 'middle' }} />
+                            <button type="button" className="submit-btn" onClick={handleNext}>
+                                Next <FiArrowRight />
                             </button>
+
                         </div>
                     )}
 
-                    {/* ==========================================
-                        STEP 2: SYSTEM LOGIN DETAILS
-                    ========================================== */}
+                    {/* ================= STEP 2 ================= */}
                     {step === 2 && (
                         <div className="wizard-step">
 
                             <div className="form-group">
-                                <label>Officer ID (Must be Unique)</label>
+                                <label>User ID</label>
                                 <div className="input-container">
                                     <FiHash className="input-icon" />
-                                    <input
-                                        name="userId"
-                                        placeholder="e.g. TECH-001"
-                                        value={form.userId}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <input name="userId" value={form.userId} onChange={handleChange} />
                                 </div>
                             </div>
 
                             <div className="form-group">
-                                <label>System Username (Must be Unique)</label>
+                                <label>Username</label>
                                 <div className="input-container">
                                     <FiUser className="input-icon" />
-                                    <input
-                                        name="username"
-                                        placeholder="Enter unique username"
-                                        value={form.username}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <input name="username" value={form.username} onChange={handleChange} />
                                 </div>
                             </div>
 
                             <div className="form-group">
-                                <label>Email Address (Must be Unique)</label>
+                                <label>Email</label>
                                 <div className="input-container">
                                     <FiMail className="input-icon" />
-                                    <input
-                                        name="email"
-                                        type="email"
-                                        placeholder="tech@example.com"
-                                        value={form.email}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <input name="email" value={form.email} onChange={handleChange} />
                                 </div>
                             </div>
 
                             <div className="form-group">
-                                <label>Account Password</label>
+                                <label>Password</label>
                                 <div className="input-container">
                                     <FiLock className="input-icon" />
-                                    <input
-                                        name="password"
-                                        type="password"
-                                        placeholder="Enter secure password"
-                                        value={form.password}
-                                        onChange={handleChange}
-                                        required
-                                    />
+                                    <input type="password" name="password" value={form.password} onChange={handleChange} />
                                 </div>
                             </div>
 
                             <div className="button-group">
                                 <button type="button" className="back-btn" onClick={handleBack}>
-                                    <FiArrowLeft style={{ marginRight: '5px', verticalAlign: 'middle' }} /> Back
+                                    <FiArrowLeft /> Back
                                 </button>
 
-                                <button
-                                    type="submit"
-                                    className="submit-btn"
-                                    disabled={!isStep2Valid}
-                                >
-                                    Register Technical Officer
+                                <button type="submit" className="submit-btn">
+                                    Register
                                 </button>
                             </div>
+
                         </div>
                     )}
 
                 </form>
 
-                {/* STATUS MESSAGE */}
                 {message && (
                     <div className={`message-box ${messageType}`}>
                         {message}

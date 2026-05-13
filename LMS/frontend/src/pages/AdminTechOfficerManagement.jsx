@@ -287,22 +287,55 @@ export default function AdminTechOfficerManagement() {
                             <div className="modal-grid">
                                 <div className="modal-form-group">
                                     <label>Position / Title</label>
-                                    <input type="text" value={editFormData.position} onChange={(e) => setEditFormData({...editFormData, position: e.target.value})} required />
+                                    <select
+                                        value={editFormData.position}
+                                        onChange={(e) => setEditFormData({...editFormData, position: e.target.value})}
+                                        required
+                                        style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+                                    >
+                                        <option value="" disabled>Select Position</option>
+                                        <option value="Lab Assistant 1">Lab Assistant 1</option>
+                                        <option value="Lab Assistant 2">Lab Assistant 2</option>
+                                    </select>
                                 </div>
                                 <div className="modal-form-group">
                                     <label>Assigned Area</label>
-                                    <input type="text" value={editFormData.assignedArea} onChange={(e) => setEditFormData({...editFormData, assignedArea: e.target.value})} required />
+                                    <select
+                                        value={editFormData.assignedArea}
+                                        onChange={(e) => setEditFormData({...editFormData, assignedArea: e.target.value})}
+                                        required
+                                        style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+                                    >
+                                        <option value="" disabled>Select Computer Lab</option>
+                                        <option value="Computer Lab 1">Computer Lab 1</option>
+                                        <option value="Computer Lab 2">Computer Lab 2</option>
+                                        <option value="Computer Lab 3">Computer Lab 3</option>
+                                    </select>
                                 </div>
                             </div>
 
                             <div className="modal-grid">
                                 <div className="modal-form-group">
                                     <label>Contact Number</label>
-                                    <input type="text" value={editFormData.contactNumber} onChange={(e) => setEditFormData({...editFormData, contactNumber: e.target.value})} required />
+                                    <input
+                                        type="tel"
+                                        pattern="^\+?[0-9\s\-\(\)]{7,15}$"
+                                        title="Please enter a valid phone number (e.g. 0771234567 or +94771234567)"
+                                        value={editFormData.contactNumber}
+                                        onChange={(e) => setEditFormData({...editFormData, contactNumber: e.target.value})}
+                                        required
+                                    />
                                 </div>
                                 <div className="modal-form-group">
                                     <label>Email Address</label>
-                                    <input type="email" value={editFormData.email} onChange={(e) => setEditFormData({...editFormData, email: e.target.value})} />
+                                    <input
+                                        type="email"
+                                        pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$"
+                                        title="Please enter a valid email address"
+                                        value={editFormData.email}
+                                        onChange={(e) => setEditFormData({...editFormData, email: e.target.value})}
+                                        required
+                                    />
                                 </div>
                             </div>
 

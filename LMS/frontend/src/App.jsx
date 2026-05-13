@@ -13,45 +13,40 @@ import AdminUsers from "./pages/AdminUsers";
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
+import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
+
+// --> MANAGEMENT TABLES <--
+import AdminStudentManagement from "./pages/AdminStudentManagement";
+import AdminTeacherManagement from "./pages/AdminTeacherManagement";
+import AdminTechOfficerManagement from "./pages/AdminTechOfficerManagement";
 
 // =========================
-// STUDENT PAGES
+// STUDENT ROLE DASHBOARDS
 // =========================
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentMarks from "./pages/student/StudentMarks";
 import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
-import MySubjects from "./pages/student/MySubjects";
 
 // =========================
-// LAYOUTS
+// LAYOUT & SECURITY
 // =========================
 import AdminLayout from "./layouts/AdminLayout";
-import StudentLayout from "./Component/student/StudentLayout"; // ✅ Fixed: lowercase 'components'
-
-// =========================
-// PROTECTED ROUTE
-// =========================
+import StudentLayout from "./Component/student/StudentLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
-
-// ─────────────────────────────────────────────
-// Get the logged-in student's ID from storage.
-// Replace this with your actual auth context/token decode
-// if you have a login system that sets it.
-// ─────────────────────────────────────────────
-const studentId = localStorage.getItem("studentId") || "";
 
 function App() {
     return (
         <Routes>
-
-            {/* DEFAULT ROUTE */}
+            {/* DEFAULT ROUTE: Redirect to Login */}
             <Route path="/" element={<Navigate to="/login" replace />} />
 
-            {/* LOGIN */}
+            {/* PUBLIC LOGIN PAGE */}
             <Route path="/login" element={<Login />} />
 
-            {/* ADMIN PANEL */}
+            {/* ============================================================
+                ADMIN PANEL (PROTECTED)
+            ============================================================ */}
             <Route
                 path="/admin"
                 element={
@@ -60,14 +55,29 @@ function App() {
                     </ProtectedRoute>
                 }
             >
+                {/* Default view when navigating to /admin */}
                 <Route index element={<Dashboard />} />
+
+                {/* USER MANAGEMENT MAIN MENU */}
                 <Route path="users" element={<AdminUsers />} />
+
+                {/* --> MANAGEMENT TABLES <-- */}
+                <Route path="students" element={<AdminStudentManagement />} />
+                <Route path="teachers" element={<AdminTeacherManagement />} />
+                <Route path="tech-officers" element={<AdminTechOfficerManagement />} />
+
+                {/* --> NEW: ACADEMIC ANALYTICS & REPORTS <-- */}
+                <Route path="analytics" element={<AdminAcademicAnalytics />} />
+
+                {/* --> REGISTRATION FORMS <-- */}
                 <Route path="users/student" element={<StudentRegister />} />
                 <Route path="users/teacher" element={<TeacherRegister />} />
                 <Route path="users/tech" element={<TechRegister />} />
             </Route>
 
-            {/* STUDENT PANEL */}
+            {/* ============================================================
+                STUDENT PANEL (PROTECTED)
+            ============================================================ */}
             <Route
                 path="/student"
                 element={
@@ -77,15 +87,11 @@ function App() {
                 }
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
-
-                {/* ✅ All routes are relative (no leading /student/) */}
-                <Route path="dashboard"  element={<StudentDashboard studentId={studentId} />} />
-                <Route path="marks"      element={<StudentMarks     studentId={studentId} />} />
-                <Route path="subjects"   element={<MySubjects       studentId={studentId} />} />
-                <Route path="materials"  element={<StudentMaterials />} />
-                <Route path="report"     element={<StudentReport    studentId={studentId} />} />
+                <Route path="dashboard" element={<StudentDashboard studentId="STU001" />} />
+                <Route path="marks" element={<StudentMarks studentId="STU001" />} />
+                <Route path="materials" element={<StudentMaterials />} />
+                <Route path="report" element={<StudentReport studentId="STU001" />} />
             </Route>
-
         </Routes>
     );
 }
