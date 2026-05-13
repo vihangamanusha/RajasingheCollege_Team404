@@ -37,73 +37,74 @@ export default function NewsList() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!form.title || !form.content) {
-      setStatusMessage("Please enter a title and content.");
-      return;
-    }
+  e.preventDefault();
 
-    try {
-      const payload = {
-        title: form.title,
-        content: form.content,
-        date: form.date || new Date().toISOString().split('T')[0],
-        image: form.image || "",
-      };
+  if (!form.title || !form.content) {
+    setStatusMessage("Please enter a title and content.");
+    return;
+  }
 
-      console.log("Sending payload:", payload);
-      console.log("Is editing:", !!editingArticle);
+  try {
+    let imageUrl = "";
 
-      let response;
-      if (editingArticle) {
-        // Try PUT for updates first
-        console.log("Trying PUT request for update");
-        try {
-          response = await fetch(`http://localhost:8080/api/news/${editingArticle.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          console.log("PUT response status:", response.status);
-        } catch (putError) {
-          console.log("PUT failed, trying POST with ID");
-          // If PUT fails, try POST with ID in payload
-          payload.id = editingArticle.id;
-          response = await fetch("http://localhost:8080/api/news", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-          console.log("POST update response status:", response.status);
-        }
-      } else {
-        // Create new article
-        console.log("Creating new article");
-        response = await fetch("http://localhost:8080/api/news", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        console.log("POST create response status:", response.status);
+    // 1. upload image if file selected
+    if (form.image instanceof File) {
+      const formData = new FormData();
+      formData.append("file", form.image);
+
+      const res = await fetch("http://localhost:8080/api/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        throw new Error("Image upload failed");
       }
 
-      const responseData = await response.json().catch(() => ({}));
-      console.log("Response data:", responseData);
-
-      if (!response.ok) {
-        throw new Error(responseData.message || `Server error: ${response.status}`);
-      }
-
-      setForm({ title: "", content: "", date: "", image: "" });
-      setStatusMessage(editingArticle ? "Article updated successfully." : "Article added successfully.");
-      setShowAddForm(false);
-      setEditingArticle(null);
-      await loadNews();
-    } catch (error) {
-      console.error("Upload error:", error);
-      setStatusMessage(`Error: ${error.message}`);
+      imageUrl = await res.text(); // backend returns URL
     }
-  };
+
+    // 2. create payload
+    const payload = {
+      title: form.title,
+      content: form.content,
+      date: form.date || new Date().toISOString().split("T")[0],
+      image: imageUrl,
+    };
+
+    console.log("Saving news:", payload);
+
+    let response;
+
+    if (editingArticle) {
+      response = await fetch(`http://localhost:8080/api/news/${editingArticle.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } else {
+      response = await fetch("http://localhost:8080/api/news", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    }
+
+    if (!response.ok) {
+      throw new Error("Failed to save news");
+    }
+
+    setForm({ title: "", content: "", date: "", image: "" });
+    setShowAddForm(false);
+    setEditingArticle(null);
+    await loadNews();
+
+    setStatusMessage(editingArticle ? "Updated successfully" : "Created successfully");
+  } catch (error) {
+    console.error(error);
+    setStatusMessage(error.message);
+  }
+};
 
   const editArticle = (article) => {
     console.log("Editing article:", article);
@@ -220,10 +221,9 @@ export default function NewsList() {
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
               <input
-                type="text"
-                placeholder="Image URL (optional)"
-                value={form.image}
-                onChange={(e) => setForm({ ...form, image: e.target.value })}
+                type="file"
+                accept="image/*"
+                onChange={(e) => setForm({ ...form, image: e.target.files[0] })}
               />
               <div className="form-actions">
                 <button type="submit" className="btn primary">
