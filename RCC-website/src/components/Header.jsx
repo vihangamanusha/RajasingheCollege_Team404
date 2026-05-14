@@ -69,14 +69,14 @@ export function Header() {
                 );
               })}
 
-              {/* Language Switch */}
+              {/* Language Switch 
               <button
                 onClick={toggleLanguage}
                 className="language-btn"
               >
                 <Globe className="header-icon" />
                 <span>{language === "en" ? "සිං" : "EN"}</span>
-              </button>
+              </button>*/}
             </nav>
 
             {/* Mobile Menu Button */}
