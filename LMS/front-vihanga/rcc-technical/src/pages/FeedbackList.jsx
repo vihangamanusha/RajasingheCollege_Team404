@@ -77,7 +77,9 @@ export default function FeedbackList() {
       </div>
 
       <div className="section-card">
+       
         {loading ? (
+           //loading is true
           <div className="empty-state">Loading feedback...</div>
         ) : filteredFeedback.length === 0 ? (
           <div className="empty-state">

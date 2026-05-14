@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import "../index.css";
 
-// CONVERT YOUTUBE URL TO EMBED
+// convert normla yt urls into embeded urls
 const getEmbedUrl = (url) => {
   if (!url) return "";
 
-  url = url.trim();
+  url = url.trim();//remove spaces
 
   // already embed
   if (url.includes("embed")) return url;
@@ -37,6 +37,7 @@ export default function LiveStreamAdmin() {
     videoURL: "",
   });
 
+  //store succes/error msg
   const [message, setMessage] = useState("");
 
   const [showForm, setShowForm] = useState(false);
@@ -107,7 +108,7 @@ export default function LiveStreamAdmin() {
     }
   };
 
-  // ADD OR UPDATE
+  // add or update stream
   const handleSubmit = async (e) => {
 
     e.preventDefault();

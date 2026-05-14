@@ -16,6 +16,7 @@ export default function Dashboard() {
     loadNews();
   }, []);
 
+  //async funcation takes time to load data from db
   const loadNews = async () => {
     const data = await getNews();
     setNews(data || []);

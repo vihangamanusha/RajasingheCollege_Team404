@@ -11,7 +11,7 @@ import "../index.css";
 export default function Event() {
 
   const [events, setEvents] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);//handle popup
 
   const [form, setForm] = useState({
     topic: "",
@@ -35,6 +35,7 @@ export default function Event() {
   setEvents(sorted);
   };
 
+  //runs when form sybmit
   const handleSubmit = async (e) => {
 
     e.preventDefault();
@@ -81,6 +82,8 @@ export default function Event() {
     alert("Delete failed! Check backend or API.");
   }
 };
+
+//runs when edit button click
   const handleEdit = (event) => {
 
     setForm({
@@ -140,7 +143,7 @@ const deleteEvent = async (id) => {
 
       </div>
 
-      {/* EVENT CARDS */}
+      {/* EVENT CARDS //loops through events and display each event in a card format with edit and delete buttons*/}
 
       <div className="event-card-container">
 
@@ -199,7 +202,7 @@ const deleteEvent = async (id) => {
 
       </div>
 
-      {/* MODAL */}
+      {/* if true show MODAL */}
 
       {showModal && (
 

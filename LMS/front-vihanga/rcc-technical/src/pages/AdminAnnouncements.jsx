@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+//backned api request
 
 export default function AdminAnnouncements() {
 
   const [announcements, setAnnouncements] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  //control popup form
 
   const [formData, setFormData] = useState({
     title: "",
@@ -17,6 +18,7 @@ export default function AdminAnnouncements() {
   const [editingId, setEditingId] = useState(null);
 
   const API_URL = "http://localhost:8080/api/announcements";
+  //backend endpoint
 
   useEffect(() => {
     fetchAnnouncements();
@@ -25,7 +27,7 @@ export default function AdminAnnouncements() {
   const fetchAnnouncements = async () => {
   try {
     const response = await axios.get(API_URL);
-
+//sort anncuments by newst id
     const sorted = (response.data || []).sort(
       (a, b) => b.id - a.id
     );
@@ -35,6 +37,7 @@ export default function AdminAnnouncements() {
     console.log(error);
   }
 };
+//update only change data  
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -42,12 +45,13 @@ export default function AdminAnnouncements() {
     });
   };
 
+  //handele submit for both add and update
   const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
     if (editingId) {
-      await axios.put(`${API_URL}/${editingId}`, formData);
+      await axios.put(`${API_URL}/${editingId}`, formData);//updae existing
     } else {
       await axios.post(API_URL, formData);
     }
