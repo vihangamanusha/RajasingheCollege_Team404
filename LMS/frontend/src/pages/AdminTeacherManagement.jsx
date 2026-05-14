@@ -1,7 +1,7 @@
 // AdminTeacherManagement.jsx
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";//page navigation without relord.
 import {
     FiSearch,
     FiEdit,
@@ -14,19 +14,19 @@ import "./AdminTeacherManagement.css";
 
 export default function AdminTeacherManagement() {
 
-    const navigate = useNavigate();
+    const navigate = useNavigate();//use to move between page.
 
     // =========================================
     // STATE MANAGEMENT
     // =========================================
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [teachers, setTeachers] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");//what admin types in search box
+    const [teachers, setTeachers] = useState([]);//store all the serch data
+    const [loading, setLoading] = useState(false);//controoler lord msg
 
     // DELETE
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);//Controls delete popup
+    const [userToDelete, setUserToDelete] = useState(null);//Stores which user is selected for deletion
 
     const [deleteMessage, setDeleteMessage] = useState({
         text: "",
@@ -34,9 +34,9 @@ export default function AdminTeacherManagement() {
     });
 
     // EDIT
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);//Controls edit popup
 
-    const [editMessage, setEditMessage] = useState({
+    const [editMessage, setEditMessage] = useState({//Stores form data while editing officer
         text: "",
         type: ""
     });
@@ -81,15 +81,15 @@ export default function AdminTeacherManagement() {
     // FETCH TEACHERS
     // =========================================
 
-    const fetchTeachers = async () => {
+    const fetchTeachers = async () => {//this function  get the teacher from the backend.
 
-        setLoading(true);
+        setLoading(true);//show loadin databse...
 
         try {
 
             const token = localStorage.getItem("token");
 
-            const response = await fetch(
+            const response = await fetch(//secnd request to backend
                 `http://localhost:8080/admin/users/search?role=ROLE_TEACHER&term=${searchTerm}`,
                 {
                     headers: {
@@ -158,7 +158,7 @@ export default function AdminTeacherManagement() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `http://localhost:8080/admin/users/teacher/${teacher.username}`,
+                `http://localhost:8080/admin/users/teacher/${teacher.username}`,//call backend controller.
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -302,7 +302,7 @@ export default function AdminTeacherManagement() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `http://localhost:8080/admin/users/teacher/update/${editFormData.username}`,
+                `http://localhost:8080/admin/users/teacher/update/${editFormData.username}`,//call controller
                 {
                     method: "PUT",
 

@@ -1,26 +1,26 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";//page navigation without relord.
 import { FiSearch, FiEdit, FiTrash2, FiUserPlus, FiAlertTriangle } from "react-icons/fi";
 import "./AdminStudentManagement.css";
 
 export default function AdminStudentManagement() {
-    const navigate = useNavigate();
+    const navigate = useNavigate();//use this to navigate
 
     // =========================
     // STATE MANAGEMENT
     // =========================
-    const [searchTerm, setSearchTerm] = useState("");
-    const [students, setStudents] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");//serch
+    const [students, setStudents] = useState([]);//store the students
+    const [loading, setLoading] = useState(false);//loading
 
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null);
-    const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" });
+    const [showDeleteModal, setShowDeleteModal] = useState(false);//delete popup
+    const [userToDelete, setUserToDelete] = useState(null);//store the messge.
+    const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" });//control delete popup
 
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);//edit popup
 
     // NEW: fieldErrors stores specific messages for each input (e.g., { fullName: "Error..." })
-    const [fieldErrors, setFieldErrors] = useState({});
+    const [fieldErrors, setFieldErrors] = useState({});//store filed specific error.
     // generalMessage handles success or server-wide errors
     const [generalMessage, setGeneralMessage] = useState({ text: "", type: "" });
 
@@ -43,7 +43,7 @@ export default function AdminStudentManagement() {
             );
 
             if (response.ok) {
-                const data = await response.json();
+                const data = await response.json();//store backend data into student state.
                 setStudents(data);
             }
         } catch (error) {
@@ -54,7 +54,7 @@ export default function AdminStudentManagement() {
     };
 
     useEffect(() => {
-        const delayDebounce = setTimeout(() => fetchStudents(), 300);
+        const delayDebounce = setTimeout(() => fetchStudents(), 300);//wait 300 ms before serching.
         return () => clearTimeout(delayDebounce);
     }, [searchTerm]);
 
@@ -139,7 +139,7 @@ export default function AdminStudentManagement() {
             return originalEditData[key] !== editFormData[key];
         });
 
-        if (!hasChanges) {
+        if (!hasChanges) {//check any chnge do
             setGeneralMessage({ text: "No changes detected to save.", type: "error" });
             return;
         }

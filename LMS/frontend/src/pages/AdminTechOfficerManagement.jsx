@@ -1,23 +1,23 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";//store and run data auto matically.
+import { useNavigate } from "react-router-dom";//page navigation without relord.
 import { FiSearch, FiEdit, FiTrash2, FiUserPlus, FiAlertTriangle } from "react-icons/fi";
 import "./AdminTechOfficerManagement.css";
 
 export default function AdminTechOfficerManagement() {
-    const navigate = useNavigate();
+    const navigate = useNavigate();//use this to navigate
 
     // =========================
     // STATE MANAGEMENT
     // =========================
-    const [searchTerm, setSearchTerm] = useState("");
-    const [officers, setOfficers] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");//what admin types in search box
+    const [officers, setOfficers] = useState([]);//store all the serch data
+    const [loading, setLoading] = useState(false);//shows loading message when API runs
 
     // =========================
     // DELETE MODAL STATE
     // =========================
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);//Controls delete popup
+    const [userToDelete, setUserToDelete] = useState(null);//Stores which user is selected for deletion
     const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" });
 
     // =========================
@@ -26,13 +26,13 @@ export default function AdminTechOfficerManagement() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [editMessage, setEditMessage] = useState({ text: "", type: "" });
     const [originalEditData, setOriginalEditData] = useState(null); // Tracks changes
-    const [editFormData, setEditFormData] = useState({
+    const [editFormData, setEditFormData] = useState({//Stores form data while editing officer
         username: "", userId: "", email: "", password: "",
         fullName: "", position: "", assignedArea: "", contactNumber: ""
     });
 
     // =========================
-    // FETCH DATA
+    // FETCH DATA, FETCH OFFICERS FROM BACKEND
     // =========================
     const fetchOfficers = async () => {
         setLoading(true);
