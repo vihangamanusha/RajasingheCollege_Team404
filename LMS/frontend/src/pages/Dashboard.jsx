@@ -1,50 +1,50 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";//store dymanic data use
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom"; // 1. Import useNavigate for button routing
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate for button without relording.
 import { FiUsers, FiBook, FiGrid, FiUserPlus, FiPlus } from "react-icons/fi";
 import { FaGraduationCap } from "react-icons/fa";
 import "./Dashboard.css";
 
 export default function Dashboard() {
     // 2. Initialize the navigation hook
-    const navigate = useNavigate();
+    const navigate = useNavigate();//change page without refressing..using in the butoon.
 
-    const [username, setUsername] = useState("");
+    const [username, setUsername] = useState("");//store the logged in username.
 
-    // 3. State to hold dynamic statistics and activity feed
+    // 3. Store dashbord data from the backend// react state object
     const [stats, setStats] = useState({
-        totalStudents: 0,
+        totalStudents: 0,//initail value is 0
         totalTeachers: 0,
         totalClasses: 0,
         totalSubjects: 0,
-        recentActivities: [] // This will be populated by your API
+        recentActivities: [] // This will be populated by your API.this is a list
     });
 
-    useEffect(() => {
+    useEffect(() => {//run auto matically
         const token = localStorage.getItem("token");
 
         if (token) {
             try {
                 // Decode the JWT to show the logged-in Admin's name
                 const decoded = jwtDecode(token);
-                setUsername(decoded.sub);
+                setUsername(decoded.sub);//store username from the token. sub = subject
 
-                // 4. Trigger the data fetch as soon as the component loads
-                fetchDashboardStats(token);
+                // called backend api
+                fetchDashboardStats(token);//loard backend data in the front end.
             } catch (error) {
                 console.log("Invalid token or connection error");
             }
         }
-    }, []);
+    }, []);//empty arry run when lord the page
 
     // 5. Function to fetch live data from your AdminController endpoint
-    const fetchDashboardStats = async (token) => {
+    const fetchDashboardStats = async (token) => {//becuase api call call take time so we use async
         try {
-            const response = await fetch("http://localhost:8080/admin/dashboard/stats", {
+            const response = await fetch("http://localhost:8080/admin/dashboard/stats", {//frontend send request.
                 headers: { "Authorization": `Bearer ${token}` }
             });
             if (response.ok) {
-                const data = await response.json();
+                const data = await response.json();//convert json into javascript object
                 // Update our state with real numbers from the database
                 setStats(data);
             }
@@ -53,10 +53,10 @@ export default function Dashboard() {
         }
     };
 
-    // Helper to generate initials for the avatar
+    // Helper to generate initials for the avatar//this is a function, have one parameter name
     const getInitials = (name) => {
-        if (!name) return "AD";
-        return name.substring(0, 2).toUpperCase();
+        if (!name) return "AD";//check the name emty or null then return ad
+        return name.substring(0, 2).toUpperCase();//convert letter to capital
     };
 
     return (
@@ -125,14 +125,14 @@ export default function Dashboard() {
                     <div className="content-card activity-card">
                         <h3>Recent Activity</h3>
 
-                        {stats.recentActivities.length > 0 ? (
-                            stats.recentActivities.map((activity, index) => (
+                        {stats.recentActivities.length > 0 ? (//check the number ofctivity
+                            stats.recentActivities.map((activity, index) => (//map funtion is gonna loop
                                 <div className="activity-item" key={index}>
                                     {/* The initial is calculated in the backend DTO */}
                                     <div className="activity-avatar">{activity.initial}</div>
                                     <div className="activity-details">
                                         <p><strong>{activity.name}</strong> {activity.action}</p>
-                                        <span>{activity.timeAgo}</span>
+                                        <span>{activity.timeAgo}</span>//get the one line text
                                     </div>
                                 </div>
                             ))

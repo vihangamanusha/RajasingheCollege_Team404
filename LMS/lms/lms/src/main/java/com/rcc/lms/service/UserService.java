@@ -100,7 +100,7 @@ public class UserService {
     // REGISTER USER WIZARDS WITH UNIQUENESS CHECKS
     // ==============================================================
 
-    @Transactional
+    @Transactional//connect with the two tables, (multiple tables)
     public String registerNewStudent(StudentRegistrationRequest request) {
         // 1. Uniqueness Checks
         if (userRepository.existsByUserId(request.getUserId())) {
