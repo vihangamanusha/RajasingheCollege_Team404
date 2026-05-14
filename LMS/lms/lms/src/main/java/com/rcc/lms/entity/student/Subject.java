@@ -2,7 +2,7 @@ package com.rcc.lms.entity.student;
 
 import jakarta.persistence.*;
 
-@Entity
+@Entity(name = "StudentSubject")
 @Table(name = "subject")
 public class Subject {
 

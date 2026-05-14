@@ -3,7 +3,8 @@ package com.rcc.lms.repository;
 import com.rcc.lms.entity.student.Student;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -16,4 +17,5 @@ public interface StudentRepository extends JpaRepository<Student, String> {
     // and searches for the specific User ID!
     // ========================================================================
     Optional<Student> findByUserUserId(String userId);
+    List<Student> findByDateOfBirthBetween(LocalDate start,LocalDate end);
 }

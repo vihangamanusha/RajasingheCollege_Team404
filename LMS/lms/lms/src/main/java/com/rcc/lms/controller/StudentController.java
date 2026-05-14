@@ -59,6 +59,18 @@ public class StudentController {
     }
 
     // =============================================
+    // GET /api/student/by-dob
+    // Returns list of students by DOB range
+    // =============================================
+    @GetMapping("/by-dob")
+    public java.util.List<Student> getStudentsByDob(
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate from,
+            @RequestParam @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE) java.time.LocalDate to
+    ) {
+        return studentRepository.findByDateOfBirthBetween(from, to);
+    }
+
+    // =============================================
     // GET /api/student/{id}/marks
     // Returns list of StudentMarksDTOs
     // =============================================

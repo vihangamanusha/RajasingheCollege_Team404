@@ -9,16 +9,17 @@ import java.time.LocalDate;
 public class Student {
 
     @Id
-    @Column(length = 20)
+    @Column(name = "student_id", length = 20)
     private String studentId;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Column(nullable = false, length = 100)
+    @Column(name = "full_name", nullable = false, length = 100)
     private String fullName;
 
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @Column(length = 255)
