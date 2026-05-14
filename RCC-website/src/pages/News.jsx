@@ -25,7 +25,7 @@ export function News() {
 
       const data = await response.json();
 
-      // ✅ SORT LATEST FIRST
+      // Sort latest first
       const sorted = (data || []).sort((a, b) => b.id - a.id);
 
       setAllNews(sorted);

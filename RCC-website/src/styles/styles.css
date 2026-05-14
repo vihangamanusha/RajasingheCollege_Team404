@@ -3718,18 +3718,18 @@ body {
 }
 
 /*live stream css*/
-/* =========================
+/* 
    LIVE STREAM PAGE
-========================= */
+ */
 
 .live-page {
   font-family: Arial, Helvetica, sans-serif;
   background: #f4f7fb;
 }
 
-/* =========================
+/* 
    HERO SECTION
-========================= */
+*/
 
 .live-hero {
   position: relative;
@@ -3758,9 +3758,9 @@ body {
   font-weight: bold;
 }
 
-/* =========================
+/* 
    CONTAINER
-========================= */
+ */
 
 .live-container {
   max-width: 1200px;
@@ -3768,9 +3768,9 @@ body {
   padding: 40px 20px;
 }
 
-/* =========================
+/* 
    CURRENT LIVE SECTION
-========================= */
+ */
 
 .live-current-section {
   background: white;
@@ -3841,9 +3841,9 @@ body {
   line-height: 1.6;
 }
 
-/* =========================
+/*
    UPCOMING SECTION
-========================= */
+= */
 
 .upcoming-section {
   background: #f5f5f5;
@@ -3935,9 +3935,9 @@ body {
   font-size: 14px;
 }
 
-/* =========================
+/* 
    ANIMATION
-========================= */
+*/
 
 @keyframes pulse {
   0% { opacity: 1; }
@@ -3945,9 +3945,9 @@ body {
   100% { opacity: 1; }
 }
 
-/* =========================
+/*  
    RESPONSIVE
-========================= */
+ */
 
 @media (max-width: 900px) {
   .upcoming-grid {

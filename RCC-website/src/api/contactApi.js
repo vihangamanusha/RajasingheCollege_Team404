@@ -7,7 +7,7 @@ export const sendMessage = async (data) => {
     body: JSON.stringify(data),
   });
 
-  //IMPORTANT: show real error
+  // show real error
   if (!res.ok) {
     const text = await res.text();
     throw new Error(text);

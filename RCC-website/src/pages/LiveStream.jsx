@@ -5,7 +5,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import LiveStreamImage from "../assets/livestream.jpeg";
 import "../styles/styles.css";
 
-// YOUTUBE URL → EMBED URL
+// Yt url - EMBED URL
 const getEmbedUrl = (url) => {
   if (!url) return "";
 
@@ -57,8 +57,8 @@ export function LiveStream() {
     }
   };
 
-  // LIVE STREAM
-  // IMPORTANT:
+  // live stream
+  
   // backend should return "live" OR "isLive"
 
   const liveStream = streams.find(
@@ -89,7 +89,7 @@ export function LiveStream() {
 
       </section>
 
-      {/* LIVE VIDEO SECTION */}
+      {/* Live stream section */}
 
       <section className="live-current-section">
 
