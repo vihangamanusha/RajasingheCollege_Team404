@@ -6,19 +6,19 @@ export default function StudentRegister() {
     // =========================
     // STATE MANAGEMENT
     // =========================
-    const [step, setStep] = useState(1);
-    const [form, setForm] = useState({
+    const [step, setStep] = useState(1);//Controls which page is shown
+    const [form, setForm] = useState({//Stores all user input
         fullName: "", dateOfBirth: "", address: "", contactNumber: "", medium: "",
         userId: "", username: "", email: "", password: ""
     });
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("");//show messge
     const [messageType, setMessageType] = useState("");
 
     // =========================
     // REGEX VALIDATION LOGIC
     // =========================
-    const validateStep = () => {
+    const validateStep = () => {//checks if user input is correct BEFORE moving or submitting
         // Step 1: Personal Profile Validation
         if (step === 1) {
             // Requirement: Letters and spaces only
@@ -71,20 +71,20 @@ export default function StudentRegister() {
         return true; // All checks passed
     };
 
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e) => {//updates form data
+        setForm({ ...form, [e.target.name]: e.target.value });//Update only the field that changed
         setMessage(""); // Clear error when typing
     };
 
     const handleNext = () => {
-        if (validateStep()) {
+        if (validateStep()) {//validate and go to next step.
             setStep(2);
             setMessage("");
         }
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();//Stop page reload
 
         // Final validation check before API call
         if (!validateStep()) return;
@@ -92,20 +92,20 @@ export default function StudentRegister() {
         setMessage("");
         setMessageType("");
 
-        try {
+        try {//Send data to backend,,res-This stores the response from backend
             const res = await fetch("http://localhost:8080/admin/users/create", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: "Bearer " + localStorage.getItem("token")
                 },
-                body: JSON.stringify({ ...form, role: "ROLE_STUDENT" })
+                body: JSON.stringify({ ...form, role: "ROLE_STUDENT" })//Add role
             });
 
-            const data = await res.text();
+            const data = await res.text();//take respond and convert to the text
 
             if (res.ok) {
-                setMessage("Student successfully registered! ✅");
+                setMessage("Student successfully registered! ");
                 setMessageType("success");
                 // Optional: Reset form here if needed
             } else {

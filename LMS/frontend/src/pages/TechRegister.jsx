@@ -15,9 +15,9 @@ import "./StudentRegister.css";
 
 export default function TechRegister() {
 
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(1);//Controls which page is shown
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState({//Stores all user input
         fullName: "",
         position: "",
         assignedArea: "",
@@ -28,7 +28,7 @@ export default function TechRegister() {
         password: ""
     });
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("");//show messge
     const [messageType, setMessageType] = useState("");
 
     // =========================
@@ -40,7 +40,7 @@ export default function TechRegister() {
     // =========================
     // VALIDATION (LIKE STUDENT FORM STYLE)
     // =========================
-    const validateStep = () => {
+    const validateStep = () => {//checks if user input is correct BEFORE moving or submitting
 
         // STEP 1 VALIDATION
         if (step === 1) {
@@ -93,7 +93,7 @@ export default function TechRegister() {
                 return false;
             }
 
-            if (form.password.length < 8) {
+            if (form.password.length < 8) {//must be at least 8 characters
                 setMessage("Password must be at least 8 characters.");
                 setMessageType("error");
                 return false;
@@ -106,8 +106,8 @@ export default function TechRegister() {
     // =========================
     // HANDLE CHANGE
     // =========================
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e) => {//updates form data
+        setForm({ ...form, [e.target.name]: e.target.value });//Update only the field that changed
         setMessage("");
     };
 
@@ -115,7 +115,7 @@ export default function TechRegister() {
     // NEXT STEP
     // =========================
     const handleNext = () => {
-        if (validateStep()) {
+        if (validateStep()) {//validate and go to next step.
             setStep(2);
             setMessage("");
         }
@@ -133,11 +133,11 @@ export default function TechRegister() {
     // SUBMIT
     // =========================
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();//Stop page reload
 
         if (!validateStep()) return;
 
-        try {
+        try {//Send data to backend,res-This stores the response from backend
             const res = await fetch("http://localhost:8080/admin/users/tech/create", {
                 method: "POST",
                 headers: {
@@ -146,14 +146,14 @@ export default function TechRegister() {
                 },
                 body: JSON.stringify({
                     ...form,
-                    role: "ROLE_TECHNICAL_OFFICER"
+                    role: "ROLE_TECHNICAL_OFFICER"//Add role
                 })
             });
 
             const data = await res.text();
 
             if (res.ok) {
-                setMessage("Technical Officer registered successfully! ✅");
+                setMessage("Technical Officer registered successfully! ");
                 setMessageType("success");
 
                 setForm({

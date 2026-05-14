@@ -17,9 +17,9 @@ import "./TeacherRegister.css";
 
 export default function TeacherRegister() {
 
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(1);//Controls which page is shown
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState({//Stores all user input
         fullName: "",
         subjectSpecialization: [],
         contactNumber: "",
@@ -30,7 +30,7 @@ export default function TeacherRegister() {
         password: ""
     });
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("");//show messge
     const [messageType, setMessageType] = useState("");
 
     const availableSubjects = [
@@ -65,7 +65,7 @@ export default function TeacherRegister() {
     // VALIDATION
     // =========================
 
-    const validateStep = () => {
+    const validateStep = () => {//checks if user input is correct BEFORE moving or submitting
 
         if (step === 1) {
 
@@ -116,7 +116,7 @@ export default function TeacherRegister() {
                 return false;
             }
 
-            if (form.password.length < 8) {
+            if (form.password.length < 8) {////must be at least 8 characters
                 setMessage("Password must be at least 8 characters.");
                 setMessageType("error");
                 return false;
@@ -130,10 +130,10 @@ export default function TeacherRegister() {
     // HANDLE CHANGE
     // =========================
 
-    const handleChange = (e) => {
+    const handleChange = (e) => {//updates form data
         setForm({
             ...form,
-            [e.target.name]: e.target.value
+            [e.target.name]: e.target.value//Update only the field that changed
         });
 
         setMessage("");
@@ -143,7 +143,7 @@ export default function TeacherRegister() {
     // SUBJECT TOGGLE
     // =========================
 
-    const handleSubjectToggle = (subject) => {
+    const handleSubjectToggle = (subject) => {//subject selection
 
         const exists = form.subjectSpecialization.includes(subject);
 
@@ -170,7 +170,7 @@ export default function TeacherRegister() {
 
     const handleNext = () => {
 
-        if (validateStep()) {
+        if (validateStep()) {//validate and go to next step.
             setStep(2);
             setMessage("");
         }
@@ -180,9 +180,9 @@ export default function TeacherRegister() {
     // SUBMIT
     // =========================
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e) => {//sends data to backend
 
-        e.preventDefault();
+        e.preventDefault();//Stop page reload
 
         if (!validateStep()) return;
 
@@ -191,11 +191,11 @@ export default function TeacherRegister() {
             const payload = {
                 ...form,
                 subjectSpecialization:
-                    form.subjectSpecialization.join(", "),
+                    form.subjectSpecialization.join(", "),//Converts array → string
                 role: "ROLE_TEACHER"
             };
 
-            const res = await fetch(
+            const res = await fetch(//Send data to backend,res-This stores the response from backend
                 "http://localhost:8080/admin/users/teacher/create",
                 {
                     method: "POST",
@@ -208,11 +208,11 @@ export default function TeacherRegister() {
                 }
             );
 
-            const data = await res.text();
+            const data = await res.text();//take respond and convert to the text
 
             if (res.ok) {
 
-                setMessage("Teacher successfully registered! ✅");
+                setMessage("Teacher successfully registered! ");
                 setMessageType("success");
 
                 setForm({
@@ -292,8 +292,8 @@ export default function TeacherRegister() {
                                             key={subject}
                                             className={`subject-option ${
                                                 form.subjectSpecialization.includes(subject)
-                                                    ? "picked"
-                                                    : ""
+                                                    ? "picked"//If subject is selected
+                                                    : ""//not picked
                                             }`}
                                             onClick={() => handleSubjectToggle(subject)}
                                         >
