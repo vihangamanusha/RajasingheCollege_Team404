@@ -1,27 +1,79 @@
-import React, { useState } from "react";
-import { saveMarks } from "../Service/TeacherMarksService";
-import "./TeacherAddMarks.css"; // ✅ import CSS
+import React, { useState, useEffect } from "react";
+import Select from "react-select";
+import { saveMarks } from "../services/marksService";
+import { getStudents } from "../services/StudentService";
+import { getSubjects } from "../services/SubjectService";
+import { getClasses } from "../services/ClassService";
+import Sidebar from "../components/Sidebar";
+import "./AddMarks.css";
 
-const students = [
-    { id: "ST001", name: "Kamal Perera" },
-    { id: "ST002", name: "Saman Kumara" },
-    { id: "ST003", name: "Ravi Fernando" }
-];
+function AddMarks() {
 
-const subjects = [
-    { id: "S001", name: "Science" },
-    { id: "S002", name: "Maths" },
-    { id: "S003", name: "English" },
-    { id: "S004", name: "Sinhala" }
-];
+    const [students, setStudents] = useState([]);
+    const [subjects, setSubjects] = useState([]);
+    const [classes, setClasses] = useState([]);
 
-function TeacherAddMarks() {
+    const [classId, setClassId] = useState("");
     const [studentId, setStudentId] = useState("");
     const [subjectId, setSubjectId] = useState("");
     const [term, setTerm] = useState("");
     const [assignmentMark, setAssignmentMark] = useState("");
 
+    useEffect(() => {
+        loadClasses();
+        loadStudents();
+        loadSubjects();
+    }, []);
+
+    const loadClasses = async () => {
+        try {
+            const response = await getClasses();
+            setClasses(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const loadStudents = async () => {
+        try {
+            const response = await getStudents();
+            setStudents(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const loadSubjects = async () => {
+        try {
+            const response = await getSubjects();
+            setSubjects(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    // convert to react-select format
+    const classOptions = classes.map(c => ({
+        value: c.classId,
+        label: `${c.className} - ${c.classId}`
+    }));
+
+    const filteredStudents = classId
+        ? students.filter(s => (s.classEntity?.classId || s.classId || s.class_id) === classId)
+        : students;
+
+    const studentOptions = filteredStudents.map(s => ({
+        value: s.studentId,
+        label: `${s.studentId} - ${s.fullName}`
+    }));
+
+    const subjectOptions = subjects.map(sub => ({
+        value: sub.subjectId,
+        label: sub.subjectName
+    }));
+
     const handleSubmit = async () => {
+
         if (!studentId || !subjectId || !term) {
             alert("Please select all fields");
             return;
@@ -40,10 +92,12 @@ function TeacherAddMarks() {
             await saveMarks(payload);
             alert("Marks saved successfully");
 
+            setClassId("");
             setStudentId("");
             setSubjectId("");
             setTerm("");
             setAssignmentMark("");
+
         } catch (error) {
             console.error(error);
             alert("Error saving marks");
@@ -51,72 +105,101 @@ function TeacherAddMarks() {
     };
 
     return (
-        <div className="container">
+        <div style={{ display: "flex" }}>
 
-            <h2>Upload Student Marks</h2>
+            {/* SIDEBAR
+            <Sidebar /> */}
 
-            {/* Top Card (Dropdowns) */}
-            <div className="card">
-                <div className="form-row">
+            <div className="container" style={{ flex: 1 }}>
+
+                <h2>Upload Student Marks</h2>
+
+                <div className="card">
+
+                    <div className="form-row">
+
+                        {/* CLASS SEARCH DROPDOWN */}
+                        <div className="form-group">
+                            <label>Select Class</label>
+                            <Select
+                                options={classOptions}
+                                value={classOptions.find(c => c.value === classId) || null}
+                                onChange={(selected) => {
+                                    setClassId(selected?.value || "");
+                                    setStudentId("");
+                                }}
+                                placeholder="Search class..."
+                                isSearchable
+                                isClearable
+                            />
+                        </div>
+
+                        {/* STUDENT SEARCH DROPDOWN */}
+                        <div className="form-group">
+                            <label>Select Student</label>
+                            <Select
+                                options={studentOptions}
+                                value={studentOptions.find(s => s.value === studentId)}
+                                onChange={(selected) => setStudentId(selected.value)}
+                                placeholder="Search student..."
+                                isSearchable
+                            />
+                        </div>
+
+                        {/* SUBJECT SEARCH DROPDOWN */}
+                        <div className="form-group">
+                            <label>Select Subject</label>
+                            <Select
+                                options={subjectOptions}
+                                value={subjectOptions.find(s => s.value === subjectId)}
+                                onChange={(selected) => setSubjectId(selected.value)}
+                                placeholder="Search subject..."
+                                isSearchable
+                            />
+                        </div>
+
+                        {/* TERM */}
+                        <div className="form-group">
+                            <label>Select Term</label>
+                            <select
+                                value={term}
+                                onChange={(e) => setTerm(e.target.value)}
+                            >
+                                <option value="">Choose Term</option>
+                                <option value="Term1">Term 1</option>
+                                <option value="Term2">Term 2</option>
+                                <option value="Term3">Term 3</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div className="card">
+
+                    <h3>Student Marks Entry</h3>
 
                     <div className="form-group">
-                        <label>Select Student</label>
-                        <select value={studentId} onChange={(e) => setStudentId(e.target.value)}>
-                            <option value="">Choose Student</option>
-                            {students.map(s => (
-                                <option key={s.id} value={s.id}>
-                                    {s.id} - {s.name}
-                                </option>
-                            ))}
-                        </select>
+                        <label>Assignment Mark</label>
+                        <input
+                            type="number"
+                            value={assignmentMark}
+                            onChange={(e) => setAssignmentMark(e.target.value)}
+                            placeholder="0 - 100"
+                        />
                     </div>
 
-                    <div className="form-group">
-                        <label>Select Subject</label>
-                        <select value={subjectId} onChange={(e) => setSubjectId(e.target.value)}>
-                            <option value="">Choose Subject</option>
-                            {subjects.map(sub => (
-                                <option key={sub.id} value={sub.id}>
-                                    {sub.name}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
+                    <br />
 
-                    <div className="form-group">
-                        <label>Select Term</label>
-                        <select value={term} onChange={(e) => setTerm(e.target.value)}>
-                            <option value="">Choose Term</option>
-                            <option value="Term1">Term 1</option>
-                            <option value="Term2">Term 2</option>
-                            <option value="Term3">Term 3</option>
-                        </select>
-                    </div>
+                    <button onClick={handleSubmit}>
+                        Save Marks
+                    </button>
 
                 </div>
+
             </div>
-
-            {/* Bottom Card */}
-            <div className="card">
-                <h3>Student Marks Entry</h3>
-
-                <div className="form-group">
-                    <label>Assignment Mark</label>
-                    <input
-                        type="number"
-                        value={assignmentMark}
-                        onChange={(e) => setAssignmentMark(e.target.value)}
-                        placeholder="0 - 100"
-                    />
-                </div>
-
-                <br />
-
-                <button onClick={handleSubmit}>Save Marks</button>
-            </div>
-
         </div>
     );
 }
 
-export default TeacherAddMarks;
+export default AddMarks;
