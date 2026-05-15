@@ -25,4 +25,9 @@ public class ClassManagementController {
                 "Classes generated successfully"
         );
     }
+
+    @GetMapping
+    public ResponseEntity<java.util.List<com.rcc.lms.entity.student.ClassEntity>> getAllClasses() {
+        return ResponseEntity.ok(classManagementService.getAllClasses());
+    }
 }

@@ -12,7 +12,8 @@ public class GenerateClassRequest {
 
     private LocalDate dobTo;
 
-    private List<String> classSections;
+    private int numberOfClasses;
+    private int academicYear;
 
     public int getGrade() {
         return grade;
@@ -38,11 +39,19 @@ public class GenerateClassRequest {
         this.dobTo = dobTo;
     }
 
-    public List<String> getClassSections() {
-        return classSections;
+    public int getNumberOfClasses() {
+        return numberOfClasses;
     }
 
-    public void setClassSections(List<String> classSections) {
-        this.classSections = classSections;
+    public void setNumberOfClasses(int numberOfClasses) {
+        this.numberOfClasses = numberOfClasses;
+    }
+
+    public int getAcademicYear() {
+        return academicYear;
+    }
+
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
     }
 }

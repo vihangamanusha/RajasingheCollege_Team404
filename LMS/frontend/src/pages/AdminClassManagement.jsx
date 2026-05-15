@@ -7,18 +7,35 @@ export default function AdminClassManagement() {
     grade: "9",
     dobFrom: "2012-02-01",
     dobTo: "2013-01-31",
-    classSections: ["A", "B", "C", "D", "E", "F", "G"],
+    numberOfClasses: 10,
+    academicYear: 2026,
   });
 
-  const [classes, setClasses] = useState([
-    { id: "CLS-9A", name: "9-A", students: 35 },
-    { id: "CLS-9B", name: "9-B", students: 32 },
-    { id: "CLS-9C", name: "9-C", students: 34 },
-  ]);
+  const [classes, setClasses] = useState([]);
 
   const [generatedStudents, setGeneratedStudents] = useState([]);
   const [message, setMessage] = useState({ text: "", type: "" });
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchClasses();
+  }, []);
+
+  const fetchClasses = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/classes");
+      if (response.ok) {
+        const data = await response.json();
+        setClasses(data.map(cls => ({
+          id: cls.classId,
+          name: cls.className,
+          students: 0 
+        })));
+      }
+    } catch (error) {
+      console.error("Error fetching classes:", error);
+    }
+  };
 
   const grades = ["6", "7", "8", "9", "10", "11", "12", "13"];
   const availableSections = ["A", "B", "C", "D", "E", "F", "G", "H"];
@@ -55,21 +72,15 @@ export default function AdminClassManagement() {
             grade: parseInt(formData.grade),
             dobFrom: formData.dobFrom,
             dobTo: formData.dobTo,
-            classSections: formData.classSections,
+            numberOfClasses: parseInt(formData.numberOfClasses),
+            academicYear: parseInt(formData.academicYear),
           }),
         },
       );
 
       if (response.ok) {
         setMessage({ text: "Classes Generated Successfully", type: "success" });
-        // Optionally fetch updated classes here
-        // For now, let's mock adding the new classes
-        const newClasses = formData.classSections.map((sec) => ({
-          id: `CLS-${formData.grade}${sec}`,
-          name: `${formData.grade}-${sec}`,
-          students: 0, // Will be updated later
-        }));
-        setClasses(newClasses);
+        fetchClasses();
       } else {
         const errorData = await response.json();
         setMessage({
@@ -196,19 +207,27 @@ export default function AdminClassManagement() {
             </button>
 
             <div className="form-group">
-              <label>Sections</label>
-              <div className="checkbox-grid">
-                {availableSections.map((sec) => (
-                  <label key={sec} className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={formData.classSections.includes(sec)}
-                      onChange={() => handleCheckboxChange(sec)}
-                    />
-                    <span>{sec}</span>
-                  </label>
-                ))}
-              </div>
+              <label>Academic Year</label>
+              <input
+                type="number"
+                value={formData.academicYear}
+                onChange={(e) =>
+                  setFormData({ ...formData, academicYear: e.target.value })
+                }
+                placeholder="e.g. 2026"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Number of Classes</label>
+              <input
+                type="number"
+                value={formData.numberOfClasses}
+                onChange={(e) =>
+                  setFormData({ ...formData, numberOfClasses: e.target.value })
+                }
+                placeholder="e.g. 10"
+              />
             </div>
 
             <button type="submit" className="generate-btn" disabled={loading}>

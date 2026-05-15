@@ -69,26 +69,19 @@ public class ClassManagementService {
         // =====================================
 
         List<ClassEntity> classes = new ArrayList<>();
+        int numClasses = request.getNumberOfClasses();
 
-        for (String section : request.getClassSections()) {
+        for (int i = 0; i < numClasses; i++) {
+            char sectionChar = (char) ('A' + i);
+            String className = request.getGrade() + "-" + sectionChar;
 
-            String className = request.getGrade() + "-" + section;
-
-            ClassEntity classEntity =
-                    classRepository.findByClassName(className);
+            ClassEntity classEntity = classRepository.findByClassName(className);
 
             if (classEntity == null) {
-
                 classEntity = new ClassEntity();
-
-                classEntity.setClassId(
-                        "CLS-" + request.getGrade() + section
-                );
-
+                classEntity.setClassId("CLS-" + request.getGrade() + sectionChar);
                 classEntity.setClassName(className);
-
-                classEntity.setYear(LocalDate.now().getYear());
-
+                classEntity.setYear(request.getAcademicYear());
                 classRepository.save(classEntity);
             }
 
@@ -131,5 +124,9 @@ public class ClassManagementService {
         }
 
         return (double) total / marks.size();
+    }
+
+    public List<ClassEntity> getAllClasses() {
+        return classRepository.findAll();
     }
 }
