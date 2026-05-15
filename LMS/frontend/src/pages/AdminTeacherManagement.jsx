@@ -21,8 +21,8 @@ export default function AdminTeacherManagement() {
     // =========================================
 
     const [searchTerm, setSearchTerm] = useState("");//what admin types in search box
-    const [teachers, setTeachers] = useState([]);//store all the serch data
-    const [loading, setLoading] = useState(false);//controoler lord msg
+    const [teachers, setTeachers] = useState([]);//store list of teacher
+    const [loading, setLoading] = useState(false);//controoler show lord msg
 
     // DELETE
     const [showDeleteModal, setShowDeleteModal] = useState(false);//Controls delete popup
@@ -41,7 +41,7 @@ export default function AdminTeacherManagement() {
         type: ""
     });
 
-    const [originalEditData, setOriginalEditData] = useState(null);
+    const [originalEditData, setOriginalEditData] = useState(null);//check if user edited anything
 
     const [editFormData, setEditFormData] = useState({
         username: "",
@@ -51,14 +51,31 @@ export default function AdminTeacherManagement() {
         fullName: "",
         subjectSpecialization: [],
         contactNumber: "",
-        subRole: ""
+        subRole: "",
+        createdDate: ""
     });
+
+    // =========================================
+    // UTILS
+    // =========================================
+
+    const calculateYearsSince = (dateString) => {
+        if (!dateString) return 0;
+        const regDate = new Date(dateString);
+        const today = new Date();
+        let years = today.getFullYear() - regDate.getFullYear();
+        const m = today.getMonth() - regDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < regDate.getDate())) {
+            years--;
+        }
+        return years;
+    };
 
     // =========================================
     // SUBJECTS + DESIGNATIONS
     // =========================================
 
-    const subjectsList = [
+    const subjectsList = [//List of available subjects
         "Mathematics",
         "Science",
         "English",
@@ -69,7 +86,7 @@ export default function AdminTeacherManagement() {
         "Music"
     ];
 
-    const designationList = [
+    const designationList = [//list of teacher roles
         "Subject Teacher",
         "Class Teacher",
         "Section Head",
@@ -111,12 +128,13 @@ export default function AdminTeacherManagement() {
 
         } finally {
 
-            setLoading(false);
+            setLoading(false);//stop lording.
         }
     };
 
     useEffect(() => {
 
+        //waits 300ms before calling API
         const delayDebounce = setTimeout(() => {
 
             fetchTeachers();
@@ -148,7 +166,8 @@ export default function AdminTeacherManagement() {
             fullName: "Loading...",
             subjectSpecialization: [],
             contactNumber: "Loading...",
-            subRole: teacher.subRole || ""
+            subRole: teacher.subRole || "",
+            createdDate: teacher.createdDate || ""
         };
 
         setEditFormData(initialData);
@@ -186,7 +205,8 @@ export default function AdminTeacherManagement() {
 
                     contactNumber: fullProfile.contactNumber || "",
 
-                    subRole: teacher.subRole || ""
+                    subRole: teacher.subRole || "",
+                    createdDate: teacher.createdDate || ""
                 };
 
                 setEditFormData(completeData);
@@ -257,9 +277,9 @@ export default function AdminTeacherManagement() {
     // SAVE EDIT
     // =========================================
 
-    const submitEdit = async (e) => {
+    const submitEdit = async (e) => {//save chnges
 
-        e.preventDefault();
+        e.preventDefault();//prevent refresh
 
         setEditMessage({
             text: "",
@@ -340,7 +360,7 @@ export default function AdminTeacherManagement() {
                     type: "success"
                 });
 
-                fetchTeachers();
+                fetchTeachers();//refresh list
 
                 setTimeout(() => {
 
@@ -513,7 +533,8 @@ export default function AdminTeacherManagement() {
                             <th>Teacher ID</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Status</th>
+                            <th>Role</th>
+                            <th>Register Date</th>
                             <th>Actions</th>
                         </tr>
 
@@ -540,13 +561,13 @@ export default function AdminTeacherManagement() {
                                 </td>
 
                                 <td>
-
-                                    <span className="role-badge subject-teacher">
-
-                                        {teacher.status}
-
+                                    <span className={`role-badge ${teacher.subRole?.toLowerCase().replace(/\s+/g, '-') || 'subject-teacher'}`}>
+                                        {teacher.subRole || "Subject Teacher"}
                                     </span>
+                                </td>
 
+                                <td>
+                                    {teacher.createdDate || "N/A"}
                                 </td>
 
                                 <td>
@@ -555,6 +576,7 @@ export default function AdminTeacherManagement() {
 
                                         <button
                                             className="icon-btn edit-icon"
+                                            title="Edit Profile"
                                             onClick={() =>
                                                 triggerEdit(teacher)
                                             }
@@ -562,8 +584,21 @@ export default function AdminTeacherManagement() {
                                             <FiEdit />
                                         </button>
 
+                                        {/* Promotion Logic */}
+                                        {calculateYearsSince(teacher.createdDate) >= 1 && (//show promotion button
+                                            <button
+                                                className="icon-btn promote-icon"
+                                                title="Manage Promotion"
+                                                onClick={() => triggerEdit(teacher)}
+                                                style={{ color: '#f39c12' }}
+                                            >
+                                                <FiUserPlus />
+                                            </button>
+                                        )}
+
                                         <button
                                             className="icon-btn delete-icon"
+                                            title="Delete User"
                                             onClick={() =>
                                                 triggerDelete(teacher.username)
                                             }
@@ -701,22 +736,34 @@ export default function AdminTeacherManagement() {
                                         })
                                     }
                                 >
+                                    <option value="">Select Designation</option>
+                                    
+                                    {/* Default Roles */}
+                                    <optgroup label="Standard Roles">
+                                        <option value="Subject Teacher">Subject Teacher</option>
+                                        <option value="Class Teacher">Class Teacher</option>
+                                    </optgroup>
 
-                                    <option value="">
-                                        Select Designation
-                                    </option>
+                                    {/* 1+ Year Promotions */}
+                                    {calculateYearsSince(editFormData.createdDate) >= 1 && (
+                                        <optgroup label="Promotions (1+ Year)">
+                                            <option value="Section Head Grade 6">Section Head Grade 6</option>
+                                            <option value="Section Head Grade 7">Section Head Grade 7</option>
+                                            <option value="Section Head Grade 8">Section Head Grade 8</option>
+                                            <option value="Section Head Grade 9">Section Head Grade 9</option>
+                                            <option value="Section Head Grade 10">Section Head Grade 10</option>
+                                            <option value="Section Head Grade 11">Section Head Grade 11</option>
+                                        </optgroup>
+                                    )}
 
-                                    {designationList.map((designation) => (
-
-                                        <option
-                                            key={designation}
-                                            value={designation}
-                                        >
-                                            {designation}
-                                        </option>
-
-                                    ))}
-
+                                    {/* 2+ Year Promotions */}
+                                    {calculateYearsSince(editFormData.createdDate) >= 2 && (
+                                        <optgroup label="Senior Leadership (2+ Years)">
+                                            <option value="Deputy Principal 1">Deputy Principal 1</option>
+                                            <option value="Deputy Principal">Deputy Principal</option>
+                                            <option value="Vice Principal">Vice Principal</option>
+                                        </optgroup>
+                                    )}
                                 </select>
 
                             </div>

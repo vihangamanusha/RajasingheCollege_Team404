@@ -25,11 +25,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service//This class contains business logic
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired//inject dependencies
+    private UserRepository userRepository;//handle user table
 
     @Autowired
     private StudentRepository studentRepository;
@@ -41,26 +41,27 @@ public class UserService {
     private TechnicalOfficerRepository technicalOfficerRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;//used to encrypt password
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;//used to generate token
 
     // =========================
     // LOGIN USER
     // =========================
     public LoginResponse loginUser(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByUsername(request.getUsername())//find by username
                 .orElse(null);
 
-        if (user == null || "DELETED".equals(user.getStatus())) {
+        if (user == null || "DELETED".equals(user.getStatus())) {//check user exit or active
             throw new RuntimeException("Invalid username or password");
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {//check password
             throw new RuntimeException("Invalid username or password");
         }
 
+        //crete login token
         String token = jwtUtil.generateToken(user.getUsername());
 
         return new LoginResponse(
@@ -77,8 +78,8 @@ public class UserService {
 
     public DashboardStatsDTO getAdminDashboardStats() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
-        stats.setTotalStudents(userRepository.countByRoleAndStatusNot("ROLE_STUDENT", "DELETED"));
-        stats.setTotalTeachers(userRepository.countByRoleAndStatusNot("ROLE_TEACHER", "DELETED"));
+        stats.setTotalStudents(userRepository.countByRoleAndStatusNot("ROLE_STUDENT", "DELETED"));//count the student
+        stats.setTotalTeachers(userRepository.countByRoleAndStatusNot("ROLE_TEACHER", "DELETED"));//count the teacher
         stats.setTotalClasses(42);
         stats.setTotalSubjects(24);
 
@@ -90,7 +91,7 @@ public class UserService {
                         "Recently",
                         u.getUsername().substring(0, 1).toUpperCase()
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());//transwer user objectto the dto object
 
         stats.setRecentActivities(activityList);
         return stats;
@@ -138,7 +139,7 @@ public class UserService {
         return "Student successfully registered!";
     }
 
-    @Transactional
+    @Transactional//connect with the two tables, (multiple tables)
     public String registerNewTeacher(TeacherRegistrationRequest request) {
         // 1. Check for existing IDs/Users to prevent duplicates
         if (userRepository.existsByUserId(request.getUserId())) {
@@ -159,7 +160,7 @@ public class UserService {
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole("ROLE_TEACHER");
         newUser.setSubRole(request.getSubRole()); // Saves designation to User table
-        newUser.setCreatedDate(LocalDate.now());
+        newUser.setCreatedDate(LocalDate.now());//set the current date.
         newUser.setStatus("ACTIVE");
         userRepository.save(newUser);
 
@@ -217,16 +218,16 @@ public class UserService {
     // ==============================================================
 
     public java.util.List<User> searchUsers(String role, String searchTerm) {
-        if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return userRepository.findByRoleAndStatusNot(role, "DELETED");
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {//IF SEARCH EMPTY
+            return userRepository.findByRoleAndStatusNot(role, "DELETED");//Return ALL active users for that role
         }
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
 
-    public Student getStudentProfile(String username) {
+    public Student getStudentProfile(String username) {//get student profile by username
         User user = userRepository.findByUsername(username).orElse(null);
-        if (user != null) {
-            return studentRepository.findById(user.getUserId()).orElse(null);
+        if (user != null) {//find student profile by id
+            return studentRepository.findById(user.getUserId()).orElse(null);//retun student object
         }
         return null;
     }
@@ -240,7 +241,7 @@ public class UserService {
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        userRepository.save(existingUser);
+        userRepository.save(existingUser);//Updates database.
 
         Student existingStudent = studentRepository.findById(existingUser.getUserId()).orElse(null);
         if (existingStudent != null) {
@@ -251,7 +252,7 @@ public class UserService {
             if (request.getMedium() != null) {
                 existingStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
             }
-            studentRepository.save(existingStudent);
+            studentRepository.save(existingStudent);//update databse
         }
         return "Student profile updated successfully!";
     }
@@ -325,16 +326,16 @@ public class UserService {
         return "User updated successfully!";
     }
 
-    @Transactional
+    @Transactional//connect with multiple table
     public String hardDeleteUser(String username) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
-        String role = existingUser.getRole();
-        String userId = existingUser.getUserId();
-        if ("ROLE_STUDENT".equals(role)) studentRepository.deleteById(userId);
+        String role = existingUser.getRole();//GET ROLE
+        String userId = existingUser.getUserId();//GET USER ID
+        if ("ROLE_STUDENT".equals(role)) studentRepository.deleteById(userId);//check role and delete
         else if ("ROLE_TEACHER".equals(role)) teacherRepository.deleteById(userId);
         else if ("ROLE_TECHNICAL_OFFICER".equals(role)) technicalOfficerRepository.deleteById(userId);
-        userRepository.delete(existingUser);
+        userRepository.delete(existingUser);//delete from usertable
         return "User permanently deleted from the system!";
     }
 
@@ -345,14 +346,14 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedDate(LocalDate.now());
         user.setStatus("ACTIVE");
-        userRepository.save(user);
+        userRepository.save(user);//insert into database
         return "User created successfully by admin!";
     }
 
     public String deleteUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) return "User not found!";
-        userRepository.delete(user);
+        userRepository.delete(user);//delete record from database.
         return "User deleted successfully!";
     }
 }

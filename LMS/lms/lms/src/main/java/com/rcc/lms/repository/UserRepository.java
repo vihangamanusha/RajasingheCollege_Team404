@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User, String> {
+public interface UserRepository extends JpaRepository<User, String> {//entity and primary key type
 
     Optional<User> findByUsername(String username);
 
@@ -34,11 +34,15 @@ public interface UserRepository extends JpaRepository<User, String> {
     // ========================================================================
     // CUSTOM SEARCH ENGINE FOR ADMIN DASHBOARD
     // ========================================================================
+    // search user by username,email,userid
+    //lower-make serch case sensitive
+    //Select a User entity and call it u..u- alias..
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.status != 'DELETED' AND " +
             "(LOWER(u.username) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(u.userId) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
-    List<User> searchActiveUsersByRoleAndTerm(@Param("role") String role, @Param("searchTerm") String searchTerm);
+    List<User> searchActiveUsersByRoleAndTerm(@Param("role") String role, @Param("searchTerm") String searchTerm);//Maps method inputs to query variables.
+
 
     // Fallback: Just get all active users for a specific role when the search bar is empty
     List<User> findByRoleAndStatusNot(String role, String status);

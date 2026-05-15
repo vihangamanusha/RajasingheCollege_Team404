@@ -150,8 +150,41 @@
     color: #f59e0b;
 }
 
+.promote-icon {
+    color: #f39c12;
+}
+
+.promote-icon:hover {
+    color: #d35400;
+}
+
 .delete-icon {
     color: #ef4444;
+}
+
+/* =========================================
+   ROLE BADGES EXTENDED
+========================================= */
+
+.subject-teacher, .class-teacher {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.section-head-grade-6, .section-head-grade-7, .section-head-grade-8,
+.section-head-grade-9, .section-head-grade-10, .section-head-grade-11 {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.deputy-principal, .deputy-principal-1 {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.vice-principal {
+    background: #fae8ff;
+    color: #86198f;
 }
 
 /* =========================================

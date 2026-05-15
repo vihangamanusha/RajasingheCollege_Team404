@@ -8,19 +8,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+@RestControllerAdvice//handles exceptions globally for all controllers
 public class GlobalExceptionHandler {
 
     // =========================
     // HANDLE LOGIN ERRORS
     // =========================
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(RuntimeException.class)//If ANY RuntimeException happens anywhere → use this method
     public ResponseEntity<?> handleRuntime(RuntimeException ex) {
 
-        Map<String, String> error = new HashMap<>();
+        Map<String, String> error = new HashMap<>();//creates JSON error map
         error.put("message", ex.getMessage());
 
         // return 401 Unauthorized for invalid login
-        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);//RETURN HTTP RESPONSE
     }
 }

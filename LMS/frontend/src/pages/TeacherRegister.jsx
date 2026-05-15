@@ -23,7 +23,7 @@ export default function TeacherRegister() {
         fullName: "",
         subjectSpecialization: [],
         contactNumber: "",
-        subRole: "",
+        subRole: "Subject Teacher",
         userId: "",
         username: "",
         email: "",
@@ -46,20 +46,6 @@ export default function TeacherRegister() {
         "Music"
     ];
 
-    const roles = [
-        "Vice Principal (Development)",
-        "Vice Principal (Administrative)",
-        "Deputy Principal (Grade 6-11)",
-        "Deputy Principal (Administrative)",
-        "Section Head Grade 6",
-        "Section Head Grade 7",
-        "Section Head Grade 8",
-        "Section Head Grade 9",
-        "Section Head Grade 10",
-        "Section Head Grade 11",
-        "Subject Teacher",
-        "Class Teacher"
-    ];
 
     // =========================
     // VALIDATION
@@ -219,7 +205,7 @@ export default function TeacherRegister() {
                     fullName: "",
                     subjectSpecialization: [],
                     contactNumber: "",
-                    subRole: "",
+                    subRole: "Subject Teacher",
                     userId: "",
                     username: "",
                     email: "",
@@ -325,16 +311,7 @@ export default function TeacherRegister() {
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="" disabled>
-                                            Select Designation
-                                        </option>
-
-                                        {roles.map(role => (
-                                            <option key={role} value={role}>
-                                                {role}
-                                            </option>
-                                        ))}
-
+                                        <option value="Subject Teacher">Subject Teacher</option>
                                     </select>
 
                                 </div>

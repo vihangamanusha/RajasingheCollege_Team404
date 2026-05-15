@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";//store dymanic data use
+import { useEffect, useState } from "react";//automatic load,store data use
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom"; // 1. Import useNavigate for button without relording.
 import { FiUsers, FiBook, FiGrid, FiUserPlus, FiPlus } from "react-icons/fi";
@@ -38,7 +38,7 @@ export default function Dashboard() {
     }, []);//empty arry run when lord the page
 
     // 5. Function to fetch live data from your AdminController endpoint
-    const fetchDashboardStats = async (token) => {//becuase api call call take time so we use async
+    const fetchDashboardStats = async (token) => {//becuase api call take time so we use async
         try {
             const response = await fetch("http://localhost:8080/admin/dashboard/stats", {//frontend send request.
                 headers: { "Authorization": `Bearer ${token}` }
@@ -132,7 +132,8 @@ export default function Dashboard() {
                                     <div className="activity-avatar">{activity.initial}</div>
                                     <div className="activity-details">
                                         <p><strong>{activity.name}</strong> {activity.action}</p>
-                                        <span>{activity.timeAgo}</span>//get the one line text
+                                        {/*//get the one line text*/}
+                                        <span>{activity.timeAgo}</span>
                                     </div>
                                 </div>
                             ))
