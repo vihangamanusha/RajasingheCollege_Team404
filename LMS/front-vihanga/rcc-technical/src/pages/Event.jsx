@@ -19,6 +19,7 @@ export default function Event() {
     date: "",
     time: "",
     venue: "",
+    announcementAudience: "",
   });
 
   const [editingId, setEditingId] = useState(null);
@@ -54,6 +55,7 @@ export default function Event() {
       date: "",
       time: "",
       venue: "",
+      announcementAudience: "",
     });
 
     setEditingId(null);
@@ -92,6 +94,7 @@ export default function Event() {
       date: event.date,
       time: event.time,
       venue: event.venue,
+      announcementAudience: event.announcementAudience,
     });
 
     setEditingId(event.id);
@@ -222,6 +225,7 @@ const deleteEvent = async (id) => {
                   date: "",
                   time: "",
                   venue: "",
+                  announcementAudience: "",
                 });
               }}
               className="event-close-btn"
@@ -312,7 +316,32 @@ const deleteEvent = async (id) => {
                 className="event-input"
                 required
               />
+            {/*  select announcement audience */}
+              <select
+                  value={form.announcementAudience || ""}
+                  onChange={(e) =>
+                       setForm({
+                       ...form,
+                       announcementAudience: e.target.value
+                      })
+                   }
+                  className="event-input"
+              >
+              <option value="">Do Not Show in Announcements</option>
 
+              <option value="Students">
+                     Show for Students
+              </option>
+
+              <option value="Teachers">
+                     Show for Teachers
+              </option>
+
+
+              <option value="All">
+                     Show for All
+               </option>
+              </select>
               <div className="event-form-buttons">
 
                 <button

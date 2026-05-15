@@ -14,7 +14,8 @@ public class Announcement {
 
     private String title;
     private String category;
-    private String targetAudeience;
+
+    private String targetAudience;
     private String content;
     private LocalDateTime createdAt;
 
@@ -47,12 +48,12 @@ public class Announcement {
         this.category = category;
     }
 
-    public String getTargetAudeience() {
-        return targetAudeience;
+    public String getTargetAudience() {
+        return targetAudience;
     }
 
-    public void setTargetAudeience(String targetAudeience) {
-        this.targetAudeience = targetAudeience;
+    public void setTargetAudience(String targetAudience) {
+        this.targetAudience = targetAudience;
     }
 
     public String getContent() {

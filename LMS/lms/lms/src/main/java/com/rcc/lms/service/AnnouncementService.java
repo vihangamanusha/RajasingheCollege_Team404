@@ -38,7 +38,7 @@ public class AnnouncementService {
 
         existing.setTitle(newData.getTitle());
         existing.setCategory(newData.getCategory());
-        existing.setTargetAudeience(newData.getTargetAudeience());
+        existing.setTargetAudience(newData.getTargetAudience());
         existing.setContent(newData.getContent());
 
         return repository.save(existing);

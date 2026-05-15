@@ -19,6 +19,9 @@ public class Event {
     private LocalTime time;
     private String venue;
 
+    //new
+    private String announcementAudience;
+
     public Event() {
     }
 
@@ -77,5 +80,13 @@ public class Event {
 
     public void setVenue(String venue) {
         this.venue = venue;
+    }
+
+    public String getAnnouncementAudience() {
+        return announcementAudience;
+    }
+
+    public void setAnnouncementAudience(String announcementAudience) {
+        this.announcementAudience = announcementAudience;
     }
 }
