@@ -12,7 +12,7 @@ const getEmbedUrl = (url) => {
 
   // watch?v=
   if (url.includes("watch?v=")) {
-    const id = url.split("watch?v=")[1].split("&")[0];
+    const id = url.split("watch?v=")[1].split("&")[0];//extract link id
     return `https://www.youtube.com/embed/${id}`;
   }
 
@@ -99,7 +99,7 @@ export default function LiveStreamAdmin() {
         }
       );
 
-      loadStreams();
+      loadStreams();//update stream stuat
 
       setMessage("Streaming stopped");
 
@@ -209,7 +209,7 @@ export default function LiveStreamAdmin() {
       videoURL: stream.videoURL,
     });
 
-    setEditingId(stream.id);
+    setEditingId(stream.id);//store editing streaam id
 
     setShowForm(true);
   };

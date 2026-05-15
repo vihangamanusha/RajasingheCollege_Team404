@@ -2,6 +2,7 @@ package com.rcc.lms.controller;
 
 import com.rcc.lms.entity.News;
 import com.rcc.lms.service.NewsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/news")
 public class NewsController {
+
 
     private final NewsService service;
 

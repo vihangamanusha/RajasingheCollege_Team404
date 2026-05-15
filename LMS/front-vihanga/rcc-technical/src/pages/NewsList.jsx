@@ -68,7 +68,7 @@ export default function NewsList() {
       const data = await res.text();
       imageUrl = data;
     }
-
+//creates data object to send to backend
     const payload = {
       title: form.title,
       content: form.content,

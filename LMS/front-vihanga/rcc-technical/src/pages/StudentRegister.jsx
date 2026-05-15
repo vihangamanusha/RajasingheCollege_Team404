@@ -21,11 +21,11 @@ export default function StudentRegister() {
   const [search, setSearch] = useState("");
   const [editingId, setEditingId] = useState(null);
 
-  // LOAD STUDENTS
+ 
   const loadStudents = async () => {
     try {
-      const res = await fetch("http://localhost:8080/api/students");
-      const data = await res.json();
+      const res = await fetch("http://localhost:8080/api/students");//get
+      const data = await res.json();//convert to json
       setStudents(data || []);
     } catch (error) {
       console.error(error);
@@ -37,7 +37,7 @@ export default function StudentRegister() {
   }, []);
 
   
-  // HANDLE INPUT
+  // handle input change
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -64,7 +64,7 @@ const handleSubmit = async (e) => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(form),
+          body: JSON.stringify(form),//js into json
         }
       );
 
@@ -110,10 +110,10 @@ const handleSubmit = async (e) => {
     // RESET EDITING
     setEditingId(null);
 
-    // CLOSE MODAL
+  
     setShowModal(false);
 
-    // RELOAD TABLE
+   
     loadStudents();
 
   } catch (error) {

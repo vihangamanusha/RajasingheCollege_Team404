@@ -15,7 +15,7 @@ public class Livestream {
     private String description;
     private String videoURL;
 
-    private boolean isLive = false;
+    private boolean isLive = false;//ture- streaming and false -not
 
     public Livestream() {}
 

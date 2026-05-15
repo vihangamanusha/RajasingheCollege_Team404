@@ -1,7 +1,9 @@
 package com.rcc.lms.controller;
 
 import com.rcc.lms.entity.Livestream;
-import com.rcc.lms.repository.LiveStreamRepository;
+import com.rcc.lms.service.LiveStreamService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,72 +12,54 @@ import java.util.List;
 @RequestMapping("/api/livestreams")
 @CrossOrigin(origins = "*")
 public class LiveStreamController {
-    private final LiveStreamRepository repository;
 
-    public LiveStreamController(LiveStreamRepository repository) {
-        this.repository = repository;
-    }
+    @Autowired
+    private LiveStreamService service;
 
-    //  all livestreams
+    // GET ALL
     @GetMapping
     public List<Livestream> getAllStreams() {
-        return repository.findAll();
+        return service.getAllStreams();
     }
 
-    // Add livestream
+    // CREATE
     @PostMapping
-    public Livestream createStream(@RequestBody Livestream stream) {
-        return repository.save(stream);
+    public Livestream createStream(
+            @RequestBody Livestream stream) {
+
+        return service.createStream(stream);
     }
 
-    // Update livestream
+    // UPDATE
     @PutMapping("/{id}")
-    public Livestream updateStream(@PathVariable Long id,
-                                   @RequestBody Livestream updatedStream) {
+    public Livestream updateStream(
+            @PathVariable Long id,
+            @RequestBody Livestream stream) {
 
-        return repository.findById(id)
-                .map(stream -> {
-                    stream.setTitle(updatedStream.getTitle());
-                    stream.setDate(updatedStream.getDate());
-                    stream.setTime(updatedStream.getTime());
-                    stream.setDescription(updatedStream.getDescription());
-                    stream.setVideoURL(updatedStream.getVideoURL());
-
-                    return repository.save(stream);
-                })
-                .orElseThrow(() -> new RuntimeException("Stream not found"));
+        return service.updateStream(id, stream);
     }
 
-    // deelee livestream
+    // DELETE
     @DeleteMapping("/{id}")
-    public void deleteStream(@PathVariable Long id) {
-        repository.deleteById(id);
+    public void deleteStream(
+            @PathVariable Long id) {
+
+        service.deleteStream(id);
     }
 
+    // START STREAM
     @PutMapping("/{id}/start")
-    public Livestream startStream(@PathVariable Long id) {
+    public Livestream startStream(
+            @PathVariable Long id) {
 
-        return repository.findById(id)
-                .map(stream -> {
-
-                    stream.setLive(true);
-
-                    return repository.save(stream);
-
-                })
-                .orElseThrow(() -> new RuntimeException("Stream not found"));
+        return service.startStream(id);
     }
+
+    // STOP STREAM
     @PutMapping("/{id}/stop")
-    public Livestream stopStream(@PathVariable Long id) {
+    public Livestream stopStream(
+            @PathVariable Long id) {
 
-        return repository.findById(id)
-                .map(stream -> {
-
-                    stream.setLive(false);
-
-                    return repository.save(stream);
-
-                })
-                .orElseThrow(() -> new RuntimeException("Stream not found"));
+        return service.stopStream(id);
     }
 }
