@@ -33,7 +33,7 @@ public class Student {
     @JoinColumn(name = "class_id")
     private ClassEntity classEntity;
 
-    @Column(length = 15)
+    @Column(name = "contact_number", length = 15)
     private String contactNumber;
 
     // Constructors

@@ -7,16 +7,16 @@ import jakarta.persistence.*;
 public class Subject {
 
     @Id
-    @Column(length = 20)
+    @Column(name = "subject_id", length = 20)
     private String subjectId;
 
-    @Column(length = 50)
+    @Column(name = "subject_name", length = 50)
     private String subjectName;
 
-    @Column(length = 20)
+    @Column(name = "class_id", length = 20)
     private String classId;
 
-    @Column(length = 20)
+    @Column(name = "teacher_id", length = 20)
     private String teacherId;
 
     // Constructors

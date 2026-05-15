@@ -7,12 +7,14 @@ import com.rcc.lms.entity.student.StudentDocument;
 import com.rcc.lms.entity.student.StudentMarks;
 import com.rcc.lms.entity.student.StudentReport;
 import com.rcc.lms.entity.student.Subject;
+
 import com.rcc.lms.repository.StudentDocumentRepository;
 import com.rcc.lms.repository.StudentMarksRepository;
 import com.rcc.lms.repository.StudentReportRepository;
 import com.rcc.lms.repository.StudentRepository;
 import com.rcc.lms.repository.SubjectRepository;
 import com.rcc.lms.service.StudentReportPdfService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

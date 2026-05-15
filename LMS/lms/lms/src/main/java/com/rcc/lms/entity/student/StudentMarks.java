@@ -8,6 +8,7 @@ public class StudentMarks {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mark_id")
     private Integer markId;
 
     @ManyToOne
@@ -20,6 +21,7 @@ public class StudentMarks {
 
     private String term;
 
+    @Column(name = "assignment_mark")
     private Integer assignmentMark;
 
     // Constructors

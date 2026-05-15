@@ -6,6 +6,7 @@ import java.util.List;
 public class GenerateClassRequest {
 
     private int grade;
+    
 
     private LocalDate dobFrom;
 
