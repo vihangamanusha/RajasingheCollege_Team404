@@ -113,7 +113,7 @@ const translations = {
   },
 
   // Sports Page
-  "sports.title": { en: "Sports & Athletics", si: "ක්‍රීඩා සහ මලල ක්‍රීඩා" },
+  "sports.title": { en: "Sports ", si: "ක්‍රීඩා " },
   "sports.championsTitle": { en: "Champions in Sports", si: "ක්‍රීඩා ශූරයන්" },
   "sports.intro": {
     en: "At RRCC, we believe that sports are essential for developing discipline, teamwork, and leadership. Our comprehensive sports program has produced numerous district and provincial champions who have made our school proud.",
@@ -129,6 +129,7 @@ const translations = {
   "sports.rugby": { en: "Rugby", si: "රග්බි" },
   "sports.karate": { en: "Karate", si: "කරාටේ" },
   "sports.athletics": { en: "Athletics", si: "මලල ක්‍රීඩා" },
+  "sports.others": { en: "Others", si: "අනෙකුරු" },
   "sports.coachingStaff": {
     en: "Expert Coaching Staff",
     si: "ප්‍රවීණ පුහුණු කාර්ය මණ්ඩලය",

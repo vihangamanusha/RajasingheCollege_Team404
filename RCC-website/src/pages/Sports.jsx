@@ -51,6 +51,14 @@ export function Sports() {
         "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
       description: "Record Holders",
     },
+     {
+      name: t("sports.athletics"),
+      icon: "🏃",
+      path: "/sports/athletics",
+      image:
+        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
+      description: "Record Holders",
+    },
   ];
 
   return (
@@ -108,9 +116,7 @@ export function Sports() {
 
     <div className="section-line"></div>
 
-    <p>
-      {t("sports.weOfferDesc")}
-    </p>
+    
 
   </div>
 
@@ -154,9 +160,7 @@ export function Sports() {
             tournaments.
           </p>
 
-          <div className="sport-achievement">
-            {sport.description}
-          </div>
+          
 
           <button className="sport-view-btn">
             View More
