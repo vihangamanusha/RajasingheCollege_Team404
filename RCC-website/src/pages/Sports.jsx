@@ -139,9 +139,7 @@ export function Sports() {
 
           <div className="sport-top-row">
 
-            <div className="sport-row-icon">
-              {sport.icon}
-            </div>
+            
 
             <h3>
               {sport.name}
