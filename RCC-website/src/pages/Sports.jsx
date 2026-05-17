@@ -1,7 +1,12 @@
-import { Trophy, Award } from "lucide-react";
+import { Trophy, Award, Volleyball } from "lucide-react";
 import { Link } from "react-router";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import sportsImage from "../assets/sport.png";
+import cricketImage from "../assets/cricket.jpeg";
+import karatheImage from "../assets/karathe.jpeg";
+import VolleyballImage from "../assets/volleyball.jpeg";
+import rugbyImage from "../assets/rugby.jpeg";
 import "../styles/styles.css";
 
 export function Sports() {
@@ -15,50 +20,38 @@ export function Sports() {
       name: t("sports.volleyball"),
       icon: "🏐",
       path: "/sports/volleyball",
-      image:
-        "https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=800&h=600&fit=crop",
-      description: "Provincial Champions",
+      image:VolleyballImage,
     },
     {
       name: t("sports.cricket"),
       icon: "🏏",
       path: "/sports/cricket",
-      image:
-        "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=800&h=600&fit=crop",
-      description: "District Tournament Winners",
+      image:cricketImage,
+        
+     
     },
     {
       name: t("sports.rugby"),
       icon: "🏉",
       path: "/sports/rugby",
-      image:
-        "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&h=600&fit=crop",
-      description: "Inter-School Champions",
+      image:rugbyImage,
     },
     {
       name: t("sports.karate"),
       icon: "🥋",
       path: "/sports/karate",
-      image:
-        "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&h=600&fit=crop",
-      description: "National Medalists",
+      image:karatheImage,
+      
     },
     {
-      name: t("sports.athletics"),
+      name: t("Others"),
       icon: "🏃",
       path: "/sports/athletics",
       image:
         "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
       description: "Record Holders",
     },
-     {
-      name: t("sports.athletics"),
-      icon: "🏃",
-      path: "/sports/athletics",
-      image:
-        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
-      description: "Record Holders",
-    },
+     
   ];
 
   return (
@@ -70,7 +63,7 @@ export function Sports() {
       <section className="sports-hero">
 
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=1920&h=1080&fit=crop"
+          src={sportsImage}
           alt="Sports"
         />
 

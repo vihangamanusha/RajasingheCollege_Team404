@@ -128,7 +128,6 @@ const translations = {
   "sports.cricket": { en: "Cricket", si: "ක්‍රිකට්" },
   "sports.rugby": { en: "Rugby", si: "රග්බි" },
   "sports.karate": { en: "Karate", si: "කරාටේ" },
-  "sports.athletics": { en: "Athletics", si: "මලල ක්‍රීඩා" },
   "sports.others": { en: "Others", si: "අනෙකුරු" },
   "sports.coachingStaff": {
     en: "Expert Coaching Staff",

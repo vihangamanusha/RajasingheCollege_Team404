@@ -4149,7 +4149,7 @@ body {
 .sports-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 33, 71, 0.75);
+  background: rgba(1, 59, 126, 0.75);
 
   display: flex;
   justify-content: center;
