@@ -4132,3 +4132,297 @@ body {
   }
 }
 
+/* HERO SECTION */
+
+.sports-hero {
+  position: relative;
+  height: 450px;
+  overflow: hidden;
+}
+
+.sports-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sports-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 33, 71, 0.75);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sports-overlay h1 {
+  color: white;
+  font-size: 60px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+/* INTRO SECTION */
+
+.sports-intro {
+  padding: 80px 20px;
+  background: white;
+  text-align: center;
+}
+
+.sports-intro-icon {
+  width: 90px;
+  height: 90px;
+  background: #002147;
+  border-radius: 50%;
+  margin: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sports-intro h2 {
+  margin-top: 25px;
+  font-size: 42px;
+  color: #002147;
+}
+
+.sports-intro p {
+  max-width: 900px;
+  margin: 20px auto;
+  line-height: 1.8;
+  color: #555;
+  font-size: 18px;
+}
+
+.sports-section {
+  padding: 80px 8%;
+  background: #f5f7fb;
+}
+
+.section-title {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-title h2 {
+  font-size: 42px;
+  color: #002147;
+  margin-bottom: 15px;
+}
+
+.section-title p {
+  max-width: 700px;
+  margin: auto;
+  color: #666;
+  line-height: 1.8;
+  font-size: 17px;
+}
+
+.section-line {
+  width: 90px;
+  height: 4px;
+  background: #FFD700;
+  margin: 0 auto 20px;
+  border-radius: 10px;
+}
+
+/* LIST */
+.sports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+/* CARD */
+.sport-row-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  transition: 0.4s ease;
+}
+
+.sport-row-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+}
+
+/* IMAGE */
+.sport-row-image {
+  width: 40%;
+  height: 320px;
+  overflow: hidden;
+}
+
+.sport-row-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.5s ease;
+}
+
+.sport-row-card:hover .sport-row-image img {
+  transform: scale(1.08);
+}
+
+/* CONTENT */
+.sport-row-content {
+  width: 60%;
+  padding: 35px;
+}
+
+.sport-top-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.sport-row-icon {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: #002147;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+}
+
+.sport-top-row h3 {
+  font-size: 32px;
+  color: #002147;
+}
+
+.sport-row-description {
+  color: #555;
+  line-height: 1.9;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.sport-achievement {
+  display: inline-block;
+  background: #FFD700;
+  color: #002147;
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+/* BUTTON */
+.sport-view-btn {
+  background: #002147;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 15px;
+  transition: 0.3s ease;
+}
+
+.sport-view-btn:hover {
+  background: #FFD700;
+  color: #002147;
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+
+  .sport-row-card {
+    flex-direction: column;
+  }
+
+  .sport-row-image,
+  .sport-row-content {
+    width: 100%;
+  }
+
+  .sport-row-image {
+    height: 250px;
+  }
+
+  .sport-top-row h3 {
+    font-size: 24px;
+  }
+}
+
+/* COACHES */
+
+.coaches-section {
+  padding: 90px 20px;
+  background: white;
+}
+
+.coaches-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 30px;
+}
+
+.coach-card {
+  background: #002147;
+  color: white;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: center;
+
+  transition: 0.3s ease;
+}
+
+.coach-card:hover {
+  transform: translateY(-8px);
+}
+
+.coach-icon {
+  width: 100px;
+  height: 100px;
+  background: #FFD700;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: auto;
+  margin-bottom: 25px;
+}
+
+.coach-card h3 {
+  color: #FFD700;
+  margin-bottom: 10px;
+}
+
+.coach-card p {
+  color: #ddd;
+  margin: 6px 0;
+}
+
+/* CTA SECTION */
+
+.sports-cta {
+  padding: 90px 20px;
+  background: #f5f5f5;
+  text-align: center;
+}
+
+.sports-cta h2 {
+  font-size: 42px;
+  color: #002147;
+  margin-bottom: 20px;
+}
+
+.sports-cta p {
+  color: #666;
+  max-width: 700px;
+  margin: auto;
+  line-height: 1.8;
+}
