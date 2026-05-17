@@ -8,23 +8,7 @@ export function Sports() {
 
   const { t } = useLanguage();
 
-  const coaches = [
-    {
-      name: "Mr. D.S. Silva",
-      specialty: "Athletics & Cricket",
-      experience: "15 years",
-    },
-    {
-      name: "Mrs. N.K. Perera",
-      specialty: "Volleyball & Karate",
-      experience: "12 years",
-    },
-    {
-      name: "Mr. A.R. Fernando",
-      specialty: "Rugby",
-      experience: "10 years",
-    },
-  ];
+  
 
   const sports = [
     {
@@ -111,11 +95,8 @@ export function Sports() {
 
       </section>
 
-      # Upgraded Sports Section (Professional Horizontal Cards)
+      
 
-## Replace Your Current `sports-grid` Section With This JSX
-
-```jsx
 {/* SPORTS SECTION */}
 <section className="sports-section">
 
@@ -197,57 +178,7 @@ export function Sports() {
 
 
 
-      {/* COACHING STAFF */}
-
-      <section className="coaches-section">
-
-        <div className="section-title">
-
-          <h2>
-            {t("sports.coachingStaff")}
-          </h2>
-
-          <div className="section-line"></div>
-
-        </div>
-
-        <div className="coaches-grid">
-
-          {coaches.map((coach, index) => (
-
-            <div
-              key={index}
-              className="coach-card"
-            >
-
-              <div className="coach-icon">
-
-                <Award
-                  size={45}
-                  color="#002147"
-                />
-
-              </div>
-
-              <h3>
-                {coach.name}
-              </h3>
-
-              <p>
-                {coach.specialty}
-              </p>
-
-              <p>
-                {coach.experience} of experience
-              </p>
-
-            </div>
-
-          ))}
-
-        </div>
-
-      </section>
+      
 
       {/* CTA SECTION */}
 
