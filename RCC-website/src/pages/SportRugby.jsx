@@ -1,49 +1,172 @@
-import { Trophy } from "lucide-react";
+import { Trophy, Shield, Medal, Users } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { useLanguage } from "../contexts/LanguageContext";
+import "./SportRugby.css";
 
 export function SportRugby() {
-  const { t } = useLanguage();
+
+  const achievements = [
+    {
+      title: "Inter-School Rugby Champions 2025",
+      description:
+        "Our senior rugby squad became inter-school champions after an outstanding unbeaten season.",
+      image:
+        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&h=500&fit=crop",
+    },
+    {
+      title: "Regional Rugby Tournament Winners",
+      description:
+        "The team displayed exceptional teamwork and discipline to secure the regional title in 2024.",
+      image:
+        "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&h=500&fit=crop",
+    },
+    {
+      title: "Under-18 Rugby Cup Champions",
+      description:
+        "Our under-18 players showed remarkable determination and sportsmanship throughout the tournament.",
+      image:
+        "https://images.unsplash.com/photo-1508098682722-e99c643e7485?w=800&h=500&fit=crop",
+    },
+  ];
 
   return (
-    <div>
-      {/* Hero Banner */}
-      <section className="relative h-80 overflow-hidden">
+    <div className="rugby-page">
+
+      {/* HERO SECTION */}
+      <section className="rugby-hero">
+
         <ImageWithFallback
           src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=1920&h=1080&fit=crop"
           alt="Rugby"
-          className="w-full h-full object-cover"
+          className="rugby-hero-image"
         />
-        <div className="absolute inset-0 bg-[#002147]/70 flex items-center justify-center">
-          <h1 className="text-5xl md:text-6xl text-white">Rugby</h1>
+
+        <div className="rugby-overlay">
+
+          <div className="rugby-hero-content">
+
+            <div className="rugby-icon-box">
+              <Trophy size={40} />
+            </div>
+
+            <h1>Rugby</h1>
+
+            <p>
+              Building strength, teamwork, discipline, and leadership through
+              competitive school rugby.
+            </p>
+
+          </div>
+
         </div>
+
       </section>
 
-      {/* Content */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center">
-                <Trophy className="w-8 h-8 text-[#FFD700]" />
-              </div>
-              <h2 className="text-4xl text-[#002147]">Inter-School Champions</h2>
-            </div>
-            <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              Our rugby team demonstrates exceptional skill, strategy, and teamwork in competitive inter-school matches.
+      {/* INTRO SECTION */}
+      <section className="rugby-intro-section">
+
+        <div className="rugby-intro-container">
+
+          <div className="rugby-intro-left">
+
+            <h2>Inter-School Rugby Excellence</h2>
+
+            <p>
+              Rugby has become one of the most respected sports in our school.
+              Our players are trained to maintain discipline, physical fitness,
+              strategic thinking, and strong teamwork both on and off the field.
             </p>
-            <div className="bg-[#F5F5F5] p-6 rounded-lg">
-              <h3 className="text-2xl text-[#002147] mb-4">Recent Achievements</h3>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Inter-School Rugby Champions 2025</li>
-                <li>Regional Rugby Tournament Winners 2024</li>
-                <li>Under-18 Rugby Cup Champions 2024</li>
-                <li>Provincial Rugby League Champions 2023</li>
-              </ul>
-            </div>
+
+            <p>
+              With experienced coaches and dedicated players, the rugby squad
+              continues to achieve success in regional and national
+              competitions.
+            </p>
+
           </div>
+
+          <div className="rugby-intro-right">
+
+            <div className="rugby-stat-card">
+              <Shield size={28} />
+              <h3>10+</h3>
+              <p>Major Rugby Titles</p>
+            </div>
+
+            <div className="rugby-stat-card">
+              <Medal size={28} />
+              <h3>25+</h3>
+              <p>National Players</p>
+            </div>
+
+            <div className="rugby-stat-card">
+              <Users size={28} />
+              <h3>100+</h3>
+              <p>Active Players</p>
+            </div>
+
+          </div>
+
         </div>
+
       </section>
+
+      {/* ACHIEVEMENTS */}
+      <section className="rugby-achievement-section">
+
+        <div className="rugby-section-header">
+
+          <h2>Rugby Achievements</h2>
+
+          <p>
+            Our rugby teams continue to make the school proud through outstanding
+            performances and championship victories.
+          </p>
+
+        </div>
+
+        <div className="rugby-achievement-container">
+
+          {achievements.map((item, index) => (
+
+            <div
+              className={`rugby-achievement-card ${
+                index % 2 !== 0 ? "reverse" : ""
+              }`}
+              key={index}
+            >
+
+              {/* IMAGE */}
+              <div className="rugby-achievement-image">
+
+                <ImageWithFallback
+                  src={item.image}
+                  alt={item.title}
+                  className="rugby-achievement-img"
+                />
+
+              </div>
+
+              {/* CONTENT */}
+              <div className="rugby-achievement-content">
+
+                <span className="rugby-achievement-badge">
+                  Achievement
+                </span>
+
+                <h3>{item.title}</h3>
+
+                <p>{item.description}</p>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </section>
+
     </div>
   );
 }
