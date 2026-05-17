@@ -1,58 +1,63 @@
-import { Trophy, Shield, Medal, Users } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import "./SportRugby.css";
+import "../styles/styles.css";
 
 export function SportRugby() {
 
   const achievements = [
+
     {
       title: "Inter-School Rugby Champions 2025",
-      description:
-        "Our senior rugby squad became inter-school champions after an outstanding unbeaten season.",
       image:
-        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&h=500&fit=crop",
+        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&h=600&fit=crop",
+      description:
+        "Our rugby team became inter-school champions after an outstanding season filled with determination and teamwork.",
     },
+
     {
       title: "Regional Rugby Tournament Winners",
-      description:
-        "The team displayed exceptional teamwork and discipline to secure the regional title in 2024.",
       image:
-        "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&h=500&fit=crop",
+        "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&h=600&fit=crop",
+      description:
+        "Students showcased excellent leadership and discipline to secure victory in the regional rugby tournament.",
     },
+
     {
       title: "Under-18 Rugby Cup Champions",
-      description:
-        "Our under-18 players showed remarkable determination and sportsmanship throughout the tournament.",
       image:
-        "https://images.unsplash.com/photo-1508098682722-e99c643e7485?w=800&h=500&fit=crop",
+        "https://images.unsplash.com/photo-1508098682722-e99c643e7485?w=800&h=600&fit=crop",
+      description:
+        "Our under-18 rugby squad displayed remarkable skill and sportsmanship throughout the championship competition.",
     },
+
   ];
 
   return (
-    <div className="rugby-page">
 
-      {/* HERO SECTION */}
-      <section className="rugby-hero">
+    <div className="sport-page">
+
+      {/* HERO */}
+
+      <section className="sport-hero">
 
         <ImageWithFallback
           src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=1920&h=1080&fit=crop"
           alt="Rugby"
-          className="rugby-hero-image"
         />
 
-        <div className="rugby-overlay">
+        <div className="hero-overlay">
 
-          <div className="rugby-hero-content">
+          <div className="hero-content">
 
-            <div className="rugby-icon-box">
+            <div className="hero-icon">
               <Trophy size={40} />
             </div>
 
             <h1>Rugby</h1>
 
             <p>
-              Building strength, teamwork, discipline, and leadership through
-              competitive school rugby.
+              Building strength, teamwork,
+              discipline, and leadership through rugby.
             </p>
 
           </div>
@@ -61,101 +66,84 @@ export function SportRugby() {
 
       </section>
 
-      {/* INTRO SECTION */}
-      <section className="rugby-intro-section">
+      {/* ABOUT */}
 
-        <div className="rugby-intro-container">
+      <section className="about-section">
 
-          <div className="rugby-intro-left">
+        <div className="about-left">
 
-            <h2>Inter-School Rugby Excellence</h2>
+          <h2>
+            About Rugby
+          </h2>
 
-            <p>
-              Rugby has become one of the most respected sports in our school.
-              Our players are trained to maintain discipline, physical fitness,
-              strategic thinking, and strong teamwork both on and off the field.
-            </p>
+          <div className="title-line"></div>
 
-            <p>
-              With experienced coaches and dedicated players, the rugby squad
-              continues to achieve success in regional and national
-              competitions.
-            </p>
+          <p>
+            Rugby is one of the most exciting and competitive sports in our
+            school. Students are trained with discipline, physical fitness,
+            teamwork, and leadership qualities while participating in major
+            tournaments.
+          </p>
 
-          </div>
+          <p>
+            Our rugby teams have achieved success at regional and national
+            levels, producing talented players who proudly represent the school.
+          </p>
 
-          <div className="rugby-intro-right">
+        </div>
 
-            <div className="rugby-stat-card">
-              <Shield size={28} />
-              <h3>10+</h3>
-              <p>Major Rugby Titles</p>
-            </div>
+        <div className="about-right">
 
-            <div className="rugby-stat-card">
-              <Medal size={28} />
-              <h3>25+</h3>
-              <p>National Players</p>
-            </div>
-
-            <div className="rugby-stat-card">
-              <Users size={28} />
-              <h3>100+</h3>
-              <p>Active Players</p>
-            </div>
-
-          </div>
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&h=700&fit=crop"
+            alt="Rugby Team"
+          />
 
         </div>
 
       </section>
 
       {/* ACHIEVEMENTS */}
-      <section className="rugby-achievement-section">
 
-        <div className="rugby-section-header">
+      <section className="achievement-section">
 
-          <h2>Rugby Achievements</h2>
+        <div className="section-heading">
 
-          <p>
-            Our rugby teams continue to make the school proud through outstanding
-            performances and championship victories.
-          </p>
+          <h2>
+            Achievements
+          </h2>
+
+          <div className="title-line"></div>
 
         </div>
 
-        <div className="rugby-achievement-container">
+        <div className="achievement-grid">
 
           {achievements.map((item, index) => (
 
             <div
-              className={`rugby-achievement-card ${
-                index % 2 !== 0 ? "reverse" : ""
-              }`}
+              className="achievement-card"
               key={index}
             >
 
-              {/* IMAGE */}
-              <div className="rugby-achievement-image">
+              <div className="achievement-image">
 
                 <ImageWithFallback
                   src={item.image}
                   alt={item.title}
-                  className="rugby-achievement-img"
                 />
 
               </div>
 
-              {/* CONTENT */}
-              <div className="rugby-achievement-content">
+              <div className="achievement-content">
 
-                <span className="rugby-achievement-badge">
-                  Achievement
-                </span>
+                <h3>
+                  {item.title}
+                </h3>
 
-                <h3>{item.title}</h3>
-
-                <p>{item.description}</p>
+                <p>
+                  {item.description}
+                </p>
 
               </div>
 
