@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Trophy, Pencil, Trash2, Upload } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
-import "../styles/index.css";
+import "../index.css";
 
 export function SportAchievements() {
 

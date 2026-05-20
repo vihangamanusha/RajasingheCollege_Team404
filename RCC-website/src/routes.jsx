@@ -20,6 +20,7 @@ import { SportCricket } from "./pages/SportCricket";
 import { SportRugby } from "./pages/SportRugby";
 import { SportKarate } from "./pages/SportKarate";
 import { SportAthletics } from "./pages/SportAthletics";
+
 import { LiveStream } from "./pages/LiveStream";
 import { Contact } from "./pages/Contact";
 import { NotFound } from "./pages/NotFound";
@@ -48,7 +49,9 @@ export const router = createBrowserRouter([
       { path: "sports/karate", element: <SportKarate /> },
       { path: "sports/athletics", element: <SportAthletics /> },
       { path: "live-stream", element: <LiveStream /> },
+      
       { path: "contact", element: <Contact /> },
+
       { path: "*", element: <NotFound /> },
     ],
   },

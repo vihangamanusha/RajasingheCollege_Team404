@@ -7,7 +7,7 @@ export default function NewsList() {
   const navigate = useNavigate();
   const tabs = [
   { name: "News", path: "/news" },
-  { name: "Sports", path: "/sports" },
+  { name: "Sports", path: "/sports/:sportName" },
   { name: "Live Stream", path: "/livestream-admin" },
   { name: "Events", path: "/events" }
 ];
