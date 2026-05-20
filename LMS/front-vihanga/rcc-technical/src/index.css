@@ -1769,3 +1769,456 @@ textarea {
   filter: brightness(0.95);
 }
 
+/*sport acheivemt  page */
+/* PAGE */
+
+.achievement-page {
+  padding: 40px;
+  background: #f5f7fb;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+
+/* HEADER */
+
+.achievement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.achievement-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.achievement-header h1 {
+  font-size: 34px;
+  color: #0f172a;
+  margin: 0;
+}
+
+
+/* BACK BUTTON */
+
+.back-btn {
+  border: none;
+  background: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  color: #2563eb;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+  transition: 0.3s;
+}
+
+.back-btn:hover {
+  background: #2563eb;
+  color: white;
+}
+
+
+/* ADD BUTTON */
+
+.add-achievement-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 14px 24px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.add-achievement-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+
+/* ACHIEVEMENT LIST */
+
+.achievement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+
+/* CARD */
+
+.achievement-card {
+  display: flex;
+  gap: 25px;
+  background: white;
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+  transition: 0.3s;
+}
+
+.achievement-card:hover {
+  transform: translateY(-4px);
+}
+
+
+/* IMAGE */
+
+.achievement-image {
+  width: 320px;
+  min-width: 320px;
+  height: 220px;
+}
+
+.achievement-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* CONTENT */
+
+.achievement-content {
+  flex: 1;
+  padding: 30px;
+}
+
+.achievement-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  height: 100%;
+}
+
+.achievement-content h2 {
+  font-size: 28px;
+  color: #0f172a;
+  margin-bottom: 15px;
+}
+
+.achievement-content p {
+  color: #64748b;
+  line-height: 1.7;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.achievement-content span {
+  color: #2563eb;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+
+/* ACTION BUTTONS */
+
+.achievement-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.edit-btn,
+.delete-btn {
+  border: none;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.edit-btn {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.edit-btn:hover {
+  background: #2563eb;
+  color: white;
+}
+
+.delete-btn {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.delete-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+
+/* MODAL */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+
+/* MODAL BOX */
+
+.modal-container {
+  width: 100%;
+  max-width: 750px;
+  background: white;
+  border-radius: 24px;
+  padding: 35px;
+  max-height: 95vh;
+  overflow-y: auto;
+  animation: popup 0.3s ease;
+}
+
+
+/* POPUP ANIMATION */
+
+@keyframes popup {
+
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+}
+
+
+/* MODAL HEADER */
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.modal-header h2 {
+  font-size: 30px;
+  color: #0f172a;
+  margin: 0;
+}
+
+
+/* CLOSE BUTTON */
+
+.close-btn {
+  border: none;
+  background: #f1f5f9;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.close-btn:hover {
+  background: #ef4444;
+  color: white;
+}
+
+
+/* FORM */
+
+.form-group {
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+
+/* INPUT */
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 15px;
+  border-radius: 14px;
+  border: 1px solid #dbe2ea;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+  box-sizing: border-box;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 4px rgba(37,99,235,0.1);
+}
+
+
+/* TEXTAREA */
+
+.form-group textarea {
+  height: 160px;
+  resize: none;
+}
+
+
+/* IMAGE UPLOAD */
+
+.upload-box {
+  border: 2px dashed #cbd5e1;
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  background: #f8fafc;
+  transition: 0.3s;
+}
+
+.upload-box:hover {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.upload-box svg {
+  color: #64748b;
+  margin-bottom: 15px;
+}
+
+.upload-box p {
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.upload-box input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+
+/* IMAGE PREVIEW */
+
+.preview-image {
+  margin-bottom: 25px;
+}
+
+.preview-image img {
+  width: 100%;
+  border-radius: 18px;
+  height: 300px;
+  object-fit: cover;
+}
+
+
+/* MODAL BUTTONS */
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.save-btn {
+  border: none;
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.cancel-btn {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.cancel-btn:hover {
+  background: #cbd5e1;
+}
+
+.save-btn {
+  background: #2563eb;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #1d4ed8;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+
+  .achievement-card {
+    flex-direction: column;
+  }
+
+  .achievement-image {
+    width: 100%;
+    height: 250px;
+  }
+
+  .achievement-top {
+    flex-direction: column;
+  }
+
+  .achievement-actions {
+    flex-direction: row;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .achievement-page {
+    padding: 20px;
+  }
+
+  .achievement-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .achievement-left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .achievement-header h1 {
+    font-size: 28px;
+  }
+
+  .modal-container {
+    padding: 25px;
+  }
+
+}
