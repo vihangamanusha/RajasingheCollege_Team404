@@ -10,6 +10,8 @@ import Event from "./pages/Event";
 import AdminAnnouncements from "./pages/AdminAnnouncements";
 import LiveStreamAdmin from "./pages/LiveStreamAdmin";
 import { SportAchievements } from "./pages/SportAchievements";
+import SportsList from "./pages/SportsList";
+
 
 export default function App() {
   return (
@@ -29,6 +31,7 @@ export default function App() {
           <Route path="/admin/announcements"element={<AdminAnnouncements />}/>
           <Route path="livestream-admin" element={<LiveStreamAdmin />} />
           <Route path="/sports/:sportName" element={<SportAchievements />} />
+          <Route path="/SportsList" element={<SportsList />} />
           
         </Route>
 
