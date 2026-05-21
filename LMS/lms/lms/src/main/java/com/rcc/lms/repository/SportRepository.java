@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public class SportRepository extends CrudRepository<Sport, Long> {
+public interface SportRepository extends CrudRepository<Sport, Long> {
 
     //filter by sport
     List<Sport> findByTypeSport(String typeSport);
