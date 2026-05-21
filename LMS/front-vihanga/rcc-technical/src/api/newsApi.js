@@ -1,5 +1,25 @@
 const BASE_URL = "http://localhost:8080/api/news";
 
+// helper
+const handleResponse = async (res) => {
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(errorText || `Request failed: ${res.status}`);
+  }
+
+  // FIX: handle empty response (204 No Content)
+  const contentType = res.headers.get("content-type");
+
+  if (res.status === 204 || !contentType) {
+    return true;
+  }
+
+  if (contentType.includes("application/json")) {
+    return res.json();
+  }
+
+  return res.text();
+};
 // GET all
 export const getNews = async () => {
   const res = await fetch(BASE_URL);
