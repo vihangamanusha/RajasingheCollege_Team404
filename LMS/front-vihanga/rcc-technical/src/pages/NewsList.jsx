@@ -1,340 +1,748 @@
 import { useEffect, useState } from "react";
-import { useNavigate} from "react-router-dom";
-import { addNews, deleteNews, getNews, updateNews } from "../api/newsApi";
-
+import { useNavigate } from "react-router-dom";
+import "../index.css";
 
 export default function NewsList() {
+
   const navigate = useNavigate();
-  const tabs = [
-  { name: "News", path: "/news" },
-  { name: "Sports", path: "/SportsList" },
-  { name: "Live Stream", path: "/livestream-admin" },
-  { name: "Events", path: "/events" }
-];
+
+  /* ACTIVE TAB */
+
   const [activeTab, setActiveTab] = useState("News");
+
+  /* NEWS STATES */
+
   const [news, setNews] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [form, setForm] = useState({ title: "", content: "", date: "", image: null });
+
+  const [form, setForm] = useState({
+    title: "",
+    content: "",
+    date: "",
+    image: null,
+  });
+
   const [statusMessage, setStatusMessage] = useState("");
   const [editingArticle, setEditingArticle] = useState(null);
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [articleToDelete, setArticleToDelete] = useState(null);
+
+  const [showDeleteConfirm, setShowDeleteConfirm] =
+    useState(false);
+
+  const [articleToDelete, setArticleToDelete] =
+    useState(null);
+
+  /* SPORTS DATA */
+
+  const sports = [
+
+    {
+      id: "volleyball",
+      name: "Volleyball",
+      image:
+        "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=900&h=600&fit=crop",
+      description:
+        "Develop teamwork, discipline, and leadership through volleyball competitions and training.",
+    },
+
+    {
+      id: "cricket",
+      name: "Cricket",
+      image:
+        "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=900&h=600&fit=crop",
+      description:
+        "Build sportsmanship and competitive spirit with school cricket tournaments and coaching.",
+    },
+
+    {
+      id: "rugby",
+      name: "Rugby",
+      image:
+        "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&h=600&fit=crop",
+      description:
+        "Enhance strength, teamwork, and leadership through rugby practices and matches.",
+    },
+
+    {
+      id: "karate",
+      name: "Karate",
+      image:
+        "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=900&h=600&fit=crop",
+      description:
+        "Train students with discipline, focus, and self-defense through karate programs.",
+    },
+
+    {
+      id: "athletics",
+      name: "Athletics",
+      image:
+        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&h=600&fit=crop",
+      description:
+        "Improve speed, endurance, and confidence through athletics training and competitions.",
+    },
+
+  ];
+
+  /* LOAD NEWS */
 
   useEffect(() => {
     loadNews();
   }, []);
 
-
   const loadNews = async () => {
-  try {
-    const data = await getNews();
 
-    const sortedNews = (data || [])
-      .sort((a, b) => b.id - a.id); // newest first
+    try {
 
-    setNews(sortedNews);
-  } catch (error) {
-    console.error("Error loading news:", error);
-    setStatusMessage("Failed to load articles");
-  }
-};
+      const response = await fetch(
+        "http://localhost:8080/api/news"
+      );
+
+      const data = await response.json();
+
+      const sortedNews = (data || []).sort(
+        (a, b) => b.id - a.id
+      );
+
+      setNews(sortedNews);
+
+    } catch (error) {
+
+      console.error(error);
+
+      setStatusMessage(
+        "Failed to load articles"
+      );
+    }
+  };
+
+  /* SAVE ARTICLE */
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
 
-  if (!form.title || !form.content) {
-    setStatusMessage("Please enter a title and content.");
-    return;
-  }
+    e.preventDefault();
 
-  try {
-    let imageUrl = "";
+    if (!form.title || !form.content) {
 
-    // upload image
-    if (form.image instanceof File) {
-      const formData = new FormData();
-      formData.append("file", form.image);
+      setStatusMessage(
+        "Please enter title and content."
+      );
 
-      const res = await fetch("http://localhost:8080/api/files/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const err = await res.text();
-        setStatusMessage("Image upload failed: " + err);
-        return;
-      }
-      const data = await res.text();
-      imageUrl = data;
-    }
-//creates data object to send to backend
-    const payload = {
-      title: form.title,
-      content: form.content,
-      date: form.date || new Date().toISOString().split("T")[0],
-      image: imageUrl,
-    };
-
-    let response;
-
-    if (editingArticle) {
-      response = await fetch(`http://localhost:8080/api/news/${editingArticle.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    } else {
-      response = await fetch("http://localhost:8080/api/news", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-    }
-
-    //  IMPORTANT CHECK
-    if (!response.ok) {
-      const errorText = await response.text();
-      setStatusMessage("Save failed: " + errorText);
       return;
     }
 
-    // SUCCESS ONLY HERE
-    setForm({ title: "", content: "", date: "", image: null });
-    setShowAddForm(false);
-    setEditingArticle(null);
+    try {
 
-    await loadNews();
+      let imageUrl = "";
 
-    setStatusMessage(
-      editingArticle ? "Updated successfully" : "Created successfully"
-    );
+      /* IMAGE UPLOAD */
 
-  } catch (error) {
-    console.error(error);
-    setStatusMessage("Server error: " + error.message);
-  }
-};
+      if (form.image instanceof File) {
 
-  const editArticle = (article) => {
-    console.log("Editing article:", article);
-    setForm({
-      title: article.title || "",
-      content: article.content || "",
-      date: article.date || "",
-      image: article.image || null,
-    });
-    setEditingArticle(article);
-    setShowAddForm(true);
-    setStatusMessage("");
+        const formData = new FormData();
+
+        formData.append("file", form.image);
+
+        const uploadResponse = await fetch(
+          "http://localhost:8080/api/files/upload",
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+
+        if (!uploadResponse.ok) {
+
+          setStatusMessage(
+            "Image upload failed"
+          );
+
+          return;
+        }
+
+        imageUrl = await uploadResponse.text();
+      }
+
+      const payload = {
+
+        title: form.title,
+
+        content: form.content,
+
+        date:
+          form.date ||
+          new Date()
+            .toISOString()
+            .split("T")[0],
+
+        image: imageUrl,
+      };
+
+      let response;
+
+      /* UPDATE */
+
+      if (editingArticle) {
+
+        response = await fetch(
+          `http://localhost:8080/api/news/${editingArticle.id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+
+      } else {
+
+        /* CREATE */
+
+        response = await fetch(
+          "http://localhost:8080/api/news",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+      }
+
+      if (!response.ok) {
+
+        setStatusMessage(
+          "Failed to save article"
+        );
+
+        return;
+      }
+
+      setStatusMessage(
+        editingArticle
+          ? "Updated successfully"
+          : "Created successfully"
+      );
+
+      setShowAddForm(false);
+
+      setEditingArticle(null);
+
+      setForm({
+        title: "",
+        content: "",
+        date: "",
+        image: null,
+      });
+
+      loadNews();
+
+    } catch (error) {
+
+      console.error(error);
+
+      setStatusMessage(
+        "Server error"
+      );
+    }
   };
 
+  /* EDIT */
+
+  const editArticle = (article) => {
+
+    setForm({
+
+      title: article.title || "",
+
+      content: article.content || "",
+
+      date: article.date || "",
+
+      image: article.image || null,
+    });
+
+    setEditingArticle(article);
+
+    setShowAddForm(true);
+  };
+
+  /* DELETE */
+
   const confirmDelete = (article) => {
-    console.log("Confirming delete for article:", article);
+
     setArticleToDelete(article);
+
     setShowDeleteConfirm(true);
   };
 
   const remove = async () => {
+
     if (!articleToDelete) return;
-    
+
     try {
-      console.log("Deleting article:", articleToDelete.id);
-      
-      const response = await fetch(`http://localhost:8080/api/news/${articleToDelete.id}`, {
-        method: "DELETE",
-      });
-      
-      console.log("Delete response status:", response.status);
-      
+
+      const response = await fetch(
+        `http://localhost:8080/api/news/${articleToDelete.id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
       if (!response.ok) {
-        throw new Error(`Delete failed: ${response.status}`);
+
+        setStatusMessage(
+          "Delete failed"
+        );
+
+        return;
       }
-      
+
       setShowDeleteConfirm(false);
+
       setArticleToDelete(null);
-      await loadNews();
-      setStatusMessage("Article deleted successfully.");
+
+      loadNews();
+
+      setStatusMessage(
+        "Deleted successfully"
+      );
+
     } catch (error) {
-      console.error("Delete error:", error);
-      setStatusMessage("Failed to delete article.");
+
+      console.error(error);
+
+      setStatusMessage(
+        "Delete error"
+      );
     }
   };
 
   return (
+
     <div className="page dashboard-page">
+
+      {/* HEADER */}
+
       <div className="page-header">
+
         <div>
-          <p className="page-org">Rajasinghe Central College</p>
-          <h1>Website Content Management</h1>
-          <p className="page-subtitle">Update and manage the public school website.</p>
+
+          <p className="page-org">
+            Rajasinghe Central College
+          </p>
+
+          <h1>
+            Website Content Management
+          </h1>
+
+          <p className="page-subtitle">
+            Update and manage the public school website.
+          </p>
+
         </div>
 
         <div className="page-actions">
-          <button className="btn secondary" onClick={() => navigate("/feedback")}>View Feedback</button>
-          <button className="btn outline">Preview Website</button>
+
+          <button
+            className="btn secondary"
+            onClick={() =>
+              navigate("/feedback")
+            }
+          >
+            View Feedback
+          </button>
+
+          <button className="btn outline">
+            Preview Website
+          </button>
+
         </div>
+
       </div>
+
+      {/* TOPBAR */}
 
       <div className="dashboard-topbar">
+
         <div className="tabs">
-          {tabs.map((tab) => (
-           <button
-             key={tab.name}
-             type="button"
-             className="tab"
-             onClick={() => navigate(tab.path)}
-           >
-             {tab.name}
-           </button>
-          ))}
+
+          <button
+            className={
+              activeTab === "News"
+                ? "tab active-tab"
+                : "tab"
+            }
+            onClick={() =>
+              setActiveTab("News")
+            }
+          >
+            News
+          </button>
+
+          <button
+            className={
+              activeTab === "Sports"
+                ? "tab active-tab"
+                : "tab"
+            }
+            onClick={() =>
+              setActiveTab("Sports")
+            }
+          >
+            Sports
+          </button>
+
+          <button
+            className="tab"
+          >
+            Live Stream
+          </button>
+
+          <button
+            className="tab"
+          >
+            Events
+          </button>
+
         </div>
 
-        <button className="btn primary" type="button" onClick={() => setShowAddForm(true)}>
+        <button
+          className="btn primary"
+          onClick={() =>
+            setShowAddForm(true)
+          }
+        >
           Add New Article
         </button>
+
       </div>
 
+      {/* ADD MODAL */}
+
       {showAddForm && (
-        <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+
+        <div
+          className="modal-overlay"
+          onClick={() =>
+            setShowAddForm(false)
+          }
+        >
+
+          <div
+            className="modal-card"
+            onClick={(e) =>
+              e.stopPropagation()
+            }
+          >
+
             <div className="modal-header">
+
               <div>
-                <div className="section-label">{editingArticle ? "Edit Article" : "Add Article"}</div>
-                <h2 className="section-title">{editingArticle ? "Edit News Article" : "Add New News Article"}</h2>
+
+                <div className="section-label">
+                  {editingArticle
+                    ? "Edit Article"
+                    : "Add Article"}
+                </div>
+
+                <h2 className="section-title">
+                  {editingArticle
+                    ? "Edit News Article"
+                    : "Add News Article"}
+                </h2>
+
               </div>
-              <button className="close-modal" type="button" onClick={() => {
-                setShowAddForm(false);
-                setEditingArticle(null);
-                setForm({ title: "", content: "", date: "", image: "" });
-              }}>
+
+              <button
+                className="close-modal"
+                onClick={() =>
+                  setShowAddForm(false)
+                }
+              >
                 ×
               </button>
+
             </div>
 
-            {statusMessage && <p className="status-text">{statusMessage}</p>}
+            <form
+              className="form"
+              onSubmit={handleSubmit}
+            >
 
-            <form className="form" onSubmit={handleSubmit}>
               <input
                 placeholder="Title"
                 value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    title: e.target.value,
+                  })
+                }
               />
+
               <textarea
                 placeholder="Content"
                 value={form.content}
-                onChange={(e) => setForm({ ...form, content: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    content: e.target.value,
+                  })
+                }
               />
+
               <input
                 type="date"
                 value={form.date}
-                onChange={(e) => setForm({ ...form, date: e.target.value })}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    date: e.target.value,
+                  })
+                }
               />
-             <input
-                key={form.image ? "file-selected" : "file-empty"}
+
+              <input
                 type="file"
                 accept="image/*"
                 onChange={(e) =>
-                setForm({ ...form, image: e.target.files[0] })
-               }
+                  setForm({
+                    ...form,
+                    image:
+                      e.target.files[0],
+                  })
+                }
               />
+
               <div className="form-actions">
-                <button type="submit" className="btn primary">
-                  {editingArticle ? "Update Article" : "Save Article"}
+
+                <button
+                  type="submit"
+                  className="btn primary"
+                >
+                  {editingArticle
+                    ? "Update"
+                    : "Save"}
                 </button>
-                <button type="button" className="btn secondary" onClick={() => {
-                  setShowAddForm(false);
-                  setEditingArticle(null);
-                  setForm({ title: "", content: "", date: "", image: null });
-                }}>
+
+                <button
+                  type="button"
+                  className="btn secondary"
+                  onClick={() =>
+                    setShowAddForm(false)
+                  }
+                >
                   Cancel
                 </button>
+
               </div>
+
             </form>
+
           </div>
+
         </div>
+
       )}
 
-      {showDeleteConfirm && (
-        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <div>
-                <div className="section-label">Confirm Delete</div>
-                <h2 className="section-title">Delete Article</h2>
-              </div>
-              <button className="close-modal" type="button" onClick={() => setShowDeleteConfirm(false)}>
-                ×
-              </button>
-            </div>
-
-            <div style={{ padding: "1rem" }}>
-              <p>Are you sure you want to delete the article "<strong>{articleToDelete?.title}</strong>"?</p>
-              <p style={{ color: "#721c24", marginTop: "0.5rem" }}>This action cannot be undone.</p>
-            </div>
-
-            <div className="form-actions">
-              <button type="button" className="btn primary" onClick={remove} style={{ backgroundColor: "#dc3545", borderColor: "#dc3545" }}>
-                Delete Article
-              </button>
-              <button type="button" className="btn secondary" onClick={() => setShowDeleteConfirm(false)}>
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* CONTENT PANEL */}
 
       <div className="section-card content-panel">
-        <div className="section-header section-header-space-between">
-          <div>
-            <div className="section-label">Website Content</div>
-            <h2 className="section-title">Manage News Articles</h2>
-          </div>
-        </div>
 
-        <div className="news-list">
-          {news.length === 0 ? (
-            <div className="empty-state">No news articles found.</div>
-          ) : (
-            news.map((article) => (
-              <div key={article.id ?? article.title} className="news-card">
-                <div className="news-image-wrapper">
-  <img
-    src={
-      article.image?.startsWith("http")
-        ? article.image
-        : article.image
-        ? `http://localhost:8080${article.image.startsWith("/") ? "" : "/"}${article.image}`
-        : "https://via.placeholder.com/400"
-    }
-    alt={article.title}
-    className="news-image"
-  />
-</div>
-                <div>
-                  <h2>{article.title}</h2>
-                  <p className="meta">{article.date || "No date provided"}</p>
-                  <p>{article.content}</p>
+        {/* NEWS CONTENT */}
+
+        {activeTab === "News" && (
+
+          <>
+            <div className="section-header section-header-space-between">
+
+              <div>
+
+                <div className="section-label">
+                  Website Content
                 </div>
-                <div className="news-card-actions">
-                  <div className={article.status === "Draft" ? "status draft" : "status"}>
-                    {article.status || "Published"}
-                  </div>
-                  <div className="actions">
-                    <button className="edit" type="button" onClick={() => editArticle(article)}>
-                      Edit
-                    </button>
-                    <button className="delete" type="button" onClick={() => confirmDelete(article)}>
-                      Delete
-                    </button>
-                  </div>
-                </div>
+
+                <h2 className="section-title">
+                  Manage News Articles
+                </h2>
+
               </div>
-            ))
-          )}
-        </div>
+
+            </div>
+
+            <div className="news-list">
+
+              {news.length === 0 ? (
+
+                <div className="empty-state">
+                  No news articles found.
+                </div>
+
+              ) : (
+
+                news.map((article) => (
+
+                  <div
+                    key={
+                      article.id ??
+                      article.title
+                    }
+                    className="news-card"
+                  >
+
+                    <div className="news-image-wrapper">
+
+                      <img
+                        src={
+                          article.image?.startsWith(
+                            "http"
+                          )
+                            ? article.image
+                            : article.image
+                            ? `http://localhost:8080${
+                                article.image.startsWith(
+                                  "/"
+                                )
+                                  ? ""
+                                  : "/"
+                              }${article.image}`
+                            : "https://via.placeholder.com/400"
+                        }
+                        alt={article.title}
+                        className="news-image"
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <h2>
+                        {article.title}
+                      </h2>
+
+                      <p className="meta">
+                        {article.date}
+                      </p>
+
+                      <p>
+                        {article.content}
+                      </p>
+
+                    </div>
+
+                    <div className="news-card-actions">
+
+                      <div className="actions">
+
+                        <button
+                          className="edit"
+                          onClick={() =>
+                            editArticle(
+                              article
+                            )
+                          }
+                        >
+                          Edit
+                        </button>
+
+                        <button
+                          className="delete"
+                          onClick={() =>
+                            confirmDelete(
+                              article
+                            )
+                          }
+                        >
+                          Delete
+                        </button>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                ))
+
+              )}
+
+            </div>
+          </>
+
+        )}
+
+        {/* SPORTS CONTENT */}
+
+        {activeTab === "Sports" && (
+
+          <>
+
+            <div className="section-header section-header-space-between">
+
+              <div>
+
+                <div className="section-label">
+                  Sports Management
+                </div>
+
+                <h2 className="section-title">
+                  Manage Sports Activities
+                </h2>
+
+              </div>
+
+            </div>
+
+            <div className="sports-grid">
+
+              {sports.map((sport) => (
+
+                <div
+                  key={sport.id}
+                  className="sport-card"
+                >
+
+                  <div className="sport-image-box">
+
+                    <img
+                      src={sport.image}
+                      alt={sport.name}
+                      className="sport-image"
+                    />
+
+                  </div>
+
+                  <div className="sport-content">
+
+                    <h2>
+                      {sport.name}
+                    </h2>
+
+                    <p>
+                      {sport.description}
+                    </p>
+
+                    <button className="sport-manage-btn">
+                      Manage Achievements
+                    </button>
+
+                  </div>
+
+                </div>
+
+              ))}
+
+            </div>
+
+          </>
+
+        )}
+
       </div>
+
     </div>
   );
 }
