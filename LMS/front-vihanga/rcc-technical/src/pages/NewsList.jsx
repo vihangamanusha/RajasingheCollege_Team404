@@ -13,7 +13,7 @@ import {
   deleteEvent,
   updateEvent,
 } from "../api/eventApi";
-import { addSportAchievement, getBySportType } from "../api/sportApi";
+import { addSportAchievement, getBySportType, updateSportAchievement, deleteSportAchievement } from "../api/sportApi";
 
 import "../index.css";
 import volleyballImage from "../assets/volleyball.jpeg";
@@ -229,25 +229,29 @@ const [achievementForm, setAchievementForm] = useState({
   const handleAchievementSubmit = async (e) => {
     e.preventDefault();
 
-    if (editingAchievementId) {
-      const updated = sportAchievements.map((item) =>
-        item.id === editingAchievementId
-          ? { ...item, ...achievementForm, id: editingAchievementId }
-          : item
-      );
-      setSportAchievements(updated);
-    } else {
-      try {
-        const saved = await addSportAchievement({
+    if (!selectedSport) {
+      alert("Please select a sport first.");
+      return;
+    }
+
+    try {
+      if (editingAchievementId) {
+        await updateSportAchievement(editingAchievementId, {
           typesport: selectedSport.id,
           ...achievementForm,
         });
-        setSportAchievements([saved, ...sportAchievements]);
-      } catch (error) {
-        console.log("Save achievement error:", error.message || error);
-        alert("Failed to save achievement");
-        return;
+      } else {
+        await addSportAchievement({
+          typesport: selectedSport.id,
+          ...achievementForm,
+        });
       }
+
+      await loadSportAchievements(selectedSport.id);
+    } catch (error) {
+      console.log("Save achievement error:", error.message || error);
+      alert("Failed to save achievement");
+      return;
     }
 
     setShowAchievementModal(false);
@@ -260,16 +264,19 @@ const [achievementForm, setAchievementForm] = useState({
     });
   };
 
-  const handleDeleteAchievement = (id) => {
+  const handleDeleteAchievement = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this achievement?"
     );
     if (!confirmDelete) return;
 
-    const filtered = sportAchievements.filter(
-      (item) => item.id !== id
-    );
-    setSportAchievements(filtered);
+    try {
+      await deleteSportAchievement(id);
+      await loadSportAchievements(selectedSport.id);
+    } catch (error) {
+      console.log("Delete achievement error:", error.message || error);
+      alert("Failed to delete achievement");
+    }
   };
 
   const handleSportBack = () => {
