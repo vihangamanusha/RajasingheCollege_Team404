@@ -1110,6 +1110,10 @@ const deleteEvent = async (id) => {
         )}
 
 {/* EVENTS */}
+
+{activeTab === "Events" && (
+  
+
 <div className="event-page">
 
       {/* HEADER */}
@@ -1366,9 +1370,10 @@ const deleteEvent = async (id) => {
       )}
 
     </div>
-
+ )}
       </div>
-
     </div>
+    
   );
+ 
 }
