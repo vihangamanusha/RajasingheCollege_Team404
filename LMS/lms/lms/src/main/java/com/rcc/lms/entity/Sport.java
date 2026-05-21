@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Sport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String typesport;
@@ -20,7 +20,7 @@ public class Sport {
 
     public Sport(){}
 
-    public Sport(long id, String typesport, String topic, String description, String image) {
+    public Sport(Long id, String typesport, String topic, String description, String image) {
         this.id = id;
         this.typesport = typesport;
         this.topic = topic;
@@ -28,11 +28,11 @@ public class Sport {
         this.image = image;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

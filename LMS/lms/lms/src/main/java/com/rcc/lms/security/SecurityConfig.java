@@ -44,6 +44,7 @@ public class SecurityConfig {
                                 "/api/announcements/**",
                                 "/api/livestreams/**",
                                 "/api/files/**",
+                                "/api/sports/**",
                                 "/uploads/**"
 
                         ).permitAll()

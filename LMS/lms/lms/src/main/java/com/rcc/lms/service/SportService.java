@@ -21,7 +21,7 @@ public class SportService {
     }
 
     public List<Sport> getByType(String typeSport) {
-        return repository.findByTypeSport(typeSport);
+        return repository.findByTypesport(typeSport);
     }
 
     public Sport saveSport(Sport sport) {

@@ -8,5 +8,5 @@ import java.util.List;
 public interface SportRepository extends CrudRepository<Sport, Long> {
 
     //filter by sport
-    List<Sport> findByTypeSport(String typeSport);
+    List<Sport> findByTypesport(String typesport);
 }
