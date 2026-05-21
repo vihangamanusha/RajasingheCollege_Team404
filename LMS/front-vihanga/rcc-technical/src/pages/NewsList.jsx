@@ -16,6 +16,12 @@ import {
 
 
 import "../index.css";
+import volleyballImage from "../assets/volleyball.jpeg";
+import karateImage from "../assets/karathe.jpeg";
+import rugbyImage from "../assets/rugby.jpeg";
+
+import cricketImage from "../assets/cricket.jpeg";
+
 
 export default function AdminDashboard() {
 
@@ -77,7 +83,8 @@ const [editingEventId, setEditingEventId] = useState(null);
       id: "volleyball",
       name: "Volleyball",
       image:
-        "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=900&h=600&fit=crop",
+        volleyballImage,
+      
       description:
         "Develop teamwork, discipline, and leadership through volleyball competitions.",
     },
@@ -86,7 +93,7 @@ const [editingEventId, setEditingEventId] = useState(null);
       id: "cricket",
       name: "Cricket",
       image:
-        "https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=900&h=600&fit=crop",
+         cricketImage,
       description:
         "Build sportsmanship and competitive spirit with cricket tournaments.",
     },
@@ -95,7 +102,7 @@ const [editingEventId, setEditingEventId] = useState(null);
       id: "rugby",
       name: "Rugby",
       image:
-        "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=900&h=600&fit=crop",
+        rugbyImage,
       description:
         "Enhance teamwork and leadership through rugby matches.",
     },
@@ -104,7 +111,7 @@ const [editingEventId, setEditingEventId] = useState(null);
       id: "karate",
       name: "Karate",
       image:
-        "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=900&h=600&fit=crop",
+         karateImage,
       description:
         "Train students with discipline and self-defense.",
     },
