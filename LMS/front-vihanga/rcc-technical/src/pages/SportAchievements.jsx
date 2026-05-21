@@ -135,7 +135,7 @@ export function SportAchievements() {
 
           <button
             className="back-btn"
-            onClick={() => navigate("/sports")}
+            onClick={() => navigate("/SportsList")}
           >
             ← Back to Sports
           </button>

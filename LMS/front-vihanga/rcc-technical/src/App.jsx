@@ -30,9 +30,8 @@ export default function App() {
           <Route path="events" element={<Event />} />
           <Route path="/admin/announcements"element={<AdminAnnouncements />}/>
           <Route path="livestream-admin" element={<LiveStreamAdmin />} />
-          <Route path="/sports/:sportName" element={<SportAchievements />} />
+          <Route path="sport-achievements/:sportName" element={<SportAchievements />} />
           <Route path="/SportsList" element={<SportsList />} />
-          
         </Route>
 
       </Routes>

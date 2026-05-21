@@ -13,7 +13,7 @@ import {
   deleteEvent,
   updateEvent,
 } from "../api/eventApi";
-
+import { addSportAchievement, getBySportType } from "../api/sportApi";
 
 import "../index.css";
 import volleyballImage from "../assets/volleyball.jpeg";
@@ -76,7 +76,18 @@ const [eventForm, setEventForm] = useState({
 
 const [editingEventId, setEditingEventId] = useState(null);
 
-  /* SPORTS DATA */
+/* SPORT STATE */
+const [selectedSport, setSelectedSport] = useState(null);
+const [sportAchievements, setSportAchievements] = useState([]);
+const [showAchievementModal, setShowAchievementModal] = useState(false);
+const [editingAchievementId, setEditingAchievementId] = useState(null);
+const [achievementForm, setAchievementForm] = useState({
+  title: "",
+  description: "",
+  date: "",
+  image: "",
+});
+
   const sports = [
 
     {
@@ -176,6 +187,113 @@ const [editingEventId, setEditingEventId] = useState(null);
   const sorted = (data || []).sort((a, b) => b.id - a.id);
 
   setEvents(sorted);
+  };
+
+  const loadSportAchievements = async (sportType) => {
+    try {
+      const data = await getBySportType(sportType);
+      setSportAchievements(data || []);
+    } catch (error) {
+      console.log("Load achievements error:", error.message || error);
+      setSportAchievements([]);
+    }
+  };
+
+  const openSportAchievements = async (sport) => {
+    setSelectedSport(sport);
+    await loadSportAchievements(sport.id);
+  };
+
+  const openAchievementModal = (achievement = null) => {
+    if (achievement) {
+      setEditingAchievementId(achievement.id);
+      setAchievementForm({
+        title: achievement.title,
+        description: achievement.description,
+        date: achievement.date,
+        image: achievement.image || "",
+      });
+    } else {
+      setEditingAchievementId(null);
+      setAchievementForm({
+        title: "",
+        description: "",
+        date: "",
+        image: "",
+      });
+    }
+
+    setShowAchievementModal(true);
+  };
+
+  const handleAchievementSubmit = async (e) => {
+    e.preventDefault();
+
+    if (editingAchievementId) {
+      const updated = sportAchievements.map((item) =>
+        item.id === editingAchievementId
+          ? { ...item, ...achievementForm, id: editingAchievementId }
+          : item
+      );
+      setSportAchievements(updated);
+    } else {
+      try {
+        const saved = await addSportAchievement({
+          typesport: selectedSport.id,
+          ...achievementForm,
+        });
+        setSportAchievements([saved, ...sportAchievements]);
+      } catch (error) {
+        console.log("Save achievement error:", error.message || error);
+        alert("Failed to save achievement");
+        return;
+      }
+    }
+
+    setShowAchievementModal(false);
+    setEditingAchievementId(null);
+    setAchievementForm({
+      title: "",
+      description: "",
+      date: "",
+      image: "",
+    });
+  };
+
+  const handleDeleteAchievement = (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this achievement?"
+    );
+    if (!confirmDelete) return;
+
+    const filtered = sportAchievements.filter(
+      (item) => item.id !== id
+    );
+    setSportAchievements(filtered);
+  };
+
+  const handleSportBack = () => {
+    setSelectedSport(null);
+    setSportAchievements([]);
+    setShowAchievementModal(false);
+    setEditingAchievementId(null);
+    setAchievementForm({
+      title: "",
+      description: "",
+      date: "",
+      image: "",
+    });
+  };
+
+  const handleAchievementImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+    setAchievementForm({
+      ...achievementForm,
+      image: imageUrl,
+    });
   };
 
 /* =========================
@@ -536,19 +654,6 @@ const handleDeleteNews = async (id) => {
   setShowModal(true);
 };
 
-const deleteEvent = async (id) => {
-  const response = await fetch(`http://localhost:8080/api/events/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to delete event");
-  }
-
-  return response;
-};
-
-
   return (
 
     <div className="page dashboard-page">
@@ -799,67 +904,214 @@ const deleteEvent = async (id) => {
 )}
 
         {/* SPORTS */}
-        {activeTab === "Sports" && (
+       {activeTab === "Sports" && (
+  <>
+    {!selectedSport ? (
+      <div className="sports-grid">
 
-          <>
-            <div className="section-header">
+        {sports.map((sport) => (
+          <div key={sport.id} className="sport-card">
 
-              <div>
+            <div className="sport-image-box">
+              <img
+                src={sport.image}
+                alt={sport.name}
+                className="sport-image"
+              />
+            </div>
 
-                <div className="section-label">
-                  Sports Management
+            <div className="sport-content">
+
+              <h2>{sport.name}</h2>
+
+              <p>{sport.description}</p>
+
+              <button
+                className="sport-manage-btn"
+                onClick={() => openSportAchievements(sport)}
+              >
+                Manage Achievements
+              </button>
+
+            </div>
+          </div>
+        ))}
+
+      </div>
+    ) : (
+      <div className="achievement-page">
+
+        <div className="achievement-header">
+
+          <div className="achievement-left">
+
+            <button
+              className="back-btn"
+              onClick={handleSportBack}
+            >
+              ← Back to Sports
+            </button>
+
+            <h1>{selectedSport.name} Achievements</h1>
+
+          </div>
+
+          <button
+            className="add-achievement-btn"
+            onClick={() => openAchievementModal()}
+          >
+            Add New Achievement
+          </button>
+
+        </div>
+
+        <div className="achievement-list">
+          {sportAchievements.length === 0 ? (
+            <div className="empty-state">
+              No achievements found for {selectedSport.name} yet.
+            </div>
+          ) : (
+            sportAchievements.map((item) => (
+              <div
+                className="achievement-card"
+                key={item.id}
+              >
+                <div className="achievement-image">
+                  {item.image ? (
+                    <img src={item.image} alt={item.title} />
+                  ) : (
+                    <div className="image-placeholder">
+                      No Image
+                    </div>
+                  )}
                 </div>
 
-                <h2 className="section-title">
-                  Manage Sports Activities
-                </h2>
+                <div className="achievement-content">
+                  <div className="achievement-top">
+                    <div>
+                      <h2>{item.title}</h2>
+                      <p>{item.description}</p>
+                      <span>{item.date}</span>
+                    </div>
 
+                    <div className="achievement-actions">
+                      <button
+                        className="edit-btn"
+                        onClick={() => openAchievementModal(item)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDeleteAchievement(item.id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {showAchievementModal && (
+          <div
+            className="popup-overlay"
+            onClick={() => setShowAchievementModal(false)}
+          >
+            <div
+              className="popup-form"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="popup-header">
+                <h2>
+                  {editingAchievementId
+                    ? "Update Achievement"
+                    : "Add New Achievement"}
+                </h2>
+                <button
+                  className="close-btn"
+                  onClick={() => setShowAchievementModal(false)}
+                >
+                  ×
+                </button>
               </div>
 
-            </div>
+              <form onSubmit={handleAchievementSubmit} className="stream-form">
+                <input
+                  type="text"
+                  placeholder="Achievement Title"
+                  value={achievementForm.title}
+                  onChange={(e) =>
+                    setAchievementForm({
+                      ...achievementForm,
+                      title: e.target.value,
+                    })
+                  }
+                  required
+                />
 
-            <div className="sports-grid">
+                <textarea
+                  placeholder="Description"
+                  value={achievementForm.description}
+                  onChange={(e) =>
+                    setAchievementForm({
+                      ...achievementForm,
+                      description: e.target.value,
+                    })
+                  }
+                  required
+                />
 
-              {sports.map((sport) => (
+                <input
+                  type="date"
+                  value={achievementForm.date}
+                  onChange={(e) =>
+                    setAchievementForm({
+                      ...achievementForm,
+                      date: e.target.value,
+                    })
+                  }
+                  required
+                />
 
-                <div
-                  key={sport.id}
-                  className="sport-card"
-                >
-
-                  <div className="sport-image-box">
-
-                    <img
-                      src={sport.image}
-                      alt={sport.name}
-                      className="sport-image"
-                    />
-
-                  </div>
-
-                  <div className="sport-content">
-
-                    <h2>
-                      {sport.name}
-                    </h2>
-
-                    <p>
-                      {sport.description}
-                    </p>
-
-                    <button className="sport-manage-btn">
-                      Manage Achievements
-                    </button>
-
-                  </div>
-
+                <div className="form-group">
+                  <label>Upload Image</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleAchievementImageUpload}
+                  />
                 </div>
 
-              ))}
+                {achievementForm.image && (
+                  <div className="preview-image">
+                    <img
+                      src={achievementForm.image}
+                      alt="preview"
+                    />
+                  </div>
+                )}
 
+                <div className="form-buttons">
+                  <button type="button" className="cancel-btn" onClick={() => setShowAchievementModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="submit-btn">
+                    {editingAchievementId ? "Update" : "Save"}
+                  </button>
+                </div>
+              </form>
             </div>
-          </>
+          </div>
         )}
+      </div>
+    )}
+  </>
+)}
+
+          
 
         {/* LIVE STREAM */}
         {activeTab === "Live Stream" && (
@@ -1222,9 +1474,9 @@ const deleteEvent = async (id) => {
               onClick={() => {
                 setShowModal(false);
 
-                setEditingId(null);
+                setEditingEventId(null);
 
-                setForm({
+                setEventForm({
                   topic: "",
                   description: "",
                   date: "",
@@ -1240,7 +1492,7 @@ const deleteEvent = async (id) => {
 
             <h2 className="event-modal-title">
 
-              {editingId
+              {editingEventId
                 ? "Update Event"
                 : "Create New Event"}
 
@@ -1254,10 +1506,10 @@ const deleteEvent = async (id) => {
               <input
                 type="text"
                 placeholder="Event Topic"
-                value={form.topic}
+                value={eventForm.topic}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
+                  setEventForm({
+                    ...eventForm,
                     topic: e.target.value
                   })
                 }
@@ -1267,10 +1519,10 @@ const deleteEvent = async (id) => {
 
               <textarea
                 placeholder="Description"
-                value={form.description}
+                value={eventForm.description}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
+                  setEventForm({
+                    ...eventForm,
                     description: e.target.value
                   })
                 }
@@ -1282,10 +1534,10 @@ const deleteEvent = async (id) => {
 
                 <input
                   type="date"
-                  value={form.date}
+                  value={eventForm.date}
                   onChange={(e) =>
-                    setForm({
-                      ...form,
+                    setEventForm({
+                      ...eventForm,
                       date: e.target.value
                     })
                   }
@@ -1295,10 +1547,10 @@ const deleteEvent = async (id) => {
 
                 <input
                   type="time"
-                  value={form.time}
+                  value={eventForm.time}
                   onChange={(e) =>
-                    setForm({
-                      ...form,
+                    setEventForm({
+                      ...eventForm,
                       time: e.target.value
                     })
                   }
@@ -1311,10 +1563,10 @@ const deleteEvent = async (id) => {
               <input
                 type="text"
                 placeholder="Venue"
-                value={form.venue}
+                value={eventForm.venue}
                 onChange={(e) =>
-                  setForm({
-                    ...form,
+                  setEventForm({
+                    ...eventForm,
                     venue: e.target.value
                   })
                 }
@@ -1323,10 +1575,10 @@ const deleteEvent = async (id) => {
               />
             {/*  select announcement audience */}
               <select
-                  value={form.announcementAudience || ""}
+                  value={eventForm.announcementAudience || ""}
                   onChange={(e) =>
-                       setForm({
-                       ...form,
+                       setEventForm({
+                       ...eventForm,
                        announcementAudience: e.target.value
                       })
                    }
@@ -1361,7 +1613,7 @@ const deleteEvent = async (id) => {
                   type="submit"
                   className="event-save-btn"
                 >
-                  {editingId
+                  {editingEventId
                     ? "Update Event"
                     : "Add Event"}
                 </button>
@@ -1379,6 +1631,7 @@ const deleteEvent = async (id) => {
     </div>
  )}
       </div>
+      
     </div>
     
   );
