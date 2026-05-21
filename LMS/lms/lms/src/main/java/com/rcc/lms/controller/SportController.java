@@ -1,3 +1,5 @@
+package com.rcc.lms.controller;
+
 import com.rcc.lms.entity.Sport;
 import com.rcc.lms.service.SportService;
 import org.springframework.beans.factory.annotation.Autowired;

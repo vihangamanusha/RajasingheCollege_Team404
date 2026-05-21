@@ -3,15 +3,17 @@ package com.rcc.lms.service;
 import com.rcc.lms.entity.Sport;
 import com.rcc.lms.repository.SportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class SportService {
     @Autowired
     private SportRepository repository;
 
     public List<Sport> getAllSports() {
-        return repository.findAll();
+        return (List<Sport>) repository.findAll();
     }
 
     public Sport getSportById(Long id) {
