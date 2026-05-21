@@ -2329,7 +2329,7 @@ textarea {
 /* BUTTON */
 
 .sport-manage-btn {
-  background: linear-gradient(135deg, #0f172a, #1e3a8a);
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
   color: white;
   border: none;
   padding: 11px 18px;
@@ -2342,7 +2342,7 @@ textarea {
 }
 
 .sport-manage-btn:hover {
-  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  background: linear-gradient(135deg, #0f172a, #1e3a8a);
   transform: translateY(-2px);
 }
 
