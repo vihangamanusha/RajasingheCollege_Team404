@@ -1775,7 +1775,7 @@ textarea {
 .achievement-page {
   padding: 40px;
   background: #f5f7fb;
-  min-height: 100vh;
+  min-height: 50vh;
   font-family: Arial, sans-serif;
 }
 
@@ -2046,6 +2046,7 @@ textarea {
 
 .form-group {
   margin-bottom: 24px;
+  height: 100px;
 }
 
 .form-group label {
@@ -2130,7 +2131,7 @@ textarea {
 .preview-image img {
   width: 100%;
   border-radius: 18px;
-  height: 300px;
+  height: 100px;
   object-fit: cover;
 }
 

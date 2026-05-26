@@ -983,15 +983,18 @@ const handleDeleteNews = async (id) => {
                 className="achievement-card"
                 key={item.id}
               >
-                <div className="achievement-image">
+              <div className="achievement-image">
                   {item.image ? (
                     <img src={item.image} alt={item.title} />
                   ) : (
                     <div className="image-placeholder">
                       No Image
                     </div>
+
+                    
                   )}
                 </div>
+                
 
                 <div className="achievement-content">
                   <div className="achievement-top">
@@ -1071,17 +1074,7 @@ const handleDeleteNews = async (id) => {
                   required
                 />
 
-                <input
-                  type="date"
-                  value={achievementForm.date}
-                  onChange={(e) =>
-                    setAchievementForm({
-                      ...achievementForm,
-                      date: e.target.value,
-                    })
-                  }
-                  required
-                />
+                
 
                 <div className="form-group">
                   <label>Upload Image</label>
