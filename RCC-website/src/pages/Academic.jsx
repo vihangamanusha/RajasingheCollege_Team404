@@ -133,7 +133,7 @@ export function Academic() {
 
             {/* Advanced Level */}
             <Link
-              /*to="/academic/advanced-level"*/
+              to="/academic/advanced-level"
               className="academic-program-card"
             >
               <div className="academic-program-image-wrap">
