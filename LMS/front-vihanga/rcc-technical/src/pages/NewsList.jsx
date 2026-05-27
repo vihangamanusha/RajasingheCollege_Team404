@@ -211,7 +211,7 @@ const [achievementForm, setAchievementForm] = useState({
         title: achievement.topic,
         description: achievement.description,
         /*date: achievement.date,*/ 
-        image: achievement.image || "",
+        image: achievement.image || null,
       });
     } else {
       setEditingAchievementId(null);
@@ -219,7 +219,7 @@ const [achievementForm, setAchievementForm] = useState({
         title: "",
         description: "",
         /*date: "",*/
-        image: "",
+        image: null,
       });
     }
 
@@ -292,20 +292,39 @@ const [achievementForm, setAchievementForm] = useState({
       title: "",
       description: "",
       /*date: "",*/
-      image: "",
+      image: null,
     });
   };
-
-  const handleAchievementImageUpload = (e) => {
+{/**/ }
+  const handleAchievementImageUpload = async (e) => {
+  try {
     const file = e.target.files[0];
+
     if (!file) return;
 
-    const imageUrl = URL.createObjectURL(file);
-    setAchievementForm({
-      ...achievementForm,
-      image: imageUrl,
-    });
-  };
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await fetch(
+      "http://localhost:8080/api/files/upload",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    if (!res.ok) throw new Error("Image upload failed");
+
+    const imageUrl = await res.text();
+
+    setAchievementForm((prev) => ({
+      ...prev,
+      image: imageUrl, // store REAL URL, not file
+    }));
+  } catch (error) {
+    console.log("Upload error:", error);
+  }
+};
 
 /* =========================
      NEWS HANDLERS
@@ -989,7 +1008,7 @@ const handleDeleteNews = async (id) => {
               >
               <div className="achievement-image">
                   {item.image ? (
-                    <img src={item.image} alt={item.title} />
+                    <img src={item.image} alt={item.topic} />
                   ) : (
                     <div className="image-placeholder">
                       No Image
@@ -1003,7 +1022,6 @@ const handleDeleteNews = async (id) => {
                 <div className="achievement-content">
                   <div className="achievement-top">
                     <div>
-                     {/**/ }<h2>{item.title}</h2>{/**/}
                      <h2>{item.topic}</h2>
                       <p>{item.description}</p>
                       <span>{item.date}</span>

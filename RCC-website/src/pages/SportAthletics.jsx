@@ -124,19 +124,28 @@ export function SportAthletics() {
 
               <div className="achievement-image">
 
-                <ImageWithFallback
-                  src={item.image}
-                  alt={item.title}
-                />
-
+              {item.image ? (
+    <img
+      src={
+        item.image.startsWith("http")
+          ? item.image
+          : `http://localhost:8080${item.image}`
+      }
+      alt={item.topic}
+    />
+  ) : (<div className="image-placeholder">
+      No Image
+    </div>
+  )}
               </div>
 
               <div className="achievement-content">
 
                 <h3>
-                  {item.title}
+                  {item.topic}
                 </h3>
 
+                
                 <p>
                   {item.description}
                 </p>
