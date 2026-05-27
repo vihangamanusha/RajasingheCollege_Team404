@@ -12,6 +12,7 @@ public class SportService {
     @Autowired
     private SportRepository repository;
 
+    
     public List<Sport> getAllSports() {
         return (List<Sport>) repository.findAll();
     }
