@@ -251,7 +251,7 @@ const [achievementForm, setAchievementForm] = useState({
        });;
       }
 
-      await loadSportAchievements(selectedSport.name);
+      await loadSportAchievements(selectedSport.id);
     } catch (error) {
       console.log("Save achievement error:", error.message || error);
       alert("Failed to save achievement");
