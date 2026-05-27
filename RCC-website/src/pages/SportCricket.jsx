@@ -1,36 +1,33 @@
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { getBySportType } from "../api/sportApi";
 import "../styles/styles.css";
 
 export function SportCricket() {
 
-  const achievements = [
+  const [achievements, setAchievements] = useState([]);
 
-    {
-      title: "District Tournament Champions 2025",
-      image:
-        "https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?w=800&h=600&fit=crop",
-      description:
-        "Our cricket team became district champions after outstanding performances throughout the tournament.",
-    },
+  useEffect(() => {
 
-    {
-      title: "Inter-School One-Day League Winners",
-      image:
-        "https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=800&h=600&fit=crop",
-      description:
-        "Students showed excellent batting and bowling skills to secure victory in the inter-school one-day league.",
-    },
+    loadAchievements();
 
-    {
-      title: "Regional T20 Tournament Winners",
-      image:
-        "https://images.unsplash.com/photo-1589801258579-18e091f4ca26?w=800&h=600&fit=crop",
-      description:
-        "The cricket squad successfully won the regional T20 championship with remarkable teamwork and dedication.",
-    },
+  }, []);
+  const loadAchievements = async () => {
 
-  ];
+    try {
+
+      const data = await getBySportType("Cricket");
+
+      setAchievements(data);
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  };
+
 
   return (
 
