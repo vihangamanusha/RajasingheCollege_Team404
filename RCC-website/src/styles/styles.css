@@ -13,6 +13,82 @@
   padding: 0;
 }
 
+/* =========================
+   GLOBAL RESPONSIVE SYSTEM
+   ========================= */
+
+/* Tablets */
+@media (max-width: 1024px) {
+
+  .grid-cols-5 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .stream-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .al-title {
+    font-size: 2rem;
+  }
+
+  .hero .title {
+    font-size: 2.5rem;
+    margin-left: 20px;
+  }
+
+  .academic-intro1 {
+    width: 100% !important;
+    padding: 40px 20px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+
+  .grid-cols-3,
+  .grid-cols-2,
+  .grid-cols-5 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stream-card {
+    width: 100% !important;
+  }
+
+  .al-title {
+    font-size: 1.6rem;
+  }
+
+  .hero .title {
+    font-size: 2rem;
+  }
+
+  .hero .school-name {
+    font-size: 2rem;
+  }
+
+  .header {
+    height: auto;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+
+  .al-hero-overlay h1 {
+    font-size: 28px;
+  }
+
+  .news-card__title {
+    font-size: 1.2rem;
+  }
+
+  .px-8 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
 html {
   line-height: 1.15;
   -webkit-text-size-adjust: 100%;
