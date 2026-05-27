@@ -1,36 +1,32 @@
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { getBySportType } from "../api/sportApi";
 import "../styles/styles.css";
 
 export function SportVolleyball() {
 
-  const achievements = [
-
-    {
-      title: "Provincial Champions 2025",
-      image:
-        "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=800&h=600&fit=crop",
-      description:
-        "Our volleyball team achieved the provincial championship through excellent teamwork and dedication.",
-    },
-
-    {
-      title: "District Tournament Winners",
-      image:
-        "https://images.unsplash.com/photo-1547347298-4074fc3086f0?w=800&h=600&fit=crop",
-      description:
-        "Students performed exceptionally well in district tournaments and secured first place.",
-    },
-
-    {
-      title: "Inter School Champions",
-      image:
-        "https://images.unsplash.com/photo-1526232761682-d26e03ac148e?w=800&h=600&fit=crop",
-      description:
-        "The school volleyball squad became champions in the annual inter-school competition.",
-    },
-
-  ];
+  const [achievements, setAchievements] = useState([]);
+    
+      useEffect(() => {
+    
+        loadAchievements();
+    
+      }, []);
+      const loadAchievements = async () => {
+    
+        try {
+    
+          const data = await getBySportType("Volleyball");
+    
+          setAchievements(data);
+    
+        } catch (error) {
+    
+          console.log(error);
+    
+        }
+      };
 
   return (
 
