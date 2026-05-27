@@ -1,36 +1,32 @@
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { getBySportType } from "../api/sportApi";
 import "../styles/styles.css";
 
 export function SportKarate() {
 
-  const achievements = [
-
-    {
-      title: "National Karate Championships 2025",
-      image:
-        "https://images.unsplash.com/photo-1517438984742-1262db08379e?w=800&h=600&fit=crop",
-      description:
-        "Our karate athletes won gold medals at the national championships through dedication and disciplined training.",
-    },
-
-    {
-      title: "Provincial Karate Tournament Champions",
-      image:
-        "https://images.unsplash.com/photo-1555597673-b21d5c935865?w=800&h=600&fit=crop",
-      description:
-        "Students demonstrated exceptional martial arts skills and became provincial karate champions in 2024.",
-    },
-
-    {
-      title: "Asian Youth Karate Participants",
-      image:
-        "https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=800&h=600&fit=crop",
-      description:
-        "Our talented karate players proudly represented the school in the Asian Youth Karate Competition.",
-    },
-
-  ];
+  const [achievements, setAchievements] = useState([]);
+    
+      useEffect(() => {
+    
+        loadAchievements();
+    
+      }, []);
+      const loadAchievements = async () => {
+    
+        try {
+    
+          const data = await getBySportType("Karate");
+    
+          setAchievements(data);
+    
+        } catch (error) {
+    
+          console.log(error);
+    
+        }
+      };
 
   return (
 
