@@ -10,7 +10,7 @@ export function AcademicALevel() {
     {
       id: "bio",
       name: "Biology Stream",
-      description: "Medicine, Bio-science, Nursing, Agriculture fields",
+     
       notifications: [
         "Practical exam starts next Monday",
         "Field visit registration is open",
@@ -19,7 +19,7 @@ export function AcademicALevel() {
     {
       id: "maths",
       name: "Mathematics Stream",
-      description: "Engineering, IT, Data Science, Physical Science",
+     
       notifications: [
         "Revision class on Friday 2:00 PM",
         "Past paper discussion uploaded",
@@ -28,7 +28,7 @@ export function AcademicALevel() {
     {
       id: "tech",
       name: "Technology Stream",
-      description: "ICT, Engineering Technology, Innovation",
+     
       notifications: [
         "New lab schedule updated",
         "Robotics workshop next week",
@@ -37,7 +37,7 @@ export function AcademicALevel() {
     {
       id: "art",
       name: "Arts Stream",
-      description: "Languages, History, Geography, Social Studies",
+      
       notifications: [
         "Arts seminar registration open",
         "Essay competition announced",
@@ -46,7 +46,7 @@ export function AcademicALevel() {
     {
       id: "commerce",
       name: "Commerce Stream",
-      description: "Business Studies, Accounting, Economics",
+      
       notifications: [
         "Mock exam timetable released",
         "Business quiz competition announced",
@@ -70,18 +70,33 @@ export function AcademicALevel() {
 
         <div className="al-hero-overlay">
           <h1>Advanced Level Streams</h1>
-          <p>Choose your academic path and stay updated</p>
+         
         </div>
       </section>
 
       {/* CONTENT */}
       <section className="al-content">
         <div className="al-container">
-
+        
+            <div className="academic-intro-icon">
+              <BookOpen className="academic-intro-icon-symbol" />
+            </div>
           <h2 className="al-title">Academic Streams Notification</h2>
+          <p className="al-description">Our Advanced Level program is designed to prepare students for higher 
+            education and future careers by providing specialized knowledge in selected 
+            streams. It focuses on developing analytical thinking, subject mastery, and 
+            practical skills essential for university entry and professional success. 
+            Students can choose from Biology, Mathematics, Commerce, Technology, and Arts 
+            streams based on their interests and career goals.</p>
+      
+         </div>
+         </section>
 
+      {/* STREAMS */}
+      <section className="al-streams2">
+        <div className="al-container">
           <div className="stream-grid">
-
+ 
             {streams.map((stream) => (
               <div
                 key={stream.id}
