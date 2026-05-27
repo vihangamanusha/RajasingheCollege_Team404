@@ -4630,9 +4630,11 @@ body {
 
 .al-title {
   text-align: center;
-  font-size: 34px;
+  font-size: 44px;
+  font-family: 'Times New Roman', Times, serif;
   font-weight: 700;
   color: #002147;
+
   margin-bottom: 40px;
 }
 
@@ -4640,7 +4642,7 @@ body {
 .stream-grid {
   display: block;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 22px;
+  gap: 30px;
 }
 
 /* CARD */
@@ -4652,6 +4654,11 @@ body {
   border: 1px solid #e8e8e8;
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   transition: 0.3s ease;
+  width:800px;
+  padding-left: 220px;
+  
+
+  
 }
 
 .stream-card:hover {
@@ -4690,7 +4697,7 @@ body {
 
 .stream-text h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 25px;
   color: #002147;
 }
 

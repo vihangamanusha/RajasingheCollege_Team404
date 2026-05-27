@@ -78,7 +78,7 @@ export function AcademicALevel() {
       <section className="al-content">
         <div className="al-container">
 
-          <h2 className="al-title">Academic Streams</h2>
+          <h2 className="al-title">Academic Streams Notification</h2>
 
           <div className="stream-grid">
 
