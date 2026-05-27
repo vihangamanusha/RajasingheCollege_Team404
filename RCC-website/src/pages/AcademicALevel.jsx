@@ -9,32 +9,37 @@ export function AcademicALevel() {
   const streams = [
     {
       id: "bio",
-      name: "Biology",
-      message: "Biology stream focuses on Medicine, Bio-science and Health studies.",
+      name: "Biology Stream",
+      description: "Medicine, Bio-science, Nursing, Agriculture fields",
+      message: "🔔 New update: Biology practical exams start next week. Check timetable.",
     },
     {
       id: "maths",
-      name: "Mathematics",
-      message: "Maths stream focuses on Engineering, IT and Physical Science fields.",
+      name: "Mathematics Stream",
+      description: "Engineering, IT, Data Science, Physical Science",
+      message: "🔔 New update: Maths revision classes scheduled on Friday.",
     },
     {
       id: "tech",
-      name: "Technology",
-      message: "Technology stream focuses on ICT, Engineering Technology and Innovation.",
+      name: "Technology Stream",
+      description: "ICT, Engineering Technology, Innovation",
+      message: "🔔 New update: Tech lab sessions updated for this month.",
     },
     {
       id: "art",
-      name: "Arts",
-      message: "Arts stream focuses on Languages, History and Social Sciences.",
+      name: "Arts Stream",
+      description: "Languages, History, Geography, Social Studies",
+      message: "🔔 New update: Arts seminar registration is now open.",
     },
     {
       id: "commerce",
-      name: "Commerce",
-      message: "Commerce stream focuses on Business, Accounting and Economics.",
+      name: "Commerce Stream",
+      description: "Business Studies, Accounting, Economics",
+      message: "🔔 New update: Commerce mock exam timetable released.",
     },
   ];
 
-  const toggleStream = (id) => {
+  const toggle = (id) => {
     setOpenStream(openStream === id ? null : id);
   };
 
@@ -45,7 +50,6 @@ export function AcademicALevel() {
       <section className="al-hero">
         <ImageWithFallback
           src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920"
-          alt="Advanced Level"
           className="al-hero-img"
         />
 
@@ -58,27 +62,36 @@ export function AcademicALevel() {
       <section className="al-content">
         <div className="al-container">
 
-          <h2 className="al-title">Choose Your Stream</h2>
+          <h2 className="al-title">Academic Streams</h2>
 
           <div className="stream-grid">
 
             {streams.map((stream) => (
-              <div key={stream.id} className="stream-wrapper">
+              <div
+                key={stream.id}
+                className={`stream-card ${openStream === stream.id ? "open" : ""}`}
+                onClick={() => toggle(stream.id)}
+              >
 
-                {/* CARD */}
-                <div
-                  className={`stream-card ${openStream === stream.id ? "active" : ""}`}
-                  onClick={() => toggleStream(stream.id)}
-                >
-                  <BookOpen className="stream-icon" />
-                  <h3>{stream.name}</h3>
-                  <p className="stream-sub">Click to view details</p>
+                {/* CARD HEADER */}
+                <div className="stream-header">
+                  <div className="stream-icon-box">
+                    <BookOpen className="stream-icon" />
+                  </div>
+
+                  <div>
+                    <h3>{stream.name}</h3>
+                    <p>{stream.description}</p>
+                  </div>
                 </div>
 
-                {/* DROPDOWN NOTIFICATION */}
+                {/* EXPAND CONTENT */}
                 {openStream === stream.id && (
-                  <div className="stream-dropdown">
-                    <p>{stream.message}</p>
+                  <div className="stream-expand">
+                    <div className="stream-notification">
+                      <h4>Notifications</h4>
+                      <p>{stream.message}</p>
+                    </div>
                   </div>
                 )}
 
