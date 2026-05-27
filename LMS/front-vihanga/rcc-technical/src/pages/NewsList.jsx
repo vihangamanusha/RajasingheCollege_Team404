@@ -208,9 +208,9 @@ const [achievementForm, setAchievementForm] = useState({
     if (achievement) {
       setEditingAchievementId(achievement.id);
       setAchievementForm({
-        title: achievement.title,
+        title: achievement.topic,
         description: achievement.description,
-        date: achievement.date,
+        /*date: achievement.date,*/ 
         image: achievement.image || "",
       });
     } else {
@@ -218,7 +218,7 @@ const [achievementForm, setAchievementForm] = useState({
       setAchievementForm({
         title: "",
         description: "",
-        date: "",
+        /*date: "",*/
         image: "",
       });
     }
@@ -237,17 +237,21 @@ const [achievementForm, setAchievementForm] = useState({
     try {
       if (editingAchievementId) {
         await updateSportAchievement(editingAchievementId, {
-          typesport: selectedSport.id,
-          ...achievementForm,
-        });
+            typesport: selectedSport.name,
+            topic: achievementForm.title,
+            description: achievementForm.description,
+            image: achievementForm.image,
+      });
       } else {
         await addSportAchievement({
-          typesport: selectedSport.id,
-          ...achievementForm,
-        });
+            typesport: selectedSport.name,
+            topic: achievementForm.title,
+            description: achievementForm.description,
+            image: achievementForm.image,
+       });;
       }
 
-      await loadSportAchievements(selectedSport.id);
+      await loadSportAchievements(selectedSport.name);
     } catch (error) {
       console.log("Save achievement error:", error.message || error);
       alert("Failed to save achievement");
@@ -259,7 +263,7 @@ const [achievementForm, setAchievementForm] = useState({
     setAchievementForm({
       title: "",
       description: "",
-      date: "",
+      /*date: "",*/
       image: "",
     });
   };
@@ -287,7 +291,7 @@ const [achievementForm, setAchievementForm] = useState({
     setAchievementForm({
       title: "",
       description: "",
-      date: "",
+      /*date: "",*/
       image: "",
     });
   };
@@ -999,7 +1003,8 @@ const handleDeleteNews = async (id) => {
                 <div className="achievement-content">
                   <div className="achievement-top">
                     <div>
-                      <h2>{item.title}</h2>
+                     {/**/ }<h2>{item.title}</h2>{/**/}
+                     <h2>{item.topic}</h2>
                       <p>{item.description}</p>
                       <span>{item.date}</span>
                     </div>
