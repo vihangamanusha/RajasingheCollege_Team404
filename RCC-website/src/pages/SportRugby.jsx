@@ -1,36 +1,32 @@
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { getBySportType } from "../api/sportApi";
 import "../styles/styles.css";
 
 export function SportRugby() {
 
-  const achievements = [
-
-    {
-      title: "Inter-School Rugby Champions 2025",
-      image:
-        "https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&h=600&fit=crop",
-      description:
-        "Our rugby team became inter-school champions after an outstanding season filled with determination and teamwork.",
-    },
-
-    {
-      title: "Regional Rugby Tournament Winners",
-      image:
-        "https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&h=600&fit=crop",
-      description:
-        "Students showcased excellent leadership and discipline to secure victory in the regional rugby tournament.",
-    },
-
-    {
-      title: "Under-18 Rugby Cup Champions",
-      image:
-        "https://images.unsplash.com/photo-1508098682722-e99c643e7485?w=800&h=600&fit=crop",
-      description:
-        "Our under-18 rugby squad displayed remarkable skill and sportsmanship throughout the championship competition.",
-    },
-
-  ];
+  const [achievements, setAchievements] = useState([]);
+    
+      useEffect(() => {
+    
+        loadAchievements();
+    
+      }, []);
+      const loadAchievements = async () => {
+    
+        try {
+    
+          const data = await getBySportType("Rugby");
+    
+          setAchievements(data);
+    
+        } catch (error) {
+    
+          console.log(error);
+    
+        }
+      };
 
   return (
 
