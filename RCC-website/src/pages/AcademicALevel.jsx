@@ -11,31 +11,46 @@ export function AcademicALevel() {
       id: "bio",
       name: "Biology Stream",
       description: "Medicine, Bio-science, Nursing, Agriculture fields",
-      message: "🔔 New update: Biology practical exams start next week. Check timetable.",
+      notifications: [
+        "Practical exam starts next Monday",
+        "Field visit registration is open",
+      ],
     },
     {
       id: "maths",
       name: "Mathematics Stream",
       description: "Engineering, IT, Data Science, Physical Science",
-      message: "🔔 New update: Maths revision classes scheduled on Friday.",
+      notifications: [
+        "Revision class on Friday 2:00 PM",
+        "Past paper discussion uploaded",
+      ],
     },
     {
       id: "tech",
       name: "Technology Stream",
       description: "ICT, Engineering Technology, Innovation",
-      message: "🔔 New update: Tech lab sessions updated for this month.",
+      notifications: [
+        "New lab schedule updated",
+        "Robotics workshop next week",
+      ],
     },
     {
       id: "art",
       name: "Arts Stream",
       description: "Languages, History, Geography, Social Studies",
-      message: "🔔 New update: Arts seminar registration is now open.",
+      notifications: [
+        "Arts seminar registration open",
+        "Essay competition announced",
+      ],
     },
     {
       id: "commerce",
       name: "Commerce Stream",
       description: "Business Studies, Accounting, Economics",
-      message: "🔔 New update: Commerce mock exam timetable released.",
+      notifications: [
+        "Mock exam timetable released",
+        "Business quiz competition announced",
+      ],
     },
   ];
 
@@ -55,6 +70,7 @@ export function AcademicALevel() {
 
         <div className="al-hero-overlay">
           <h1>Advanced Level Streams</h1>
+          <p>Choose your academic path and stay updated</p>
         </div>
       </section>
 
@@ -73,25 +89,34 @@ export function AcademicALevel() {
                 onClick={() => toggle(stream.id)}
               >
 
-                {/* CARD HEADER */}
+                {/* HEADER */}
                 <div className="stream-header">
+
                   <div className="stream-icon-box">
                     <BookOpen className="stream-icon" />
                   </div>
 
-                  <div>
+                  <div className="stream-text">
                     <h3>{stream.name}</h3>
                     <p>{stream.description}</p>
                   </div>
+
                 </div>
 
-                {/* EXPAND CONTENT */}
+                {/* DROPDOWN */}
                 {openStream === stream.id && (
                   <div className="stream-expand">
-                    <div className="stream-notification">
-                      <h4>Notifications</h4>
-                      <p>{stream.message}</p>
+
+                    <h4 className="notif-title">Notifications</h4>
+
+                    <div className="notif-list">
+                      {stream.notifications.map((note, i) => (
+                        <div key={i} className="notif-item">
+                          🔔 {note}
+                        </div>
+                      ))}
                     </div>
+
                   </div>
                 )}
 
@@ -99,10 +124,8 @@ export function AcademicALevel() {
             ))}
 
           </div>
-
         </div>
       </section>
-
     </div>
   );
 }

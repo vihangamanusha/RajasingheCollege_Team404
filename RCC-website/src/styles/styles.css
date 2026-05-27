@@ -4579,6 +4579,57 @@ body {
 }
 
 /*academic page -al*/
+
+.al-hero {
+  position: relative;
+  height: 500px;
+  overflow: hidden;
+}
+
+.al-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.al-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 33, 71, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.al-content {
+  text-align: center;
+  color: white;
+  max-width: 700px;
+  padding: 20px;
+}
+
+.al-icon {
+  width: 90px;
+  height: 90px;
+  background: #FFD700;
+  color: #002147;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto auto 25px;
+}
+
+.al-content h1 {
+  font-size: 70px;
+  margin-bottom: 20px;
+}
+
+.al-content p {
+  font-size: 20px;
+  line-height: 1.8;
+}
+
 .al-title {
   text-align: center;
   font-size: 36px;
