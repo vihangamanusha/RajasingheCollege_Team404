@@ -1,13 +1,10 @@
 import { BookOpen } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { useLanguage } from "../contexts/LanguageContext";
 import { useState } from "react";
 import "../styles/styles.css";
 
 export function AcademicALevel() {
-  const { t } = useLanguage();
-
-  const [selectedStream, setSelectedStream] = useState(null);
+  const [openStream, setOpenStream] = useState(null);
 
   const streams = [
     {
@@ -37,13 +34,17 @@ export function AcademicALevel() {
     },
   ];
 
+  const toggleStream = (id) => {
+    setOpenStream(openStream === id ? null : id);
+  };
+
   return (
     <div className="al-page">
 
       {/* HERO */}
       <section className="al-hero">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920&h=1080&fit=crop"
+          src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920"
           alt="Advanced Level"
           className="al-hero-img"
         />
@@ -57,30 +58,34 @@ export function AcademicALevel() {
       <section className="al-content">
         <div className="al-container">
 
-          <h2 className="al-title">Select Your Stream</h2>
+          <h2 className="al-title">Choose Your Stream</h2>
 
           <div className="stream-grid">
 
             {streams.map((stream) => (
-              <div
-                key={stream.id}
-                className={`stream-card ${selectedStream?.id === stream.id ? "active" : ""}`}
-                onClick={() => setSelectedStream(stream)}
-              >
-                <BookOpen className="stream-icon" />
-                <h3>{stream.name}</h3>
+              <div key={stream.id} className="stream-wrapper">
+
+                {/* CARD */}
+                <div
+                  className={`stream-card ${openStream === stream.id ? "active" : ""}`}
+                  onClick={() => toggleStream(stream.id)}
+                >
+                  <BookOpen className="stream-icon" />
+                  <h3>{stream.name}</h3>
+                  <p className="stream-sub">Click to view details</p>
+                </div>
+
+                {/* DROPDOWN NOTIFICATION */}
+                {openStream === stream.id && (
+                  <div className="stream-dropdown">
+                    <p>{stream.message}</p>
+                  </div>
+                )}
+
               </div>
             ))}
 
           </div>
-
-          {/* MESSAGE BOX */}
-          {selectedStream && (
-            <div className="stream-message">
-              <h3>{selectedStream.name}</h3>
-              <p>{selectedStream.message}</p>
-            </div>
-          )}
 
         </div>
       </section>
