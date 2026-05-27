@@ -1,37 +1,32 @@
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
+import { getBySportType } from "../api/sportApi";
 import "../styles/styles.css";
 
 export function SportAthletics() {
 
-  const achievements = [
-
-    {
-      title: "100m Sprint Record Holders 2025",
-      image:
-        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
-      description:
-        "Our athletics team broke school sprint records with outstanding speed, dedication, and training.",
-    },
-
-    {
-      title: "Provincial Athletics Champions",
-      image:
-        "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=800&h=600&fit=crop",
-      description:
-        "Students secured championship titles in provincial athletics competitions across multiple events.",
-    },
-
-    {
-      title: "Inter-School Relay Race Winners",
-      image:
-        "https://images.unsplash.com/photo-1508609349937-5ec4ae374ebf?w=800&h=600&fit=crop",
-      description:
-        "Our relay teams demonstrated teamwork and endurance to become inter-school relay champions.",
-    },
-
-  ];
-
+  const [achievements, setAchievements] = useState([]);
+  
+    useEffect(() => {
+  
+      loadAchievements();
+  
+    }, []);
+    const loadAchievements = async () => {
+  
+      try {
+  
+        const data = await getBySportType("Athletics");
+  
+        setAchievements(data);
+  
+      } catch (error) {
+  
+        console.log(error);
+  
+      }
+    };
   return (
 
     <div className="sport-page">
