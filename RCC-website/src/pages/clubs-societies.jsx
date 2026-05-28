@@ -1,17 +1,17 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 import { ArrowRight, Users } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
-import scienceImg from "../assets/science.jpg";
-import arduinoImg from "../assets/arduino.jpg";
-import cadetImg from "../assets/cadet.jpg";
-import scoutsImg from "../assets/scouts.jpg";
-import stjohnImg from "../assets/stjohn.jpg";
-import astronomyImg from "../assets/astronomy.jpg";
-import techImg from "../assets/tech.jpg";
-import buddhistImg from "../assets/buddhist.jpg";
-import artImg from "../assets/art.jpg";
-import mediaImg from "../assets/media.jpg";
+import scienceImg from "../assets/about.jpeg";
+import arduinoImg from "../assets/about.jpeg";
+import cadetImg from "../assets/about.jpeg";
+import scoutsImg from "../assets/about.jpeg";
+import stjohnImg from "../assets/about.jpeg";
+import astronomyImg from "../assets/about.jpeg";
+import techImg from "../assets/about.jpeg";
+import buddhistImg from "../assets/about.jpeg";
+import artImg from "../assets/about.jpeg";
+import mediaImg from "../assets/about.jpeg";
 
 import "../styles/styles.css";
 

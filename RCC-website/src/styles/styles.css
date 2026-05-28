@@ -4850,3 +4850,164 @@ font-size: 1rem;
     transform: translateY(0);
   }
 }
+
+/*clubs and socities*/
+.clubs-page {
+  width: 100%;
+}
+
+/* HERO */
+.clubs-hero {
+  position: relative;
+  height: 70vh;
+  overflow: hidden;
+}
+
+.clubs-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.clubs-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.clubs-hero-content {
+  text-align: center;
+  color: white;
+  max-width: 700px;
+  padding: 20px;
+}
+
+.clubs-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  margin: auto auto 20px;
+}
+
+.clubs-hero-content h1 {
+  font-size: 60px;
+  margin-bottom: 20px;
+}
+
+.clubs-hero-content p {
+  font-size: 20px;
+  line-height: 1.7;
+}
+
+/* INTRO */
+.clubs-intro-section {
+  padding: 80px 20px;
+  background: #fff;
+}
+
+.clubs-section-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.clubs-section-header h2 {
+  font-size: 40px;
+  color: #111827;
+}
+
+.title-line {
+  width: 90px;
+  height: 4px;
+  background: #2563eb;
+  margin: 15px auto;
+  border-radius: 10px;
+}
+
+.clubs-intro-text {
+  max-width: 1000px;
+  margin: auto;
+  text-align: center;
+  line-height: 1.8;
+  font-size: 18px;
+  color: #4b5563;
+}
+
+/* GRID */
+.clubs-grid-section {
+  padding: 80px 20px;
+  background: #f9fafb;
+}
+
+.clubs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 30px;
+}
+
+.club-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  transition: 0.3s;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+}
+
+.club-card:hover {
+  transform: translateY(-8px);
+}
+
+.club-image-wrapper {
+  height: 220px;
+  overflow: hidden;
+}
+
+.club-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.club-content {
+  padding: 25px;
+}
+
+.club-content h3 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #111827;
+}
+
+.club-content p {
+  color: #4b5563;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.club-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  text-decoration: none;
+  background: #2563eb;
+  color: white;
+
+  padding: 12px 20px;
+  border-radius: 10px;
+
+  transition: 0.3s;
+}
+
+.club-btn:hover {
+  background: #1d4ed8;
+}
