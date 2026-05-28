@@ -193,7 +193,7 @@ export function ClubsSocieties() {
           <p>
             {club.description}
           </p>
-
+{/* LEARN MORE BUTTON 
           <Link
             to={`/clubs/${club.id}`}
             className="club-row-btn"
@@ -201,7 +201,7 @@ export function ClubsSocieties() {
             Learn More
             <ArrowRight size={18} />
           </Link>
-
+*/}
         </div>
 
       </div>
