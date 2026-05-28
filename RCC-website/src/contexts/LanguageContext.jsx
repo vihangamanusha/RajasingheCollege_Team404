@@ -11,6 +11,7 @@ const translations = {
   "nav.events": { en: "Events", si: "සිදුවීම්" },
   "nav.sports": { en: "Sports", si: "ක්‍රීඩා" },
   "nav.liveStream": { en: "Live Stream", si: "සජීවී විකාශනය" },
+  "nav.clubs-societies": { en: "Clubs & Societies", si: "සමාජ හා සංගම්" },
   "nav.contact": { en: "Contact", si: "සම්බන්ධ වන්න" },
   "nav.lms": { en: "LMS", si: "LMS" },
 
