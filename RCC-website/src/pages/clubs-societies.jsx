@@ -161,60 +161,56 @@ export function ClubsSocieties() {
 
       </section>
 
-      {/* CLUBS GRID */}
-      <section className="clubs-grid-section">
+      {/* CLUBS LIST */}
+<section className="clubs-list-section">
 
-        <div className="container">
+  <div className="container">
 
-          <div className="clubs-grid">
+    {clubs.map((club) => (
 
-            {clubs.map((club) => (
+      <div
+        key={club.id}
+        className="club-row-card"
+      >
 
-              <div
-                key={club.id}
-                className="club-card"
-              >
+        {/* LEFT IMAGE */}
+        <div className="club-row-image">
 
-                <div className="club-image-wrapper">
-
-                  <img
-                    src={club.image}
-                    alt={club.title}
-                    className="club-image"
-                  />
-
-                </div>
-
-                <div className="club-content">
-
-                  <h3>
-                    {club.title}
-                  </h3>
-
-                  <p>
-                    {club.description}
-                  </p>
-
-                  <Link
-                    to={`/clubs/${club.id}`}
-                    className="club-btn"
-                  >
-                    Learn More
-                    <ArrowRight size={18} />
-                  </Link>
-
-                </div>
-
-              </div>
-
-            ))}
-
-          </div>
+          <img
+            src={club.image}
+            alt={club.title}
+          />
 
         </div>
 
-      </section>
+        {/* RIGHT CONTENT */}
+        <div className="club-row-content">
 
+          <h2>
+            {club.title}
+          </h2>
+
+          <p>
+            {club.description}
+          </p>
+
+          <Link
+            to={`/clubs/${club.id}`}
+            className="club-row-btn"
+          >
+            Learn More
+            <ArrowRight size={18} />
+          </Link>
+
+        </div>
+
+      </div>
+
+    ))}
+
+  </div>
+
+</section>
     </div>
   );
 }
