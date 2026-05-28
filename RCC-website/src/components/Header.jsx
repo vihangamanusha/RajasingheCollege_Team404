@@ -13,7 +13,7 @@ export function Header() {
     { name: t("nav.home"), path: "/" },
     { name: t("nav.about"), path: "/about" },
     { name: t("nav.academic"), path: "/academic" },
-    { name: t("nav.club-societies"), path: "/clubs-societies" },
+    { name: t("nav.clubs-societies"), path: "/clubs-societies" },
     { name: t("nav.news"), path: "/news" },
     { name: t("nav.sports"), path: "/sports" },
     { name: t("nav.liveStream"), path: "/live-stream" },
