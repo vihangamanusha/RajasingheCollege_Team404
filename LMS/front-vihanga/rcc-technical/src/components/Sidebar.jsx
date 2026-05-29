@@ -1,5 +1,14 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import logoImage from "../assets/rcc.png";
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  BookOpen,
+  Megaphone,
+  FileText,
+  Globe,
+} from "lucide-react";
 
 export default function Sidebar() {
   const navigate = useNavigate();
