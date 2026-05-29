@@ -26,30 +26,31 @@ export default function Sidebar() {
 
       <nav>
         <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
+        <LayoutDashboard size={18} />
           Dashboard
         </NavLink>
-
-        <NavLink
-  to="/student-register"
-  className={({ isActive }) =>
-    isActive ? "nav-link active" : "nav-link"
-  }
->
-  Student
-</NavLink>
+        <NavLink to="/student-register"className={({ isActive }) =>isActive ? "nav-link active" : "nav-link" }>
+          <Users size={18} />
+         Student
+        </NavLink>
         <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+          <GraduationCap size={18} />
           Teacher
         </NavLink>
         <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+          <BookOpen size={18} />
           Classes
         </NavLink>
         <NavLink to="/admin/announcements" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+          <Megaphone size={18} />
           Announcement
         </NavLink>
         <NavLink to="/add" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+          <FileText size={18} />
           Reports
         </NavLink>
         <NavLink to="/news" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+          <Globe size={18} />
           Website Content
         </NavLink>
         
