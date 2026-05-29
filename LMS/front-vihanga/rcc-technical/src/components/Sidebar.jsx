@@ -8,6 +8,7 @@ import {
   Megaphone,
   FileText,
   Globe,
+  LogOut
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -58,6 +59,7 @@ export default function Sidebar() {
       </nav>
 
       <button className="logout" onClick={handleLogout}>
+        <LogOut size={18} />
         Logout
       </button>
     </div>
