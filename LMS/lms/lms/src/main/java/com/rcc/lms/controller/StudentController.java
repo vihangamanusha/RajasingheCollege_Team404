@@ -48,9 +48,11 @@ public class StudentController {
         existing.setGrade(student.getGrade());
         existing.setDob(student.getDob());
         existing.setMedium(student.getMedium());
-        existing.setContactNo(student.getContactNo());
-        existing.setGname(student.getGname());
         existing.setAddress(student.getAddress());
+        existing.setDonation(student.getDonation());
+        existing.setEmergency_contact_name_01(student.getEmergency_contact_name_01());
+        existing.setEmergency_contact_name_02(student.getEmergency_contact_name_02());
+        existing.se
 
         return service.save(existing);
     }
