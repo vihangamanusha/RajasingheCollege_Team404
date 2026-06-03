@@ -3,18 +3,31 @@ import "../index.css";
 
 export default function StudentRegister() {
 
-  const [form, setForm] = useState({
+ const [form, setForm] = useState({
   fullName: "",
   studentId: "",
   password: "",
-  studentClass: "",
   grade: "",
-  dob: "",
+  studentClass: "",
   medium: "",
-  contactNo: "",
-  gname: "",
+  dob: "",
   address: "",
+
+  gardian_name: "",
+  gardian_contact: "",
+
+  emergency_contact_name_01: "",
+  emergency_contact_contact_01: "",
+
+  emergency_contact_name_02: "",
+  emergency_contact_contact_02: "",
+
+  mother_job: "",
+  father_job: "",
+  donation: "",
 });
+
+  const [step, setStep] = useState(1);
 
   const [students, setStudents] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -105,6 +118,16 @@ const handleSubmit = async (e) => {
       contactNo: "",
       gname: "",
       address: "",
+      gardian_name: "",
+      gardian_contact: "",
+      emergency_contact_name_01: "",
+      emergency_contact_contact_01: "",
+      emergency_contact_name_02: "",
+      emergency_contact_contact_02: "",
+      mother_job: "",
+      father_job: "",
+      donation: "",
+
     });
 
     // RESET EDITING
@@ -164,17 +187,34 @@ const handleSubmit = async (e) => {
     fullName: student.fullName || "",
     studentId: student.studentId || "",
     password: student.password || "",
-    studentClass: student.studentClass || "",
     grade: student.grade || "",
-    dob: student.dob || "",
+    studentClass: student.studentClass || "",
     medium: student.medium || "",
-    contactNo: student.contactNo || "",
-    gname: student.gname || "",
+    dob: student.dob || "",
     address: student.address || "",
-    gender: student.gender || "",
+
+    gardian_name: student.gardian_name || "",
+    gardian_contact: student.gardian_contact || "",
+
+    emergency_contact_name_01:
+      student.emergency_contact_name_01 || "",
+
+    emergency_contact_contact_01:
+      student.emergency_contact_contact_01 || "",
+
+    emergency_contact_name_02:
+      student.emergency_contact_name_02 || "",
+
+    emergency_contact_contact_02:
+      student.emergency_contact_contact_02 || "",
+
+    mother_job: student.mother_job || "",
+    father_job: student.father_job || "",
+    donation: student.donation || "",
   });
 
   setEditingId(student.userId);
+  setStep(1);
   setShowModal(true);
 };
   return (
@@ -195,12 +235,41 @@ const handleSubmit = async (e) => {
           </p>
         </div>
 
-        <button
-          className="add-student-btn"
-          onClick={() => setShowModal(true)}
-        >
-          + Add Student
-        </button>
+       <button
+  className="add-student-btn"
+  onClick={() => {
+    setEditingId(null);
+
+    setForm({
+      fullName: "",
+      studentId: "",
+      password: "",
+      grade: "",
+      studentClass: "",
+      medium: "",
+      dob: "",
+      address: "",
+
+      gardian_name: "",
+      gardian_contact: "",
+
+      emergency_contact_name_01: "",
+      emergency_contact_contact_01: "",
+
+      emergency_contact_name_02: "",
+      emergency_contact_contact_02: "",
+
+      mother_job: "",
+      father_job: "",
+      donation: "",
+    });
+
+    setStep(1);
+    setShowModal(true);
+  }}
+>
+  + Add Student
+</button>
 
       </div>
 
@@ -305,161 +374,204 @@ const handleSubmit = async (e) => {
 
             <form onSubmit={handleSubmit} className="student-form-grid">
 
-  {/* FULL NAME */}
-  <div className="form-group">
-    <label>Full Name</label>
-    <input
-      type="text"
-      name="fullName"
-      placeholder="Enter full name"
-      value={form.fullName}
-      onChange={handleChange}
-      required
-    />
-  </div>
+ {step === 1 && (
+  <div className="student-form-grid">
 
-  {/* ADMISSION NUMBER */}
-  <div className="form-group">
-    <label>Admission Number</label>
-    <input
-      type="text"
-      name="studentId"
-      placeholder="Enter admission number"
-      value={form.studentId}
-      onChange={handleChange}
-      required
-    />
-  </div>
+    <div className="form-group">
+      <label>Full Name</label>
+      <input
+        name="fullName"
+        value={form.fullName}
+        onChange={handleChange}
+      />
+    </div>
 
-  {/* GRADE */}
-  <div className="form-group">
-    <label>Grade</label>
-    <select
-      name="grade"
-      value={form.grade}
-      onChange={handleChange}
-      required
-    >
-      <option value="">Select Grade</option>
-      <option value="Grade 6">Grade 6</option>
-      <option value="Grade 7">Grade 7</option>
-      <option value="Grade 8">Grade 8</option>
-      <option value="Grade 9">Grade 9</option>
-      <option value="Grade 10">Grade 10</option>
-      <option value="Grade 11">Grade 11</option>
-    </select>
-  </div>
+    <div className="form-group">
+      <label>Admission No</label>
+      <input
+        name="studentId"
+        value={form.studentId}
+        onChange={handleChange}
+      />
+    </div>
 
-  {/* CLASS */}
-  <div className="form-group">
-    <label>Class</label>
-    <input
-      type="text"
-      name="studentClass"
-      placeholder="Enter class (e.g. A, B, C)"
-      value={form.studentClass}
-      onChange={handleChange}
-      required
-    />
-  </div>
+    <div className="form-group">
+      <label>Grade</label>
+      <input
+        name="grade"
+        value={form.grade}
+        onChange={handleChange}
+      />
+    </div>
 
-  {/* MEDIUM */}
-  <div className="form-group">
-    <label>Medium</label>
-    <select
-      name="medium"
-      value={form.medium}
-      onChange={handleChange}
-      required
-    >
-      <option value="">Select Medium</option>
-      <option value="Sinhala">Sinhala</option>
-      <option value="English">English</option>
-     
-    </select>
-  </div>
+    <div className="form-group">
+      <label>Class</label>
+      <input
+        name="studentClass"
+        value={form.studentClass}
+        onChange={handleChange}
+      />
+    </div>
 
-  {/* DATE OF BIRTH */}
-  <div className="form-group">
-    <label>Date of Birth</label>
-    <input
-      type="date"
-      name="dob"
-      value={form.dob}
-      onChange={handleChange}
-      required
-    />
-  </div>
+    <div className="form-group">
+      <label>Medium</label>
+      <select
+        name="medium"
+        value={form.medium}
+        onChange={handleChange}
+      >
+        <option value="">Select</option>
+        <option value="Sinhala">Sinhala</option>
+        <option value="English">English</option>
+      </select>
+    </div>
 
-  {/* PASSWORD */}
-  <div className="form-group full-width">
-    <label>Password</label>
-    <input
-      type="password"
-      name="password"
-      placeholder="Create password for LMS access"
-      value={form.password}
-      onChange={handleChange}
-      required
-    />
-  </div>
+    <div className="form-group">
+      <label>Date of Birth</label>
+      <input
+        type="date"
+        name="dob"
+        value={form.dob}
+        onChange={handleChange}
+      />
+    </div>
 
-  {/* ADDRESS */}
-  <div className="form-group full-width">
-    <label>Address</label>
-    <textarea
-      name="address"
-      placeholder="Enter address"
-      value={form.address}
-      onChange={handleChange}
-      required
-    />
-  </div>
+    <div className="form-group full-width">
+      <label>Password</label>
+      <input
+        type="password"
+        name="password"
+        value={form.password}
+        onChange={handleChange}
+      />
+    </div>
 
-  {/* GUARDIAN NAME */}
-  <div className="form-group">
-    <label>Guardian Name</label>
-    <input
-      type="text"
-      name="gname"
-      value={form.gname}
-      placeholder="Guardian name"
-      onChange={handleChange}
-      required
-    />
-  </div>
+    <div className="form-group full-width">
+      <label>Address</label>
+      <textarea
+        name="address"
+        value={form.address}
+        onChange={handleChange}
+      />
+    </div>
 
-  {/* CONTACT NUMBER */}
-  <div className="form-group">
-    <label>Guardian Contact Number</label>
-    <input
-      type="text"
-      name="contactNo"
-      placeholder="Phone number"
-      value={form.contactNo}
-      onChange={handleChange}
-      required
-    />
-  </div>
-
-  {/* BUTTONS */}
-  <div className="modal-btns">
-
-    <button
-      type="reset"
-      className="clearb-btn"
-    >
-      Clear
-    </button>
-
-    <button
-      type="submit"
-      className="save-btn"
-    >
-      Save Student
-    </button>
+    <div className="modal-btns">
+      <button
+        type="button"
+        className="save-btn"
+        onClick={() => setStep(2)}
+      >
+        Next →
+      </button>
+    </div>
 
   </div>
+)}
+{step === 2 && (
+  <div className="student-form-grid">
+
+    <div className="form-group">
+      <label>Guardian Name</label>
+      <input
+        name="gardian_name"
+        value={form.gardian_name}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Guardian Contact</label>
+      <input
+        name="gardian_contact"
+        value={form.gardian_contact}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Emergency Contact 1</label>
+      <input
+        name="emergency_contact_name_01"
+        value={form.emergency_contact_name_01}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Emergency Phone 1</label>
+      <input
+        name="emergency_contact_contact_01"
+        value={form.emergency_contact_contact_01}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Emergency Contact 2</label>
+      <input
+        name="emergency_contact_name_02"
+        value={form.emergency_contact_name_02}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Emergency Phone 2</label>
+      <input
+        name="emergency_contact_contact_02"
+        value={form.emergency_contact_contact_02}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Mother Occupation</label>
+      <input
+        name="mother_job"
+        value={form.mother_job}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group">
+      <label>Father Occupation</label>
+      <input
+        name="father_job"
+        value={form.father_job}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="form-group full-width">
+      <label>Donations Received</label>
+      <textarea
+        name="donation"
+        value={form.donation}
+        onChange={handleChange}
+      />
+    </div>
+
+    <div className="modal-btns">
+
+      <button
+        type="button"
+        className="clearb-btn"
+        onClick={() => setStep(1)}
+      >
+        ← Previous
+      </button>
+
+      <button
+        type="submit"
+        className="save-btn"
+      >
+        {editingId ? "Update Student" : "Save Student"}
+      </button>
+
+    </div>
+
+  </div>
+)}
 
 </form>
         
