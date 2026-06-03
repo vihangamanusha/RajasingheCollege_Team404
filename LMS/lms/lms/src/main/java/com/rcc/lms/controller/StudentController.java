@@ -2,6 +2,7 @@ package com.rcc.lms.controller;
 
 
 import com.rcc.lms.service.StudentService;
+import com.rcc.lms.student.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,24 +36,38 @@ public class StudentController {
 
     // UPDATE
     @PutMapping("/{id}")
-    public com.rcc.lms.student.Student updateStudent(
+    public Student updateStudent(
             @PathVariable Long id,
-            @RequestBody com.rcc.lms.student.Student student) {
+            @RequestBody Student student) {
 
-        com.rcc.lms.student.Student existing = service.getById(id);
+        Student existing = service.getById(id);
 
         existing.setFullName(student.getFullName());
         existing.setStudentId(student.getStudentId());
         existing.setPassword(student.getPassword());
-        existing.setStudentClass(student.getStudentClass());
         existing.setGrade(student.getGrade());
-        existing.setDob(student.getDob());
+        existing.setStudentClass(student.getStudentClass());
         existing.setMedium(student.getMedium());
+        existing.setDob(student.getDob());
         existing.setAddress(student.getAddress());
+
+        existing.setGardian_name(student.getGardian_name());
+        existing.setGardian_contact(student.getGardian_contact());
+
+        existing.setEmergency_contact_name_01(
+                student.getEmergency_contact_name_01());
+        existing.setEmergency_contact_name_02(
+                student.getEmergency_contact_name_02());
+
+        existing.setEmergency_contact_contact_01(
+                student.getEmergency_contact_contact_01());
+        existing.setEmergency_contact_contact_02(
+                student.getEmergency_contact_contact_02());
+
+        existing.setMother_job(student.getMother_job());
+        existing.setFather_job(student.getFather_job());
+
         existing.setDonation(student.getDonation());
-        existing.setEmergency_contact_name_01(student.getEmergency_contact_name_01());
-        existing.setEmergency_contact_name_02(student.getEmergency_contact_name_02());
-        existing.se
 
         return service.save(existing);
     }
