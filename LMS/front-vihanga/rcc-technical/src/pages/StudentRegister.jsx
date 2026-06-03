@@ -291,6 +291,7 @@ const handleSubmit = async (e) => {
         </div>
 
         {/* TABLE */}
+        <div className="table-container">
 
         <table className="student-table">
 
@@ -300,58 +301,88 @@ const handleSubmit = async (e) => {
               <th>Name</th>
               <th>Grade/Class</th>
               <th>Medium</th>
-              <th>Contact</th>
+              <th>Date of Birth</th>
+              <th>Password</th>
+              {/*
+              <th>Address</th>
+              <th>Guardian Name</th>
+              <th>Guardian Contact</th>
+              <th>Emergency Contact 1</th>
+              <th>Emergency Phone 1</th>
+              <th>Emergency Contact 2</th>
+              <th>Emergency Phone 2</th>
+              <th>Mother Occupation</th>
+              <th>Father Occupation</th>
+              <th>Donations Received</th>
+              */}
               <th>Actions</th>
+              
             </tr>
           </thead>
 
           <tbody>
+  {filteredStudents.map((s) => (
+    <tr key={s.userId}>
 
-            {filteredStudents.map((s) => (
+      <td>{s.studentId}</td>
 
-              <tr key={s.userId}>
+      <td>{s.fullName}</td>
 
-                <td>{s.studentId}</td>
+      <td>
+        {s.grade} - {s.studentClass}
+      </td>
 
-                <td>{s.fullName}</td>
+      <td>
+        <span className={`medium-badge ${s.medium}`}>
+          {s.medium}
+        </span>
+      </td>
 
-                <td>
-                    {s.grade} - {s.studentClass}
-                </td>
+      <td>{s.dob}</td>
 
-                <td>
-                  <span className={`medium-badge ${s.medium}`}>
-                    {s.medium}
-                  </span>
-                </td>
+      <td>{s.password}</td>
 
-                <td>{s.contactNo}</td>
+      <td>{s.address}</td>
+{/*
+      <td>{s.gardian_name}</td>
 
-                <td>
+      <td>{s.gardian_contact}</td>
 
-                 <button
-    className="edit-btn"
-    onClick={() => handleEdit(s)}
-  >
-    Edit
-  </button>
+      <td>{s.emergency_contact_name_01}</td>
 
-  <button
-    className="delete-btn"
-    onClick={() => handleDelete(s.userId)}
-  >
-    Delete
-  </button>
+      <td>{s.emergency_contact_contact_01}</td>
 
-                </td>
+      <td>{s.emergency_contact_name_02}</td>
 
-              </tr>
+      <td>{s.emergency_contact_contact_02}</td>
 
-            ))}
+      <td>{s.mother_job}</td>
 
-          </tbody>
+      <td>{s.father_job}</td>
 
+      <td>{s.donation}</td>
+*/}
+      <td>
+        <button
+          className="edit-btn"
+          onClick={() => handleEdit(s)}
+        >
+          Edit
+        </button>
+
+        <button
+          className="delete-btn"
+          onClick={() => handleDelete(s.userId)}
+        >
+          Delete
+        </button>
+      </td>
+
+    </tr>
+  ))}
+</tbody>
         </table>
+        </div>
 
       </div>
 

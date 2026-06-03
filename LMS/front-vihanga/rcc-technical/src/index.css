@@ -96,7 +96,26 @@ button {
   color: #ffffff;
 }
 
+.logout {
+  margin-top: 50px;
+  width: calc(100% - 12px);
 
+  background: #ff4d65;
+  color: #ffffff;
+
+  border: none;
+
+  padding: 12px 16px;
+  border-radius: 14px;
+  margin-top: 90px;
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+.logout:hover {
+  background: #f52141;
+}
 .logout {
   margin-top: 40px;
   width: calc(100% - 12px);
@@ -114,7 +133,7 @@ button {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top:90px;
+
   transition: 0.3s;
 }
 
