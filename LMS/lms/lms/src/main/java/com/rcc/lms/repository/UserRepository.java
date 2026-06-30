@@ -40,7 +40,8 @@ public interface UserRepository extends JpaRepository<User, String> {//entity an
     @Query("SELECT u FROM User u WHERE u.role = :role AND u.status != 'DELETED' AND " +
             "(LOWER(u.username) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(u.userId) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+            "LOWER(u.userId) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.subRole) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
     List<User> searchActiveUsersByRoleAndTerm(@Param("role") String role, @Param("searchTerm") String searchTerm);//Maps method inputs to query variables.
 
 

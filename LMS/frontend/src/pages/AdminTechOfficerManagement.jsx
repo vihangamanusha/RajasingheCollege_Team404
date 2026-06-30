@@ -115,6 +115,64 @@ export default function AdminTechOfficerManagement() {
         e.preventDefault();
         setEditMessage({ text: "", type: "" });
 
+        // 1. Password validation (only if entered/modified)
+        if (editFormData.password.trim() !== "") {
+            if (editFormData.password.length < 8) {
+                setEditMessage({
+                    text: "Password must be at least 8 characters long.",
+                    type: "error"
+                });
+                return;
+            }
+        }
+
+        // 2. Full Name validation
+        if (!editFormData.fullName || !editFormData.fullName.trim()) {
+            setEditMessage({
+                text: "Full Name is required.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 3. Email validation
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!editFormData.email || !emailPattern.test(editFormData.email)) {
+            setEditMessage({
+                text: "Please enter a valid email address.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 4. Contact Number validation (must be exactly 10 digits)
+        const contactPattern = /^\d{10}$/;
+        if (!editFormData.contactNumber || !contactPattern.test(editFormData.contactNumber)) {
+            setEditMessage({
+                text: "Contact Number must be exactly 10 digits.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 5. Position validation
+        if (!editFormData.position || editFormData.position === "Select Position") {
+            setEditMessage({
+                text: "Please select a valid Position.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 6. Assigned Area validation
+        if (!editFormData.assignedArea || editFormData.assignedArea === "Select Area") {
+            setEditMessage({
+                text: "Please select a valid Assigned Area.",
+                type: "error"
+            });
+            return;
+        }
+
         // Change Tracker: Prevent saving if nothing was altered
         const hasChanges = Object.keys(originalEditData).some(key => {
             if (key === 'password') return editFormData.password.trim() !== "";

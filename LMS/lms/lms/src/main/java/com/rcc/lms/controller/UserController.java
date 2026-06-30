@@ -34,6 +34,24 @@ public class UserController {
     }
 
     // =========================
+    // CHANGE PASSWORD API
+    // =========================
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestParam String username,
+            @RequestParam String newPassword) {
+        try {
+            String response = userService.changePassword(username, newPassword);
+            if (response.equals("User not found!")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    // =========================
     // TEST API
     // =========================
     @GetMapping("/test")

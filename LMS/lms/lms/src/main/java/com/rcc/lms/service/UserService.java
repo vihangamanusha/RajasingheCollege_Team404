@@ -434,4 +434,12 @@ public class UserService {
     public List<String> getOccupiedDesignations() {
         return userRepository.findOccupiedSubRoles(UNIQUE_LEADERSHIP_ROLES, "DELETED");
     }
+
+    public String changePassword(String username, String newPassword) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) return "User not found!";
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return "Password changed successfully!";
+    }
 }

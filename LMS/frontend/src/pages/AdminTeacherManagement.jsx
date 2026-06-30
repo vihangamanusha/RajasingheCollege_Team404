@@ -150,7 +150,18 @@ export default function AdminTeacherManagement() {
 
                 const data = await response.json();
 
-                setTeachers(data);
+                // Sort by createdDate descending (recently added first), then by userId descending
+                const sortedData = data.sort((a, b) => {
+                    const dateA = new Date(a.createdDate || 0);
+                    const dateB = new Date(b.createdDate || 0);
+                    if (dateB - dateA !== 0) {
+                        return dateB - dateA;
+                    }
+                    return (b.userId || "").localeCompare(a.userId || "");
+                });
+
+                // Limit to maximum 10 rows
+                setTeachers(sortedData.slice(0, 10));
             }
 
         } catch (error) {
@@ -325,6 +336,64 @@ export default function AdminTeacherManagement() {
                 type: "error"
             });
 
+            return;
+        }
+
+        // 1. Password validation (only if entered/modified)
+        if (editFormData.password.trim() !== "") {
+            if (editFormData.password.length < 8) {
+                setEditMessage({
+                    text: "Password must be at least 8 characters long.",
+                    type: "error"
+                });
+                return;
+            }
+        }
+
+        // 2. Full Name validation
+        if (!editFormData.fullName || !editFormData.fullName.trim()) {
+            setEditMessage({
+                text: "Full Name is required.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 3. Email validation
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!editFormData.email || !emailPattern.test(editFormData.email)) {
+            setEditMessage({
+                text: "Please enter a valid email address.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 4. Contact Number validation (must be exactly 10 digits)
+        const contactPattern = /^\d{10}$/;
+        if (!editFormData.contactNumber || !contactPattern.test(editFormData.contactNumber)) {
+            setEditMessage({
+                text: "Contact Number must be exactly 10 digits.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 5. Subject Specialization validation
+        if (!editFormData.subjectSpecialization || editFormData.subjectSpecialization.length === 0) {
+            setEditMessage({
+                text: "Please select at least one subject specialization.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 6. Designation (subRole) validation
+        if (!editFormData.subRole) {
+            setEditMessage({
+                text: "Please select a Designation.",
+                type: "error"
+            });
             return;
         }
 

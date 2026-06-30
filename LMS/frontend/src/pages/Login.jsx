@@ -43,6 +43,7 @@ export default function Login() {
             // =========================
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("role", res.data.role);
+            localStorage.setItem("username", res.data.username);
             if (res.data.subRole) {
                 localStorage.setItem("subRole", res.data.subRole);
             } else {

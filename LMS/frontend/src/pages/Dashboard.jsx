@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";//automatic load,store data use
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom"; // 1. Import useNavigate for button without relording.
-import { FiUsers, FiBook, FiGrid, FiUserPlus, FiPlus } from "react-icons/fi";
+import { FiUsers, FiBook, FiGrid, FiUserPlus, FiPlus, FiLock } from "react-icons/fi";
 import { FaGraduationCap } from "react-icons/fa";
 import "./Dashboard.css";
 
@@ -10,6 +10,10 @@ export default function Dashboard() {
     const navigate = useNavigate();//change page without refressing..using in the butoon.
 
     const [username, setUsername] = useState("");//store the logged in username.
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [passwordMessage, setPasswordMessage] = useState({ text: "", type: "" });
 
     // 3. Store dashbord data from the backend// react state object
     const [stats, setStats] = useState({
@@ -53,6 +57,49 @@ export default function Dashboard() {
         }
     };
 
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        setPasswordMessage({ text: "", type: "" });
+
+        if (newPassword.length < 8) {
+            setPasswordMessage({ text: "Password must be at least 8 characters long.", type: "error" });
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setPasswordMessage({ text: "Passwords do not match.", type: "error" });
+            return;
+        }
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(
+                `http://localhost:8080/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
+                {
+                    method: "PUT",
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+
+            if (response.ok) {
+                setPasswordMessage({ text: "Password changed successfully! Redirecting to login...", type: "success" });
+                setNewPassword("");
+                setConfirmPassword("");
+                setTimeout(() => {
+                    localStorage.clear();
+                    navigate("/login");
+                }, 1500);
+            } else {
+                const errText = await response.text();
+                setPasswordMessage({ text: `Failed: ${errText}`, type: "error" });
+            }
+        } catch (error) {
+            setPasswordMessage({ text: "Server error during password update.", type: "error" });
+        }
+    };
+
     // Helper to generate initials for the avatar//this is a function, have one parameter name
     const getInitials = (name) => {
         if (!name) return "AD";//check the name emty or null then return ad
@@ -69,7 +116,19 @@ export default function Dashboard() {
                 <div className="user-profile">
                     <div className="user-info">
                         <p className="user-role">Admin</p>
-                        <p className="user-name">{username || "Admin"}</p>
+                        <p className="user-name" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            {username || "Admin"}
+                            <FiLock 
+                                style={{ cursor: "pointer", color: "#64748b", fontSize: "14px" }} 
+                                title="Change Password"
+                                onClick={() => {
+                                    setPasswordMessage({ text: "", type: "" });
+                                    setNewPassword("");
+                                    setConfirmPassword("");
+                                    setShowPasswordModal(true);
+                                }} 
+                            />
+                        </p>
                     </div>
                     <div className="user-avatar">
                         {getInitials(username)}
@@ -172,6 +231,107 @@ export default function Dashboard() {
                     </div>
                 </div>
             </div>
+
+            {/* CHANGE PASSWORD MODAL */}
+            {showPasswordModal && (
+                <div className="modal-overlay" style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    backgroundColor: "rgba(15, 23, 42, 0.6)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 2000
+                }}>
+                    <div className="modal-box" style={{
+                        backgroundColor: "white",
+                        padding: "30px",
+                        borderRadius: "12px",
+                        width: "400px",
+                        boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
+                    }}>
+                        <div className="modal-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
+                            <FiLock className="warning-icon" style={{color: "#2b55cc", fontSize: "24px"}} />
+                            <h2 style={{ margin: 0, fontSize: "1.25rem", fontWeight: "700", color: "#1e293b" }}>Change Password</h2>
+                        </div>
+                        <form onSubmit={handlePasswordChange}>
+                            <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>New Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter new password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    required
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px",
+                                        borderRadius: "6px",
+                                        border: "1px solid #cbd5e1",
+                                        fontSize: "14px",
+                                        backgroundColor: "white"
+                                    }}
+                                />
+                            </div>
+                            <div className="modal-form-group" style={{ marginBottom: "20px" }}>
+                                <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Confirm New Password</label>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm new password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    required
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px",
+                                        borderRadius: "6px",
+                                        border: "1px solid #cbd5e1",
+                                        fontSize: "14px",
+                                        backgroundColor: "white"
+                                    }}
+                                />
+                            </div>
+
+                            {/* INLINE MESSAGE */}
+                            {passwordMessage.text && (
+                                <div className={`inline-form-message ${passwordMessage.type}`} style={{
+                                    padding: "10px",
+                                    borderRadius: "6px",
+                                    fontSize: "13px",
+                                    marginBottom: "15px",
+                                    backgroundColor: passwordMessage.type === "success" ? "#f0fdf4" : "#fef2f2",
+                                    color: passwordMessage.type === "success" ? "#15803d" : "#b91c1c",
+                                    border: passwordMessage.type === "success" ? "1px solid #bbf7d0" : "1px solid #fecaca"
+                                }}>
+                                    {passwordMessage.text}
+                                </div>
+                            )}
+
+                            <div className="modal-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                                <button type="button" className="cancel-btn" onClick={() => setShowPasswordModal(false)} style={{
+                                    padding: "8px 16px",
+                                    border: "1px solid #cbd5e1",
+                                    borderRadius: "6px",
+                                    backgroundColor: "white",
+                                    cursor: "pointer"
+                                }}>Cancel</button>
+                                <button type="submit" className="confirm-delete-btn" style={{
+                                    padding: "8px 16px",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    backgroundColor: "#2b55cc",
+                                    color: "white",
+                                    cursor: "pointer"
+                                }}>Change Password</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }
