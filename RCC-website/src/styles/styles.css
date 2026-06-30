@@ -4845,6 +4845,7 @@ h6,
   gap: 60px;
   align-items: center;
   background: white;
+  
 }
 
 .about-left {
@@ -4870,6 +4871,7 @@ h6,
   line-height: 2;
   margin-bottom: 20px;
   font-size: 17px;
+  font-style: italic;
 }
 
 .about-right {
