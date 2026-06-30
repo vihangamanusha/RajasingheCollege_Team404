@@ -94,13 +94,44 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+body,
+p,
+span,
+li,
+a,
+button,
+input,
+textarea,
+select {
+  font-family: 'Roboto', sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: 'Roboto', sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: #002147;
   background-color: #ffffff;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.hero .title,
+.hero .school-name,
+.home-lms-title,
+.home-feature-title,
+.home-event-title,
+.news-card__title,
+.news-hero__title,
+.academic-section-heading,
+.about-heading,
+.section-title,
+.card-title {
+  font-family: 'Playfair Display', serif;
 }
 
 /* Utility Classes */
@@ -1774,13 +1805,13 @@ body {
   color: #002147;
   margin-left: 75px;
   margin-top: 1.5rem;
- 
 }
 
-.btn-secondary:hover {
+.btn-secondary-lms:hover {
   background-color: #FFC700;
   transform: translateY(-5px);
-  color: #ffffff;
+  color: #002147;
+  
 }
 
 /* Forms */
@@ -3195,7 +3226,7 @@ body {
   color: #374151;
   margin-bottom: 1.5rem;
   font-family: 'Times New Roman', Times, serif;
-  font-style: italic;
+  
 }
 
 .home-link-primary {

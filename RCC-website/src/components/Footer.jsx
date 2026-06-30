@@ -29,7 +29,7 @@ export function Footer() {
         {/* Social Media Icons */}
         <div className="footer-social-links">
           <a
-            href="https://facebook.com"
+            href="https://www.facebook.com/share/1RzCcpjbrY/?mibextid=wwXIfr"
             target="_blank"
             rel="noopener noreferrer"
             className="social-link"
@@ -37,7 +37,7 @@ export function Footer() {
             <Facebook className="footer-icon" />
           </a>
           <a
-            href="https://youtube.com"
+            href="https://youtube.com/@rrvolleyball?si=2otXYcO2WnxmvrT9"
             target="_blank"
             rel="noopener noreferrer"
             className="social-link"
