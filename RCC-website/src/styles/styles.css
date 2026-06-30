@@ -1773,12 +1773,14 @@ body {
   background-color: #FFD700;
   color: #002147;
   margin-left: 75px;
-  margin-top: -10px;
+  margin-top: 1.5rem;
+ 
 }
 
 .btn-secondary:hover {
   background-color: #FFC700;
   transform: translateY(-5px);
+  color: #ffffff;
 }
 
 /* Forms */
@@ -2857,7 +2859,29 @@ body {
   line-height: 1.6;
 }
 
+.no-event-container {
+  width: 100%;
+  text-align: center;
+  padding: 70px 20px;
+  background: #ffffff;
+  border: 2px dashed #d9d9d9;
+  border-radius: 16px;
+  margin-top: 30px;
+}
 
+.no-event-container h3 {
+  font-size: 28px;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.no-event-container p {
+  font-size: 17px;
+  color: #6b7280;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
 
 .news-grid {
   display: grid;
@@ -3170,6 +3194,8 @@ body {
   line-height: 1.625;
   color: #374151;
   margin-bottom: 1.5rem;
+  font-family: 'Times New Roman', Times, serif;
+  font-style: italic;
 }
 
 .home-link-primary {
