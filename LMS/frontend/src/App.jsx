@@ -13,110 +13,136 @@ import AdminUsers from "./pages/AdminUsers";
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
+import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
+// --> NEW: ANNOUNCEMENTS <--
+import Announcement from "./pages/Announcements";
+
+// --> MANAGEMENT TABLES <--
 import AdminStudentManagement from "./pages/AdminStudentManagement";
 import AdminTeacherManagement from "./pages/AdminTeacherManagement";
 import AdminTechOfficerManagement from "./pages/AdminTechOfficerManagement";
-import ManageUsers from "./pages/ManageUsers";
-import AdminClassManagement from "./pages/AdminClassManagement";
 
 // =========================
-// STUDENT PAGES
+// STUDENT ROLE DASHBOARDS
 // =========================
 import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentMarks from "./pages/student/StudentMarks";
 import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
-import MySubjects from "./pages/student/MySubjects";
 
 // =========================
-// TEACHER PAGES
+// TEACHER & SECTION HEAD & DEPUTY PRINCIPAL ROLE DASHBOARDS
 // =========================
 import TeacherDashboard from "./pages/TeacherDashboard";
+import SectionHeadDashboard from "./pages/SectionHeadDashboard";
+import DeputyPrincipalDashboard from "./pages/DeputyPrincipalDashboard";
 
 // =========================
-// LAYOUTS
+// LAYOUT & SECURITY
 // =========================
 import AdminLayout from "./layouts/AdminLayout";
-import StudentLayout from "./Component/student/StudentLayout"; // ✅ Fixed: lowercase 'components'
-
-// =========================
-// PROTECTED ROUTE
-// =========================
+import StudentLayout from "./Component/student/StudentLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
-// ─────────────────────────────────────────────
-// Get the logged-in student's ID from storage.
-// Replace this with your actual auth context/token decode
-// if you have a login system that sets it.
-// ─────────────────────────────────────────────
-const studentId = localStorage.getItem("studentId") || "";
-
 function App() {
-  return (
-    <Routes>
-      {/* DEFAULT ROUTE */}
-      <Route path="/" element={<Navigate to="/login" replace />} />
+    return (
+        <Routes>
+            {/* DEFAULT ROUTE: Redirect to Login */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
 
-      {/* LOGIN */}
-      <Route path="/login" element={<Login />} />
+            {/* PUBLIC LOGIN PAGE */}
+            <Route path="/login" element={<Login />} />
 
-      {/* ADMIN PANEL */}
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute>
-            <AdminLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Dashboard />} />
-        <Route path="users" element={<AdminUsers />} />
-        <Route path="users/student" element={<StudentRegister />} />
-        <Route path="users/teacher" element={<TeacherRegister />} />
-        <Route path="users/tech" element={<TechRegister />} />
-        <Route path="students" element={<AdminStudentManagement />} />
-        <Route path="teachers" element={<AdminTeacherManagement />} />
-        <Route path="tech-officers" element={<AdminTechOfficerManagement />} />
-        <Route path="manage-users" element={<ManageUsers />} />
-        <Route path="classes" element={<AdminClassManagement />} />
-      </Route>
+            {/* ============================================================
+                ADMIN PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/admin"
+                element={
+                    <ProtectedRoute>
+                        <AdminLayout />
+                    </ProtectedRoute>
+                }
+            >
+                {/* Default view when navigating to /admin */}
+                <Route index element={<Dashboard />} />
 
-      {/* TEACHER PANEL */}
-      <Route
-        path="/teacher"
-        element={
-          <ProtectedRoute>
-            <TeacherDashboard />
-          </ProtectedRoute>
-        }
-      />
+                {/* USER MANAGEMENT MAIN MENU */}
+                <Route path="users" element={<AdminUsers />} />
 
-      {/* STUDENT PANEL */}
-      <Route
-        path="/student"
-        element={
-          <ProtectedRoute>
-            <StudentLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<Navigate to="dashboard" replace />} />
+                {/* --> MANAGEMENT TABLES <-- */}
+                <Route path="students" element={<AdminStudentManagement />} />
+                <Route path="teachers" element={<AdminTeacherManagement />} />
+                <Route path="tech-officers" element={<AdminTechOfficerManagement />} />
 
-        {/* ✅ All routes are relative (no leading /student/) */}
-        <Route
-          path="dashboard"
-          element={<StudentDashboard studentId={studentId} />}
-        />
-        <Route path="marks" element={<StudentMarks studentId={studentId} />} />
-        <Route path="subjects" element={<MySubjects studentId={studentId} />} />
-        <Route path="materials" element={<StudentMaterials />} />
-        <Route
-          path="report"
-          element={<StudentReport studentId={studentId} />}
-        />
-      </Route>
-    </Routes>
-  );
+                {/* --> NEW: ACADEMIC ANALYTICS & REPORTS <-- */}
+                <Route path="analytics" element={<AdminAcademicAnalytics />} />
+
+                {/* --> REGISTRATION FORMS <-- */}
+                <Route path="users/student" element={<StudentRegister />} />
+                <Route path="users/teacher" element={<TeacherRegister />} />
+                <Route path="users/tech" element={<TechRegister />} />
+
+                {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- */}
+                <Route path="announcements" element={<Announcement />} />
+
+            </Route>
+
+            {/* ============================================================
+                STUDENT PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/student"
+                element={
+                    <ProtectedRoute>
+                        <StudentLayout />
+                    </ProtectedRoute>
+                }
+            >
+                <Route index element={<Navigate to="dashboard" replace />} />
+                <Route path="dashboard" element={<StudentDashboard studentId="STU001" />} />
+                <Route path="marks" element={<StudentMarks studentId="STU001" />} />
+                <Route path="materials" element={<StudentMaterials />} />
+                <Route path="report" element={<StudentReport studentId="STU001" />} />
+            </Route>
+
+            {/* ============================================================
+                TEACHER PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/teacher"
+                element={
+                    <ProtectedRoute>
+                        <TeacherDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ============================================================
+                SECTION HEAD PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/section-head"
+                element={
+                    <ProtectedRoute>
+                        <SectionHeadDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ============================================================
+                DEPUTY PRINCIPAL PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/deputy-principal"
+                element={
+                    <ProtectedRoute>
+                        <DeputyPrincipalDashboard />
+                    </ProtectedRoute>
+                }
+            />
+        </Routes>
+    );
 }
 
 export default App;

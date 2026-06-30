@@ -30,3 +30,15 @@ export const loginUser = (data) => API.post("/user/login", data);
 
 // export API for other calls
 export default API;
+
+
+// ======================
+// ANNOUNCEMENT APIs
+// ======================
+
+// Get all announcements
+export const getAnnouncements = () => API.get("/admin/announcements");
+
+// Create announcement
+export const createAnnouncement = (data) =>
+    API.post("/admin/announcements/create", data);

@@ -1,24 +1,27 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";//store and run data auto matically.
+import { useNavigate } from "react-router-dom";//page navigation without relord.
 import { FiSearch, FiEdit, FiTrash2, FiUserPlus, FiAlertTriangle } from "react-icons/fi";
 import "./AdminTechOfficerManagement.css";
 
 export default function AdminTechOfficerManagement() {
-    const navigate = useNavigate();
+    const navigate = useNavigate();//use this to navigate
 
     // =========================
     // STATE MANAGEMENT
     // =========================
-    const [searchTerm, setSearchTerm] = useState("");
-    const [officers, setOfficers] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");//what admin types in search box
+    const [officers, setOfficers] = useState([]);//store all the serch data
+    const [loading, setLoading] = useState(false);//shows loading message when API runs
 
     // =========================
     // DELETE MODAL STATE
     // =========================
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);//Controls delete popup
+    const [userToDelete, setUserToDelete] = useState(null);//Stores which user is selected for deletion
     const [deleteMessage, setDeleteMessage] = useState({ text: "", type: "" });
+    const [deleteStage, setDeleteStage] = useState(1);
+    const [deletionReason, setDeletionReason] = useState("");
+    const [reasonError, setReasonError] = useState("");
 
     // =========================
     // EDIT MODAL STATE
@@ -26,13 +29,13 @@ export default function AdminTechOfficerManagement() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [editMessage, setEditMessage] = useState({ text: "", type: "" });
     const [originalEditData, setOriginalEditData] = useState(null); // Tracks changes
-    const [editFormData, setEditFormData] = useState({
+    const [editFormData, setEditFormData] = useState({//Stores form data while editing officer
         username: "", userId: "", email: "", password: "",
         fullName: "", position: "", assignedArea: "", contactNumber: ""
     });
 
     // =========================
-    // FETCH DATA
+    // FETCH DATA, FETCH OFFICERS FROM BACKEND
     // =========================
     const fetchOfficers = async () => {
         setLoading(true);
@@ -112,6 +115,64 @@ export default function AdminTechOfficerManagement() {
         e.preventDefault();
         setEditMessage({ text: "", type: "" });
 
+        // 1. Password validation (only if entered/modified)
+        if (editFormData.password.trim() !== "") {
+            if (editFormData.password.length < 8) {
+                setEditMessage({
+                    text: "Password must be at least 8 characters long.",
+                    type: "error"
+                });
+                return;
+            }
+        }
+
+        // 2. Full Name validation
+        if (!editFormData.fullName || !editFormData.fullName.trim()) {
+            setEditMessage({
+                text: "Full Name is required.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 3. Email validation
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!editFormData.email || !emailPattern.test(editFormData.email)) {
+            setEditMessage({
+                text: "Please enter a valid email address.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 4. Contact Number validation (must be exactly 10 digits)
+        const contactPattern = /^\d{10}$/;
+        if (!editFormData.contactNumber || !contactPattern.test(editFormData.contactNumber)) {
+            setEditMessage({
+                text: "Contact Number must be exactly 10 digits.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 5. Position validation
+        if (!editFormData.position || editFormData.position === "Select Position") {
+            setEditMessage({
+                text: "Please select a valid Position.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 6. Assigned Area validation
+        if (!editFormData.assignedArea || editFormData.assignedArea === "Select Area") {
+            setEditMessage({
+                text: "Please select a valid Assigned Area.",
+                type: "error"
+            });
+            return;
+        }
+
         // Change Tracker: Prevent saving if nothing was altered
         const hasChanges = Object.keys(originalEditData).some(key => {
             if (key === 'password') return editFormData.password.trim() !== "";
@@ -158,28 +219,40 @@ export default function AdminTechOfficerManagement() {
     // =========================
     const triggerDelete = (username) => {
         setUserToDelete(username);
+        setDeleteStage(1);
+        setDeletionReason("");
+        setReasonError("");
         setDeleteMessage({ text: "", type: "" });
         setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
+        if (!deletionReason.trim()) {
+            setReasonError("Reason for deletion is compulsory.");
+            return;
+        }
+        setReasonError("");
         setDeleteMessage({ text: "", type: "" });
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/delete/${userToDelete}`, {
-                method: "DELETE",
-                headers: { Authorization: `Bearer ${token}` },
-            });
+            const response = await fetch(
+                `http://localhost:8080/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionReason)}`,
+                {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
 
             if (response.ok) {
-                setDeleteMessage({ text: "Officer permanently deleted.", type: "success" });
+                setDeleteMessage({ text: "Officer deleted successfully.", type: "success" });
                 fetchOfficers();
                 setTimeout(() => {
                     setShowDeleteModal(false);
                     setUserToDelete(null);
                 }, 1500);
             } else {
-                setDeleteMessage({ text: "Failed to delete officer.", type: "error" });
+                const errText = await response.text();
+                setDeleteMessage({ text: `Failed to delete: ${errText}`, type: "error" });
             }
         } catch (error) {
             setDeleteMessage({ text: "Server error during deletion.", type: "error" });
@@ -370,22 +443,60 @@ export default function AdminTechOfficerManagement() {
             {showDeleteModal && (
                 <div className="modal-overlay">
                     <div className="modal-box">
-                        <div className="modal-header">
-                            <FiAlertTriangle className="warning-icon" style={{color: "#dc2626"}} />
-                            <h2>Permanently Delete Officer?</h2>
+                        <div className="modal-header" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                            <FiAlertTriangle className="warning-icon" style={{color: "#dc2626", fontSize: "24px"}} />
+                            <h2 style={{ margin: 0 }}>Delete Technical Officer</h2>
                         </div>
-                        <p>Are you sure you want to permanently delete <strong>{userToDelete}</strong>? This action cannot be undone.</p>
+                        <p style={{ marginTop: "15px" }}>Do you want to delete this technical officer account?</p>
+
+                        {deleteStage === 2 && (
+                            <div style={{ marginTop: "15px", marginBottom: "15px", textAlign: "left" }}>
+                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "5px" }}>
+                                    Please enter the reason for deletion (compulsory):
+                                </label>
+                                <textarea
+                                    placeholder="Enter reason for deletion"
+                                    value={deletionReason}
+                                    onChange={(e) => {
+                                        setDeletionReason(e.target.value);
+                                        if (e.target.value.trim()) setReasonError("");
+                                    }}
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px",
+                                        borderRadius: "6px",
+                                        border: reasonError ? "1px solid #ef4444" : "1px solid #cbd5e1",
+                                        backgroundColor: "#f8fafc",
+                                        resize: "none",
+                                        fontSize: "14px",
+                                        outline: "none",
+                                        fontFamily: "inherit"
+                                    }}
+                                    rows="3"
+                                    required
+                                />
+                                {reasonError && (
+                                    <div style={{ color: "#ef4444", fontSize: "12px", marginTop: "4px", fontWeight: "500" }}>
+                                        {reasonError}
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {/* INLINE FORM MESSAGE */}
                         {deleteMessage.text && (
-                            <div className={`inline-form-message ${deleteMessage.type}`}>
+                            <div className={`inline-form-message ${deleteMessage.type}`} style={{ marginTop: "10px" }}>
                                 {deleteMessage.text}
                             </div>
                         )}
 
                         <div className="modal-actions" style={{marginTop: "25px"}}>
                             <button className="cancel-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
-                            <button className="confirm-delete-btn" onClick={confirmDelete}>Yes, Permanently Delete</button>
+                            {deleteStage === 1 ? (
+                                <button className="confirm-delete-btn" onClick={() => setDeleteStage(2)}>Yes</button>
+                            ) : (
+                                <button className="confirm-delete-btn" onClick={confirmDelete}>Delete</button>
+                            )}
                         </div>
                     </div>
                 </div>

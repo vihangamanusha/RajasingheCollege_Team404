@@ -13,6 +13,7 @@ public class TechRegistrationRequest {
     private String contactNumber;
     private String position;
     private String assignedArea;
+    private String nic;
 
     // Generate all standard Getters and Setters here!
     public String getUserId() { return userId; } public void setUserId(String userId) { this.userId = userId; }
@@ -24,4 +25,5 @@ public class TechRegistrationRequest {
     public String getContactNumber() { return contactNumber; } public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
     public String getPosition() { return position; } public void setPosition(String position) { this.position = position; }
     public String getAssignedArea() { return assignedArea; } public void setAssignedArea(String assignedArea) { this.assignedArea = assignedArea; }
+    public String getNic() { return nic; } public void setNic(String nic) { this.nic = nic; }
 }

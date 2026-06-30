@@ -30,6 +30,9 @@ public class Teacher {
     @Column(name = "contact_number", length = 15)
     private String contactNumber;
 
+    @Column(name = "nic", unique = true, length = 20)
+    private String nic;
+
     // =========================
     // UPDATED GETTERS AND SETTERS
     // =========================
@@ -45,4 +48,6 @@ public class Teacher {
     public void setSubRole(String subRole) { this.subRole = subRole; }
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+    public String getNic() { return nic; }
+    public void setNic(String nic) { this.nic = nic; }
 }

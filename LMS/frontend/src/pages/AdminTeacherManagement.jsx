@@ -1,7 +1,7 @@
 // AdminTeacherManagement.jsx
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";//page navigation without relord.
 import {
     FiSearch,
     FiEdit,
@@ -14,19 +14,50 @@ import "./AdminTeacherManagement.css";
 
 export default function AdminTeacherManagement() {
 
-    const navigate = useNavigate();
+    const navigate = useNavigate();//use to move between page.
 
     // =========================================
     // STATE MANAGEMENT
     // =========================================
 
-    const [searchTerm, setSearchTerm] = useState("");
-    const [teachers, setTeachers] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");//what admin types in search box
+    const [teachers, setTeachers] = useState([]);//store list of teacher
+    const [loading, setLoading] = useState(false);//controoler show lord msg
+    const [occupiedRoles, setOccupiedRoles] = useState([]);
+    const [deleteStage, setDeleteStage] = useState(1);
+    const [deletionReason, setDeletionReason] = useState("");
+    const [reasonError, setReasonError] = useState("");
+
+    const fetchOccupied = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("http://localhost:8080/admin/users/occupied-designations", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setOccupiedRoles(data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch occupied designations", err);
+        }
+    };
+
+    const isRoleAvailable = (role) => {
+        if (role === "Subject Teacher") {
+            return true;
+        }
+        if (editFormData && editFormData.subRole === role) {
+            return true;
+        }
+        return !occupiedRoles.includes(role);
+    };
 
     // DELETE
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [userToDelete, setUserToDelete] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);//Controls delete popup
+    const [userToDelete, setUserToDelete] = useState(null);//Stores which user is selected for deletion
 
     const [deleteMessage, setDeleteMessage] = useState({
         text: "",
@@ -34,14 +65,14 @@ export default function AdminTeacherManagement() {
     });
 
     // EDIT
-    const [showEditModal, setShowEditModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);//Controls edit popup
 
-    const [editMessage, setEditMessage] = useState({
+    const [editMessage, setEditMessage] = useState({//Stores form data while editing officer
         text: "",
         type: ""
     });
 
-    const [originalEditData, setOriginalEditData] = useState(null);
+    const [originalEditData, setOriginalEditData] = useState(null);//check if user edited anything
 
     const [editFormData, setEditFormData] = useState({
         username: "",
@@ -51,14 +82,31 @@ export default function AdminTeacherManagement() {
         fullName: "",
         subjectSpecialization: [],
         contactNumber: "",
-        subRole: ""
+        subRole: "",
+        createdDate: ""
     });
+
+    // =========================================
+    // UTILS
+    // =========================================
+
+    const calculateYearsSince = (dateString) => {
+        if (!dateString) return 0;
+        const regDate = new Date(dateString);
+        const today = new Date();
+        let years = today.getFullYear() - regDate.getFullYear();
+        const m = today.getMonth() - regDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < regDate.getDate())) {
+            years--;
+        }
+        return years;
+    };
 
     // =========================================
     // SUBJECTS + DESIGNATIONS
     // =========================================
 
-    const subjectsList = [
+    const subjectsList = [//List of available subjects
         "Mathematics",
         "Science",
         "English",
@@ -69,7 +117,7 @@ export default function AdminTeacherManagement() {
         "Music"
     ];
 
-    const designationList = [
+    const designationList = [//list of teacher roles
         "Subject Teacher",
         "Class Teacher",
         "Section Head",
@@ -81,15 +129,15 @@ export default function AdminTeacherManagement() {
     // FETCH TEACHERS
     // =========================================
 
-    const fetchTeachers = async () => {
+    const fetchTeachers = async () => {//this function  get the teacher from the backend.
 
-        setLoading(true);
+        setLoading(true);//show loadin databse...
 
         try {
 
             const token = localStorage.getItem("token");
 
-            const response = await fetch(
+            const response = await fetch(//secnd request to backend
                 `http://localhost:8080/admin/users/search?role=ROLE_TEACHER&term=${searchTerm}`,
                 {
                     headers: {
@@ -102,7 +150,18 @@ export default function AdminTeacherManagement() {
 
                 const data = await response.json();
 
-                setTeachers(data);
+                // Sort by createdDate descending (recently added first), then by userId descending
+                const sortedData = data.sort((a, b) => {
+                    const dateA = new Date(a.createdDate || 0);
+                    const dateB = new Date(b.createdDate || 0);
+                    if (dateB - dateA !== 0) {
+                        return dateB - dateA;
+                    }
+                    return (b.userId || "").localeCompare(a.userId || "");
+                });
+
+                // Limit to maximum 10 rows
+                setTeachers(sortedData.slice(0, 10));
             }
 
         } catch (error) {
@@ -111,15 +170,17 @@ export default function AdminTeacherManagement() {
 
         } finally {
 
-            setLoading(false);
+            setLoading(false);//stop lording.
         }
     };
 
     useEffect(() => {
 
+        //waits 300ms before calling API
         const delayDebounce = setTimeout(() => {
 
             fetchTeachers();
+            fetchOccupied();
 
         }, 300);
 
@@ -132,7 +193,7 @@ export default function AdminTeacherManagement() {
     // =========================================
 
     const triggerEdit = async (teacher) => {
-
+        fetchOccupied();
         setEditMessage({
             text: "",
             type: ""
@@ -148,7 +209,8 @@ export default function AdminTeacherManagement() {
             fullName: "Loading...",
             subjectSpecialization: [],
             contactNumber: "Loading...",
-            subRole: teacher.subRole || ""
+            subRole: teacher.subRole || "",
+            createdDate: teacher.createdDate || ""
         };
 
         setEditFormData(initialData);
@@ -158,7 +220,7 @@ export default function AdminTeacherManagement() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `http://localhost:8080/admin/users/teacher/${teacher.username}`,
+                `http://localhost:8080/admin/users/teacher/${teacher.username}`,//call backend controller.
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -186,7 +248,8 @@ export default function AdminTeacherManagement() {
 
                     contactNumber: fullProfile.contactNumber || "",
 
-                    subRole: teacher.subRole || ""
+                    subRole: teacher.subRole || "",
+                    createdDate: teacher.createdDate || ""
                 };
 
                 setEditFormData(completeData);
@@ -257,9 +320,9 @@ export default function AdminTeacherManagement() {
     // SAVE EDIT
     // =========================================
 
-    const submitEdit = async (e) => {
+    const submitEdit = async (e) => {//save chnges
 
-        e.preventDefault();
+        e.preventDefault();//prevent refresh
 
         setEditMessage({
             text: "",
@@ -273,6 +336,64 @@ export default function AdminTeacherManagement() {
                 type: "error"
             });
 
+            return;
+        }
+
+        // 1. Password validation (only if entered/modified)
+        if (editFormData.password.trim() !== "") {
+            if (editFormData.password.length < 8) {
+                setEditMessage({
+                    text: "Password must be at least 8 characters long.",
+                    type: "error"
+                });
+                return;
+            }
+        }
+
+        // 2. Full Name validation
+        if (!editFormData.fullName || !editFormData.fullName.trim()) {
+            setEditMessage({
+                text: "Full Name is required.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 3. Email validation
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!editFormData.email || !emailPattern.test(editFormData.email)) {
+            setEditMessage({
+                text: "Please enter a valid email address.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 4. Contact Number validation (must be exactly 10 digits)
+        const contactPattern = /^\d{10}$/;
+        if (!editFormData.contactNumber || !contactPattern.test(editFormData.contactNumber)) {
+            setEditMessage({
+                text: "Contact Number must be exactly 10 digits.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 5. Subject Specialization validation
+        if (!editFormData.subjectSpecialization || editFormData.subjectSpecialization.length === 0) {
+            setEditMessage({
+                text: "Please select at least one subject specialization.",
+                type: "error"
+            });
+            return;
+        }
+
+        // 6. Designation (subRole) validation
+        if (!editFormData.subRole) {
+            setEditMessage({
+                text: "Please select a Designation.",
+                type: "error"
+            });
             return;
         }
 
@@ -302,7 +423,7 @@ export default function AdminTeacherManagement() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `http://localhost:8080/admin/users/teacher/update/${editFormData.username}`,
+                `http://localhost:8080/admin/users/teacher/update/${editFormData.username}`,//call controller
                 {
                     method: "PUT",
 
@@ -340,7 +461,8 @@ export default function AdminTeacherManagement() {
                     type: "success"
                 });
 
-                fetchTeachers();
+                fetchTeachers();//refresh list
+                fetchOccupied();
 
                 setTimeout(() => {
 
@@ -372,18 +494,23 @@ export default function AdminTeacherManagement() {
     // =========================================
 
     const triggerDelete = (username) => {
-
         setUserToDelete(username);
-
+        setDeleteStage(1);
+        setDeletionReason("");
+        setReasonError("");
         setDeleteMessage({
             text: "",
             type: ""
         });
-
         setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
+        if (!deletionReason.trim()) {
+            setReasonError("Reason for deletion is compulsory.");
+            return;
+        }
+        setReasonError("");
 
         setDeleteMessage({
             text: "",
@@ -391,11 +518,9 @@ export default function AdminTeacherManagement() {
         });
 
         try {
-
             const token = localStorage.getItem("token");
-
             const response = await fetch(
-                `http://localhost:8080/admin/users/delete/${userToDelete}`,
+                `http://localhost:8080/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionReason)}`,
                 {
                     method: "DELETE",
                     headers: {
@@ -405,26 +530,21 @@ export default function AdminTeacherManagement() {
             );
 
             if (response.ok) {
-
                 setDeleteMessage({
                     text: "Teacher deleted successfully.",
                     type: "success"
                 });
 
                 fetchTeachers();
+                fetchOccupied();
 
                 setTimeout(() => {
-
                     setShowDeleteModal(false);
-
                     setUserToDelete(null);
-
                 }, 1500);
 
             } else {
-
                 const errorText = await response.text();
-
                 setDeleteMessage({
                     text: `Failed to delete: ${errorText}`,
                     type: "error"
@@ -432,13 +552,30 @@ export default function AdminTeacherManagement() {
             }
 
         } catch (error) {
-
             setDeleteMessage({
                 text: "Server error during deletion.",
                 type: "error"
             });
         }
     };
+
+    const allDesignationsList = [
+        "Subject Teacher",
+        "Section Head Grade 6",
+        "Section Head Grade 7",
+        "Section Head Grade 8",
+        "Section Head Grade 9",
+        "Section Head Grade 10",
+        "Section Head Grade 11",
+        "Deputy Principal (Administrative)",
+        "Deputy Principal (Development)"
+    ];
+
+    const editDesignations = allDesignationsList.filter(role => 
+        role === "Subject Teacher" || 
+        (editFormData && editFormData.subRole === role) ||
+        !occupiedRoles.includes(role)
+    );
 
     // =========================================
     // RETURN
@@ -513,7 +650,8 @@ export default function AdminTeacherManagement() {
                             <th>Teacher ID</th>
                             <th>Username</th>
                             <th>Email</th>
-                            <th>Status</th>
+                            <th>Role</th>
+                            <th>Register Date</th>
                             <th>Actions</th>
                         </tr>
 
@@ -540,13 +678,13 @@ export default function AdminTeacherManagement() {
                                 </td>
 
                                 <td>
-
-                                    <span className="role-badge subject-teacher">
-
-                                        {teacher.status}
-
+                                    <span className={`role-badge ${teacher.subRole?.toLowerCase().replace(/\s+/g, '-') || 'subject-teacher'}`}>
+                                        {teacher.subRole || "Subject Teacher"}
                                     </span>
+                                </td>
 
+                                <td>
+                                    {teacher.createdDate || "N/A"}
                                 </td>
 
                                 <td>
@@ -555,6 +693,7 @@ export default function AdminTeacherManagement() {
 
                                         <button
                                             className="icon-btn edit-icon"
+                                            title="Edit Profile"
                                             onClick={() =>
                                                 triggerEdit(teacher)
                                             }
@@ -562,8 +701,21 @@ export default function AdminTeacherManagement() {
                                             <FiEdit />
                                         </button>
 
+                                        {/* Promotion Logic */}
+                                        {calculateYearsSince(teacher.createdDate) >= 1 && (//show promotion button
+                                            <button
+                                                className="icon-btn promote-icon"
+                                                title="Manage Promotion"
+                                                onClick={() => triggerEdit(teacher)}
+                                                style={{ color: '#f39c12' }}
+                                            >
+                                                <FiUserPlus />
+                                            </button>
+                                        )}
+
                                         <button
                                             className="icon-btn delete-icon"
+                                            title="Delete User"
                                             onClick={() =>
                                                 triggerDelete(teacher.username)
                                             }
@@ -689,7 +841,7 @@ export default function AdminTeacherManagement() {
                             <div className="modal-form-group">
 
                                 <label>
-                                    Designation / Hierarchy
+                                    Designation
                                 </label>
 
                                 <select
@@ -701,22 +853,9 @@ export default function AdminTeacherManagement() {
                                         })
                                     }
                                 >
-
-                                    <option value="">
-                                        Select Designation
-                                    </option>
-
-                                    {designationList.map((designation) => (
-
-                                        <option
-                                            key={designation}
-                                            value={designation}
-                                        >
-                                            {designation}
-                                        </option>
-
+                                    {editDesignations.map((role) => (
+                                        <option key={role} value={role}>{role}</option>
                                     ))}
-
                                 </select>
 
                             </div>
@@ -840,8 +979,42 @@ export default function AdminTeacherManagement() {
                         </div>
 
                         <p className="delete-text">
-                            Are you sure you want to permanently delete this teacher account?
+                            Do you want to delete this teacher account?
                         </p>
+
+                        {deleteStage === 2 && (
+                            <div style={{ marginTop: "15px", marginBottom: "15px", textAlign: "left" }}>
+                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "5px" }}>
+                                    Please enter the reason for deletion (compulsory):
+                                </label>
+                                <textarea
+                                    placeholder="Enter reason for deletion"
+                                    value={deletionReason}
+                                    onChange={(e) => {
+                                        setDeletionReason(e.target.value);
+                                        if (e.target.value.trim()) setReasonError("");
+                                    }}
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px",
+                                        borderRadius: "6px",
+                                        border: reasonError ? "1px solid #ef4444" : "1px solid #cbd5e1",
+                                        backgroundColor: "#f8fafc",
+                                        resize: "none",
+                                        fontSize: "14px",
+                                        outline: "none",
+                                        fontFamily: "inherit"
+                                    }}
+                                    rows="3"
+                                    required
+                                />
+                                {reasonError && (
+                                    <div style={{ color: "#ef4444", fontSize: "12px", marginTop: "4px", fontWeight: "500" }}>
+                                        {reasonError}
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {deleteMessage.text && (
 
@@ -863,13 +1036,23 @@ export default function AdminTeacherManagement() {
                                 Cancel
                             </button>
 
-                            <button
-                                type="button"
-                                className="confirm-delete-btn"
-                                onClick={confirmDelete}
-                            >
-                                Delete
-                            </button>
+                            {deleteStage === 1 ? (
+                                <button
+                                    type="button"
+                                    className="confirm-delete-btn"
+                                    onClick={() => setDeleteStage(2)}
+                                >
+                                    Yes
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="confirm-delete-btn"
+                                    onClick={confirmDelete}
+                                >
+                                    Delete
+                                </button>
+                            )}
 
                         </div>
 

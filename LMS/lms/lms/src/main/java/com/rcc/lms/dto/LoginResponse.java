@@ -6,16 +6,26 @@ public class LoginResponse {
     private String username;
     private String role;
     private String token;
+    private String subRole;
 
     // Default constructor
     public LoginResponse() {}
 
-    // Constructor with all fields
+    // Constructor with legacy fields
     public LoginResponse(String message, String username, String role, String token) {
         this.message = message;
         this.username = username;
         this.role = role;
         this.token = token;
+    }
+
+    // Constructor with all fields including subRole
+    public LoginResponse(String message, String username, String role, String token, String subRole) {
+        this.message = message;
+        this.username = username;
+        this.role = role;
+        this.token = token;
+        this.subRole = subRole;
     }
 
     // Getter and Setter for message
@@ -52,5 +62,14 @@ public class LoginResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    // Getter and Setter for subRole
+    public String getSubRole() {
+        return subRole;
+    }
+
+    public void setSubRole(String subRole) {
+        this.subRole = subRole;
     }
 }

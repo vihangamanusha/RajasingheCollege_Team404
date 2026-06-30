@@ -29,6 +29,10 @@ public class CustomUserDetailsService implements UserDetailsService {
                         new UsernameNotFoundException("User not found: " + username)
                 );
 
+        if ("DELETED".equals(user.getStatus())) {
+            throw new UsernameNotFoundException("User has been deleted: " + username);
+        }
+
         // =========================
         // 2. HANDLE ROLE SAFELY
         // =========================

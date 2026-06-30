@@ -23,9 +23,8 @@ public class UserController {
         return ResponseEntity.ok(userService.createUserByAdmin(user));
     }
 
-
     // =========================
-    // LOGIN API
+    // LOGIN API.........
     // =========================
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest request) {
@@ -34,7 +33,23 @@ public class UserController {
         return ResponseEntity.ok(userService.loginUser(request));
     }
 
- 
+    // =========================
+    // CHANGE PASSWORD API
+    // =========================
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestParam String username,
+            @RequestParam String newPassword) {
+        try {
+            String response = userService.changePassword(username, newPassword);
+            if (response.equals("User not found!")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
 
     // =========================
     // TEST API
