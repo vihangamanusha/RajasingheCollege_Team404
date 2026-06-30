@@ -4507,9 +4507,10 @@ h6,
 .sports-intro p {
   max-width: 900px;
   margin: 20px auto;
-  line-height: 1.8;
-  color: #555;
-  font-size: 18px;
+  line-height: 1.75;  
+  color: #4b5563;
+  font-size: 1rem;
+  font-weight: 300;
 }
 
 .sports-section {
@@ -4618,10 +4619,13 @@ h6,
 }
 
 .sport-row-description {
-  color: #555;
-  line-height: 1.9;
-  font-size: 16px;
-  margin-bottom: 25px;
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 2.5rem;
+  line-height: 1.625;
+  font-weight: 300;
+  font-style: italic;
+
 }
 
 .sport-achievement {
