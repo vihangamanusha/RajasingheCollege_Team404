@@ -76,10 +76,23 @@ export default function StudentRegister() {
         setMessage(""); // Clear error when typing
     };
 
-    const handleNext = () => {
-        if (validateStep()) {//validate and go to next step.
-            setStep(2);
+    const handleNext = async () => {
+        if (validateStep()) {
             setMessage("");
+            try {
+                const res = await fetch("http://localhost:8080/admin/users/generate-id?role=ROLE_STUDENT", {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                });
+                if (res.ok) {
+                    const generatedId = await res.text();
+                    setForm(prev => ({ ...prev, userId: generatedId, username: generatedId.toLowerCase() }));
+                }
+            } catch (err) {
+                console.error("Failed to generate Student ID automatically", err);
+            }
+            setStep(2);
         }
     };
 
@@ -107,7 +120,11 @@ export default function StudentRegister() {
             if (res.ok) {
                 setMessage("Student successfully registered! ");
                 setMessageType("success");
-                // Optional: Reset form here if needed
+                setForm({
+                    fullName: "", dateOfBirth: "", address: "", contactNumber: "", medium: "",
+                    userId: "", username: "", email: "", password: ""
+                });
+                setStep(1);
             } else {
                 // Backend uniqueness errors (e.g. "Username already exists") will show here
                 setMessage(data);
@@ -182,10 +199,10 @@ export default function StudentRegister() {
                     {step === 2 && (
                         <div className="wizard-step">
                             <div className="form-group">
-                                <label>Student ID (Alphanumeric)</label>
+                                <label>Student ID (Automatically Generated)</label>
                                 <div className="input-container">
                                     <FiHash className="input-icon" />
-                                    <input name="userId" value={form.userId} onChange={handleChange} required />
+                                    <input name="userId" value={form.userId} readOnly style={{ backgroundColor: "#e2e8f0", cursor: "not-allowed" }} required />
                                 </div>
                             </div>
                             <div className="form-group">

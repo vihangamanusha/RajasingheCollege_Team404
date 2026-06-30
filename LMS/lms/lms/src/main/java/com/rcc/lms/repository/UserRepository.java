@@ -57,7 +57,17 @@ public interface UserRepository extends JpaRepository<User, String> {//entity an
     long countByRoleAndStatusNot(String role, String status);
 
     /**
-     * Fetches the 4 most recently created users who are not deleted.
+     * Fetches the 5 most recently created users who are not deleted, ordered by created date and then user ID descending.
      */
-    List<User> findTop4ByStatusNotOrderByCreatedDateDesc(String status);
+    List<User> findTop5ByStatusNotOrderByCreatedDateDescUserIdDesc(String status);
+
+    @Query("SELECT u.userId FROM User u WHERE u.userId LIKE CONCAT(:prefix, '%')")
+    List<String> findUserIdsByPrefix(@Param("prefix") String prefix);
+
+    boolean existsBySubRoleAndStatusNot(String subRole, String status);
+
+    boolean existsBySubRoleAndUserIdNotAndStatusNot(String subRole, String userId, String status);
+
+    @Query("SELECT DISTINCT u.subRole FROM User u WHERE u.subRole IN :roles AND u.status != :status")
+    List<String> findOccupiedSubRoles(@Param("roles") List<String> roles, @Param("status") String status);
 }

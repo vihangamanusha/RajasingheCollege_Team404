@@ -31,6 +31,12 @@ import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
 
 // =========================
+// TEACHER & SECTION HEAD ROLE DASHBOARDS
+// =========================
+import TeacherDashboard from "./pages/TeacherDashboard";
+import SectionHeadDashboard from "./pages/SectionHeadDashboard";
+
+// =========================
 // LAYOUT & SECURITY
 // =========================
 import AdminLayout from "./layouts/AdminLayout";
@@ -98,6 +104,30 @@ function App() {
                 <Route path="materials" element={<StudentMaterials />} />
                 <Route path="report" element={<StudentReport studentId="STU001" />} />
             </Route>
+
+            {/* ============================================================
+                TEACHER PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/teacher"
+                element={
+                    <ProtectedRoute>
+                        <TeacherDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ============================================================
+                SECTION HEAD PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/section-head"
+                element={
+                    <ProtectedRoute>
+                        <SectionHeadDashboard />
+                    </ProtectedRoute>
+                }
+            />
         </Routes>
     );
 }

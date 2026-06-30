@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     FiUser,
     FiMail,
@@ -18,6 +18,42 @@ import "./TeacherRegister.css";
 export default function TeacherRegister() {
 
     const [step, setStep] = useState(1);//Controls which page is shown
+    const [occupiedRoles, setOccupiedRoles] = useState([]);
+
+    useEffect(() => {
+        const fetchOccupied = async () => {
+            try {
+                const res = await fetch("http://localhost:8080/admin/users/occupied-designations", {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setOccupiedRoles(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch occupied designations", err);
+            }
+        };
+        fetchOccupied();
+    }, []);
+
+    const allDesignations = [
+        "Subject Teacher",
+        "Section Head Grade 6",
+        "Section Head Grade 7",
+        "Section Head Grade 8",
+        "Section Head Grade 9",
+        "Section Head Grade 10",
+        "Section Head Grade 11",
+        "Deputy Principal (Administrative)",
+        "Deputy Principal (Development)"
+    ];
+
+    const availableDesignations = allDesignations.filter(
+        (role) => role === "Subject Teacher" || !occupiedRoles.includes(role)
+    );
 
     const [form, setForm] = useState({//Stores all user input
         fullName: "",
@@ -27,7 +63,8 @@ export default function TeacherRegister() {
         userId: "",
         username: "",
         email: "",
-        password: ""
+        password: "",
+        nic: ""
     });
 
     const [message, setMessage] = useState("");//show messge
@@ -75,6 +112,12 @@ export default function TeacherRegister() {
 
             if (!/^\d{10}$/.test(form.contactNumber)) {
                 setMessage("Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^([0-9]{9}[xXvV]|[0-9]{12})$/.test(form.nic)) {
+                setMessage("NIC Number must be 9 digits with V/X or 12 digits.");
                 setMessageType("error");
                 return false;
             }
@@ -154,11 +197,24 @@ export default function TeacherRegister() {
     // NEXT STEP
     // =========================
 
-    const handleNext = () => {
+    const handleNext = async () => {
 
-        if (validateStep()) {//validate and go to next step.
-            setStep(2);
+        if (validateStep()) {
             setMessage("");
+            try {
+                const res = await fetch("http://localhost:8080/admin/users/generate-id?role=ROLE_TEACHER", {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                });
+                if (res.ok) {
+                    const generatedId = await res.text();
+                    setForm(prev => ({ ...prev, userId: generatedId, username: generatedId.toLowerCase() }));
+                }
+            } catch (err) {
+                console.error("Failed to generate Teacher ID automatically", err);
+            }
+            setStep(2);
         }
     };
 
@@ -209,10 +265,26 @@ export default function TeacherRegister() {
                     userId: "",
                     username: "",
                     email: "",
-                    password: ""
+                    password: "",
+                    nic: ""
                 });
 
                 setStep(1);
+
+                // Refresh occupied roles
+                try {
+                    const resOcc = await fetch("http://localhost:8080/admin/users/occupied-designations", {
+                        headers: {
+                            Authorization: "Bearer " + localStorage.getItem("token")
+                        }
+                    });
+                    if (resOcc.ok) {
+                        const dataOcc = await resOcc.json();
+                        setOccupiedRoles(dataOcc);
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
 
             } else {
 
@@ -311,7 +383,9 @@ export default function TeacherRegister() {
                                         onChange={handleChange}
                                         required
                                     >
-                                        <option value="Subject Teacher">Subject Teacher</option>
+                                        {availableDesignations.map((role) => (
+                                            <option key={role} value={role}>{role}</option>
+                                        ))}
                                     </select>
 
                                 </div>
@@ -327,6 +401,24 @@ export default function TeacherRegister() {
                                     <input
                                         name="contactNumber"
                                         value={form.contactNumber}
+                                        onChange={handleChange}
+                                        required
+                                    />
+
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>NIC Number (9 Digits with V/X or 12 Digits)</label>
+
+                                <div className="input-container">
+
+                                    <FiHash className="input-icon" />
+
+                                    <input
+                                        name="nic"
+                                        placeholder="Enter NIC Number"
+                                        value={form.nic}
                                         onChange={handleChange}
                                         required
                                     />
@@ -353,7 +445,7 @@ export default function TeacherRegister() {
                         <div className="wizard-step">
 
                             <div className="form-group">
-                                <label>Teacher ID</label>
+                                <label>Teacher ID (Automatically Generated)</label>
 
                                 <div className="input-container">
 
@@ -362,7 +454,8 @@ export default function TeacherRegister() {
                                     <input
                                         name="userId"
                                         value={form.userId}
-                                        onChange={handleChange}
+                                        readOnly
+                                        style={{ backgroundColor: "#e2e8f0", cursor: "not-allowed" }}
                                         required
                                     />
 

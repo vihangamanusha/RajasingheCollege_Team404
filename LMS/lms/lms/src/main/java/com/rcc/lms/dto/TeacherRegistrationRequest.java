@@ -13,6 +13,7 @@ public class TeacherRegistrationRequest {
     private String fullName;
     private String subjectSpecialization;
     private String contactNumber;
+    private String nic;
 
     // Getters and Setters
     public String getUserId() { return userId; } public void setUserId(String userId) { this.userId = userId; }
@@ -24,4 +25,5 @@ public class TeacherRegistrationRequest {
     public String getFullName() { return fullName; } public void setFullName(String fullName) { this.fullName = fullName; }
     public String getSubjectSpecialization() { return subjectSpecialization; } public void setSubjectSpecialization(String subjectSpecialization) { this.subjectSpecialization = subjectSpecialization; }
     public String getContactNumber() { return contactNumber; } public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+    public String getNic() { return nic; } public void setNic(String nic) { this.nic = nic; }
 }

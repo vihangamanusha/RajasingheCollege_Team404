@@ -114,10 +114,23 @@ export default function TechRegister() {
     // =========================
     // NEXT STEP
     // =========================
-    const handleNext = () => {
-        if (validateStep()) {//validate and go to next step.
-            setStep(2);
+    const handleNext = async () => {
+        if (validateStep()) {
             setMessage("");
+            try {
+                const res = await fetch("http://localhost:8080/admin/users/generate-id?role=ROLE_TECHNICAL_OFFICER", {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                });
+                if (res.ok) {
+                    const generatedId = await res.text();
+                    setForm(prev => ({ ...prev, userId: generatedId, username: generatedId.toLowerCase() }));
+                }
+            } catch (err) {
+                console.error("Failed to generate Technical Officer ID automatically", err);
+            }
+            setStep(2);
         }
     };
 
@@ -273,10 +286,10 @@ export default function TechRegister() {
                         <div className="wizard-step">
 
                             <div className="form-group">
-                                <label>User ID</label>
+                                <label>User ID (Automatically Generated)</label>
                                 <div className="input-container">
                                     <FiHash className="input-icon" />
-                                    <input name="userId" value={form.userId} onChange={handleChange} />
+                                    <input name="userId" value={form.userId} readOnly style={{ backgroundColor: "#e2e8f0", cursor: "not-allowed" }} />
                                 </div>
                             </div>
 

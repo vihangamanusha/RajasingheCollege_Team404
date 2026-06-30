@@ -23,6 +23,34 @@ export default function AdminTeacherManagement() {
     const [searchTerm, setSearchTerm] = useState("");//what admin types in search box
     const [teachers, setTeachers] = useState([]);//store list of teacher
     const [loading, setLoading] = useState(false);//controoler show lord msg
+    const [occupiedRoles, setOccupiedRoles] = useState([]);
+
+    const fetchOccupied = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("http://localhost:8080/admin/users/occupied-designations", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setOccupiedRoles(data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch occupied designations", err);
+        }
+    };
+
+    const isRoleAvailable = (role) => {
+        if (role === "Subject Teacher" || role === "Class Teacher" || role === "Deputy Principal 1" || role === "Deputy Principal" || role === "Vice Principal") {
+            return true;
+        }
+        if (editFormData && editFormData.subRole === role) {
+            return true;
+        }
+        return !occupiedRoles.includes(role);
+    };
 
     // DELETE
     const [showDeleteModal, setShowDeleteModal] = useState(false);//Controls delete popup
@@ -138,6 +166,7 @@ export default function AdminTeacherManagement() {
         const delayDebounce = setTimeout(() => {
 
             fetchTeachers();
+            fetchOccupied();
 
         }, 300);
 
@@ -361,6 +390,7 @@ export default function AdminTeacherManagement() {
                 });
 
                 fetchTeachers();//refresh list
+                fetchOccupied();
 
                 setTimeout(() => {
 
@@ -432,6 +462,7 @@ export default function AdminTeacherManagement() {
                 });
 
                 fetchTeachers();
+                fetchOccupied();
 
                 setTimeout(() => {
 
@@ -740,28 +771,30 @@ export default function AdminTeacherManagement() {
                                     
                                     {/* Default Roles */}
                                     <optgroup label="Standard Roles">
-                                        <option value="Subject Teacher">Subject Teacher</option>
-                                        <option value="Class Teacher">Class Teacher</option>
+                                        {isRoleAvailable("Subject Teacher") && <option value="Subject Teacher">Subject Teacher</option>}
+                                        {isRoleAvailable("Class Teacher") && <option value="Class Teacher">Class Teacher</option>}
                                     </optgroup>
 
                                     {/* 1+ Year Promotions */}
                                     {calculateYearsSince(editFormData.createdDate) >= 1 && (
                                         <optgroup label="Promotions (1+ Year)">
-                                            <option value="Section Head Grade 6">Section Head Grade 6</option>
-                                            <option value="Section Head Grade 7">Section Head Grade 7</option>
-                                            <option value="Section Head Grade 8">Section Head Grade 8</option>
-                                            <option value="Section Head Grade 9">Section Head Grade 9</option>
-                                            <option value="Section Head Grade 10">Section Head Grade 10</option>
-                                            <option value="Section Head Grade 11">Section Head Grade 11</option>
+                                            {isRoleAvailable("Section Head Grade 6") && <option value="Section Head Grade 6">Section Head Grade 6</option>}
+                                            {isRoleAvailable("Section Head Grade 7") && <option value="Section Head Grade 7">Section Head Grade 7</option>}
+                                            {isRoleAvailable("Section Head Grade 8") && <option value="Section Head Grade 8">Section Head Grade 8</option>}
+                                            {isRoleAvailable("Section Head Grade 9") && <option value="Section Head Grade 9">Section Head Grade 9</option>}
+                                            {isRoleAvailable("Section Head Grade 10") && <option value="Section Head Grade 10">Section Head Grade 10</option>}
+                                            {isRoleAvailable("Section Head Grade 11") && <option value="Section Head Grade 11">Section Head Grade 11</option>}
                                         </optgroup>
                                     )}
 
                                     {/* 2+ Year Promotions */}
                                     {calculateYearsSince(editFormData.createdDate) >= 2 && (
                                         <optgroup label="Senior Leadership (2+ Years)">
-                                            <option value="Deputy Principal 1">Deputy Principal 1</option>
-                                            <option value="Deputy Principal">Deputy Principal</option>
-                                            <option value="Vice Principal">Vice Principal</option>
+                                            {isRoleAvailable("Deputy Principal 1") && <option value="Deputy Principal 1">Deputy Principal 1</option>}
+                                            {isRoleAvailable("Deputy Principal") && <option value="Deputy Principal">Deputy Principal</option>}
+                                            {isRoleAvailable("Deputy Principal (Administrative)") && <option value="Deputy Principal (Administrative)">Deputy Principal (Administrative)</option>}
+                                            {isRoleAvailable("Deputy Principal (Development)") && <option value="Deputy Principal (Development)">Deputy Principal (Development)</option>}
+                                            {isRoleAvailable("Vice Principal") && <option value="Vice Principal">Vice Principal</option>}
                                         </optgroup>
                                     )}
                                 </select>

@@ -46,6 +46,17 @@ public class UserService {
     @Autowired
     private JwtUtil jwtUtil;//used to generate token
 
+    private static final List<String> UNIQUE_LEADERSHIP_ROLES = List.of(
+        "Section Head Grade 6",
+        "Section Head Grade 7",
+        "Section Head Grade 8",
+        "Section Head Grade 9",
+        "Section Head Grade 10",
+        "Section Head Grade 11",
+        "Deputy Principal (Administrative)",
+        "Deputy Principal (Development)"
+    );
+
     // =========================
     // LOGIN USER
     // =========================
@@ -68,7 +79,8 @@ public class UserService {
                 "Login successful",
                 user.getUsername(),
                 user.getRole(),
-                token
+                token,
+                user.getSubRole()
         );
     }
 
@@ -83,7 +95,7 @@ public class UserService {
         stats.setTotalClasses(42);
         stats.setTotalSubjects(24);
 
-        List<RecentActivityDTO> activityList = userRepository.findTop4ByStatusNotOrderByCreatedDateDesc("DELETED")
+        List<RecentActivityDTO> activityList = userRepository.findTop5ByStatusNotOrderByCreatedDateDescUserIdDesc("DELETED")
                 .stream()
                 .map(u -> new RecentActivityDTO(
                         u.getUsername(),
@@ -151,6 +163,14 @@ public class UserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             return "Error: Email is already registered!";
         }
+        if (teacherRepository.existsByNic(request.getNic())) {
+            return "Error: NIC is already registered!";
+        }
+        if (request.getSubRole() != null && UNIQUE_LEADERSHIP_ROLES.contains(request.getSubRole())) {
+            if (userRepository.existsBySubRoleAndStatusNot(request.getSubRole(), "DELETED")) {
+                return "Error: The designation '" + request.getSubRole() + "' is already occupied!";
+            }
+        }
 
         // 2. Create the Auth User (Security Credentials)
         User newUser = new User();
@@ -171,6 +191,7 @@ public class UserService {
         newTeacher.setSubjectSpecialization(request.getSubjectSpecialization()); // Comma-separated string from frontend
         newTeacher.setSubRole(request.getSubRole()); // Saves designation to Teacher table
         newTeacher.setContactNumber(request.getContactNumber());
+        newTeacher.setNic(request.getNic());
         newTeacher.setUser(newUser);
         teacherRepository.save(newTeacher);
 
@@ -269,6 +290,13 @@ public class UserService {
     public String updateTeacherProfile(String username, TeacherRegistrationRequest request) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
+
+        if (request.getSubRole() != null && UNIQUE_LEADERSHIP_ROLES.contains(request.getSubRole())) {
+            if (userRepository.existsBySubRoleAndUserIdNotAndStatusNot(request.getSubRole(), existingUser.getUserId(), "DELETED")) {
+                return "Error: The designation '" + request.getSubRole() + "' is already occupied!";
+            }
+        }
+
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
         if (request.getSubRole() != null) existingUser.setSubRole(request.getSubRole());
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
@@ -281,6 +309,9 @@ public class UserService {
             existingTeacher.setFullName(request.getFullName());
             existingTeacher.setSubjectSpecialization(request.getSubjectSpecialization());
             existingTeacher.setContactNumber(request.getContactNumber());
+            if (request.getSubRole() != null) {
+                existingTeacher.setSubRole(request.getSubRole());
+            }
             teacherRepository.save(existingTeacher);
         }
         return "Teacher profile updated successfully!";
@@ -327,16 +358,12 @@ public class UserService {
     }
 
     @Transactional//connect with multiple table
-    public String hardDeleteUser(String username) {
+    public String softDeleteUser(String username) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
-        String role = existingUser.getRole();//GET ROLE
-        String userId = existingUser.getUserId();//GET USER ID
-        if ("ROLE_STUDENT".equals(role)) studentRepository.deleteById(userId);//check role and delete
-        else if ("ROLE_TEACHER".equals(role)) teacherRepository.deleteById(userId);
-        else if ("ROLE_TECHNICAL_OFFICER".equals(role)) technicalOfficerRepository.deleteById(userId);
-        userRepository.delete(existingUser);//delete from usertable
-        return "User permanently deleted from the system!";
+        existingUser.setStatus("DELETED");
+        userRepository.save(existingUser);
+        return "User soft deleted successfully!";
     }
 
     public String createUserByAdmin(User user) {
@@ -353,7 +380,48 @@ public class UserService {
     public String deleteUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) return "User not found!";
-        userRepository.delete(user);//delete record from database.
-        return "User deleted successfully!";
+        user.setStatus("DELETED");
+        userRepository.save(user);
+        return "User soft deleted successfully!";
+    }
+
+    public String generateNextUserId(String role) {
+        String prefix;
+        int padding = 3;
+        if ("ROLE_STUDENT".equals(role)) {
+            prefix = "STU";
+        } else if ("ROLE_TEACHER".equals(role)) {
+            prefix = "teacher";
+            padding = 4;
+        } else if ("ROLE_TECHNICAL_OFFICER".equals(role) || "ROLE_TECH_OFFICER".equals(role)) {
+            prefix = "TEC";
+        } else {
+            prefix = "USR";
+        }
+
+        List<String> userIds = userRepository.findUserIdsByPrefix(prefix);
+
+        int maxNum = 0;
+        int expectedLength = prefix.length() + padding;
+        for (String id : userIds) {
+            try {
+                if (id != null && id.length() == expectedLength) {
+                    String numPart = id.substring(prefix.length());
+                    int num = Integer.parseInt(numPart.trim());
+                    if (num > maxNum) {
+                        maxNum = num;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Ignore malformed IDs
+            }
+        }
+
+        int nextNum = maxNum + 1;
+        return String.format("%s%0" + padding + "d", prefix, nextNum);
+    }
+
+    public List<String> getOccupiedDesignations() {
+        return userRepository.findOccupiedSubRoles(UNIQUE_LEADERSHIP_ROLES, "DELETED");
     }
 }

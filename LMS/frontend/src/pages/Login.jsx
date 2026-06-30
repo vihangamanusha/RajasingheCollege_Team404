@@ -39,19 +39,25 @@ export default function Login() {
             console.log("LOGIN RESPONSE:", res.data);
 
             // =========================
-            // SAVE TOKEN & ROLE
+            // SAVE TOKEN, ROLE & SUBROLE
             // =========================
             localStorage.setItem("token", res.data.token);
             localStorage.setItem("role", res.data.role);
+            if (res.data.subRole) {
+                localStorage.setItem("subRole", res.data.subRole);
+            } else {
+                localStorage.removeItem("subRole");
+            }
 
             setMessage("Login Successful");
             setMessageType("success");
 
             // =========================
-            // GET USER ROLE
+            // GET USER ROLE & SUBROLE
             // =========================
             const role = res.data.role?.toUpperCase();
-            console.log("USER ROLE:", role);
+            const subRole = res.data.subRole;
+            console.log("USER ROLE:", role, "SUBROLE:", subRole);
 
             // =========================
             // ROLE BASED REDIRECT
@@ -59,7 +65,11 @@ export default function Login() {
             if (role === "ADMIN" || role === "ROLE_ADMIN") {
                 navigate("/admin");
             } else if (role === "TEACHER" || role === "ROLE_TEACHER") {
-                navigate("/teacher");
+                if (subRole && subRole.startsWith("Section Head")) {
+                    navigate("/section-head");
+                } else {
+                    navigate("/teacher");
+                }
             } else if (role === "STUDENT" || role === "ROLE_STUDENT") {
                 navigate("/student");
             } else if (role === "TECHNICAL_OFFICER" || role === "ROLE_TECHNICAL_OFFICER") {

@@ -190,15 +190,34 @@ public class AdminController {
     }
 
     @DeleteMapping("/users/delete/{username}")
-    public ResponseEntity<String> deleteUserPermanently(@PathVariable String username) {
+    public ResponseEntity<String> deleteUserSoftly(@PathVariable String username) {
         try {
-            String response = userService.hardDeleteUser(username);
+            String response = userService.softDeleteUser(username);
             if (response.equals("User not found!")) {
                 return ResponseEntity.badRequest().body(response);
             }
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/users/generate-id")
+    public ResponseEntity<String> generateNextId(@RequestParam String role) {
+        try {
+            String nextId = userService.generateNextUserId(role);
+            return ResponseEntity.ok(nextId);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/users/occupied-designations")
+    public ResponseEntity<java.util.List<String>> getOccupiedDesignations() {
+        try {
+            return ResponseEntity.ok(userService.getOccupiedDesignations());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
