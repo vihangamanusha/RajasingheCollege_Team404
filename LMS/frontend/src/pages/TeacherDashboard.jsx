@@ -1,179 +1,680 @@
-import { useNavigate, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 import {
-    LayoutDashboard, BookOpen, Users,
-    Upload, FileText, BarChart3, GraduationCap, Folder
+    Users,
+    BookOpen,
+    LayoutDashboard,
+    Upload,
+    FileText,
+    LogOut,
+    Plus,
+    Activity,
+    FolderPlus,
+    Award,
+    CheckCircle,
+    Calendar,
+    Briefcase
 } from "lucide-react";
+import "./Dashboard.css";
+import "../layouts/AdminLayout.css";
+import schoolLogo from "../assets/school-logo.jpeg";
+import TeacherAddMarks from "../Component/TeacherAddMarks";
 
-function TeacherDashboard() {
+export default function TeacherDashboard() {
     const navigate = useNavigate();
-    const location = useLocation(); // Tracks the current URL path
+    const [username, setUsername] = useState("Teacher");
+    const [subRole, setSubRole] = useState("Subject Teacher");
+    const [activeTab, setActiveTab] = useState("dashboard");
+    const [assignedSubjects, setAssignedSubjects] = useState([]);
 
-    const menuItems = [
-        { name: "Dashboard", icon: <LayoutDashboard size={22} />, path: "/dashboard" },
-        { name: "My Subjects", icon: <BookOpen size={22} />, path: "/subjects" },
-        { name: "My Classes", icon: <Users size={22} />, path: "/classes" },
-        { name: "Upload Marks", icon: <Upload size={22} />, path: "/AddMarks" },
-        { name: "Materials", icon: <FileText size={22} />, path: "/materials" },
-        { name: "Reports", icon: <BarChart3 size={22} />, path: "/reports" },
-    ];
+    // Local state for materials upload mock
+    const [materials, setMaterials] = useState([
+        { id: 1, title: "Algebra Lesson 1 Notes.pdf", subject: "Mathematics", grade: "Grade 10", uploadedDate: "2026-06-28" },
+        { id: 2, title: "Quadratic Equations Worksheet.docx", subject: "Mathematics", grade: "Grade 10", uploadedDate: "2026-06-23" },
+        { id: 3, title: "Probability Basics Slides.pptx", subject: "Mathematics", grade: "Grade 11", uploadedDate: "2026-06-15" }
+    ]);
+    const [materialTitle, setMaterialTitle] = useState("");
+    const [materialSubject, setMaterialSubject] = useState("Mathematics");
+    const [materialGrade, setMaterialGrade] = useState("Grade 10");
+
+    // Local state for assignments mock
+    const [assignments, setAssignments] = useState([
+        { id: 1, title: "Mathematics Midterm Assignment", dueDate: "2026-07-15", maxMarks: 100, subject: "Mathematics", submissions: "35/42" },
+        { id: 2, title: "Trigonometry Homework Quiz", dueDate: "2026-07-02", maxMarks: 20, subject: "Mathematics", submissions: "12/40" }
+    ]);
+    const [assignmentTitle, setAssignmentTitle] = useState("");
+    const [assignmentDueDate, setAssignmentDueDate] = useState("");
+    const [assignmentMaxMarks, setAssignmentMaxMarks] = useState("100");
+    const [assignmentSubject, setAssignmentSubject] = useState("Mathematics");
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const storedSubRole = localStorage.getItem("subRole");
+        if (storedSubRole) setSubRole(storedSubRole);
+
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                const userVal = decoded.sub || "Teacher";
+                setUsername(userVal);
+                fetchTeacherProfile(token, userVal);
+            } catch (error) {
+                console.error("Failed to decode token", error);
+            }
+        }
+    }, []);
+
+    const fetchTeacherProfile = async (token, userVal) => {
+        try {
+            const response = await fetch(`http://localhost:8080/admin/users/teacher/${userVal}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                if (data.subjectSpecialization) {
+                    const subjectsArray = data.subjectSpecialization.split(",").map(s => s.trim()).filter(Boolean);
+                    setAssignedSubjects(subjectsArray);
+                }
+            }
+        } catch (error) {
+            console.error("Failed to fetch teacher profile details", error);
+        }
+    };
+
+    const getSubjectDetails = (subjectName) => {
+        switch (subjectName.trim()) {
+            case "Mathematics":
+                return { classesCount: "2 Classes", totalStudents: 9, classes: ["10-A", "11-B"] };
+            case "Science":
+                return { classesCount: "1 Classes", totalStudents: 3, classes: ["9-C"] };
+            case "ICT":
+                return { classesCount: "2 Classes", totalStudents: 5, classes: ["10-A", "11-B"] };
+            case "English":
+                return { classesCount: "2 Classes", totalStudents: 12, classes: ["10-A", "10-B"] };
+            case "Sinhala":
+                return { classesCount: "1 Classes", totalStudents: 8, classes: ["9-A"] };
+            case "Geography":
+                return { classesCount: "1 Classes", totalStudents: 6, classes: ["10-B"] };
+            case "History":
+                return { classesCount: "1 Classes", totalStudents: 15, classes: ["11-A"] };
+            default:
+                return { classesCount: "1 Classes", totalStudents: 10, classes: ["10-A"] };
+        }
+    };
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate("/login");
+    };
+
+    const handleUploadMaterial = (e) => {
+        e.preventDefault();
+        if (!materialTitle.trim()) return;
+
+        const newMaterial = {
+            id: Date.now(),
+            title: materialTitle,
+            subject: materialSubject,
+            grade: materialGrade,
+            uploadedDate: new Date().toISOString().split("T")[0]
+        };
+        setMaterials([newMaterial, ...materials]);
+        setMaterialTitle("");
+    };
+
+    const handleCreateAssignment = (e) => {
+        e.preventDefault();
+        if (!assignmentTitle.trim() || !assignmentDueDate) return;
+
+        const newAssignment = {
+            id: Date.now(),
+            title: assignmentTitle,
+            dueDate: assignmentDueDate,
+            maxMarks: parseInt(assignmentMaxMarks),
+            subject: assignmentSubject,
+            submissions: "0/40"
+        };
+        setAssignments([newAssignment, ...assignments]);
+        setAssignmentTitle("");
+        setAssignmentDueDate("");
+    };
 
     return (
-        <div style={styles.container}>
-            {/* Sidebar */}
-            <nav style={styles.sidebar}>
-                <div style={styles.logoSection}>
-                    <div style={styles.logoPlaceholder}></div>
-                    <h2 style={styles.schoolName}>Rajasinghe LMS</h2>
-                    <p style={styles.subText}>Rajasinha Central College</p>
+        <div className="admin-layout">
+            {/* SIDEBAR NAVIGATION */}
+            <div className="layout-sidebar">
+                <div className="sidebar-header">
+                    <div className="sidebar-logo">
+                        <img
+                            src={schoolLogo}
+                            alt="RCC Logo"
+                            style={{ width: '100%', borderRadius: '50%' }}
+                        />
+                    </div>
+                    <div className="sidebar-title">
+                        <h2>Rajasinghe<br />LMS</h2>
+                    </div>
                 </div>
 
-                <ul style={styles.navList}>
-                    {menuItems.map((item) => {
-                        // Logic to determine if this link is currently active
-                        const isActive = location.pathname === item.path || (item.path === "/dashboard" && location.pathname === "/");
+                <div className="sidebar-nav">
+                    {/* Dashboard */}
+                    <div
+                        className={`nav-item ${activeTab === "dashboard" ? "active" : ""}`}
+                        onClick={() => setActiveTab("dashboard")}
+                    >
+                        <LayoutDashboard className="nav-icon" /> Dashboard
+                    </div>
 
-                        return (
-                            <li
-                                key={item.name}
-                                onClick={() => navigate(item.path)}
-                                style={{
-                                    ...styles.navItem,
-                                    backgroundColor: isActive ? "#FFC107" : "transparent",
-                                    color: isActive ? "#1A237E" : "white",
-                                    // The "Pill" shape: rounded right corners, flat left
-                                    borderRadius: isActive ? "0 40px 40px 0" : "0",
-                                    width: isActive ? "90%" : "100%",
-                                    fontWeight: isActive ? "600" : "400"
-                                }}
-                            >
-                                <div style={styles.navContent}>
-                                    {item.icon}
-                                    <span style={{ marginLeft: "15px" }}>{item.name}</span>
-                                </div>
-                            </li>
-                        );
-                    })}
-                </ul>
-            </nav>
+                    {/* My Subject */}
+                    <div
+                        className={`nav-item ${activeTab === "my-subject" ? "active" : ""}`}
+                        onClick={() => setActiveTab("my-subject")}
+                    >
+                        <BookOpen className="nav-icon" /> My Subject
+                    </div>
 
-            {/* Main Content Area */}
-            <main style={styles.mainContent}>
-                <header style={styles.header}>
-                    <h3 style={{margin: 0, fontSize: '1rem'}}>Welcome, Nimal Silva</h3>
+                    {/* My Class */}
+                    <div
+                        className={`nav-item ${activeTab === "my-class" ? "active" : ""}`}
+                        onClick={() => setActiveTab("my-class")}
+                    >
+                        <Users className="nav-icon" /> My Class
+                    </div>
+
+                    {/* Upload Mark */}
+                    <div
+                        className={`nav-item ${activeTab === "upload-mark" ? "active" : ""}`}
+                        onClick={() => setActiveTab("upload-mark")}
+                    >
+                        <Upload className="nav-icon" /> Upload Mark
+                    </div>
+
+                    {/* Materials */}
+                    <div
+                        className={`nav-item ${activeTab === "materials" ? "active" : ""}`}
+                        onClick={() => setActiveTab("materials")}
+                    >
+                        <FileText className="nav-icon" /> Materials
+                    </div>
+
+                    {/* Assignments */}
+                    <div
+                        className={`nav-item ${activeTab === "assignments" ? "active" : ""}`}
+                        onClick={() => setActiveTab("assignments")}
+                    >
+                        <Briefcase className="nav-icon" /> Assignments
+                    </div>
+                </div>
+
+                <div className="sidebar-footer">
+                    <div className="nav-item logout-item" onClick={handleLogout}>
+                        <LogOut className="nav-icon" /> Logout
+                    </div>
+                </div>
+            </div>
+
+            {/* MAIN WORKSPACE */}
+            <div className="layout-main">
+                {/* TOP HEADER */}
+                <header className="top-header">
+                    <div className="header-title">
+                        <h3>Rajasinghe Central College</h3>
+                    </div>
+                    <div className="user-profile">
+                        <div className="user-info">
+                            <p className="user-role">{subRole}</p>
+                            <p className="user-name">{username}</p>
+                        </div>
+                        <div className="user-avatar" style={{ backgroundColor: "#2b55cc", color: "white", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}>
+                            {username ? username.substring(0, 2).toUpperCase() : "TE"}
+                        </div>
+                    </div>
                 </header>
 
-                <div style={styles.contentBody}>
-                    <h2 style={styles.dashboardTitle}>Teacher Dashboard</h2>
+                {/* MAIN CONTENT AREA */}
+                <div className="dashboard-content" style={{ padding: "30px" }}>
+                    
+                    {/* TAB 1: DASHBOARD OVERVIEW */}
+                    {activeTab === "dashboard" && (
+                        <>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    Teacher Dashboard
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Welcome back! Here's what's happening today.
+                                </p>
+                            </div>
 
-                    {/* TOP SECTION: Subjects, Classes, Actions */}
-                    <div style={styles.topGrid}>
+                            {/* STATS ROW */}
+                            <div className="stats-row" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: "30px" }}>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Total Students</p>
+                                        <h3>{assignedSubjects.reduce((acc, sub) => acc + getSubjectDetails(sub).totalStudents, 0)}</h3>
+                                    </div>
+                                    <div className="stat-icon blue"><Users size={20} /></div>
+                                </div>
 
-                        {/* My Subjects */}
-                        <div style={styles.whiteCard}>
-                            <div style={styles.cardHeader}><BookOpen size={18} color="#1E40AF"/> <b>My Subjects</b></div>
-                            <div style={styles.listItemBlue}>
-                                <div style={{fontWeight: 'bold'}}>Mathematics</div>
-                                <div style={styles.subTextDark}>Grade 10 • 3 Classes</div>
-                            </div>
-                            <div style={styles.listItemBlue}>
-                                <div style={{fontWeight: 'bold'}}>Mathematics</div>
-                                <div style={styles.subTextDark}>Grade 11 • 2 Classes</div>
-                            </div>
-                        </div>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Classes Assigned</p>
+                                        <h3>{assignedSubjects.reduce((acc, sub) => acc + getSubjectDetails(sub).classes.length, 0)}</h3>
+                                    </div>
+                                    <div className="stat-icon yellow"><BookOpen size={20} /></div>
+                                </div>
 
-                        {/* My Classes */}
-                        <div style={styles.whiteCard}>
-                            <div style={styles.cardHeader}><GraduationCap size={18} color="#1E40AF"/> <b>My Classes</b></div>
-                            <div style={styles.listItemYellow}>
-                                <div style={{fontWeight: 'bold'}}>Grade 10A</div>
-                                <div style={styles.subTextDark}>42 Students • English</div>
-                            </div>
-                            <div style={styles.listItemYellow}>
-                                <div style={{fontWeight: 'bold'}}>Grade 10B</div>
-                                <div style={styles.subTextDark}>38 Students • Sinhala</div>
-                            </div>
-                            <div style={styles.listItemYellow}>
-                                <div style={{fontWeight: 'bold'}}>Grade 11A</div>
-                                <div style={styles.subTextDark}>40 Students • English</div>
-                            </div>
-                        </div>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Uploaded Materials</p>
+                                        <h3>{materials.length}</h3>
+                                    </div>
+                                    <div className="stat-icon green"><FileText size={20} /></div>
+                                </div>
 
-                        {/* Quick Actions */}
-                        <div style={styles.whiteCard}>
-                            <div style={styles.cardHeader}><b>Quick Actions</b></div>
-                            <button onClick={() => navigate("/AddMarks")} style={styles.actionBtnBlue}>
-                                <Upload size={18}/> Upload Marks
-                            </button>
-                            <button style={styles.actionBtnYellow}>
-                                <Folder size={18}/> Upload Materials
-                            </button>
-                            <button style={styles.actionBtnGrey}>
-                                <BarChart3 size={18}/> View Reports
-                            </button>
-                        </div>
-                    </div>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Pending Assignments</p>
+                                        <h3>{assignments.length}</h3>
+                                    </div>
+                                    <div className="stat-icon purple"><Briefcase size={20} /></div>
+                                </div>
+                            </div>
 
-                    {/* BOTTOM SECTION: Overview */}
-                    <div style={{...styles.whiteCard, marginTop: '20px', width: '100%'}}>
-                        <div style={styles.cardHeader}><b>Overview</b></div>
-                        <div style={styles.overviewGrid}>
-                            <div style={styles.statBoxBlue}>
-                                <h1 style={{color: '#1E40AF', margin: 0, fontSize: '2.5rem'}}>5</h1>
-                                <p style={styles.subTextDark}>Total Classes</p>
+                            {/* BOTTOM GRID */}
+                            <div className="content-grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "25px" }}>
+                                {/* Left Card: Subject & Class Allocations */}
+                                <div className="content-card">
+                                    <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        <Activity size={18} style={{ color: "#3b82f6" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Your Allocations</h3>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                                        {assignedSubjects && assignedSubjects.length > 0 ? (
+                                            assignedSubjects.map((sub, index) => {
+                                                const details = getSubjectDetails(sub);
+                                                return (
+                                                    <div key={index} style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", borderLeft: index % 2 === 0 ? "4px solid #3b82f6" : "4px solid #f59e0b" }}>
+                                                        <h4 style={{ margin: "0 0 5px 0", fontSize: "15px", color: "#1e293b", fontWeight: "600" }}>{sub}</h4>
+                                                        <p style={{ margin: 0, fontSize: "13px", color: "#64748b" }}>
+                                                            {details.classes.map(c => c.split("-")[0]).filter((v, i, a) => a.indexOf(v) === i).map(g => `Grade ${g}`).join(" & ")} • Class {details.classes.map(c => c.split("-")[1] || c).join(", ")}
+                                                        </p>
+                                                    </div>
+                                                );
+                                            })
+                                        ) : (
+                                            <p style={{ color: "#94a3b8", fontSize: "14px" }}>No assigned subjects / allocations found.</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Right Card: Quick Actions */}
+                                <div className="content-card">
+                                    <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        <FolderPlus size={18} style={{ color: "#f59e0b" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Quick Tasks</h3>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                        <button
+                                            onClick={() => setActiveTab("upload-mark")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#2b55cc",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer"
+                                            }}
+                                        >
+                                            <Upload size={16} />
+                                            <span>Upload Marks</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("materials")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#f59e0b",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer"
+                                            }}
+                                        >
+                                            <FileText size={16} />
+                                            <span>Upload Materials</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("assignments")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#10b981",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer"
+                                            }}
+                                        >
+                                            <Briefcase size={16} />
+                                            <span>Manage Assignments</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                            <div style={styles.statBoxYellow}>
-                                <h1 style={{color: '#F59E0B', margin: 0, fontSize: '2.5rem'}}>120</h1>
-                                <p style={styles.subTextDark}>Total Students</p>
+                        </>
+                    )}
+
+                    {/* TAB 2: MY SUBJECTS */}
+                    {activeTab === "my-subject" && (
+                        <>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    My Subjects
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    View and manage student marks across all subjects
+                                </p>
                             </div>
-                            <div style={styles.statBoxGreen}>
-                                <h1 style={{color: '#10B981', margin: 0, fontSize: '2.5rem'}}>24</h1>
-                                <p style={styles.subTextDark}>Materials Uploaded</p>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "25px" }}>
+                                {assignedSubjects && assignedSubjects.length > 0 ? (
+                                    assignedSubjects.map((subject, index) => {
+                                        const details = getSubjectDetails(subject);
+                                        return (
+                                            <div className="content-card" key={index} style={{ padding: "25px", borderRadius: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "300px" }}>
+                                                <div>
+                                                    <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
+                                                        <div style={{ width: "48px", height: "48px", backgroundColor: "#eff6ff", color: "#2b55cc", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                            <BookOpen size={24} />
+                                                        </div>
+                                                        <div>
+                                                            <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b", fontWeight: "700" }}>{subject}</h3>
+                                                            <span style={{ fontSize: "13px", color: "#94a3b8" }}>{details.classesCount}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
+                                                        <span style={{ color: "#64748b", fontSize: "14px" }}>Total Students:</span>
+                                                        <strong style={{ fontSize: "16px", color: "#1e293b" }}>{details.totalStudents}</strong>
+                                                    </div>
+
+                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+                                                        <span style={{ color: "#64748b", fontSize: "14px" }}>Classes:</span>
+                                                        <div style={{ display: "flex", gap: "6px" }}>
+                                                            {details.classes.map((cls, i) => (
+                                                                <span key={i} style={{ padding: "4px 10px", backgroundColor: "#eff6ff", color: "#2b55cc", borderRadius: "6px", fontSize: "12px", fontWeight: "600" }}>{cls}</span>
+                                                            ))}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <button
+                                                    onClick={() => setActiveTab("my-class")}
+                                                    style={{
+                                                        width: "100%",
+                                                        padding: "12px",
+                                                        backgroundColor: "#2b55cc",
+                                                        color: "white",
+                                                        border: "none",
+                                                        borderRadius: "8px",
+                                                        fontWeight: "600",
+                                                        fontSize: "14px",
+                                                        cursor: "pointer",
+                                                        transition: "background-color 0.2s"
+                                                    }}
+                                                >
+                                                    View Classes
+                                                </button>
+                                            </div>
+                                        );
+                                    })
+                                ) : (
+                                    <div className="content-card" style={{ gridColumn: "span 3", textAlign: "center", padding: "40px" }}>
+                                        <p style={{ color: "#94a3b8", fontSize: "16px" }}>No assigned subjects found in your profile.</p>
+                                    </div>
+                                )}
                             </div>
-                        </div>
-                    </div>
+                        </>
+                    )}
+
+                    {/* TAB 3: MY CLASSES */}
+                    {activeTab === "my-class" && (
+                        <>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    My Classes
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    View assigned school classes and student enrollment stats
+                                </p>
+                            </div>
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
+                                <div className="content-card">
+                                    <h3 style={{ margin: "0 0 10px 0", fontSize: "18px", color: "#1e293b" }}>Grade 10 - A</h3>
+                                    <p style={{ margin: "0 0 15px 0", fontSize: "13px", color: "#64748b" }}>Medium: English</p>
+                                    <div style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                        <span style={{ fontSize: "14px", color: "#64748b" }}>Students enrolled:</span>
+                                        <strong style={{ fontSize: "18px", color: "#2b55cc" }}>42</strong>
+                                    </div>
+                                </div>
+                                <div className="content-card">
+                                    <h3 style={{ margin: "0 0 10px 0", fontSize: "18px", color: "#1e293b" }}>Grade 10 - B</h3>
+                                    <p style={{ margin: "0 0 15px 0", fontSize: "13px", color: "#64748b" }}>Medium: Sinhala</p>
+                                    <div style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                        <span style={{ fontSize: "14px", color: "#64748b" }}>Students enrolled:</span>
+                                        <strong style={{ fontSize: "18px", color: "#2b55cc" }}>38</strong>
+                                    </div>
+                                </div>
+                                <div className="content-card">
+                                    <h3 style={{ margin: "0 0 10px 0", fontSize: "18px", color: "#1e293b" }}>Grade 11 - A</h3>
+                                    <p style={{ margin: "0 0 15px 0", fontSize: "13px", color: "#64748b" }}>Medium: English</p>
+                                    <div style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                        <span style={{ fontSize: "14px", color: "#64748b" }}>Students enrolled:</span>
+                                        <strong style={{ fontSize: "18px", color: "#2b55cc" }}>40</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* TAB 4: UPLOAD MARKS */}
+                    {activeTab === "upload-mark" && (
+                        <>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "30px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    Upload Student Marks
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Input academic grades directly into the student evaluation database
+                                </p>
+                            </div>
+                            <div className="content-card" style={{ maxWidth: "800px", margin: "0 auto" }}>
+                                <TeacherAddMarks />
+                            </div>
+                        </>
+                    )}
+
+                    {/* TAB 5: STUDY MATERIALS */}
+                    {activeTab === "materials" && (
+                        <>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    Study Materials
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Upload course documents, notes, and textbook slides for student download
+                                </p>
+                            </div>
+                            <div className="content-grid" style={{ gridTemplateColumns: "1fr 2fr", gap: "25px" }}>
+                                {/* Left Side: Add Material Form */}
+                                <div className="content-card">
+                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Upload Material</h3>
+                                    <form onSubmit={handleUploadMaterial}>
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Material Title</label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. Vectors Revision Notes"
+                                                value={materialTitle}
+                                                onChange={(e) => setMaterialTitle(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            />
+                                        </div>
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Subject</label>
+                                            <select
+                                                value={materialSubject}
+                                                onChange={(e) => setMaterialSubject(e.target.value)}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option>Mathematics</option>
+                                                <option>Science</option>
+                                                <option>English</option>
+                                            </select>
+                                        </div>
+                                        <div className="modal-form-group" style={{ marginBottom: "20px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Target Grade</label>
+                                            <select
+                                                value={materialGrade}
+                                                onChange={(e) => setMaterialGrade(e.target.value)}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option>Grade 10</option>
+                                                <option>Grade 11</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center" }}>
+                                            <Plus size={16} style={{ marginRight: "6px" }} /> Upload Document
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {/* Right Side: Material List */}
+                                <div className="content-card">
+                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Active Study Materials</h3>
+                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                                        {materials.map((m) => (
+                                            <div key={m.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                                                <div>
+                                                    <h4 style={{ margin: "0 0 5px 0", fontSize: "14px", color: "#1e293b" }}>{m.title}</h4>
+                                                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>{m.subject} • {m.grade}</span>
+                                                </div>
+                                                <span style={{ fontSize: "12px", color: "#94a3b8" }}>Uploaded: {m.uploadedDate}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* TAB 6: ASSIGNMENTS */}
+                    {activeTab === "assignments" && (
+                        <>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    Student Assignments
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Publish assignments, set due deadlines, and view submitted coursework
+                                </p>
+                            </div>
+                            <div className="content-grid" style={{ gridTemplateColumns: "1fr 2fr", gap: "25px" }}>
+                                {/* Left Side: Create Assignment Form */}
+                                <div className="content-card">
+                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Create Assignment</h3>
+                                    <form onSubmit={handleCreateAssignment}>
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Assignment Title</label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. Midterm Algebra Homework"
+                                                value={assignmentTitle}
+                                                onChange={(e) => setAssignmentTitle(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            />
+                                        </div>
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Due Date</label>
+                                            <input
+                                                type="date"
+                                                value={assignmentDueDate}
+                                                onChange={(e) => setAssignmentDueDate(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            />
+                                        </div>
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Max Marks</label>
+                                            <input
+                                                type="number"
+                                                value={assignmentMaxMarks}
+                                                onChange={(e) => setAssignmentMaxMarks(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            />
+                                        </div>
+                                        <div className="modal-form-group" style={{ marginBottom: "20px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Subject</label>
+                                            <select
+                                                value={assignmentSubject}
+                                                onChange={(e) => setAssignmentSubject(e.target.value)}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option>Mathematics</option>
+                                                <option>Science</option>
+                                                <option>English</option>
+                                            </select>
+                                        </div>
+                                        <button type="submit" className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center" }}>
+                                            <Plus size={16} style={{ marginRight: "6px" }} /> Create Task
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {/* Right Side: Assignments List */}
+                                <div className="content-card">
+                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Active Assignments</h3>
+                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                                        {assignments.map((as) => (
+                                            <div key={as.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                                                <div>
+                                                    <h4 style={{ margin: "0 0 5px 0", fontSize: "14px", color: "#1e293b" }}>{as.title}</h4>
+                                                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>{as.subject} • Max Marks: {as.maxMarks}</span>
+                                                </div>
+                                                <div style={{ textAlign: "right" }}>
+                                                    <span style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#2b55cc", marginBottom: "3px" }}>Submissions: {as.submissions}</span>
+                                                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>Due Date: {as.dueDate}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
                 </div>
-            </main>
+            </div>
         </div>
     );
 }
-
-const styles = {
-    container: { display: "flex", height: "100vh", fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif", backgroundColor: "#F8FAFC" },
-    sidebar: { width: "280px", backgroundColor: "#1E40AF", color: "white", padding: "30px 0", display: "flex", flexDirection: "column" },
-    logoSection: { padding: "0 25px", marginBottom: "40px" },
-    schoolName: { fontSize: "1.3rem", margin: "5px 0 0 0", fontWeight: "600" },
-    subText: { fontSize: "0.8rem", opacity: 0.8 },
-    subTextDark: { fontSize: "0.8rem", color: "#64748B" },
-    navList: { listStyle: "none", padding: 0, margin: 0 },
-    navItem: {
-        display: "flex",
-        alignItems: "center",
-        height: "56px",
-        cursor: "pointer",
-        transition: "0.3s ease",
-        marginBottom: "8px"
-    },
-    navContent: { display: "flex", alignItems: "center", paddingLeft: "25px" },
-    mainContent: { flex: 1, overflowY: "auto" },
-    header: { backgroundColor: "white", padding: "18px 35px", borderBottom: "1px solid #E2E8F0", display: 'flex', justifyContent: 'flex-end' },
-    contentBody: { padding: "35px" },
-    dashboardTitle: { fontSize: "1.6rem", color: "#1E293B", marginBottom: "25px", fontWeight: "700" },
-
-    topGrid: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "25px" },
-    whiteCard: { backgroundColor: "white", padding: "25px", borderRadius: "20px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.05)" },
-    cardHeader: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px', color: '#1E293B', fontSize: '1.1rem' },
-
-    listItemBlue: { backgroundColor: "#EFF6FF", padding: "14px", borderRadius: "14px", marginBottom: "12px" },
-    listItemYellow: { backgroundColor: "#FEFCE8", padding: "14px", borderRadius: "14px", marginBottom: "12px" },
-
-    actionBtnBlue: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#1E40AF', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', marginBottom: '12px', cursor: 'pointer', fontWeight: '600', fontSize: '1rem' },
-    actionBtnYellow: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#FBBF24', color: '#1E40AF', border: 'none', padding: '14px', borderRadius: '12px', marginBottom: '12px', cursor: 'pointer', fontWeight: '600', fontSize: '1rem' },
-    actionBtnGrey: { width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', backgroundColor: '#F1F5F9', color: '#475569', border: 'none', padding: '14px', borderRadius: '12px', cursor: 'pointer', fontWeight: '600', fontSize: '1rem' },
-
-    overviewGrid: { display: "flex", gap: "25px" },
-    statBoxBlue: { flex: 1, backgroundColor: '#EFF6FF', padding: '25px', borderRadius: '16px', textAlign: 'center' },
-    statBoxYellow: { flex: 1, backgroundColor: '#FEFCE8', padding: '25px', borderRadius: '16px', textAlign: 'center' },
-    statBoxGreen: { flex: 1, backgroundColor: '#F0FDF4', padding: '25px', borderRadius: '16px', textAlign: 'center' },
-};
-
-export default TeacherDashboard;
