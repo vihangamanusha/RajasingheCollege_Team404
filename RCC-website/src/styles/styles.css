@@ -2421,7 +2421,7 @@ h6,
   font-size: 2.5rem;
   color: #002147;
   margin: 0 0 1rem;
-  font-style: italic;
+  
   font-family: 'Times New Roman', Times, serif;
 }
 
@@ -2443,6 +2443,10 @@ h6,
 .academic-stat-grid {
   display: grid;
   gap: 2rem;
+}
+
+.academic-program-grid{
+  height: 470px;
 }
 
 @media (min-width: 768px) {
@@ -2510,8 +2514,9 @@ h6,
 .academic-program-description,
 .academic-facility-description {
   font-size: 1rem;
+  font-style: italic;
   line-height: 1.75;
-  color: #4b5563;
+  color: #393c3f;
   margin: 0;
   text-align: center;
 }
@@ -4959,7 +4964,7 @@ font-size: 1rem;
   color: #4b5563;
   font-weight: 300;
   margin: 0;
-  font-style: italic;
+  text-align: center;
   padding-bottom: 50px;
 }
 
