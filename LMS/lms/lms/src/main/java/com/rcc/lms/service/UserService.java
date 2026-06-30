@@ -358,10 +358,11 @@ public class UserService {
     }
 
     @Transactional//connect with multiple table
-    public String softDeleteUser(String username) {
+    public String softDeleteUser(String username, String deletionNote) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
         existingUser.setStatus("DELETED");
+        existingUser.setDeletionNote(deletionNote);
         userRepository.save(existingUser);
         return "User soft deleted successfully!";
     }

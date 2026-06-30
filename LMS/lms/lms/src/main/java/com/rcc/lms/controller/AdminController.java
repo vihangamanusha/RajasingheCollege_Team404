@@ -190,9 +190,11 @@ public class AdminController {
     }
 
     @DeleteMapping("/users/delete/{username}")
-    public ResponseEntity<String> deleteUserSoftly(@PathVariable String username) {
+    public ResponseEntity<String> deleteUserSoftly(
+            @PathVariable String username,
+            @RequestParam String reason) {
         try {
-            String response = userService.softDeleteUser(username);
+            String response = userService.softDeleteUser(username, reason);
             if (response.equals("User not found!")) {
                 return ResponseEntity.badRequest().body(response);
             }

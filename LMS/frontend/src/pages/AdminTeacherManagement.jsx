@@ -24,6 +24,9 @@ export default function AdminTeacherManagement() {
     const [teachers, setTeachers] = useState([]);//store list of teacher
     const [loading, setLoading] = useState(false);//controoler show lord msg
     const [occupiedRoles, setOccupiedRoles] = useState([]);
+    const [deleteStage, setDeleteStage] = useState(1);
+    const [deletionReason, setDeletionReason] = useState("");
+    const [reasonError, setReasonError] = useState("");
 
     const fetchOccupied = async () => {
         try {
@@ -422,18 +425,23 @@ export default function AdminTeacherManagement() {
     // =========================================
 
     const triggerDelete = (username) => {
-
         setUserToDelete(username);
-
+        setDeleteStage(1);
+        setDeletionReason("");
+        setReasonError("");
         setDeleteMessage({
             text: "",
             type: ""
         });
-
         setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
+        if (!deletionReason.trim()) {
+            setReasonError("Reason for deletion is compulsory.");
+            return;
+        }
+        setReasonError("");
 
         setDeleteMessage({
             text: "",
@@ -441,11 +449,9 @@ export default function AdminTeacherManagement() {
         });
 
         try {
-
             const token = localStorage.getItem("token");
-
             const response = await fetch(
-                `http://localhost:8080/admin/users/delete/${userToDelete}`,
+                `http://localhost:8080/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionReason)}`,
                 {
                     method: "DELETE",
                     headers: {
@@ -455,7 +461,6 @@ export default function AdminTeacherManagement() {
             );
 
             if (response.ok) {
-
                 setDeleteMessage({
                     text: "Teacher deleted successfully.",
                     type: "success"
@@ -465,17 +470,12 @@ export default function AdminTeacherManagement() {
                 fetchOccupied();
 
                 setTimeout(() => {
-
                     setShowDeleteModal(false);
-
                     setUserToDelete(null);
-
                 }, 1500);
 
             } else {
-
                 const errorText = await response.text();
-
                 setDeleteMessage({
                     text: `Failed to delete: ${errorText}`,
                     type: "error"
@@ -483,7 +483,6 @@ export default function AdminTeacherManagement() {
             }
 
         } catch (error) {
-
             setDeleteMessage({
                 text: "Server error during deletion.",
                 type: "error"
@@ -920,8 +919,42 @@ export default function AdminTeacherManagement() {
                         </div>
 
                         <p className="delete-text">
-                            Are you sure you want to permanently delete this teacher account?
+                            Do you want to delete this teacher account?
                         </p>
+
+                        {deleteStage === 2 && (
+                            <div style={{ marginTop: "15px", marginBottom: "15px", textAlign: "left" }}>
+                                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "5px" }}>
+                                    Please enter the reason for deletion (compulsory):
+                                </label>
+                                <textarea
+                                    placeholder="Enter reason for deletion"
+                                    value={deletionReason}
+                                    onChange={(e) => {
+                                        setDeletionReason(e.target.value);
+                                        if (e.target.value.trim()) setReasonError("");
+                                    }}
+                                    style={{
+                                        width: "100%",
+                                        padding: "10px",
+                                        borderRadius: "6px",
+                                        border: reasonError ? "1px solid #ef4444" : "1px solid #cbd5e1",
+                                        backgroundColor: "#f8fafc",
+                                        resize: "none",
+                                        fontSize: "14px",
+                                        outline: "none",
+                                        fontFamily: "inherit"
+                                    }}
+                                    rows="3"
+                                    required
+                                />
+                                {reasonError && (
+                                    <div style={{ color: "#ef4444", fontSize: "12px", marginTop: "4px", fontWeight: "500" }}>
+                                        {reasonError}
+                                    </div>
+                                )}
+                            </div>
+                        )}
 
                         {deleteMessage.text && (
 
@@ -943,13 +976,23 @@ export default function AdminTeacherManagement() {
                                 Cancel
                             </button>
 
-                            <button
-                                type="button"
-                                className="confirm-delete-btn"
-                                onClick={confirmDelete}
-                            >
-                                Delete
-                            </button>
+                            {deleteStage === 1 ? (
+                                <button
+                                    type="button"
+                                    className="confirm-delete-btn"
+                                    onClick={() => setDeleteStage(2)}
+                                >
+                                    Yes
+                                </button>
+                            ) : (
+                                <button
+                                    type="button"
+                                    className="confirm-delete-btn"
+                                    onClick={confirmDelete}
+                                >
+                                    Delete
+                                </button>
+                            )}
 
                         </div>
 
