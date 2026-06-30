@@ -163,75 +163,83 @@ export function LiveStream() {
 
       {/* UPCOMING STREAMS */}
 
-      <section className="upcoming-section">
+<section className="upcoming-section">
 
-        <div className="live-container">
+  <div className="live-container">
 
-          <div className="upcoming-header">
+    <div className="upcoming-header">
 
-            <h2 className="upcoming-title">
-              Upcoming Streams
-            </h2>
+      <h2 className="upcoming-title">
+        Upcoming Streams
+      </h2>
 
-            <div className="upcoming-line"></div>
+      <div className="upcoming-line"></div>
 
-          </div>
+    </div>
 
-          <div className="upcoming-grid">
+    {streams.filter((stream) => !stream.live).length > 0 ? (
 
-            {streams
-              .filter((stream) => !stream.live)
-              .map((stream) => (
+      <div className="upcoming-grid">
 
-                <div
-                  key={stream.id}
-                  className="upcoming-card"
-                >
+        {streams
+          .filter((stream) => !stream.live)
+          .map((stream) => (
 
-                  <div className="upcoming-icon-box">
+            <div
+              key={stream.id}
+              className="upcoming-card"
+            >
 
-                    <Calendar className="upcoming-icon" />
+              <div className="upcoming-icon-box">
+                <Calendar className="upcoming-icon" />
+              </div>
 
-                  </div>
+              <h3 className="upcoming-card-title">
+                {stream.title}
+              </h3>
 
-                  <h3 className="upcoming-card-title">
-                    {stream.title}
-                  </h3>
+              <div className="upcoming-info">
 
-                  <div className="upcoming-info">
-
-                    <div className="upcoming-info-row">
-
-                      <Calendar className="small-icon" />
-
-                      <span>{stream.date}</span>
-
-                    </div>
-
-                    <div className="upcoming-info-row">
-
-                      <Clock className="small-icon" />
-
-                      <span>{stream.time}</span>
-
-                    </div>
-
-                  </div>
-
-                  <p className="upcoming-description">
-                    {stream.description}
-                  </p>
-
+                <div className="upcoming-info-row">
+                  <Calendar className="small-icon" />
+                  <span>{stream.date}</span>
                 </div>
 
-              ))}
+                <div className="upcoming-info-row">
+                  <Clock className="small-icon" />
+                  <span>{stream.time}</span>
+                </div>
 
-          </div>
+              </div>
 
-        </div>
+              <p className="upcoming-description">
+                {stream.description}
+              </p>
 
-      </section>
+            </div>
 
+          ))}
+
+      </div>
+
+    ) : (
+
+      <div className="no-stream-container">
+
+        <h3>No Upcoming Streams Yet</h3>
+
+        <p>
+          There are currently no upcoming live streams scheduled.
+          Please check back later for future broadcasts.
+        </p>
+
+      </div>
+
+    )}
+
+  </div>
+
+</section>
     </div>
   );
 }

@@ -4259,7 +4259,31 @@ h6,
   50% { opacity: 0.5; }
   100% { opacity: 1; }
 }
+.no-stream-container {
+  
+  max-width: 1600px;
+  margin: 40px auto;
+  padding: 70px 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 2px dashed #d9d9d9;
+  border-radius: 16px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
 
+.no-stream-container h3 {
+  font-size: 28px;
+  color: #002147;
+  margin-bottom: 12px;
+}
+
+.no-stream-container p {
+  max-width: 500px;
+  margin: 0 auto;
+  font-size: 17px;
+  color: #6b7280;
+  line-height: 1.6;
+}
 /*  
    RESPONSIVE
  */
