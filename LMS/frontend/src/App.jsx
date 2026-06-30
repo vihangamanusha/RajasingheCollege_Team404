@@ -92,7 +92,24 @@ function App() {
                 <Route path="materials" element={<StudentMaterials />} />
                 <Route path="report" element={<StudentReport studentId="STU001" />} />
             </Route>
+
+
+            <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" />} />
+                <Route path="/dashboard" element={<TeacherDashboard />} />
+                <Route path="/TeacherAddMarks" element={<TeacherAddMarks />} />
+                <Route path="/subjects" element={<TeacherSubject />} />
+                <Route path="/classes" element={<TeacherClass />} />
+                <Route path="/materials" element={<TeacherMaterialList />} />
+                <Route path="/upload-material" element={<TeacherUploadMaterial />} />
+                <Route path="/myclasses" element={<TeacherMyClasses />} />
+                <Route path="/marks/:classId" element={<TeacherMarksPage />} />
+                <Route path="/add-student" element={<TeacherAddStudentToClass />} />
+                <Route path="/Assignment" element={<TeacherAssignmentList />} />
+                <Route path="/create-assignment" element={<TeacherCreateAssignment />} />
+            </Routes>
         </Routes>
+
     );
 }
 
