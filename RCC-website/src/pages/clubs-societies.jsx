@@ -1,5 +1,4 @@
-import { Link } from "react-router";
-import { ArrowRight, Users } from "lucide-react";
+import { BookOpen, Users } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
 import scienceImg from "../assets/about.jpeg";
@@ -114,18 +113,9 @@ export function ClubsSocieties() {
         <div className="clubs-overlay">
 
           <div className="clubs-hero-content">
-
-            <div className="clubs-icon">
-              <Users size={40} />
-            </div>
-
+            
             <h1>Clubs & Societies</h1>
-
-            <p>
-              Empowering students through leadership,
-              creativity, teamwork, and innovation.
-            </p>
-
+            
           </div>
 
         </div>
@@ -138,6 +128,10 @@ export function ClubsSocieties() {
         <div className="container">
 
           <div className="clubs-section-header">
+
+            <div className="clubs-icon">
+              <Users size={30} />
+            </div>
 
             <h2>
               Student Activities & Organizations
@@ -175,12 +169,10 @@ export function ClubsSocieties() {
 
         {/* LEFT IMAGE */}
         <div className="club-row-image">
-
-          <img
+          <ImageWithFallback
             src={club.image}
             alt={club.title}
           />
-
         </div>
 
         {/* RIGHT CONTENT */}

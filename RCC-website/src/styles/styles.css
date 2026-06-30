@@ -586,10 +586,12 @@ h6,
 
 .line-clamp-2 {
   -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .line-clamp-3 {
   -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 
 
@@ -5108,7 +5110,7 @@ font-size: 1rem;
 .clubs-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background:rgba(5, 54, 110, 0.405);
 
   display: flex;
   justify-content: center;
@@ -5123,11 +5125,11 @@ font-size: 1rem;
 }
 
 .clubs-icon {
-  width: 80px;
-  height: 80px;
-  background: rgba(255,255,255,0.2);
+  width: 60px;
+  height: 60px;
+  background: #002147;
   border-radius: 50%;
-
+  color: #ffd700;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -5170,12 +5172,12 @@ font-size: 1rem;
 }
 
 .clubs-intro-text {
-  max-width: 1000px;
-  margin: auto;
-  text-align: center;
-  line-height: 1.8;
-  font-size: 18px;
+  font-size: 1rem;
+  line-height: 1.75;
   color: #4b5563;
+  font-weight: 300;
+  margin: 0;
+  text-align: center;
 }
 
 /* GRID */
