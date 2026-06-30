@@ -80,7 +80,7 @@ export function Sports() {
         <div className="sports-intro-icon">
 
           <Trophy
-            size={45}
+            size={33}
             color="#FFD700"
           />
 
