@@ -1,0 +1,89 @@
+/* ============================= */
+/* MARKS PAGE */
+/* ============================= */
+
+.dashboard-container {
+    padding: 30px;
+    background-color: #f5f7fb;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+/* PAGE TITLE */
+.dashboard-container h2 {
+    font-size: 28px;
+    color: #1e293b;
+    margin-bottom: 25px;
+    font-weight: 700;
+}
+
+/* ============================= */
+/* TABLE STYLING */
+/* ============================= */
+
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* TABLE HEADER */
+.marks-table thead {
+    background-color: #2563eb;
+    color: white;
+}
+
+.marks-table th {
+    padding: 16px;
+    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* TABLE BODY */
+.marks-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #334155;
+    font-size: 14px;
+}
+
+/* ROW HOVER */
+.marks-table tbody tr:hover {
+    background-color: #f1f5f9;
+    transition: 0.2s ease;
+}
+
+/* LAST ROW BORDER REMOVE */
+.marks-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 768px) {
+
+    .dashboard-container {
+        padding: 15px;
+    }
+
+    .marks-table th,
+    .marks-table td {
+        padding: 10px;
+        font-size: 13px;
+    }
+
+    .dashboard-container h2 {
+        font-size: 22px;
+    }
+}
