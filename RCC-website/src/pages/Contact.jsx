@@ -152,9 +152,7 @@ if (!formData.phone.trim()) {
                     <p>
                       Main Office: +94 35 226 XXXX
                       <br />
-                      Principal: +94 35 226 YYYY
-                      <br />
-                      Admissions: +94 35 226 ZZZZ
+                     
                     </p>
                   </div>
                 </div>
@@ -170,9 +168,7 @@ if (!formData.phone.trim()) {
                     <p>
                       General: info@rrcc.lk
                       <br />
-                      Principal: principal@rrcc.lk
-                      <br />
-                      Admissions: admissions@rrcc.lk
+                      
                     </p>
                   </div>
                 </div>
@@ -184,11 +180,10 @@ if (!formData.phone.trim()) {
                   <div>
                     <h3>Office Hours</h3>
                     <p>
-                      Monday - Friday: 7:30 AM - 3:30 PM
+                      Monday - Friday: 7:30 AM - 1:30 PM
                       <br />
-                      Saturday: 8:00 AM - 12:00 PM
-                      <br />
-                      Sunday & Public Holidays: Closed
+                    
+                       Saturday, Sunday & Public Holidays: Closed
                     </p>
                   </div>
                 </div>
@@ -247,11 +242,9 @@ if (!formData.phone.trim()) {
             placeholder="0771234567"
           />
 
-           {errors.phone && (
-    <p style={{ color: "red", fontSize: "12px", marginTop: "4px" }}>
-      {errors.phone}
-    </p>
-  )}
+          {errors.phone && (
+            <p className="error-text">{errors.phone}</p>
+          )}
         </div>
 
         {/* Subject */}

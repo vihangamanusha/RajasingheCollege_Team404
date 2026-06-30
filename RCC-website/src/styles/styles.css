@@ -1732,6 +1732,14 @@ h6,
   min-height: 6rem;
 }
 
+.error-text,
+.contact-form .error-text {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
 .contact-form button {
   width: 100%;
   padding: 1rem 1.5rem;
@@ -3096,7 +3104,8 @@ h6,
 
 .contact-form {
   width: 600px;
-  height: 800px;
+  height: 900px;
+  border:#c0cee0 solid 2px;
 
 }
 
