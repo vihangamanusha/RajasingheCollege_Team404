@@ -14,6 +14,7 @@
 }
 
 .page-header p {
+    text-align: center;
     margin: 0 0 30px 0;
     color: #64748b;
     font-size: 16px;
@@ -25,14 +26,6 @@
     padding: 30px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
     border: 1px solid #f1f5f9;
-}
-
-.form-card h2 {
-    margin: 0 0 25px 0;
-    color: #1e293b;
-    font-size: 20px;
-    border-bottom: 1px solid #f1f5f9;
-    padding-bottom: 15px;
 }
 
 .form-group {
@@ -61,7 +54,9 @@
     font-size: 18px;
 }
 
-.input-container input {
+/* Include select elements so the dropdown matches text inputs */
+.input-container input,
+.input-container select {
     width: 100%;
     padding: 12px 12px 12px 40px;
     border: 1px solid #e2e8f0;
@@ -71,32 +66,16 @@
     outline: none;
     transition: border-color 0.2s;
     box-sizing: border-box;
+    background-color: white;
 }
 
 .input-container input::placeholder {
     color: #94a3b8;
 }
 
-.input-container input:focus {
+.input-container input:focus,
+.input-container select:focus {
     border-color: #2b55cc;
-}
-
-.submit-btn {
-    width: 100%;
-    background-color: #2b55cc;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    padding: 14px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 10px;
-}
-
-.submit-btn:hover {
-    background-color: #1e40af;
 }
 
 .message-box {
@@ -118,4 +97,77 @@
     background-color: #fee2e2;
     color: #991b1b;
     border: 1px solid #fecaca;
+}
+
+/* ==========================================
+   NEW WIZARD STYLES
+========================================== */
+
+.step-indicator {
+    text-align: center;
+    color: #2b55cc;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 25px;
+    background-color: #eff6ff;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #bfdbfe;
+}
+
+.button-group {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.back-btn {
+    width: 100%;
+    background-color: #f1f5f9;
+    color: #475569;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background-color: #e2e8f0;
+    color: #1e293b;
+}
+
+.submit-btn {
+    width: 100%;
+    background-color: #2b55cc;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background-color: #1e40af;
+}
+
+/* Visually disable buttons when validation fails */
+.submit-btn:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.wizard-step {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }

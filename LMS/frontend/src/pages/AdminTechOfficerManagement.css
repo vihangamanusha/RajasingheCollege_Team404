@@ -1,0 +1,348 @@
+/* AdminTechOfficerManagement.css */
+
+/* =========================================================
+   LAYOUT & HEADER
+========================================================= */
+.admin-tech-management-container {
+    padding: 10px 0;
+}
+
+.page-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header-text h1 {
+    margin: 0 0 8px 0;
+    color: #0f172a;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.header-text p {
+    margin: 0;
+    color: #64748b;
+    font-size: 15px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+.add-btn.tech-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #0f766e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-btn.tech-btn:hover {
+    background-color: #115e59;
+}
+
+/* =========================================================
+   MAIN DATA TABLE & CARD
+========================================================= */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 14px;
+    color: #94a3b8;
+    font-size: 18px;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 14px 14px 14px 45px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #334155;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-container input:focus {
+    border-color: #0f766e;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.data-table th {
+    color: #64748b;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 16px 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table td {
+    color: #334155;
+    font-size: 14px;
+    padding: 16px 10px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.data-table tr:last-child td {
+    border-bottom: none;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge.active {
+    background-color: #dcfce7;
+    color: #15803d;
+}
+
+.badge.suspended {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+/* =========================================================
+   ACTION ICONS
+========================================================= */
+.action-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: opacity 0.2s;
+    padding: 0;
+}
+
+.icon-btn:hover {
+    opacity: 0.7;
+}
+
+.edit-icon { color: #0f766e; }
+.delete-icon { color: #ef4444; }
+
+/* =========================================================
+   MODALS (EDIT & DELETE)
+========================================================= */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    width: 450px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.scrollable-modal {
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 600px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.warning-icon {
+    font-size: 24px;
+}
+
+.modal-box h2 {
+    margin: 0;
+    color: #0f172a;
+    font-size: 1.4rem;
+}
+
+.modal-box p {
+    color: #475569;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 20px;
+}
+
+/* =========================================================
+   FORMS WITHIN MODALS
+========================================================= */
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.modal-form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.modal-form-group input,
+.modal-form-group select,
+.modal-form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    background-color: white;
+    box-sizing: border-box;
+}
+
+/* Dropdown specific styles */
+.modal-form-group select {
+    cursor: pointer;
+    appearance: auto;
+}
+
+.modal-form-group input:focus,
+.modal-form-group select:focus,
+.modal-form-group textarea:focus {
+    border-color: #0f766e;
+}
+
+.modal-form-group input:disabled {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
+}
+
+/* =========================================================
+   MODAL ACTIONS (BUTTONS)
+========================================================= */
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.cancel-btn {
+    padding: 10px 16px;
+    background: white;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancel-btn:hover {
+    background: #f8fafc;
+}
+
+.confirm-delete-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    background-color: #ef4444; /* Default Red for Delete */
+}
+
+.confirm-delete-btn:disabled {
+    background: #fca5a5;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   MESSAGES & ALERTS
+========================================================= */
+.inline-form-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: center;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.inline-form-message.success {
+    background-color: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.inline-form-message.error {
+    background-color: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+/* Simple text feedback classes */
+.error {
+    color: #dc2626;
+    font-size: 13px;
+    margin: 10px 0;
+}
+
+.success {
+    color: #16a34a;
+    font-size: 13px;
+    margin: 10px 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}

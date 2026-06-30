@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { BookCopy } from "lucide-react";
 import {
   LayoutDashboard,
   ClipboardList,
@@ -7,10 +8,10 @@ import {
   BookOpen,
   Bell,
   LogOut,
+  Library,
 } from "lucide-react";
 
-
-import schoolLogo from "../../assets/school-logo.jpeg";
+import schoolLogo from "../../assets/school-logo.png";
 const StudentSidebar = () => {
   const menuItems = [
     {
@@ -34,6 +35,11 @@ const StudentSidebar = () => {
       path: "/student/materials",
     },
     {
+      name: "My Subjects",
+      icon: <BookCopy size={22} />,
+      path: "/student/subjects",
+    },
+    {
       name: "Announcements",
       icon: <Bell size={22} />,
       path: "/student/announcements",
@@ -41,8 +47,8 @@ const StudentSidebar = () => {
   ];
 
   return (
-    <aside className="sidebar-main">
-      <style>{`
+      <aside className="sidebar-main">
+        <style>{`
         .sidebar-main {
           width: 260px;
           height: 100vh;
@@ -146,48 +152,48 @@ const StudentSidebar = () => {
         }
       `}</style>
 
-      <div className="logo-area">
-        {/* Logo Photo eka methanata danna */}
-        <div className="logo-photo-container">
-          <img
-            src={schoolLogo}
-            alt="School Logo"
-          />
-        </div>
-        <div className="logo-brand">
-          Rajasinghe
-          <br />
-          <span style={{ fontSize: "0.85rem", opacity: 0.7, fontWeight: 400 }}>
+        <div className="logo-area">
+          {/* Logo Photo eka methanata danna */}
+          <div className="logo-photo-container">
+            <img
+                src={schoolLogo}
+                alt="School Logo"
+            />
+          </div>
+          <div className="logo-brand">
+            Rajasinghe
+            <br />
+            <span style={{ fontSize: "0.85rem", opacity: 0.7, fontWeight: 400 }}>
             LMS 
           </span>
+          </div>
         </div>
-      </div>
 
-      <nav className="nav-menu">
-        {menuItems.map((item) => (
-          <NavLink
-            key={item.name}
-            to={item.path}
-            className={({ isActive }) =>
-              `nav-link-item ${isActive ? "active" : ""}`
-            }
+        <nav className="nav-menu">
+          {menuItems.map((item) => (
+              <NavLink
+                  key={item.name}
+                  to={item.path}
+                  className={({ isActive }) =>
+                      `nav-link-item ${isActive ? "active" : ""}`
+                  }
+              >
+                {item.icon}
+                <span>{item.name}</span>
+              </NavLink>
+          ))}
+        </nav>
+
+        <div className="sidebar-footer">
+          <button
+              className="logout-button"
+              onClick={() => (window.location.href = "/login")}
           >
-            {item.icon}
-            <span>{item.name}</span>
-          </NavLink>
-        ))}
-      </nav>
-
-      <div className="sidebar-footer">
-        <button
-          className="logout-button"
-          onClick={() => (window.location.href = "/login")}
-        >
-          <LogOut size={22} />
-          <span>Logout</span>
-        </button>
-      </div>
-    </aside>
+            <LogOut size={22} />
+            <span>Logout</span>
+          </button>
+        </div>
+      </aside>
   );
 };
 

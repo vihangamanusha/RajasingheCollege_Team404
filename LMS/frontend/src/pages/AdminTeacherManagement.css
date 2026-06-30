@@ -1,0 +1,373 @@
+/* AdminTeacherManagement.css */
+
+.admin-teacher-management-container {
+    padding: 10px 0;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.page-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.header-text h1 {
+    margin: 0;
+    font-size: 26px;
+    color: #0f172a;
+}
+
+.header-text p {
+    color: #64748b;
+    margin-top: 5px;
+}
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.add-btn.teacher-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: #f59e0b;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 12px 20px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+.add-btn.teacher-btn:hover {
+    background: #d97706;
+}
+
+/* =========================================
+   TABLE CARD
+========================================= */
+
+.table-card {
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.search-container {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.search-icon {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    color: #94a3b8;
+}
+
+.search-container input {
+    width: 100%;
+    padding: 14px 14px 14px 42px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    outline: none;
+}
+
+.search-container input:focus {
+    border-color: #f59e0b;
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th {
+    text-align: left;
+    padding: 15px;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.data-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* =========================================
+   BADGES
+========================================= */
+
+.role-badge {
+    padding: 5px 12px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.subject-teacher {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.action-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.edit-icon {
+    color: #f59e0b;
+}
+
+.delete-icon {
+    color: #ef4444;
+}
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal-overlay {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: rgba(15, 23, 42, 0.65);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 999;
+}
+
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+}
+
+.scrollable-modal {
+    width: 700px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* =========================================
+   MODAL HEADER
+========================================= */
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    margin-bottom: 25px;
+}
+
+.warning-icon {
+    color: #f59e0b;
+    font-size: 24px;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.modal-form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.modal-form-group label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.modal-form-group input,
+.modal-form-group select {
+    padding: 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+}
+
+.modal-form-group input:focus,
+.modal-form-group select:focus {
+    border-color: #f59e0b;
+}
+
+.modal-form-group input:disabled {
+    background: #f1f5f9;
+}
+
+/* =========================================
+   SUBJECT CHECKBOXES
+========================================= */
+
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background: #f8fafc;
+
+    padding: 10px;
+    border-radius: 8px;
+
+    border: 1px solid #e2e8f0;
+}
+
+.checkbox-item:hover {
+    border-color: #f59e0b;
+    background: #fef3c7;
+}
+
+/* =========================================
+   PASSWORD SECTION
+========================================= */
+
+.password-section {
+    margin-top: 20px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+}
+
+.password-title {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.password-description {
+    color: #64748b;
+    margin-bottom: 10px;
+}
+
+/* =========================================
+   MESSAGE
+========================================= */
+
+.inline-form-message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.inline-form-message.success {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.inline-form-message.error {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+
+    margin-top: 25px;
+}
+
+.cancel-btn {
+    padding: 10px 16px;
+
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+
+    background: white;
+    cursor: pointer;
+}
+
+.confirm-delete-btn {
+    padding: 10px 16px;
+
+    border: none;
+    border-radius: 8px;
+
+    background: #f59e0b;
+    color: white;
+
+    cursor: pointer;
+}
+
+.confirm-delete-btn:hover {
+    background: #d97706;
+}
+
+/* =========================================
+   SMALL NOTE
+========================================= */
+
+.field-note {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+/* =========================================
+   LOADING
+========================================= */
+
+.loading-text {
+    text-align: center;
+    padding: 30px;
+    color: #64748b;
+}

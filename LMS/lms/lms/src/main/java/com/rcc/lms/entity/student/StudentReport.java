@@ -1,33 +1,34 @@
 package com.rcc.lms.entity.student;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "student_report")
+@Table(name = "report")
 public class StudentReport {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "report_id")
     private Integer reportId;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", referencedColumnName = "student_id", nullable = false)
+    @JoinColumn(name = "student_id")
     private Student student;
+
+    @Column(length = 20)
+    private String classId;
 
     @Column(length = 20)
     private String term;
 
-    @Column(name = "attendance_percentage")
-    private Double attendancePercentage;
+    private Integer totalMarks;
 
-    @Column(name = "overall_grade")
-    private String overallGrade;
+    @Column(precision = 5, scale = 2)
+    private BigDecimal average;
 
-    @Column(name = "teacher_comments")
-    private String teacherComments;
+    private Integer rankPosition;
 
-    @Column(name = "generated_date")
     private LocalDate generatedDate;
 
     // Constructors
@@ -40,17 +41,20 @@ public class StudentReport {
     public Student getStudent() { return student; }
     public void setStudent(Student student) { this.student = student; }
 
+    public String getClassId() { return classId; }
+    public void setClassId(String classId) { this.classId = classId; }
+
     public String getTerm() { return term; }
     public void setTerm(String term) { this.term = term; }
 
-    public Double getAttendancePercentage() { return attendancePercentage; }
-    public void setAttendancePercentage(Double attendancePercentage) { this.attendancePercentage = attendancePercentage; }
+    public Integer getTotalMarks() { return totalMarks; }
+    public void setTotalMarks(Integer totalMarks) { this.totalMarks = totalMarks; }
 
-    public String getOverallGrade() { return overallGrade; }
-    public void setOverallGrade(String overallGrade) { this.overallGrade = overallGrade; }
+    public BigDecimal getAverage() { return average; }
+    public void setAverage(BigDecimal average) { this.average = average; }
 
-    public String getTeacherComments() { return teacherComments; }
-    public void setTeacherComments(String teacherComments) { this.teacherComments = teacherComments; }
+    public Integer getRankPosition() { return rankPosition; }
+    public void setRankPosition(Integer rankPosition) { this.rankPosition = rankPosition; }
 
     public LocalDate getGeneratedDate() { return generatedDate; }
     public void setGeneratedDate(LocalDate generatedDate) { this.generatedDate = generatedDate; }

@@ -1,77 +1,180 @@
 import { useState } from "react";
-import { FiUser, FiMail, FiLock, FiHash } from "react-icons/fi";
-import "./TechRegister.css";
+import {
+    FiUser,
+    FiMail,
+    FiLock,
+    FiHash,
+    FiBriefcase,
+    FiMapPin,
+    FiPhone,
+    FiArrowRight,
+    FiArrowLeft
+} from "react-icons/fi";
+
+import "./StudentRegister.css";
 
 export default function TechRegister() {
 
-    // =========================
-    // FORM STATE
-    // =========================
+    const [step, setStep] = useState(1);
+
     const [form, setForm] = useState({
+        fullName: "",
+        position: "",
+        assignedArea: "",
+        contactNumber: "",
         userId: "",
         username: "",
         email: "",
         password: ""
     });
 
-    // MESSAGE STATE
     const [message, setMessage] = useState("");
-    const [messageType, setMessageType] = useState(""); // Used to style success/error alerts
+    const [messageType, setMessageType] = useState("");
 
     // =========================
-    // HANDLE INPUT CHANGES
+    // DROPDOWN OPTIONS
     // =========================
-    const handleChange = (e) => {
-        setForm({
-            ...form,
-            [e.target.name]: e.target.value
-        });
+    const positionList = ["Lab Assistant 01", "Lab Assistant 02"];
+    const areaList = ["Computer Lab"];
+
+    // =========================
+    // VALIDATION (LIKE STUDENT FORM STYLE)
+    // =========================
+    const validateStep = () => {
+
+        // STEP 1 VALIDATION
+        if (step === 1) {
+
+            if (!/^[a-zA-Z\s]+$/.test(form.fullName)) {
+                setMessage("Full Name can only contain letters and spaces.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!form.position) {
+                setMessage("Please select a Job Position.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!form.assignedArea) {
+                setMessage("Please select Assigned Area.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^\d{10}$/.test(form.contactNumber)) {
+                setMessage("Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+        }
+
+        // STEP 2 VALIDATION
+        if (step === 2) {
+
+            const alphaNum = /^[a-zA-Z0-9]+$/;
+
+            if (!alphaNum.test(form.userId)) {
+                setMessage("User ID must be alphanumeric only.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!alphaNum.test(form.username)) {
+                setMessage("Username must be alphanumeric only.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+                setMessage("Invalid email format.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (form.password.length < 8) {
+                setMessage("Password must be at least 8 characters.");
+                setMessageType("error");
+                return false;
+            }
+        }
+
+        return true;
     };
 
     // =========================
-    // SUBMIT FORM
+    // HANDLE CHANGE
+    // =========================
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+        setMessage("");
+    };
+
+    // =========================
+    // NEXT STEP
+    // =========================
+    const handleNext = () => {
+        if (validateStep()) {
+            setStep(2);
+            setMessage("");
+        }
+    };
+
+    // =========================
+    // BACK STEP
+    // =========================
+    const handleBack = () => {
+        setStep(1);
+        setMessage("");
+    };
+
+    // =========================
+    // SUBMIT
     // =========================
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setMessage("");
-        setMessageType("");
+
+        if (!validateStep()) return;
 
         try {
-            // =========================
-            // SEND REQUEST TO BACKEND
-            // =========================
-            const res = await fetch(
-                "http://localhost:8080/admin/users/create",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        // SEND JWT TOKEN
-                        Authorization: "Bearer " + localStorage.getItem("token")
-                    },
-                    body: JSON.stringify({
-                        userId: form.userId,
-                        username: form.username,
-                        email: form.email,
-                        password: form.password,
-                        // IMPORTANT
-                        role: "ROLE_TECHNICAL_OFFICER"
-                    })
-                }
-            );
+            const res = await fetch("http://localhost:8080/admin/users/tech/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "Bearer " + localStorage.getItem("token")
+                },
+                body: JSON.stringify({
+                    ...form,
+                    role: "ROLE_TECHNICAL_OFFICER"
+                })
+            });
 
             const data = await res.text();
-            setMessage(data);
 
             if (res.ok) {
+                setMessage("Technical Officer registered successfully! ✅");
                 setMessageType("success");
+
+                setForm({
+                    fullName: "",
+                    position: "",
+                    assignedArea: "",
+                    contactNumber: "",
+                    userId: "",
+                    username: "",
+                    email: "",
+                    password: ""
+                });
+
+                setStep(1);
             } else {
+                setMessage(data);
                 setMessageType("error");
             }
 
-        } catch (error) {
-            console.log(error);
-            setMessage("Technical Officer registration failed");
+        } catch (err) {
+            setMessage("Server connection failed.");
             setMessageType("error");
         }
     };
@@ -81,84 +184,141 @@ export default function TechRegister() {
 
             <div className="page-header">
                 <h1>Technical Officer Registration</h1>
-                <p>Register a new system administrator or technical support member.</p>
+                <p>Create system account for technical staff</p>
             </div>
 
             <div className="form-card">
-                <h2>Account Details</h2>
+
+                <div className="step-indicator">
+                    {step === 1 ? "Step 1: Professional Info" : "Step 2: Account Setup"}
+                </div>
 
                 <form onSubmit={handleSubmit}>
 
-                    {/* USER ID */}
-                    <div className="form-group">
-                        <label>Officer ID</label>
-                        <div className="input-container">
-                            <FiHash className="input-icon" />
-                            <input
-                                name="userId"
-                                placeholder="Enter officer ID number"
-                                value={form.userId}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                    {/* ================= STEP 1 ================= */}
+                    {step === 1 && (
+                        <div className="wizard-step">
 
-                    {/* USERNAME */}
-                    <div className="form-group">
-                        <label>Username</label>
-                        <div className="input-container">
-                            <FiUser className="input-icon" />
-                            <input
-                                name="username"
-                                placeholder="Enter unique username"
-                                value={form.username}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                            {/* FULL NAME */}
+                            <div className="form-group">
+                                <label>Full Name</label>
+                                <div className="input-container">
+                                    <FiUser className="input-icon" />
+                                    <input
+                                        name="fullName"
+                                        value={form.fullName}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
 
-                    {/* EMAIL */}
-                    <div className="form-group">
-                        <label>Email Address</label>
-                        <div className="input-container">
-                            <FiMail className="input-icon" />
-                            <input
-                                name="email"
-                                type="email"
-                                placeholder="tech@example.com"
-                                value={form.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                            {/* POSITION */}
+                            <div className="form-group">
+                                <label>Job Position</label>
+                                <div className="input-container">
+                                    <FiBriefcase className="input-icon" />
+                                    <select
+                                        name="position"
+                                        value={form.position}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Select Position</option>
+                                        {positionList.map((p) => (
+                                            <option key={p} value={p}>{p}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
 
-                    {/* PASSWORD */}
-                    <div className="form-group">
-                        <label>Password</label>
-                        <div className="input-container">
-                            <FiLock className="input-icon" />
-                            <input
-                                name="password"
-                                type="password"
-                                placeholder="Enter secure password"
-                                value={form.password}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                            {/* AREA */}
+                            <div className="form-group">
+                                <label>Assigned Area</label>
+                                <div className="input-container">
+                                    <FiMapPin className="input-icon" />
+                                    <select
+                                        name="assignedArea"
+                                        value={form.assignedArea}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="">Select Area</option>
+                                        {areaList.map((a) => (
+                                            <option key={a} value={a}>{a}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
 
-                    {/* SUBMIT BUTTON */}
-                    <button type="submit" className="submit-btn green-btn">
-                        Create Tech User
-                    </button>
+                            {/* CONTACT */}
+                            <div className="form-group">
+                                <label>Contact Number</label>
+                                <div className="input-container">
+                                    <FiPhone className="input-icon" />
+                                    <input
+                                        name="contactNumber"
+                                        value={form.contactNumber}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+
+                            <button type="button" className="submit-btn" onClick={handleNext}>
+                                Next <FiArrowRight />
+                            </button>
+
+                        </div>
+                    )}
+
+                    {/* ================= STEP 2 ================= */}
+                    {step === 2 && (
+                        <div className="wizard-step">
+
+                            <div className="form-group">
+                                <label>User ID</label>
+                                <div className="input-container">
+                                    <FiHash className="input-icon" />
+                                    <input name="userId" value={form.userId} onChange={handleChange} />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Username</label>
+                                <div className="input-container">
+                                    <FiUser className="input-icon" />
+                                    <input name="username" value={form.username} onChange={handleChange} />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Email</label>
+                                <div className="input-container">
+                                    <FiMail className="input-icon" />
+                                    <input name="email" value={form.email} onChange={handleChange} />
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Password</label>
+                                <div className="input-container">
+                                    <FiLock className="input-icon" />
+                                    <input type="password" name="password" value={form.password} onChange={handleChange} />
+                                </div>
+                            </div>
+
+                            <div className="button-group">
+                                <button type="button" className="back-btn" onClick={handleBack}>
+                                    <FiArrowLeft /> Back
+                                </button>
+
+                                <button type="submit" className="submit-btn">
+                                    Register
+                                </button>
+                            </div>
+
+                        </div>
+                    )}
 
                 </form>
 
-                {/* MESSAGE */}
                 {message && (
                     <div className={`message-box ${messageType}`}>
                         {message}

@@ -7,18 +7,18 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "student")
 public class Student {
+
     @Id
-    @Column(name = "student_id", length = 20)
+    @Column(length = 20)
     private String studentId;
 
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
-    @Column(name = "full_name", nullable = false, length = 100)
+    @Column(nullable = false, length = 100)
     private String fullName;
 
-    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @Column(length = 255)
@@ -29,16 +29,17 @@ public class Student {
     private Medium medium;
 
     @ManyToOne
-    @JoinColumn(name = "class_id", referencedColumnName = "class_id")
+    @JoinColumn(name = "class_id")
     private ClassEntity classEntity;
 
-    @Column(name = "contact_number", length = 15)
+    @Column(length = 15)
     private String contactNumber;
 
     // Constructors
     public Student() {}
 
-    public Student(String studentId, User user, String fullName, LocalDate dateOfBirth, String address, Medium medium, ClassEntity classEntity, String contactNumber) {
+    public Student(String studentId, User user, String fullName, LocalDate dateOfBirth,
+                   String address, Medium medium, ClassEntity classEntity, String contactNumber) {
         this.studentId = studentId;
         this.user = user;
         this.fullName = fullName;

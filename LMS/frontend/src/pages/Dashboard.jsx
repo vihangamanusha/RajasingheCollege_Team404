@@ -1,40 +1,66 @@
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom"; // 1. Import useNavigate for button routing
+import { FiUsers, FiBook, FiGrid, FiUserPlus, FiPlus } from "react-icons/fi";
+import { FaGraduationCap } from "react-icons/fa";
 import "./Dashboard.css";
 
 export default function Dashboard() {
+    // 2. Initialize the navigation hook
+    const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
 
-    useEffect(() => {
+    // 3. State to hold dynamic statistics and activity feed
+    const [stats, setStats] = useState({
+        totalStudents: 0,
+        totalTeachers: 0,
+        totalClasses: 0,
+        totalSubjects: 0,
+        recentActivities: [] // This will be populated by your API
+    });
 
-        // get token from localStorage
+    useEffect(() => {
         const token = localStorage.getItem("token");
 
         if (token) {
             try {
-                // decode JWT token
+                // Decode the JWT to show the logged-in Admin's name
                 const decoded = jwtDecode(token);
-
-                // only extract username (sub = subject in JWT)
                 setUsername(decoded.sub);
 
+                // 4. Trigger the data fetch as soon as the component loads
+                fetchDashboardStats(token);
             } catch (error) {
-                console.log("Invalid token");
+                console.log("Invalid token or connection error");
             }
         }
-
     }, []);
 
-    // Helper function to grab the first letter for the circle avatar
+    // 5. Function to fetch live data from your AdminController endpoint
+    const fetchDashboardStats = async (token) => {
+        try {
+            const response = await fetch("http://localhost:8080/admin/dashboard/stats", {
+                headers: { "Authorization": `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                // Update our state with real numbers from the database
+                setStats(data);
+            }
+        } catch (error) {
+            console.error("Failed to load dashboard statistics:", error);
+        }
+    };
+
+    // Helper to generate initials for the avatar
     const getInitials = (name) => {
-        if (!name) return "G"; // G for Guest
-        return name.substring(0, 1).toUpperCase();
+        if (!name) return "AD";
+        return name.substring(0, 2).toUpperCase();
     };
 
     return (
         <div className="simple-dashboard-container">
-
             {/* TOP HEADER */}
             <header className="top-header">
                 <div className="header-title">
@@ -43,7 +69,7 @@ export default function Dashboard() {
                 <div className="user-profile">
                     <div className="user-info">
                         <p className="user-role">Admin</p>
-                        <p className="user-name">{username || "Guest"}</p>
+                        <p className="user-name">{username || "Admin"}</p>
                     </div>
                     <div className="user-avatar">
                         {getInitials(username)}
@@ -55,13 +81,96 @@ export default function Dashboard() {
             <div className="dashboard-content">
                 <div className="page-header">
                     <h1>Admin Dashboard</h1>
-                    <p>Welcome back, {username || "Guest"}! Here's what's happening today.</p>
+                    <p>Welcome back! Here's what's happening today.</p>
                 </div>
 
-                {/* Your future dashboard components will go here later */}
+                {/* STATS ROW - Data mapped from stats state */}
+                <div className="stats-row">
+                    <div className="stat-card">
+                        <div className="stat-info">
+                            <p>Total Students</p>
+                            <h3>{stats.totalStudents.toLocaleString()}</h3>
+                        </div>
+                        <div className="stat-icon blue"><FiUsers /></div>
+                    </div>
 
+                    <div className="stat-card">
+                        <div className="stat-info">
+                            <p>Total Teachers</p>
+                            <h3>{stats.totalTeachers.toLocaleString()}</h3>
+                        </div>
+                        <div className="stat-icon yellow"><FaGraduationCap /></div>
+                    </div>
+
+                    <div className="stat-card">
+                        <div className="stat-info">
+                            <p>Total Classes</p>
+                            <h3>{stats.totalClasses}</h3>
+                        </div>
+                        <div className="stat-icon green"><FiBook /></div>
+                    </div>
+
+                    <div className="stat-card">
+                        <div className="stat-info">
+                            <p>Total Subjects</p>
+                            <h3>{stats.totalSubjects}</h3>
+                        </div>
+                        <div className="stat-icon purple"><FiGrid /></div>
+                    </div>
+                </div>
+
+                {/* BOTTOM GRID */}
+                <div className="content-grid">
+                    {/* RECENT ACTIVITY - Mapping data from database logs */}
+                    <div className="content-card activity-card">
+                        <h3>Recent Activity</h3>
+
+                        {stats.recentActivities.length > 0 ? (
+                            stats.recentActivities.map((activity, index) => (
+                                <div className="activity-item" key={index}>
+                                    {/* The initial is calculated in the backend DTO */}
+                                    <div className="activity-avatar">{activity.initial}</div>
+                                    <div className="activity-details">
+                                        <p><strong>{activity.name}</strong> {activity.action}</p>
+                                        <span>{activity.timeAgo}</span>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p style={{color: "#94a3b8", fontSize: "14px"}}>No recent activity to display.</p>
+                        )}
+                    </div>
+
+                    {/* QUICK ACTIONS - Functional buttons for fast navigation */}
+                    <div className="content-card quick-actions-card">
+                        <h3>Quick Actions</h3>
+
+                        {/* 6. Navigate to the Student Management page */}
+                        <button
+                            className="action-btn blue"
+                            onClick={() => navigate("/admin/users/student")}
+                        >
+                            <FiUserPlus /> Add Student
+                        </button>
+
+                        {/* 7. Navigate to the Teacher Management page */}
+                        <button
+                            className="action-btn yellow"
+                            onClick={() => navigate("/admin/users/teacher")}
+                        >
+                            <FaGraduationCap /> Add Teacher
+                        </button>
+
+                        {/* 8. Navigate to the Classes Management page (built by your friend) */}
+                        <button
+                            className="action-btn green"
+                            onClick={() => navigate("/admin/classes")}
+                        >
+                            <FiPlus /> Manage Classes
+                        </button>
+                    </div>
+                </div>
             </div>
-
         </div>
     );
 }

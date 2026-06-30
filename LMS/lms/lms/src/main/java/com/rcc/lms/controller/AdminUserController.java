@@ -19,11 +19,13 @@ public class AdminUserController {
     @Autowired
     private UserRepository userRepository;
 
-    // =========================
-    // CREATE USER (ADMIN ONLY)
-    // =========================
+    // =========================================================
+    // CREATE USER (ADMIN ONLY) - GENERIC
+    // Changed path to "/create-generic" to prevent conflict
+    // with the new 2-Step Student Registration Wizard!
+    // =========================================================
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/create")
+    @PostMapping("/create-generic")
     public String createUser(@RequestBody User user) {
         return userService.createUserByAdmin(user);
     }
@@ -41,7 +43,7 @@ public class AdminUserController {
     // UPDATE USER (ADMIN ONLY)
     // =========================
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/update/{username}")
+    @PutMapping("/update-old/{username}")
     public String updateUser(@PathVariable String username,
                              @RequestBody User user) {
         return userService.updateUser(username, user);
@@ -51,7 +53,7 @@ public class AdminUserController {
     // DELETE USER (ADMIN ONLY)
     // =========================
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/delete/{username}")
+    @DeleteMapping("/delete-hard/{username}")
     public String deleteUser(@PathVariable String username) {
         return userService.deleteUser(username);
     }
