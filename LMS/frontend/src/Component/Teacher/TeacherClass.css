@@ -1,0 +1,133 @@
+.classes-container {
+    padding: 40px;
+    background-color: #f8f9fc;
+    min-height: 100vh;
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.classes-header h1 {
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.classes-header p {
+    color: #64748b;
+    margin: 0 0 32px 0;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+.cards-grid {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.class-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 24px;
+    width: 320px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+}
+
+.class-card:hover {
+    transform: translateY(-4px);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.icon-container {
+    background-color: #eff6ff;
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-text {
+    flex: 1;
+    min-width: 0; /* allows text truncation */
+}
+
+.header-text h3 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.25rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.header-text p {
+    margin: 4px 0 0 0;
+    color: #94a3b8;
+    font-size: 0.95rem;
+}
+
+.card-body {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 20px;
+    margin-bottom: 24px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.info-row .label {
+    color: #64748b;
+}
+
+.info-row .value {
+    color: #1e293b;
+}
+
+.info-row .value.bold {
+    font-weight: 700;
+}
+
+.view-button {
+    width: 100%;
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.view-button:hover {
+    background-color: #1d4ed8;
+}
+
+/* Responsive Queries */
+@media (max-width: 768px) {
+    .classes-container {
+        padding: 20px 15px;
+    }
+
+    .class-card {
+        width: 100%; /* Take full width on mobile */
+    }
+
+    .cards-grid {
+        flex-direction: column;
+    }
+}
