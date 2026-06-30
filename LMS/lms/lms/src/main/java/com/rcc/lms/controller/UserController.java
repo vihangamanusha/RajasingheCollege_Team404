@@ -15,6 +15,15 @@ public class UserController {
     private UserService userService;
 
     // =========================
+    // REGISTER API
+    // =========================
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody com.rcc.lms.entity.User user) {
+        // This calls the existing method in UserService to create a user
+        return ResponseEntity.ok(userService.createUserByAdmin(user));
+    }
+
+    // =========================
     // LOGIN API.........
     // =========================
     @PostMapping("/login")
