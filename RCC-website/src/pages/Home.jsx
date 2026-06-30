@@ -235,98 +235,105 @@ const totalPages = Math.ceil(events.length / eventsPerPage);
 </section>
 
       {/* Upcoming Events */}
-      <section className="home-section-white">
-        <div className="container">
-          <div className="home-section-header">
-            <h2 className="home-section-title">
-              {t("home.upcomingEvents")}
-            </h2>
-            <div className="home-section-divider home-section-divider-mb4"></div>
-          </div>
-          <div className="home-events-grid">
-            {currentEvents.map((event) => (
-    <div
-      key={event.id}
-      className="home-event-card"
-    >
-      <h3 className="home-event-title">
-        {event.topic}
-      </h3>
+<section className="home-section-white">
+  <div className="container">
 
-      <p className="home-event-desc">
-        {event.description}
-      </p>
-
-      <div className="home-event-details">
-
-        <div className="home-event-detail-item">
-          <div className="home-event-icon">
-            📅
-          </div>
-
-          <span className="home-event-text">
-            {event.date}
-          </span>
-        </div>
-
-        <div className="home-event-detail-item">
-          <div className="home-event-icon">
-            🕐
-          </div>
-
-          <span className="home-event-text">
-            {event.time}
-          </span>
-        </div>
-
-        <div className="home-event-detail-item">
-          <div className="home-event-icon">
-            📍
-          </div>
-
-          <span className="home-event-text">
-            {event.venue}
-          </span>
-        </div>
-
-      </div>
+    <div className="home-section-header">
+      <h2 className="home-section-title">
+        {t("home.upcomingEvents")}
+      </h2>
+      <div className="home-section-divider home-section-divider-mb4"></div>
     </div>
-  ))}
-          </div>
-          <div className="pagination">
 
-  <button
-    onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-    disabled={currentPage === 1}
-    className="page-btn"
-  >
-    Prev
-  </button>
+    {currentEvents.length > 0 ? (
+      <>
+        <div className="home-events-grid">
+          {currentEvents.map((event) => (
+            <div
+              key={event.id}
+              className="home-event-card"
+            >
+              <h3 className="home-event-title">
+                {event.topic}
+              </h3>
 
-  {Array.from({ length: totalPages }, (_, i) => (
-    <button
-      key={i}
-      onClick={() => setCurrentPage(i + 1)}
-      className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
-    >
-      {i + 1}
-    </button>
-  ))}
+              <p className="home-event-desc">
+                {event.description}
+              </p>
 
-  <button
-    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-    disabled={currentPage === totalPages}
-    className="page-btn"
-  >
-    Next
-  </button>
+              <div className="home-event-details">
 
-</div>
- 
-</div>
-        
-        
-      </section>
+                <div className="home-event-detail-item">
+                  <div className="home-event-icon">📅</div>
+                  <span className="home-event-text">
+                    {event.date}
+                  </span>
+                </div>
+
+                <div className="home-event-detail-item">
+                  <div className="home-event-icon">🕐</div>
+                  <span className="home-event-text">
+                    {event.time}
+                  </span>
+                </div>
+
+                <div className="home-event-detail-item">
+                  <div className="home-event-icon">📍</div>
+                  <span className="home-event-text">
+                    {event.venue}
+                  </span>
+                </div>
+
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Show pagination only when there are events */}
+        <div className="pagination">
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="page-btn"
+          >
+            Prev
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(p + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="page-btn"
+          >
+            Next
+          </button>
+
+        </div>
+      </>
+    ) : (
+      <div className="no-event-container">
+        <h3>No Upcoming Events</h3>
+        <p>
+          There are currently no upcoming events scheduled.
+          Please check back later for new announcements.
+        </p>
+      </div>
+    )}
+
+  </div>
+</section>
       {/* LMS Section */}
       <section className="home-lms-section">
         <div className="container">
