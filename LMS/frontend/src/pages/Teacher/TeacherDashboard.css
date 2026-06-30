@@ -1,0 +1,154 @@
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.dashboard-header {
+    background-color: white;
+    padding: 18px 35px;
+    border-bottom: 1px solid #E2E8F0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.dashboard-body {
+    padding: 35px;
+}
+
+.dashboard-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1E293B;
+    margin-bottom: 25px;
+    margin-top: 0;
+}
+
+.dashboard-top-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.dashboard-card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+}
+
+.card-header {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.list-item-blue {
+    background-color: #EFF6FF;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.list-item-yellow {
+    background-color: #FEFCE8;
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+}
+
+.sub-text-dark {
+    font-size: 0.8rem;
+    color: #64748B;
+}
+
+.action-btn-blue {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #1E40AF;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.action-btn-yellow {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #FBBF24;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.action-btn-grey {
+    width: 100%;
+    padding: 12px;
+    background-color: #F1F5F9;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.overview-grid {
+    display: flex;
+    gap: 20px;
+}
+
+.stat-box-blue {
+    flex: 1;
+    background-color: #EFF6FF;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-box-yellow {
+    flex: 1;
+    background-color: #FEFCE8;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-box-green {
+    flex: 1;
+    background-color: #F0FDF4;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.stat-number-blue {
+    color: #1E40AF;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.stat-number-yellow {
+    color: #F59E0B;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+.stat-number-green {
+    color: #10B981;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .dashboard-body {
+        padding: 20px;
+    }
+    .overview-grid {
+        flex-direction: column;
+    }
+    .dashboard-header {
+        padding: 15px 20px;
+        justify-content: center;
+    }
+}
