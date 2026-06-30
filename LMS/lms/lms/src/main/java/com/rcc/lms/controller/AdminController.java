@@ -44,7 +44,7 @@ public class AdminController {
     public ResponseEntity<String> createStudent(@RequestBody StudentRegistrationRequest request) {//front send json, Spring converts JSON → Java object.
         try {
             String response = userService.registerNewStudent(request);
-            if (response.equals("Username already exists!")) {//chck the username
+            if (response.startsWith("Error") || response.equals("Username already exists!")) {//chck the username
                 return ResponseEntity.badRequest().body(response);
             }
             return ResponseEntity.ok(response);
@@ -57,7 +57,7 @@ public class AdminController {
     public ResponseEntity<String> createTeacher(@RequestBody TeacherRegistrationRequest request) {//json to java object
         try {
             String response = userService.registerNewTeacher(request);
-            if (response.equals("Username already exists!")) {
+            if (response.startsWith("Error") || response.equals("Username already exists!")) {
                 return ResponseEntity.badRequest().body(response);
             }
             return ResponseEntity.ok(response);
@@ -70,7 +70,7 @@ public class AdminController {
     public ResponseEntity<String> createTechOfficer(@RequestBody TechRegistrationRequest request) {//json to java object
         try {
             String response = userService.registerNewTechOfficer(request);
-            if (response.equals("Username already exists!")) {
+            if (response.startsWith("Error") || response.equals("Username already exists!")) {
                 return ResponseEntity.badRequest().body(response);
             }
             return ResponseEntity.ok(response);
@@ -192,7 +192,7 @@ public class AdminController {
     @DeleteMapping("/users/delete/{username}")
     public ResponseEntity<String> deleteUserSoftly(
             @PathVariable String username,
-            @RequestParam String reason) {
+            @RequestParam(required = false, defaultValue = "No reason provided") String reason) {
         try {
             String response = userService.softDeleteUser(username, reason);
             if (response.equals("User not found!")) {

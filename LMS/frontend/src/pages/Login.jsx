@@ -67,6 +67,8 @@ export default function Login() {
             } else if (role === "TEACHER" || role === "ROLE_TEACHER") {
                 if (subRole && subRole.startsWith("Section Head")) {
                     navigate("/section-head");
+                } else if (subRole && (subRole.startsWith("Deputy Principal") || subRole.startsWith("Vice Principal"))) {
+                    navigate("/deputy-principal");
                 } else {
                     navigate("/teacher");
                 }

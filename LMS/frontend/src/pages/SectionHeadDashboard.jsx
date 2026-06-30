@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-    LayoutDashboard,
     Users,
     UserCheck,
-    BookOpen,
-    TrendingUp,
-    AlertCircle,
     LogOut,
     PlusCircle,
-    Bell,
     CheckCircle,
-    FileSpreadsheet
+    FileSpreadsheet,
+    Bell,
+    TrendingUp
 } from "lucide-react";
+import "./Dashboard.css";
+import "../layouts/AdminLayout.css";
 import "./SectionHeadDashboard.css";
+import schoolLogo from "../assets/school-logo.jpeg";
 
 export default function SectionHeadDashboard() {
     const navigate = useNavigate();
@@ -139,118 +139,135 @@ export default function SectionHeadDashboard() {
     };
 
     return (
-        <div className="section-head-container">
-            {/* Sidebar */}
-            <aside className="sh-sidebar">
-                <div className="sh-logo-section">
-                    <div className="sh-logo-circle">
-                        <BookOpen size={24} />
+        <div className="admin-layout">
+            {/* SIDEBAR NAVIGATION */}
+            <div className="layout-sidebar">
+                <div className="sidebar-header">
+                    <div className="sidebar-logo">
+                        <img
+                            src={schoolLogo}
+                            alt="RCC Logo"
+                            style={{ width: '100%', borderRadius: '50%' }}
+                        />
                     </div>
-                    <div>
-                        <h2 className="sh-title">Rajasinghe LMS</h2>
-                        <span className="sh-subtitle">Section Head Workspace</span>
+                    <div className="sidebar-title">
+                        <h2>Rajasinghe<br />LMS</h2>
                     </div>
                 </div>
 
-                <nav className="sh-nav">
-                    <ul>
-                        <li className="active">
-                            <LayoutDashboard size={18} />
-                            <span>Dashboard</span>
-                        </li>
-                    </ul>
-                </nav>
-
-                <div className="sh-sidebar-footer">
-                    <button className="logout-btn" onClick={handleLogout}>
-                        <LogOut size={18} />
-                        <span>Sign Out</span>
-                    </button>
-                </div>
-            </aside>
-
-            {/* Main Workspace */}
-            <main className="sh-main">
-                {/* Header */}
-                <header className="sh-header">
-                    <div className="sh-header-title-box">
-                        <span className="badge-grade">{gradeLabel} Overview</span>
-                        <h1>Welcome, {username}</h1>
+                <div className="sidebar-nav">
+                    {/* Dashboard */}
+                    <div className="nav-item active">
+                        <Users className="nav-icon" /> Dashboard
                     </div>
-                    <div className="sh-header-profile">
-                        <div className="profile-indicator">
-                            <span className="profile-dot"></span>
-                            <span className="profile-role">{subRole}</span>
+
+                    {/* Classes */}
+                    <div className="nav-item">
+                        <FileSpreadsheet className="nav-icon" /> Classes
+                    </div>
+
+                    {/* Announcements */}
+                    <div className="nav-item">
+                        <Bell className="nav-icon" /> Announcements
+                    </div>
+                </div>
+
+                <div className="sidebar-footer">
+                    <div className="nav-item logout-item" onClick={handleLogout}>
+                        <LogOut className="nav-icon" /> Logout
+                    </div>
+                </div>
+            </div>
+
+            {/* MAIN WORKSPACE */}
+            <div className="layout-main">
+                {/* TOP HEADER */}
+                <header className="top-header">
+                    <div className="header-title">
+                        <h3>Rajasinghe Central College</h3>
+                    </div>
+                    <div className="user-profile">
+                        <div className="user-info">
+                            <p className="user-role">{subRole}</p>
+                            <p className="user-name">{username}</p>
+                        </div>
+                        <div className="user-avatar" style={{ backgroundColor: "#f59e0b" }}>
+                            {username ? username.substring(0, 2).toUpperCase() : "SH"}
                         </div>
                     </div>
                 </header>
 
-                {/* Dashboard Widgets Grid */}
-                <div className="sh-dashboard-grid">
-                    {/* Stat Cards */}
-                    <section className="sh-stats-row">
-                        <div className="stat-card blue">
-                            <div className="icon-wrapper">
-                                <Users size={24} />
+                {/* MAIN CONTENT AREA */}
+                <div className="dashboard-content">
+                    {/* Center aligned title */}
+                    <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                        <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>Section Head Dashboard</h1>
+                        <p style={{ fontSize: "16px", color: "#64748b" }}>Welcome back! Here's what's happening today in {gradeLabel}.</p>
+                    </div>
+
+                    {/* STATS ROW */}
+                    <div className="stats-row" style={{ gridTemplateColumns: "repeat(3, 1fr)", marginBottom: "30px" }}>
+                        <div className="stat-card">
+                            <div className="stat-info">
+                                <p>Total Students</p>
+                                <h3>{sectionData.totalStudents.toLocaleString()}</h3>
                             </div>
-                            <div className="stat-content">
-                                <h3>Total Students</h3>
-                                <p className="stat-number">{sectionData.totalStudents}</p>
-                                <span className="stat-desc">Enrolled in {gradeLabel}</span>
-                            </div>
+                            <div className="stat-icon blue"><Users size={20} /></div>
                         </div>
 
-                        <div className="stat-card amber">
-                            <div className="icon-wrapper">
-                                <UserCheck size={24} />
+                        <div className="stat-card">
+                            <div className="stat-info">
+                                <p>Class Teachers</p>
+                                <h3>{sectionData.teachersCount}</h3>
                             </div>
-                            <div className="stat-content">
-                                <h3>Class Teachers</h3>
-                                <p className="stat-number">{sectionData.teachersCount}</p>
-                                <span className="stat-desc">Active staff members</span>
-                            </div>
+                            <div className="stat-icon yellow"><UserCheck size={20} /></div>
                         </div>
 
-                        <div className="stat-card emerald">
-                            <div className="icon-wrapper">
-                                <TrendingUp size={24} />
+                        <div className="stat-card">
+                            <div className="stat-info">
+                                <p>Average Performance</p>
+                                <h3>{sectionData.avgPerf}</h3>
                             </div>
-                            <div className="stat-content">
-                                <h3>Average Performance</h3>
-                                <p className="stat-number">{sectionData.avgPerf}</p>
-                                <span className="stat-desc">Current term analytics</span>
-                            </div>
+                            <div className="stat-icon green"><TrendingUp size={20} /></div>
                         </div>
-                    </section>
+                    </div>
 
-                    {/* Classes & Performance */}
-                    <div className="sh-details-split">
-                        {/* Classes Management */}
-                        <section className="detail-card list-card">
-                            <div className="card-header">
-                                <div className="header-title">
-                                    <FileSpreadsheet size={18} className="header-icon blue-text" />
-                                    <h2>Classes Under Your Section</h2>
+                    {/* BOTTOM GRID */}
+                    <div className="content-grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "25px" }}>
+                        {/* Left Card: Classes Table */}
+                        <div className="content-card">
+                            <div className="card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                    <FileSpreadsheet size={18} style={{ color: "#3b82f6" }} />
+                                    <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Classes Under Your Section</h3>
                                 </div>
-                                <span className="classes-count-pill">{sectionData.classes.length} Classes</span>
+                                <span className="classes-count-pill" style={{
+                                    padding: "4px 10px",
+                                    backgroundColor: "#f8fafc",
+                                    border: "1px solid #e2e8f0",
+                                    borderRadius: "20px",
+                                    fontSize: "12px",
+                                    fontWeight: "600",
+                                    color: "#64748b"
+                                }}>{sectionData.classes.length} Classes</span>
                             </div>
                             <div className="table-responsive">
-                                <table className="sh-table">
+                                <table className="sh-table" style={{ width: "100%", borderCollapse: "collapse" }}>
                                     <thead>
                                         <tr>
-                                            <th>Class Name</th>
-                                            <th>Class Teacher</th>
-                                            <th>Total Students</th>
-                                            <th>Avg. Performance</th>
+                                            <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Class Name</th>
+                                            <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Class Teacher</th>
+                                            <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Total Students</th>
+                                            <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Avg. Performance</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {sectionData.classes.map((cls, index) => (
                                             <tr key={index}>
-                                                <td className="font-semibold">{cls.name}</td>
-                                                <td>{cls.teacher}</td>
-                                                <td>{cls.students}</td>
-                                                <td>
+                                                <td style={{ padding: "16px", fontSize: "14px", borderBottom: "1px solid #e2e8f0", fontWeight: "600" }}>{cls.name}</td>
+                                                <td style={{ padding: "16px", fontSize: "14px", borderBottom: "1px solid #e2e8f0" }}>{cls.teacher}</td>
+                                                <td style={{ padding: "16px", fontSize: "14px", borderBottom: "1px solid #e2e8f0" }}>{cls.students}</td>
+                                                <td style={{ padding: "16px", fontSize: "14px", borderBottom: "1px solid #e2e8f0" }}>
                                                     <span className={`perf-badge ${cls.avgMark >= 75 ? "high" : cls.avgMark >= 68 ? "medium" : "low"}`}>
                                                         {cls.avgMark}%
                                                     </span>
@@ -260,56 +277,91 @@ export default function SectionHeadDashboard() {
                                     </tbody>
                                 </table>
                             </div>
-                        </section>
+                        </div>
 
-                        {/* Announcements Management */}
-                        <section className="detail-card announcements-card">
-                            <div className="card-header">
-                                <div className="header-title">
-                                    <Bell size={18} className="header-icon amber-text" />
-                                    <h2>Publish Grade Notices</h2>
-                                </div>
+                        {/* Right Card: Announcements */}
+                        <div className="content-card">
+                            <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                <Bell size={18} style={{ color: "#f59e0b" }} />
+                                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Publish Grade Notices</h3>
                             </div>
 
-                            <form className="announcement-form" onSubmit={handleCreateAnnouncement}>
-                                <div className="form-group-inline">
+                            <form className="announcement-form" onSubmit={handleCreateAnnouncement} style={{ marginBottom: "20px" }}>
+                                <div className="form-group-inline" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                                     <input
                                         type="text"
                                         placeholder="Type grade announcement..."
                                         value={newAnnouncement.title}
                                         onChange={(e) => setNewAnnouncement({ ...newAnnouncement, title: e.target.value })}
                                         required
+                                        style={{
+                                            width: "100%",
+                                            padding: "10px 14px",
+                                            border: "1px solid #e2e8f0",
+                                            borderRadius: "8px",
+                                            fontSize: "14px",
+                                            outline: "none"
+                                        }}
                                     />
-                                    <select
-                                        value={newAnnouncement.target}
-                                        onChange={(e) => setNewAnnouncement({ ...newAnnouncement, target: e.target.value })}
-                                    >
-                                        <option value="All Classes">All Classes</option>
-                                        <option value="Teachers Only">Teachers Only</option>
-                                        <option value="Students Only">Students Only</option>
-                                    </select>
-                                    <button type="submit" className="publish-btn">
-                                        <PlusCircle size={16} />
-                                        <span>Publish</span>
-                                    </button>
+                                    <div style={{ display: "flex", gap: "10px" }}>
+                                        <select
+                                            value={newAnnouncement.target}
+                                            onChange={(e) => setNewAnnouncement({ ...newAnnouncement, target: e.target.value })}
+                                            style={{
+                                                flex: 1,
+                                                padding: "10px 14px",
+                                                border: "1px solid #e2e8f0",
+                                                borderRadius: "8px",
+                                                fontSize: "14px",
+                                                backgroundColor: "white",
+                                                outline: "none"
+                                            }}
+                                        >
+                                            <option value="All Classes">All Classes</option>
+                                            <option value="Teachers Only">Teachers Only</option>
+                                            <option value="Students Only">Students Only</option>
+                                        </select>
+                                        <button type="submit" className="publish-btn" style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            gap: "6px",
+                                            padding: "10px 16px",
+                                            backgroundColor: "#0f172a",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "8px",
+                                            fontWeight: "600",
+                                            fontSize: "14px",
+                                            cursor: "pointer"
+                                        }}>
+                                            <PlusCircle size={16} />
+                                            <span>Publish</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </form>
 
-                            <div className="announcements-list">
+                            <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "14px", maxHeight: "280px", overflowY: "auto" }}>
                                 {announcements.map((ann) => (
-                                    <div key={ann.id} className="announcement-item">
-                                        <div className="ann-header">
-                                            <span className="ann-date">{ann.date}</span>
-                                            <span className="ann-target">{ann.target}</span>
+                                    <div key={ann.id} className="announcement-item" style={{
+                                        backgroundColor: "#f8fafc",
+                                        borderLeft: "4px solid #f59e0b",
+                                        padding: "14px",
+                                        borderRadius: "0 8px 8px 0"
+                                    }}>
+                                        <div className="ann-header" style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+                                            <span className="ann-date" style={{ fontSize: "11px", color: "#94a3b8" }}>{ann.date}</span>
+                                            <span className="ann-target" style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: "#f59e0b" }}>{ann.target}</span>
                                         </div>
-                                        <p className="ann-title">{ann.title}</p>
+                                        <p className="ann-title" style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>{ann.title}</p>
                                     </div>
                                 ))}
                             </div>
-                        </section>
+                        </div>
                     </div>
                 </div>
-            </main>
+            </div>
 
             {/* Notification Toast */}
             {toast && (

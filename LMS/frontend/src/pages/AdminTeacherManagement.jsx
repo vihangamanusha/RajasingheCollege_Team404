@@ -46,7 +46,7 @@ export default function AdminTeacherManagement() {
     };
 
     const isRoleAvailable = (role) => {
-        if (role === "Subject Teacher" || role === "Class Teacher" || role === "Deputy Principal 1" || role === "Deputy Principal" || role === "Vice Principal") {
+        if (role === "Subject Teacher") {
             return true;
         }
         if (editFormData && editFormData.subRole === role) {
@@ -182,7 +182,7 @@ export default function AdminTeacherManagement() {
     // =========================================
 
     const triggerEdit = async (teacher) => {
-
+        fetchOccupied();
         setEditMessage({
             text: "",
             type: ""
@@ -490,6 +490,24 @@ export default function AdminTeacherManagement() {
         }
     };
 
+    const allDesignationsList = [
+        "Subject Teacher",
+        "Section Head Grade 6",
+        "Section Head Grade 7",
+        "Section Head Grade 8",
+        "Section Head Grade 9",
+        "Section Head Grade 10",
+        "Section Head Grade 11",
+        "Deputy Principal (Administrative)",
+        "Deputy Principal (Development)"
+    ];
+
+    const editDesignations = allDesignationsList.filter(role => 
+        role === "Subject Teacher" || 
+        (editFormData && editFormData.subRole === role) ||
+        !occupiedRoles.includes(role)
+    );
+
     // =========================================
     // RETURN
     // =========================================
@@ -754,7 +772,7 @@ export default function AdminTeacherManagement() {
                             <div className="modal-form-group">
 
                                 <label>
-                                    Designation / Hierarchy
+                                    Designation
                                 </label>
 
                                 <select
@@ -766,36 +784,9 @@ export default function AdminTeacherManagement() {
                                         })
                                     }
                                 >
-                                    <option value="">Select Designation</option>
-                                    
-                                    {/* Default Roles */}
-                                    <optgroup label="Standard Roles">
-                                        {isRoleAvailable("Subject Teacher") && <option value="Subject Teacher">Subject Teacher</option>}
-                                        {isRoleAvailable("Class Teacher") && <option value="Class Teacher">Class Teacher</option>}
-                                    </optgroup>
-
-                                    {/* 1+ Year Promotions */}
-                                    {calculateYearsSince(editFormData.createdDate) >= 1 && (
-                                        <optgroup label="Promotions (1+ Year)">
-                                            {isRoleAvailable("Section Head Grade 6") && <option value="Section Head Grade 6">Section Head Grade 6</option>}
-                                            {isRoleAvailable("Section Head Grade 7") && <option value="Section Head Grade 7">Section Head Grade 7</option>}
-                                            {isRoleAvailable("Section Head Grade 8") && <option value="Section Head Grade 8">Section Head Grade 8</option>}
-                                            {isRoleAvailable("Section Head Grade 9") && <option value="Section Head Grade 9">Section Head Grade 9</option>}
-                                            {isRoleAvailable("Section Head Grade 10") && <option value="Section Head Grade 10">Section Head Grade 10</option>}
-                                            {isRoleAvailable("Section Head Grade 11") && <option value="Section Head Grade 11">Section Head Grade 11</option>}
-                                        </optgroup>
-                                    )}
-
-                                    {/* 2+ Year Promotions */}
-                                    {calculateYearsSince(editFormData.createdDate) >= 2 && (
-                                        <optgroup label="Senior Leadership (2+ Years)">
-                                            {isRoleAvailable("Deputy Principal 1") && <option value="Deputy Principal 1">Deputy Principal 1</option>}
-                                            {isRoleAvailable("Deputy Principal") && <option value="Deputy Principal">Deputy Principal</option>}
-                                            {isRoleAvailable("Deputy Principal (Administrative)") && <option value="Deputy Principal (Administrative)">Deputy Principal (Administrative)</option>}
-                                            {isRoleAvailable("Deputy Principal (Development)") && <option value="Deputy Principal (Development)">Deputy Principal (Development)</option>}
-                                            {isRoleAvailable("Vice Principal") && <option value="Vice Principal">Vice Principal</option>}
-                                        </optgroup>
-                                    )}
+                                    {editDesignations.map((role) => (
+                                        <option key={role} value={role}>{role}</option>
+                                    ))}
                                 </select>
 
                             </div>

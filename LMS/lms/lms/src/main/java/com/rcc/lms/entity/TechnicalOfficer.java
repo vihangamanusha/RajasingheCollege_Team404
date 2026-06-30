@@ -34,6 +34,9 @@ public class TechnicalOfficer {
     @Column(name = "assigned_area", length = 100)
     private String assignedArea;
 
+    @Column(name = "nic", length = 20, unique = true)
+    private String nic;
+
     // Getters and Setters
     public String getTechnicalOfficerId() { return technicalOfficerId; }
     public void setTechnicalOfficerId(String technicalOfficerId) { this.technicalOfficerId = technicalOfficerId; }
@@ -49,4 +52,6 @@ public class TechnicalOfficer {
     public void setPosition(String position) { this.position = position; }
     public String getAssignedArea() { return assignedArea; }
     public void setAssignedArea(String assignedArea) { this.assignedArea = assignedArea; }
+    public String getNic() { return nic; }
+    public void setNic(String nic) { this.nic = nic; }
 }

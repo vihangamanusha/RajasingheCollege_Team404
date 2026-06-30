@@ -47,14 +47,18 @@ public class UserService {
     private JwtUtil jwtUtil;//used to generate token
 
     private static final List<String> UNIQUE_LEADERSHIP_ROLES = List.of(
+        "Class Teacher",
         "Section Head Grade 6",
         "Section Head Grade 7",
         "Section Head Grade 8",
         "Section Head Grade 9",
         "Section Head Grade 10",
         "Section Head Grade 11",
+        "Deputy Principal 1",
+        "Deputy Principal",
         "Deputy Principal (Administrative)",
-        "Deputy Principal (Development)"
+        "Deputy Principal (Development)",
+        "Vice Principal"
     );
 
     // =========================
@@ -210,6 +214,9 @@ public class UserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             return "Error: Email is already registered!";
         }
+        if (technicalOfficerRepository.existsByNic(request.getNic())) {
+            return "Error: NIC is already registered!";
+        }
 
         User newUser = new User();
         newUser.setUserId(request.getUserId());
@@ -228,6 +235,7 @@ public class UserService {
         newTech.setContactNumber(request.getContactNumber());
         newTech.setPosition(request.getPosition());
         newTech.setAssignedArea(request.getAssignedArea());
+        newTech.setNic(request.getNic());
         newTech.setUser(newUser);
         technicalOfficerRepository.save(newTech);
 
@@ -395,7 +403,8 @@ public class UserService {
             prefix = "teacher";
             padding = 4;
         } else if ("ROLE_TECHNICAL_OFFICER".equals(role) || "ROLE_TECH_OFFICER".equals(role)) {
-            prefix = "TEC";
+            prefix = "to";
+            padding = 4;
         } else {
             prefix = "USR";
         }

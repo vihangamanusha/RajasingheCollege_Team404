@@ -25,7 +25,8 @@ export default function TechRegister() {
         userId: "",
         username: "",
         email: "",
-        password: ""
+        password: "",
+        nic: ""
     });
 
     const [message, setMessage] = useState("");//show messge
@@ -65,6 +66,12 @@ export default function TechRegister() {
 
             if (!/^\d{10}$/.test(form.contactNumber)) {
                 setMessage("Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^([0-9]{9}[xXvV]|[0-9]{12})$/.test(form.nic)) {
+                setMessage("NIC Number must be 9 digits with V/X or 12 digits.");
                 setMessageType("error");
                 return false;
             }
@@ -177,7 +184,8 @@ export default function TechRegister() {
                     userId: "",
                     username: "",
                     email: "",
-                    password: ""
+                    password: "",
+                    nic: ""
                 });
 
                 setStep(1);
@@ -235,7 +243,7 @@ export default function TechRegister() {
                                         value={form.position}
                                         onChange={handleChange}
                                     >
-                                        <option value="">Select Position</option>
+                                        <option value="" disabled>Select Position</option>
                                         {positionList.map((p) => (
                                             <option key={p} value={p}>{p}</option>
                                         ))}
@@ -253,7 +261,7 @@ export default function TechRegister() {
                                         value={form.assignedArea}
                                         onChange={handleChange}
                                     >
-                                        <option value="">Select Area</option>
+                                        <option value="" disabled>Select Area</option>
                                         {areaList.map((a) => (
                                             <option key={a} value={a}>{a}</option>
                                         ))}
@@ -274,6 +282,20 @@ export default function TechRegister() {
                                 </div>
                             </div>
 
+                            {/* NIC */}
+                            <div className="form-group">
+                                <label>NIC Number (9 Digits with V/X or 12 Digits)</label>
+                                <div className="input-container">
+                                    <FiHash className="input-icon" />
+                                    <input
+                                        name="nic"
+                                        placeholder="Enter NIC Number"
+                                        value={form.nic}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+ 
                             <button type="button" className="submit-btn" onClick={handleNext}>
                                 Next <FiArrowRight />
                             </button>

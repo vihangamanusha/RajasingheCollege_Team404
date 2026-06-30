@@ -31,10 +31,11 @@ import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
 
 // =========================
-// TEACHER & SECTION HEAD ROLE DASHBOARDS
+// TEACHER & SECTION HEAD & DEPUTY PRINCIPAL ROLE DASHBOARDS
 // =========================
 import TeacherDashboard from "./pages/TeacherDashboard";
 import SectionHeadDashboard from "./pages/SectionHeadDashboard";
+import DeputyPrincipalDashboard from "./pages/DeputyPrincipalDashboard";
 
 // =========================
 // LAYOUT & SECURITY
@@ -125,6 +126,18 @@ function App() {
                 element={
                     <ProtectedRoute>
                         <SectionHeadDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ============================================================
+                DEPUTY PRINCIPAL PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/deputy-principal"
+                element={
+                    <ProtectedRoute>
+                        <DeputyPrincipalDashboard />
                     </ProtectedRoute>
                 }
             />
