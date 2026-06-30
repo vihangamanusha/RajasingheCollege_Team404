@@ -5126,8 +5126,8 @@ font-size: 1rem;
 }
 
 .clubs-icon {
-  width: 60px;
-  height: 60px;
+  width: 65px;
+  height: 65px;
   background: #002147;
   border-radius: 50%;
   color: #ffd700;
@@ -5302,10 +5302,12 @@ font-size: 1rem;
 }
 
 .club-row-content p {
-  font-size: 17px;
-  line-height: 1.8;
-  color: #475569;
-  margin-bottom: 25px;
+  font-size: 1rem;
+  color: #4b5563;
+  margin-bottom: 2.5rem;
+  line-height: 1.625;
+  font-weight: 300;
+  font-style: italic;
 }
 
 .club-row-btn {
