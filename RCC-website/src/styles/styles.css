@@ -3929,10 +3929,20 @@ h6,
 
 /* UPCOMING */
 
+/* ===========================
+   UPCOMING STREAMS SECTION
+=========================== */
+
 .upcoming-section {
   padding: 80px 0;
   background: #f5f5f5;
-  
+}
+
+.live-container {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .upcoming-header {
@@ -3943,6 +3953,7 @@ h6,
 .upcoming-title {
   font-size: 48px;
   color: #002147;
+  font-weight: bold;
 }
 
 .upcoming-line {
@@ -3950,25 +3961,39 @@ h6,
   height: 4px;
   background: gold;
   margin: 15px auto;
+  border-radius: 5px;
 }
+
+/* ===== CENTER CARDS ===== */
 
 .upcoming-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
   gap: 30px;
-  
+  width: 100%;
 }
 
+/* ===== CARD ===== */
+
 .upcoming-card {
-  
-  background: white;
+  flex: 0 1 340px;
+  max-width: 350px;
+  width: 100%;
+
+  background: #ffffff;
+  border-radius: 16px;
   padding: 30px;
-  border-radius: 15px;
-  transition: 0.3s;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+
+  transition: all .3s ease;
 }
 
 .upcoming-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.15);
 }
 
 .upcoming-icon-box {
@@ -3977,8 +4002,8 @@ h6,
   background: #002147;
   border-radius: 50%;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   margin-bottom: 20px;
 }
 
@@ -3989,6 +4014,7 @@ h6,
 }
 
 .upcoming-card-title {
+  font-size: 24px;
   color: #002147;
   margin-bottom: 20px;
 }
@@ -4001,35 +4027,59 @@ h6,
   display: flex;
   align-items: center;
   gap: 10px;
-  color: gray;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  color: #666;
 }
 
 .small-icon {
   width: 18px;
   height: 18px;
+  color: #002147;
 }
 
 .upcoming-description {
   color: #555;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
-/* ANIMATION */
+/* ===== NO STREAM ===== */
 
-@keyframes pulse {
+.no-stream-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 40px auto;
+  text-align: center;
 
-  0% {
-    transform: scale(1);
-  }
+  background: #fff;
+  padding: 60px 30px;
+  border-radius: 15px;
+  border: 2px dashed #d9d9d9;
+}
 
-  50% {
-    transform: scale(1.1);
-  }
+.no-stream-container h3 {
+  font-size: 30px;
+  color: #002147;
+  margin-bottom: 15px;
+}
 
-  100% {
-    transform: scale(1);
-  }
+.no-stream-container p {
+  color: #666;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* ===== MOBILE ===== */
+
+@media (max-width:768px){
+
+.upcoming-title{
+    font-size:34px;
+}
+
+.upcoming-card{
+    max-width:100%;
+}
+
 }
 
 /*live stream css*/
@@ -4183,19 +4233,26 @@ h6,
 }
 
 .upcoming-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 25px;
 }
 
 /* CARD */
 
 .upcoming-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  transition: 0.3s;
+  flex: 0 1 380px;
+  width: 100%;
+  max-width: 380px;
+  margin: 0;
+
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 2rem;
+
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transition: all .3s ease;
 }
 
 .upcoming-card:hover {
