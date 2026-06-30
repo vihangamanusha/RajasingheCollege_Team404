@@ -3309,7 +3309,29 @@ body {
   margin-top: 4rem;
 }
 
+.no-news-container {
+  width: 100%;
+  text-align: center;
+  padding: 70px 20px;
+  background: #ffffff;
+  border: 2px dashed #d9d9d9;
+  border-radius: 16px;
+  margin-top: 30px;
+}
 
+.no-news-container h3 {
+  font-size: 28px;
+  color: #1f2937;
+  margin-bottom: 12px;
+}
+
+.no-news-container p {
+  font-size: 17px;
+  color: #6b7280;
+  max-width: 500px;
+  margin: auto;
+  line-height: 1.6;
+}
 
 .btn-text {
   font-size: 1rem;

@@ -169,49 +169,67 @@ const totalPages = Math.ceil(events.length / eventsPerPage);
       <div className="home-news-divider"></div>
     </div>
 
-    <div className="news-grid">
-      {newsItems.slice(0, 3).map((news) => (
-        <div key={news.id} className="news-card">
+    {newsItems.length > 0 ? (
+      <>
+        <div className="news-grid">
+          {newsItems.slice(0, 3).map((news) => (
+            <div key={news.id} className="news-card">
 
-          <div className="news-image">
-            <img
-              src={
-                news.image
-                ? news.image.startsWith("http")
-                ? news.image
-                : `http://localhost:8080${news.image.startsWith("/") ? news.image : "/" + news.image}`
-                : "https://via.placeholder.com/400x250"
-             }
-               alt={news.title}
-               className="home-news-img"
-           />
-          </div>
+              <div className="news-image">
+                <img
+                  src={
+                    news.image
+                      ? news.image.startsWith("http")
+                        ? news.image
+                        : `http://localhost:8080${
+                            news.image.startsWith("/")
+                              ? news.image
+                              : "/" + news.image
+                          }`
+                      : "https://via.placeholder.com/400x250"
+                  }
+                  alt={news.title}
+                  className="home-news-img"
+                />
+              </div>
 
-          <div className="news-content">
+              <div className="news-content">
 
-            <div className="news-date">
-              {news.date}
+                <div className="news-date">
+                  {news.date}
+                </div>
+
+                <h3 className="news-title">
+                  {news.title}
+                </h3>
+
+                <p className="news-excerpt">
+                  {news.content?.length > 120
+                    ? news.content.substring(0, 120) + "..."
+                    : news.content}
+                </p>
+
+              </div>
+
             </div>
-
-            <h3 className="news-title">
-              {news.title}
-            </h3>
-
-            <p className="news-excerpt">
-              {news.content?.substring(0, 120)}...
-            </p>
-
-          </div>
-
+          ))}
         </div>
-      ))}
-    </div>
 
-    <div className="home-news-footer">
-      <Link to="/news" className="btn btn-primary">
-        View All
-      </Link>
-    </div>
+        <div className="home-news-footer">
+          <Link to="/news" className="btn btn-primary">
+            View All
+          </Link>
+        </div>
+      </>
+    ) : (
+      <div className="no-news-container">
+        <h3>No News Available Yet</h3>
+        <p>
+          There are currently no news articles published.
+          Please check back later for the latest updates.
+        </p>
+      </div>
+    )}
 
   </div>
 </section>
