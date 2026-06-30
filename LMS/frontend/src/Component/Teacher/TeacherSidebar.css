@@ -1,0 +1,76 @@
+.sidebar-container {
+    width: 280px;
+    background-color: #1E40AF;
+    color: white;
+    height: 100vh;
+    padding-top: 30px;
+    transition: transform 0.3s ease;
+    z-index: 50;
+    flex-shrink: 0;
+}
+
+.sidebar-logo-section {
+    padding: 0 25px;
+    margin-bottom: 40px;
+}
+
+.sidebar-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.sidebar-school-name {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: white;
+    margin: 0;
+}
+
+.sidebar-nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-nav-item {
+    display: flex;
+    align-items: center;
+    height: 56px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.sidebar-nav-item.active {
+    background-color: #FFC107 !important;
+    color: #1A237E !important;
+    border-radius: 0 40px 40px 0;
+    width: 90%;
+}
+
+.sidebar-nav-item:not(.active):hover {
+    background-color: #2563EB;
+    transform: translateX(5px);
+}
+
+.sidebar-nav-content {
+    display: flex;
+    align-items: center;
+    padding-left: 25px;
+}
+
+@media (max-width: 768px) {
+    .sidebar-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        transform: translateX(-100%);
+    }
+
+    .sidebar-container.open {
+        transform: translateX(0);
+    }
+}
