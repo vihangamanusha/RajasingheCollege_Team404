@@ -148,7 +148,7 @@ const totalPages = Math.ceil(events.length / eventsPerPage);
               </p>
               <Link
                 to="/about"
-                className="home-link-primary"
+                className="btn btn-secondary-lms"
               >
                 <span>{t("common.readMore")}</span>
                 <ArrowRight className="btn-icon" />
@@ -158,6 +158,7 @@ const totalPages = Math.ceil(events.length / eventsPerPage);
         </div>
       </section>
 
+               
      {/* Latest News */}
 <section className="home-news-section">
   <div className="home-news-container">
