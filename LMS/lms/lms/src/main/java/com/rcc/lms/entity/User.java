@@ -3,16 +3,16 @@ package com.rcc.lms.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
-@Entity
+@Entity//this is a entity class
 @Table(name = "users")
 public class User {
 
-    @Id
+    @Id//primary key
     @Column(name = "user_id", length = 20)
     private String userId;
 
     @Column(name = "username", unique = true, nullable = false, length = 50)
-    private String username;
+    private String username;//store login username, can be null
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -27,7 +27,7 @@ public class User {
     @Column(name = "email", length = 100)
     private String email;
 
-    @Column(name = "created_date")
+    @Column(name = "created_date")//add new coloum to get the date.
     private LocalDate createdDate;
 
     @Column(name = "status", length = 20)
@@ -53,7 +53,7 @@ public class User {
         this.role = role;
         this.subRole = subRole;
         this.email = email;
-        this.createdDate = createdDate;
+        this.createdDate = createdDate;//add this new
         this.status = status;
         this.deletionNote = deletionNote; // Added to constructor
     }
@@ -78,7 +78,7 @@ public class User {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public LocalDate getCreatedDate() { return createdDate; }
+    public LocalDate getCreatedDate() { return createdDate; }//add this
     public void setCreatedDate(LocalDate createdDate) { this.createdDate = createdDate; }
 
     public String getStatus() { return status; }

@@ -25,11 +25,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service//This class contains business logic
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    @Autowired//inject dependencies
+    private UserRepository userRepository;//handle user table
 
     @Autowired
     private StudentRepository studentRepository;
@@ -41,33 +41,50 @@ public class UserService {
     private TechnicalOfficerRepository technicalOfficerRepository;
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;//used to encrypt password
 
     @Autowired
-    private JwtUtil jwtUtil;
+    private JwtUtil jwtUtil;//used to generate token
+
+    private static final List<String> UNIQUE_LEADERSHIP_ROLES = List.of(
+        "Class Teacher",
+        "Section Head Grade 6",
+        "Section Head Grade 7",
+        "Section Head Grade 8",
+        "Section Head Grade 9",
+        "Section Head Grade 10",
+        "Section Head Grade 11",
+        "Deputy Principal 1",
+        "Deputy Principal",
+        "Deputy Principal (Administrative)",
+        "Deputy Principal (Development)",
+        "Vice Principal"
+    );
 
     // =========================
     // LOGIN USER
     // =========================
     public LoginResponse loginUser(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByUsername(request.getUsername())//find by username
                 .orElse(null);
 
-        if (user == null || "DELETED".equals(user.getStatus())) {
+        if (user == null || "DELETED".equals(user.getStatus())) {//check user exit or active
             throw new RuntimeException("Invalid username or password");
         }
 
-        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {//check password
             throw new RuntimeException("Invalid username or password");
         }
 
+        //crete login token
         String token = jwtUtil.generateToken(user.getUsername());
 
         return new LoginResponse(
                 "Login successful",
                 user.getUsername(),
                 user.getRole(),
-                token
+                token,
+                user.getSubRole()
         );
     }
 
@@ -77,12 +94,12 @@ public class UserService {
 
     public DashboardStatsDTO getAdminDashboardStats() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
-        stats.setTotalStudents(userRepository.countByRoleAndStatusNot("ROLE_STUDENT", "DELETED"));
-        stats.setTotalTeachers(userRepository.countByRoleAndStatusNot("ROLE_TEACHER", "DELETED"));
+        stats.setTotalStudents(userRepository.countByRoleAndStatusNot("ROLE_STUDENT", "DELETED"));//count the student
+        stats.setTotalTeachers(userRepository.countByRoleAndStatusNot("ROLE_TEACHER", "DELETED"));//count the teacher
         stats.setTotalClasses(42);
         stats.setTotalSubjects(24);
 
-        List<RecentActivityDTO> activityList = userRepository.findTop4ByStatusNotOrderByCreatedDateDesc("DELETED")
+        List<RecentActivityDTO> activityList = userRepository.findTop5ByStatusNotOrderByCreatedDateDescUserIdDesc("DELETED")
                 .stream()
                 .map(u -> new RecentActivityDTO(
                         u.getUsername(),
@@ -90,7 +107,7 @@ public class UserService {
                         "Recently",
                         u.getUsername().substring(0, 1).toUpperCase()
                 ))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList());//transwer user objectto the dto object
 
         stats.setRecentActivities(activityList);
         return stats;
@@ -100,7 +117,7 @@ public class UserService {
     // REGISTER USER WIZARDS WITH UNIQUENESS CHECKS
     // ==============================================================
 
-    @Transactional
+    @Transactional//connect with the two tables, (multiple tables)
     public String registerNewStudent(StudentRegistrationRequest request) {
         // 1. Uniqueness Checks
         if (userRepository.existsByUserId(request.getUserId())) {
@@ -138,7 +155,7 @@ public class UserService {
         return "Student successfully registered!";
     }
 
-    @Transactional
+    @Transactional//connect with the two tables, (multiple tables)
     public String registerNewTeacher(TeacherRegistrationRequest request) {
         // 1. Check for existing IDs/Users to prevent duplicates
         if (userRepository.existsByUserId(request.getUserId())) {
@@ -150,6 +167,14 @@ public class UserService {
         if (userRepository.existsByEmail(request.getEmail())) {
             return "Error: Email is already registered!";
         }
+        if (teacherRepository.existsByNic(request.getNic())) {
+            return "Error: NIC is already registered!";
+        }
+        if (request.getSubRole() != null && UNIQUE_LEADERSHIP_ROLES.contains(request.getSubRole())) {
+            if (userRepository.existsBySubRoleAndStatusNot(request.getSubRole(), "DELETED")) {
+                return "Error: The designation '" + request.getSubRole() + "' is already occupied!";
+            }
+        }
 
         // 2. Create the Auth User (Security Credentials)
         User newUser = new User();
@@ -159,7 +184,7 @@ public class UserService {
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole("ROLE_TEACHER");
         newUser.setSubRole(request.getSubRole()); // Saves designation to User table
-        newUser.setCreatedDate(LocalDate.now());
+        newUser.setCreatedDate(LocalDate.now());//set the current date.
         newUser.setStatus("ACTIVE");
         userRepository.save(newUser);
 
@@ -170,6 +195,7 @@ public class UserService {
         newTeacher.setSubjectSpecialization(request.getSubjectSpecialization()); // Comma-separated string from frontend
         newTeacher.setSubRole(request.getSubRole()); // Saves designation to Teacher table
         newTeacher.setContactNumber(request.getContactNumber());
+        newTeacher.setNic(request.getNic());
         newTeacher.setUser(newUser);
         teacherRepository.save(newTeacher);
 
@@ -187,6 +213,9 @@ public class UserService {
         }
         if (userRepository.existsByEmail(request.getEmail())) {
             return "Error: Email is already registered!";
+        }
+        if (technicalOfficerRepository.existsByNic(request.getNic())) {
+            return "Error: NIC is already registered!";
         }
 
         User newUser = new User();
@@ -206,6 +235,7 @@ public class UserService {
         newTech.setContactNumber(request.getContactNumber());
         newTech.setPosition(request.getPosition());
         newTech.setAssignedArea(request.getAssignedArea());
+        newTech.setNic(request.getNic());
         newTech.setUser(newUser);
         technicalOfficerRepository.save(newTech);
 
@@ -217,16 +247,16 @@ public class UserService {
     // ==============================================================
 
     public java.util.List<User> searchUsers(String role, String searchTerm) {
-        if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return userRepository.findByRoleAndStatusNot(role, "DELETED");
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {//IF SEARCH EMPTY
+            return userRepository.findByRoleAndStatusNot(role, "DELETED");//Return ALL active users for that role
         }
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
 
-    public Student getStudentProfile(String username) {
+    public Student getStudentProfile(String username) {//get student profile by username
         User user = userRepository.findByUsername(username).orElse(null);
-        if (user != null) {
-            return studentRepository.findById(user.getUserId()).orElse(null);
+        if (user != null) {//find student profile by id
+            return studentRepository.findById(user.getUserId()).orElse(null);//retun student object
         }
         return null;
     }
@@ -240,7 +270,7 @@ public class UserService {
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
             existingUser.setPassword(passwordEncoder.encode(request.getPassword()));
         }
-        userRepository.save(existingUser);
+        userRepository.save(existingUser);//Updates database.
 
         Student existingStudent = studentRepository.findById(existingUser.getUserId()).orElse(null);
         if (existingStudent != null) {
@@ -251,7 +281,7 @@ public class UserService {
             if (request.getMedium() != null) {
                 existingStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
             }
-            studentRepository.save(existingStudent);
+            studentRepository.save(existingStudent);//update databse
         }
         return "Student profile updated successfully!";
     }
@@ -268,6 +298,13 @@ public class UserService {
     public String updateTeacherProfile(String username, TeacherRegistrationRequest request) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
+
+        if (request.getSubRole() != null && UNIQUE_LEADERSHIP_ROLES.contains(request.getSubRole())) {
+            if (userRepository.existsBySubRoleAndUserIdNotAndStatusNot(request.getSubRole(), existingUser.getUserId(), "DELETED")) {
+                return "Error: The designation '" + request.getSubRole() + "' is already occupied!";
+            }
+        }
+
         if (request.getEmail() != null) existingUser.setEmail(request.getEmail());
         if (request.getSubRole() != null) existingUser.setSubRole(request.getSubRole());
         if (request.getPassword() != null && !request.getPassword().trim().isEmpty()) {
@@ -280,6 +317,9 @@ public class UserService {
             existingTeacher.setFullName(request.getFullName());
             existingTeacher.setSubjectSpecialization(request.getSubjectSpecialization());
             existingTeacher.setContactNumber(request.getContactNumber());
+            if (request.getSubRole() != null) {
+                existingTeacher.setSubRole(request.getSubRole());
+            }
             teacherRepository.save(existingTeacher);
         }
         return "Teacher profile updated successfully!";
@@ -325,17 +365,14 @@ public class UserService {
         return "User updated successfully!";
     }
 
-    @Transactional
-    public String hardDeleteUser(String username) {
+    @Transactional//connect with multiple table
+    public String softDeleteUser(String username, String deletionNote) {
         User existingUser = userRepository.findByUsername(username).orElse(null);
         if (existingUser == null) return "User not found!";
-        String role = existingUser.getRole();
-        String userId = existingUser.getUserId();
-        if ("ROLE_STUDENT".equals(role)) studentRepository.deleteById(userId);
-        else if ("ROLE_TEACHER".equals(role)) teacherRepository.deleteById(userId);
-        else if ("ROLE_TECHNICAL_OFFICER".equals(role)) technicalOfficerRepository.deleteById(userId);
-        userRepository.delete(existingUser);
-        return "User permanently deleted from the system!";
+        existingUser.setStatus("DELETED");
+        existingUser.setDeletionNote(deletionNote);
+        userRepository.save(existingUser);
+        return "User soft deleted successfully!";
     }
 
     public String createUserByAdmin(User user) {
@@ -345,14 +382,64 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedDate(LocalDate.now());
         user.setStatus("ACTIVE");
-        userRepository.save(user);
+        userRepository.save(user);//insert into database
         return "User created successfully by admin!";
     }
 
     public String deleteUser(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user == null) return "User not found!";
-        userRepository.delete(user);
-        return "User deleted successfully!";
+        user.setStatus("DELETED");
+        userRepository.save(user);
+        return "User soft deleted successfully!";
+    }
+
+    public String generateNextUserId(String role) {
+        String prefix;
+        int padding = 3;
+        if ("ROLE_STUDENT".equals(role)) {
+            prefix = "STU";
+        } else if ("ROLE_TEACHER".equals(role)) {
+            prefix = "teacher";
+            padding = 4;
+        } else if ("ROLE_TECHNICAL_OFFICER".equals(role) || "ROLE_TECH_OFFICER".equals(role)) {
+            prefix = "to";
+            padding = 4;
+        } else {
+            prefix = "USR";
+        }
+
+        List<String> userIds = userRepository.findUserIdsByPrefix(prefix);
+
+        int maxNum = 0;
+        int expectedLength = prefix.length() + padding;
+        for (String id : userIds) {
+            try {
+                if (id != null && id.length() == expectedLength) {
+                    String numPart = id.substring(prefix.length());
+                    int num = Integer.parseInt(numPart.trim());
+                    if (num > maxNum) {
+                        maxNum = num;
+                    }
+                }
+            } catch (NumberFormatException e) {
+                // Ignore malformed IDs
+            }
+        }
+
+        int nextNum = maxNum + 1;
+        return String.format("%s%0" + padding + "d", prefix, nextNum);
+    }
+
+    public List<String> getOccupiedDesignations() {
+        return userRepository.findOccupiedSubRoles(UNIQUE_LEADERSHIP_ROLES, "DELETED");
+    }
+
+    public String changePassword(String username, String newPassword) {
+        User user = userRepository.findByUsername(username).orElse(null);
+        if (user == null) return "User not found!";
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+        return "Password changed successfully!";
     }
 }

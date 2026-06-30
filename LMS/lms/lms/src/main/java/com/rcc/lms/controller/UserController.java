@@ -15,6 +15,15 @@ public class UserController {
     private UserService userService;
 
     // =========================
+    // REGISTER API
+    // =========================
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody com.rcc.lms.entity.User user) {
+        // This calls the existing method in UserService to create a user
+        return ResponseEntity.ok(userService.createUserByAdmin(user));
+    }
+
+    // =========================
     // LOGIN API.........
     // =========================
     @PostMapping("/login")
@@ -22,6 +31,24 @@ public class UserController {
 
         // call service and return response
         return ResponseEntity.ok(userService.loginUser(request));
+    }
+
+    // =========================
+    // CHANGE PASSWORD API
+    // =========================
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestParam String username,
+            @RequestParam String newPassword) {
+        try {
+            String response = userService.changePassword(username, newPassword);
+            if (response.equals("User not found!")) {
+                return ResponseEntity.badRequest().body(response);
+            }
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+        }
     }
 
     // =========================

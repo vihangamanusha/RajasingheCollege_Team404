@@ -15,9 +15,9 @@ import "./StudentRegister.css";
 
 export default function TechRegister() {
 
-    const [step, setStep] = useState(1);
+    const [step, setStep] = useState(1);//Controls which page is shown
 
-    const [form, setForm] = useState({
+    const [form, setForm] = useState({//Stores all user input
         fullName: "",
         position: "",
         assignedArea: "",
@@ -25,10 +25,11 @@ export default function TechRegister() {
         userId: "",
         username: "",
         email: "",
-        password: ""
+        password: "",
+        nic: ""
     });
 
-    const [message, setMessage] = useState("");
+    const [message, setMessage] = useState("");//show messge
     const [messageType, setMessageType] = useState("");
 
     // =========================
@@ -40,7 +41,7 @@ export default function TechRegister() {
     // =========================
     // VALIDATION (LIKE STUDENT FORM STYLE)
     // =========================
-    const validateStep = () => {
+    const validateStep = () => {//checks if user input is correct BEFORE moving or submitting
 
         // STEP 1 VALIDATION
         if (step === 1) {
@@ -65,6 +66,12 @@ export default function TechRegister() {
 
             if (!/^\d{10}$/.test(form.contactNumber)) {
                 setMessage("Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+
+            if (!/^([0-9]{9}[xXvV]|[0-9]{12})$/.test(form.nic)) {
+                setMessage("NIC Number must be 9 digits with V/X or 12 digits.");
                 setMessageType("error");
                 return false;
             }
@@ -93,7 +100,7 @@ export default function TechRegister() {
                 return false;
             }
 
-            if (form.password.length < 8) {
+            if (form.password.length < 8) {//must be at least 8 characters
                 setMessage("Password must be at least 8 characters.");
                 setMessageType("error");
                 return false;
@@ -106,18 +113,31 @@ export default function TechRegister() {
     // =========================
     // HANDLE CHANGE
     // =========================
-    const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e) => {//updates form data
+        setForm({ ...form, [e.target.name]: e.target.value });//Update only the field that changed
         setMessage("");
     };
 
     // =========================
     // NEXT STEP
     // =========================
-    const handleNext = () => {
+    const handleNext = async () => {
         if (validateStep()) {
-            setStep(2);
             setMessage("");
+            try {
+                const res = await fetch("http://localhost:8080/admin/users/generate-id?role=ROLE_TECHNICAL_OFFICER", {
+                    headers: {
+                        Authorization: "Bearer " + localStorage.getItem("token")
+                    }
+                });
+                if (res.ok) {
+                    const generatedId = await res.text();
+                    setForm(prev => ({ ...prev, userId: generatedId, username: generatedId.toLowerCase() }));
+                }
+            } catch (err) {
+                console.error("Failed to generate Technical Officer ID automatically", err);
+            }
+            setStep(2);
         }
     };
 
@@ -133,11 +153,11 @@ export default function TechRegister() {
     // SUBMIT
     // =========================
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault();//Stop page reload
 
         if (!validateStep()) return;
 
-        try {
+        try {//Send data to backend,res-This stores the response from backend
             const res = await fetch("http://localhost:8080/admin/users/tech/create", {
                 method: "POST",
                 headers: {
@@ -146,14 +166,14 @@ export default function TechRegister() {
                 },
                 body: JSON.stringify({
                     ...form,
-                    role: "ROLE_TECHNICAL_OFFICER"
+                    role: "ROLE_TECHNICAL_OFFICER"//Add role
                 })
             });
 
             const data = await res.text();
 
             if (res.ok) {
-                setMessage("Technical Officer registered successfully! ✅");
+                setMessage("Technical Officer registered successfully! ");
                 setMessageType("success");
 
                 setForm({
@@ -164,7 +184,8 @@ export default function TechRegister() {
                     userId: "",
                     username: "",
                     email: "",
-                    password: ""
+                    password: "",
+                    nic: ""
                 });
 
                 setStep(1);
@@ -222,7 +243,7 @@ export default function TechRegister() {
                                         value={form.position}
                                         onChange={handleChange}
                                     >
-                                        <option value="">Select Position</option>
+                                        <option value="" disabled>Select Position</option>
                                         {positionList.map((p) => (
                                             <option key={p} value={p}>{p}</option>
                                         ))}
@@ -240,7 +261,7 @@ export default function TechRegister() {
                                         value={form.assignedArea}
                                         onChange={handleChange}
                                     >
-                                        <option value="">Select Area</option>
+                                        <option value="" disabled>Select Area</option>
                                         {areaList.map((a) => (
                                             <option key={a} value={a}>{a}</option>
                                         ))}
@@ -261,6 +282,20 @@ export default function TechRegister() {
                                 </div>
                             </div>
 
+                            {/* NIC */}
+                            <div className="form-group">
+                                <label>NIC Number (9 Digits with V/X or 12 Digits)</label>
+                                <div className="input-container">
+                                    <FiHash className="input-icon" />
+                                    <input
+                                        name="nic"
+                                        placeholder="Enter NIC Number"
+                                        value={form.nic}
+                                        onChange={handleChange}
+                                    />
+                                </div>
+                            </div>
+ 
                             <button type="button" className="submit-btn" onClick={handleNext}>
                                 Next <FiArrowRight />
                             </button>
@@ -273,10 +308,10 @@ export default function TechRegister() {
                         <div className="wizard-step">
 
                             <div className="form-group">
-                                <label>User ID</label>
+                                <label>User ID (Automatically Generated)</label>
                                 <div className="input-container">
                                     <FiHash className="input-icon" />
-                                    <input name="userId" value={form.userId} onChange={handleChange} />
+                                    <input name="userId" value={form.userId} readOnly style={{ backgroundColor: "#e2e8f0", cursor: "not-allowed" }} />
                                 </div>
                             </div>
 

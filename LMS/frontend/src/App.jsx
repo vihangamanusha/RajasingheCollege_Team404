@@ -14,6 +14,8 @@ import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
 import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
+// --> NEW: ANNOUNCEMENTS <--
+import Announcement from "./pages/Announcements";
 
 // --> MANAGEMENT TABLES <--
 import AdminStudentManagement from "./pages/AdminStudentManagement";
@@ -27,6 +29,13 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentMarks from "./pages/student/StudentMarks";
 import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
+
+// =========================
+// TEACHER & SECTION HEAD & DEPUTY PRINCIPAL ROLE DASHBOARDS
+// =========================
+import TeacherDashboard from "./pages/TeacherDashboard";
+import SectionHeadDashboard from "./pages/SectionHeadDashboard";
+import DeputyPrincipalDashboard from "./pages/DeputyPrincipalDashboard";
 
 // =========================
 // LAYOUT & SECURITY
@@ -73,6 +82,10 @@ function App() {
                 <Route path="users/student" element={<StudentRegister />} />
                 <Route path="users/teacher" element={<TeacherRegister />} />
                 <Route path="users/tech" element={<TechRegister />} />
+
+                {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- */}
+                <Route path="announcements" element={<Announcement />} />
+
             </Route>
 
             {/* ============================================================
@@ -92,6 +105,42 @@ function App() {
                 <Route path="materials" element={<StudentMaterials />} />
                 <Route path="report" element={<StudentReport studentId="STU001" />} />
             </Route>
+
+            {/* ============================================================
+                TEACHER PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/teacher"
+                element={
+                    <ProtectedRoute>
+                        <TeacherDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ============================================================
+                SECTION HEAD PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/section-head"
+                element={
+                    <ProtectedRoute>
+                        <SectionHeadDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ============================================================
+                DEPUTY PRINCIPAL PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/deputy-principal"
+                element={
+                    <ProtectedRoute>
+                        <DeputyPrincipalDashboard />
+                    </ProtectedRoute>
+                }
+            />
         </Routes>
     );
 }

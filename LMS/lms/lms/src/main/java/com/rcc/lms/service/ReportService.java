@@ -20,8 +20,8 @@ public class ReportService {
 
         double change = ((currentAvg - previousAvg) / previousAvg) * 100;
 
-        if (change <= -10.0) return "ALERT";  // 🔴 10% drop or more
-        if (change >= 5.0) return "GROWTH";   // 🟢 5% improvement or more
-        return "STABLE";                      // 🔵 Normal fluctuation
+        if (change <= -10.0) return "ALERT";  //  10% drop or more
+        if (change >= 5.0) return "GROWTH";   //  5% improvement or more
+        return "STABLE";                      //  Normal fluctuation
     }
 }

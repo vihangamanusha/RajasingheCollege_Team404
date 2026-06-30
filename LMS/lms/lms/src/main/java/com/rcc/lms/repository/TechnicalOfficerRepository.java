@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TechnicalOfficerRepository extends JpaRepository<TechnicalOfficer, String> {
+    boolean existsByNic(String nic);
 }
