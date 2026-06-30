@@ -1,8 +1,6 @@
-/* Page background */
-body {
+/* Page background (global body styling removed to prevent sidebar layout margin leaks) */
+.teacher-add-marks-container {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f6f9;
-    margin: 0;
     padding: 20px;
 }
 
