@@ -38,6 +38,7 @@ import StudentReport from "./pages/student/StudentReport";
 import TeacherDashboard from "./pages/TeacherDashboard";
 import SectionHeadDashboard from "./pages/SectionHeadDashboard";
 import DeputyPrincipalDashboard from "./pages/DeputyPrincipalDashboard";
+import DeputyPrincipalDevDashboard from "./pages/DeputyPrincipalDevDashboard";
 
 // =========================
 // LAYOUT & SECURITY
@@ -144,6 +145,18 @@ function App() {
                 element={
                     <ProtectedRoute>
                         <DeputyPrincipalDashboard />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* ============================================================
+                DEPUTY PRINCIPAL DEVELOPMENT PANEL (PROTECTED)
+            ============================================================ */}
+            <Route
+                path="/deputy-principal-dev"
+                element={
+                    <ProtectedRoute>
+                        <DeputyPrincipalDevDashboard />
                     </ProtectedRoute>
                 }
             />
