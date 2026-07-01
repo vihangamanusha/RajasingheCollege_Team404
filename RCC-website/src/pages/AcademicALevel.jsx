@@ -2,6 +2,7 @@ import { BookOpen } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useState } from "react";
 import "../styles/styles.css";
+import academicALevelImage from "../assets/Alacademic.jpeg";
 
 export function AcademicALevel() {
   const [openStream, setOpenStream] = useState(null);
@@ -64,7 +65,7 @@ export function AcademicALevel() {
       {/* HERO */}
       <section className="al-hero">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920"
+          src={academicALevelImage}
           className="al-hero-img"
         />
 

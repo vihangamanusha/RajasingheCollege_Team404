@@ -7,6 +7,7 @@ import cricketImage from "../assets/cricket.jpeg";
 import karatheImage from "../assets/karathe.jpeg";
 import VolleyballImage from "../assets/volleyball.jpeg";
 import rugbyImage from "../assets/rugby.jpeg";
+import imageother from "../assets/sportothers.jpeg";
 import "../styles/styles.css";
 
 export function Sports() {
@@ -47,8 +48,7 @@ export function Sports() {
       name: t("Others"),
       icon: "🏃",
       path: "/sports/athletics",
-      image:
-        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
+      image:imageother,
       description: "Record Holders",
     },
      

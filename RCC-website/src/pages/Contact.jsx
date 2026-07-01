@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
-import ContactImage from "../assets/contact.jpeg";
+import ContactImage from "../assets/contact.jpg";
 import { sendMessage } from "../api/contactApi";
 
 export function Contact() {
@@ -132,11 +132,11 @@ if (!formData.phone.trim()) {
                       {t("contact.address")}
                     </h3>
                     <p>
-                      Ruwanwella Rajasinhge Central College
+                      Ruwanwella Rajasinhge Central College,
                       <br />
-                      Main Street, Ruwanwella
+                      Ruwanwella,
                       <br />
-                      Kegalle District, Sri Lanka
+                      Kegalle District, Sri Lanka.
                     </p>
                   </div>
                 </div>
@@ -150,7 +150,7 @@ if (!formData.phone.trim()) {
                       {t("contact.phone")}
                     </h3>
                     <p>
-                      Main Office: +94 35 226 XXXX
+                      Main Office: 036 226 6234
                       <br />
                      
                     </p>
@@ -166,7 +166,7 @@ if (!formData.phone.trim()) {
                       {t("contact.email")}
                     </h3>
                     <p>
-                      General: info@rrcc.lk
+                      General: ruRajasingheCC@gmail.com
                       <br />
                       
                     </p>
