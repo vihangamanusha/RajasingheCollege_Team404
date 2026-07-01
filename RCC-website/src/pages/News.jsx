@@ -139,9 +139,9 @@ export function News() {
 
                       <div className="news-card__divider"></div>
 
-                      <p className="news-card__body">
+                      {/*<p className="news-card__body">
                         {news.content}
-                      </p>
+                      </p>*/}
 
                     </div>
                   </article>

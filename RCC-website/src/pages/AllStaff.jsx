@@ -3,6 +3,7 @@ import { Users } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import "../styles/styles.css";
 import { getAllTeachers } from "../api/teacherApi";
+import staffImage from "../assets/staff.jpeg";
 
 export function AllStaff() {
   const [teachers, setTeachers] = useState([]);
@@ -22,7 +23,7 @@ export function AllStaff() {
       {/* Hero */}
       <section className="staff-hero">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=1920&h=1080&fit=crop"
+          src={staffImage}
           alt="All Staff"
           className="staff-hero-img"
         />

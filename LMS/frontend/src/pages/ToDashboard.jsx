@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getNews } from "../api/newsApi";
+import "./Dashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();

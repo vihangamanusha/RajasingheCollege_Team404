@@ -5,10 +5,10 @@ import { useLanguage } from "../contexts/LanguageContext";
 import grade69Image from "../assets/grade69.jpeg";
 import gradeOLImage from "../assets/gradeOL.jpeg";
 import gradeALImage from "../assets/gradeAL.jpeg";
-import academicstaffImage from "../assets/academicstaff.jpeg";
+import academicstaffImage from "../assets/academicsstaff.jpg";
 import libraryImage from "../assets/library.jpeg";
 import labImage from"../assets/lab.jpeg";
-import clabImage from"../assets/clab.webp";
+import clabImage from"../assets/clab.jpeg";
 import academicImage from"../assets/academicabout.jpeg";
 
 export function Academic() {
