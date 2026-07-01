@@ -373,13 +373,14 @@ h6,
 
 .news-hero {
   position: relative;
-  height: 20rem;
+  
   overflow: hidden;
+  
 }
 
 .news-hero__image {
   width: 100%;
-  height: 100%;
+  height: 800px;
   object-fit: cover;
 }
 
@@ -1568,7 +1569,7 @@ h6,
 /* Contact Page Styles */
 .contact-hero {
   position: relative;
-  height: 20rem;
+  height: 385px;
   overflow: hidden;
 }
 
@@ -4107,7 +4108,7 @@ h6,
 
 .live-hero {
   position: relative;
-  height: 320px;
+  height: 385px;
   overflow: hidden;
 }
 
@@ -4115,6 +4116,7 @@ h6,
   width: 100%;
   height: 100%;
   object-fit: cover;
+  
 }
 
 .live-hero-overlay {
@@ -4570,7 +4572,7 @@ h6,
 
 .sports-hero {
   position: relative;
-  height: 510px;
+  height: 385px;
   overflow: hidden;
 }
 
@@ -4583,7 +4585,7 @@ h6,
 .sports-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(1, 59, 126, 0.75);
+  background: rgba(0, 33, 71, 0.7);
 
   display: flex;
   justify-content: center;
