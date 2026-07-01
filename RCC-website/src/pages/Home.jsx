@@ -10,7 +10,7 @@ import {
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
 import school from "../assets/homeImage.jpeg";
-import schoolimg from "../assets/schoolimg.jpeg";
+import schoolimg from "../assets/newabout.jpeg";
 import LMS from "../assets/LMS.png";
 import academic from "../assets/academic.jpeg";
 import sport from "../assets/sport.jpeg";

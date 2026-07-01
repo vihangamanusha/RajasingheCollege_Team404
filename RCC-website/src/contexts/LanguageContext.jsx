@@ -21,8 +21,8 @@ const translations = {
     si: "රාජසිංහ මධ්‍ය විද්‍යාලය",
   },
   "footer.tagline": {
-    en: "Excellence in Education Since 1960",
-    si: "1960 සිට අධ්‍යාපනයේ විශිෂ්ටත්වය",
+    en: "Excellence in Education Since 1945",
+    si: "1945 සිට අධ්‍යාපනයේ විශිෂ්ටත්වය",
   },
   "footer.quickLinks": { en: "Quick Links", si: "ඉක්මන් සබැඳි" },
   "footer.copyright": {
@@ -96,8 +96,8 @@ const translations = {
     si: "LMS ද්වාරය වෙත ප්‍රවේශ වන්න",
   },
   "home.aboutDesc": {
-    en: "Ruwanwella Rajasinhge Central College has been a beacon of educational excellence in the Kegalle District for over six decades. Our institution is committed to providing a comprehensive education that develops not only academic prowess but also character, creativity, and citizenship.",
-    si: "රුවන්වැල්ල රාජසිංහ මධ්‍ය විද්‍යාලය දශක හයකට වැඩි කාලයක් තිස්සේ කෑගල්ල දිස්ත්‍රික්කයේ අධ්‍යාපනික විශිෂ්ටත්වයේ ප්‍රදීපයක් වී ඇත. අපගේ ආයතනය අධ්‍යයන දක්ෂතාව පමණක් නොව චරිතය, නිර්මාණශීලිත්වය සහ පුරවැසිභාවය ද වර්ධනය කරන විස්තීර්ණ අධ්‍යාපනයක් ලබා දීමට කැප වී සිටී.",
+    en: "Ruwanwella Rajasinhge Central College has been a beacon of educational excellence in the Kegalle District since 1945. Our institution is committed to providing a comprehensive education that develops not only academic prowess but also character, creativity, and citizenship.",
+    si: "රුවන්වැල්ල රාජසිංහ මධ්‍ය මහා විද්‍යාලය, 1945 වසරේ සිට කෑගල්ල දිස්ත්‍රික්කය තුළ අධ්‍යාපනික විශිෂ්ටත්වයේ ප්‍රදීපාගාරයක් බඳු විය. අප ආයතනය, සිසුන්ගේ අධ්‍යයන කුසලතාවයන් පමණක් නොව, ඔවුන්ගේ චරිත සංවර්ධනය, නිර්මාණශීලීත්වය සහ යහපත් පුරවැසිභාවයද ගොඩනංවන සර්වපාර්ශ්වික අධ්‍යාපනයක් ලබාදීම වෙනුවෙන් කැපවී සිටී.",
   },
   "home.motivationTitle": { en: "Our Motivation", si: "අපගේ ආභාෂය" },
   "home.motivationQuote": {
@@ -105,8 +105,8 @@ const translations = {
     si: "සෑම රාජසිංහයෙකු සඳහාම, ගමන ආරම්භ වන්නේ සිහිනයකින් සහ අවසන් වන්නේ ජයග්‍රහණයකිනි.",
   },
   "home.motivationSubtext": {
-    en: "Together, we build tomorrow's leaders today.",
-    si: "එකට, අපි අද හෙටේ නායකයින් ගොඩනඟමු.",
+    en: "Vidya Dadathi Vinayang.",
+    si: "විද්‍යා දදාති විනයං.",
   },
   "home.academicIntro": {
     en: "Our academic programs are designed to challenge and inspire students across all grade levels. From Grade 6 to Advanced Level, we provide comprehensive education that prepares students for higher education and professional success.",
