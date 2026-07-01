@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import logo from "../Assets/logo.png";
+import logo from "../../assets/school-logo.jpeg";
 import "./TeacherSidebar.css";
 
 import {

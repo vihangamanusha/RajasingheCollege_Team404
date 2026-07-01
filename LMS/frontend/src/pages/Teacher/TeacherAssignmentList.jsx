@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, FileText, Calendar, Trash2 } from "lucide-react";
-import { getSubjects } from "../services/SubjectService";
-import { getClasses } from "../services/ClassService";
-import { deleteAssignment } from "../services/AssignmentService";
+import { getSubjects } from "../../Service/TeacherSubjectService";
+import { getClasses } from "../../Service/TeacherClassService";
+import { deleteAssignment } from "../../Service/TeacherAssignmentService";
 import "./TeacherAssignmentList.css";
 
 function TeacherAssignmentList() {

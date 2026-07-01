@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Select from "react-select";
-import { getSubjects } from "../services/SubjectService";
+import { getSubjects } from "../../Service/TeacherSubjectService";
 import "./TeacherMarksPage.css";
 
 const TeacherMarksPage = () => {

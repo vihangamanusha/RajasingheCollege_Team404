@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload } from "lucide-react";
-import { uploadAssignment } from "../services/AssignmentService";
-import { getSubjects } from "../services/SubjectService";
-import { getClasses } from "../services/ClassService";
+import { uploadAssignment } from "../../Service/TeacherAssignmentService";
+import { getSubjects } from "../../Service/TeacherSubjectService";
+import { getClasses } from "../../Service/TeacherClassService";
 import "./TeacherCreateAssignment.css";
 
 function TeacherCreateAssignment() {

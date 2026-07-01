@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { getStudents, assignStudentToClass } from "../services/StudentService";
-import { getClasses } from "../services/ClassService";
+import { getStudents, assignStudentToClass } from "../../Service/TeacherStudentService";
+import { getClasses } from "../../Service/TeacherClassService";
 import "./TeacherAddStudentToClass.css";
 
 function TeacherAddStudentToClass() {

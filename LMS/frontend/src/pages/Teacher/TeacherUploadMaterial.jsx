@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
 
-import { uploadMaterial } from "../services/MaterialService";
-import { getSubjects } from "../services/SubjectService";
-import { getClasses } from "../services/ClassService";
+import { uploadMaterial } from "../../Service/TeacherMaterialService";
+import { getSubjects } from "../../Service/TeacherSubjectService";
+import { getClasses } from "../../Service/TeacherClassService";
 
 import "./TeacherUploadMaterial.css";
 

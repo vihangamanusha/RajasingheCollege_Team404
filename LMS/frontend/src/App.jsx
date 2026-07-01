@@ -35,6 +35,22 @@ import AdminLayout from "./layouts/AdminLayout";
 import StudentLayout from "./Component/student/StudentLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+// =========================
+// TEACHER PAGES & COMPONENTS
+// =========================
+import TeacherDashboard from "./pages/Teacher/TeacherDashboard";
+import TeacherMaterialList from "./pages/Teacher/TeacherMaterialList";
+import TeacherUploadMaterial from "./pages/Teacher/TeacherUploadMaterial";
+import TeacherAddStudentToClass from "./pages/Teacher/TeacherAddStudentToClass";
+import TeacherAssignmentList from "./pages/Teacher/TeacherAssignmentList";
+import TeacherCreateAssignment from "./pages/Teacher/TeacherCreateAssignment";
+
+import TeacherAddMarks from "./Component/Teacher/TeacherAddMarks";
+import TeacherSubject from "./Component/Teacher/TeacherSubject";
+import TeacherClass from "./Component/Teacher/TeacherClass";
+import TeacherMyClasses from "./Component/Teacher/TeacherMyClasses";
+import TeacherMarksPage from "./Component/Teacher/TeacherMarksPage";
+
 function App() {
     return (
         <Routes>
@@ -94,20 +110,18 @@ function App() {
             </Route>
 
 
-            <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" />} />
-                <Route path="/dashboard" element={<TeacherDashboard />} />
-                <Route path="/TeacherAddMarks" element={<TeacherAddMarks />} />
-                <Route path="/subjects" element={<TeacherSubject />} />
-                <Route path="/classes" element={<TeacherClass />} />
-                <Route path="/materials" element={<TeacherMaterialList />} />
-                <Route path="/upload-material" element={<TeacherUploadMaterial />} />
-                <Route path="/myclasses" element={<TeacherMyClasses />} />
-                <Route path="/marks/:classId" element={<TeacherMarksPage />} />
-                <Route path="/add-student" element={<TeacherAddStudentToClass />} />
-                <Route path="/Assignment" element={<TeacherAssignmentList />} />
-                <Route path="/create-assignment" element={<TeacherCreateAssignment />} />
-            </Routes>
+            {/* TEACHER ROUTES */}
+            <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+            <Route path="/TeacherAddMarks" element={<TeacherAddMarks />} />
+            <Route path="/subjects" element={<TeacherSubject />} />
+            <Route path="/classes" element={<TeacherClass />} />
+            <Route path="/materials" element={<TeacherMaterialList />} />
+            <Route path="/upload-material" element={<TeacherUploadMaterial />} />
+            <Route path="/myclasses" element={<TeacherMyClasses />} />
+            <Route path="/marks/:classId" element={<TeacherMarksPage />} />
+            <Route path="/add-student" element={<TeacherAddStudentToClass />} />
+            <Route path="/Assignment" element={<TeacherAssignmentList />} />
+            <Route path="/create-assignment" element={<TeacherCreateAssignment />} />
         </Routes>
 
     );

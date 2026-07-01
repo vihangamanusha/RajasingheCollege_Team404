@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import { saveMarks } from "../services/marksService";
-import { getStudents } from "../services/StudentService";
-import { getSubjects } from "../services/SubjectService";
-import { getClasses } from "../services/ClassService";
+import { saveMarks } from "../../Service/TeacherMarksService";
+import { getStudents } from "../../Service/TeacherStudentService";
+import { getSubjects } from "../../Service/TeacherSubjectService";
+import { getClasses } from "../../Service/TeacherClassService";
 import TeacherSidebar from "./TeacherSidebar";
 import "./TeacherAddMarks.css";
 
