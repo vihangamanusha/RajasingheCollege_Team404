@@ -78,8 +78,13 @@ export function News() {
             <div className="news-grid">
 
               {allNews.length === 0 ? (
-                <div className="empty-state">
-                  No news articles found.
+                <div className="no-news-container">
+                  <h3>No News Available Yet</h3>
+
+                  <p>
+                    There are currently no news articles published.
+                    Please check back later for the latest updates.
+                  </p>
                 </div>
               ) : (
                 allNews.map((news, index) => (
@@ -93,17 +98,17 @@ export function News() {
                     <div className="news-card__image-wrapper">
 
                       <ImageWithFallback
-                         src={
-                           news.image
-                           ? news.image.startsWith("http")
-                           ? news.image
-                           : `http://localhost:8080/${news.image.replace(/^\/+/, "")}`
-                           : "https://via.placeholder.com/800x600?text=No+Image"
-                         }
-                            alt={news.title}
-                             className="news-card__image"
-                       />
- 
+                        src={
+                          news.image
+                            ? news.image.startsWith("http")
+                              ? news.image
+                              : `http://localhost:8080/${news.image.replace(/^\/+/, "")}`
+                            : "https://via.placeholder.com/800x600?text=No+Image"
+                        }
+                        alt={news.title}
+                        className="news-card__image"
+                      />
+
                       <div className="news-card__image-overlay"></div>
 
                       {/* DATE */}

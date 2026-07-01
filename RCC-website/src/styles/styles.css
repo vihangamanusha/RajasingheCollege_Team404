@@ -4435,10 +4435,39 @@ h6,
   font-weight: 800;
   letter-spacing: 1px;
 }
+.no-staff-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 70px 30px;
+
+  text-align: center;
+
+  background: #ffffff;
+  border: 2px dashed #d9d9d9;
+  border-radius: 16px;
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.no-staff-container h3 {
+  font-size: 32px;
+  color: #002147;
+  margin-bottom: 15px;
+}
+
+.no-staff-container p {
+  font-size: 17px;
+  color: #6b7280;
+  line-height: 1.7;
+  max-width: 500px;
+  margin: 0 auto;
+}
 
 /* SECTION WRAPPER */
 .staff-section {
   padding: 70px 20px;
+  background: #ffff;
 }
 
 .staff-container {
