@@ -1,49 +1,166 @@
+import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
-import { useLanguage } from "../contexts/LanguageContext";
+import { getBySportType } from "../api/sportApi";
+import "../styles/styles.css";
 
 export function SportCricket() {
-  const { t } = useLanguage();
+
+  const [achievements, setAchievements] = useState([]);
+
+  useEffect(() => {
+
+    loadAchievements();
+
+  }, []);
+  const loadAchievements = async () => {
+
+    try {
+
+      const data = await getBySportType("Cricket");
+
+      setAchievements(data);
+
+    } catch (error) {
+
+      console.log(error);
+
+    }
+  };
+
 
   return (
-    <div>
-      {/* Hero Banner */}
-      <section className="relative h-80 overflow-hidden">
+
+    <div className="sport-page">
+
+      {/* HERO */}
+
+      <section className="sport-hero">
+
         <ImageWithFallback
           src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?w=1920&h=1080&fit=crop"
           alt="Cricket"
-          className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-[#002147]/70 flex items-center justify-center">
-          <h1 className="text-5xl md:text-6xl text-white">Cricket</h1>
+
+        <div className="hero-overlay">
+
+          <div className="hero-content">
+
+            <div className="hero-icon">
+              <Trophy size={40} />
+            </div>
+
+            <h1>Cricket</h1>
+
+            <p>
+              Developing discipline, teamwork,
+              and sportsmanship through cricket excellence.
+            </p>
+
+          </div>
+
         </div>
+
       </section>
 
-      {/* Content */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="max-w-3xl mx-auto">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center">
-                <Trophy className="w-8 h-8 text-[#FFD700]" />
-              </div>
-              <h2 className="text-4xl text-[#002147]">District Tournament Winners</h2>
-            </div>
-            <p className="text-lg text-gray-700 leading-relaxed mb-6">
-              Our cricket team showcases excellence in both batting and bowling, competing at the highest school level.
-            </p>
-            <div className="bg-[#F5F5F5] p-6 rounded-lg">
-              <h3 className="text-2xl text-[#002147] mb-4">Recent Achievements</h3>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>District Cricket Tournament Champions 2025</li>
-                <li>Inter-School One-Day League Winners 2024</li>
-                <li>Regional T20 Tournament Winners 2024</li>
-                <li>School Cricket Cup Champions 2023</li>
-              </ul>
-            </div>
-          </div>
+      {/* ABOUT */}
+
+      <section className="about-section">
+
+        <div className="about-left">
+
+          <h2>
+            About Cricket
+          </h2>
+
+          <div className="title-line"></div>
+
+          <p>
+            Cricket is one of the most celebrated sports in our school.
+            Students participate in competitive tournaments and receive
+            professional coaching to improve their batting, bowling,
+            and fielding techniques.
+          </p>
+
+          <p>
+            Our cricket team has earned many championships and continues
+            to build talented players who represent the school with pride.
+          </p>
+
         </div>
+
+        <div className="about-right">
+
+          <ImageWithFallback
+            src="https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=900&h=700&fit=crop"
+            alt="Cricket Team"
+          />
+
+        </div>
+
       </section>
+
+      {/* ACHIEVEMENTS */}
+
+      <section className="achievement-section">
+
+        <div className="section-heading">
+
+          <h2>
+            Achievements
+          </h2>
+
+          <div className="title-line"></div>
+
+        </div>
+
+        <div className="achievement-grid">
+
+          {achievements.map((item, index) => (
+
+            <div
+              className="achievement-card"
+              key={index}
+            >
+
+              <div className="achievement-image">
+
+                    {item.image ? (
+    <img
+      src={
+        item.image.startsWith("http")
+          ? item.image
+          : `http://localhost:8080${item.image}`
+      }
+      alt={item.topic}
+    />
+  ) : (<div className="image-placeholder">
+      No Image
+    </div>
+  )}
+              </div>
+
+
+              <div className="achievement-content">
+
+                <h3>
+                  {item.topic}
+                </h3>
+
+                <p>
+                  {item.description}
+                </p>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </section>
+
     </div>
   );
 }

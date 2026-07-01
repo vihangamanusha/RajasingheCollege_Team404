@@ -88,7 +88,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
+<<<<<<< HEAD
 		<!-- PDF GENERATION -->
 		<dependency>
 			<groupId>com.github.librepdf</groupId>
@@ -97,6 +103,9 @@
 		</dependency>
 
 	</dependencies>
+=======
+    </dependencies>
+>>>>>>> TG1388
 
 	<build>
 		<plugins>

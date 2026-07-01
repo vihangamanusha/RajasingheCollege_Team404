@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Calendar,
@@ -9,78 +10,71 @@ import {
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
 import school from "../assets/homeImage.jpeg";
-import schoolimg from "../assets/schoolimg.jpeg";
+import schoolimg from "../assets/newabout.jpeg";
 import LMS from "../assets/LMS.png";
 import academic from "../assets/academic.jpeg";
 import sport from "../assets/sport.jpeg";
+import { getAllEvents } from "../api/eventApi";
+import { getNews } from "../api/newsApi";
+
+
 
 export function Home() {
   const { t } = useLanguage();
-  const newsItems = [
-    {
-      id: 1,
-      titleKey: "news.item1.title",
-      date: "April 28, 2026",
-      excerptKey: "news.item1.excerpt",
-      image:
-        "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&h=600&fit=crop",
-    },
-    {
-      id: 2,
-      titleKey: "news.item2.title",
-      date: "April 20, 2026",
-      excerptKey: "news.item2.excerpt",
-      image:
-        "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=800&h=600&fit=crop",
-    },
-    {
-      id: 3,
-      titleKey: "news.item3.title",
-      date: "April 15, 2026",
-      excerptKey: "news.item3.excerpt",
-      image:
-        "https://images.unsplash.com/photo-1588072432836-e10032774350?w=800&h=600&fit=crop",
-    },
-    {
-      id: 4,
-      titleKey: "news.item4.title",
-      date: "April 10, 2026",
-      excerptKey: "news.item4.excerpt",
-      image:
-        "https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&h=600&fit=crop",
-    },
-  ];
+  
+  const [events, setEvents] = useState([]);
+  const [newsItems, setNewsItems] = useState([]);
+
+  useEffect(() => {
+  const loadNews = async () => {
+    try {
+      const data = await getNews();
+
+      const latest = (data || [])
+        .sort((a, b) => b.id - a.id)
+        .slice(0, 3);
+
+      setNewsItems(latest);
+    } catch (err) {
+      console.error("News load error:", err);
+    }
+  };
+
+  loadNews();
+}, []);
+
+  /*pagination componenet*/
+  const [currentPage, setCurrentPage] = useState(1);
+  const eventsPerPage = 3;
+
+  useEffect(() => {
+  const loadEvents = async () => {
+    try {
+      const data = await getAllEvents();
+
+      // newest first
+      const sorted = (data || []).sort((a, b) => b.id - a.id);
+
+      setEvents(sorted);
+    } catch (err) {
+      console.error("Event load error:", err);
+    }
+  };
+
+  loadEvents();
+}, []);
+
+  
 
   const upcomingEvents = [
-    {
-      id: 1,
-      titleKey: "event1.title",
-      date: "May 15, 2026",
-      time: "8:00 AM",
-      locationKey: "event1.location",
-      descriptionKey: "event1.desc",
-      icon: "🏆",
-    },
-    {
-      id: 2,
-      titleKey: "event2.title",
-      date: "May 20, 2026",
-      time: "2:00 PM",
-      locationKey: "event2.location",
-      descriptionKey: "event2.desc",
-      icon: "👨‍👩‍👧‍👦",
-    },
-    {
-      id: 3,
-      titleKey: "event3.title",
-      date: "June 1-10, 2026",
-      time: "9:00 AM",
-      locationKey: "event3.location",
-      descriptionKey: "event3.desc",
-      icon: "📝",
-    },
+    
   ];
+const indexOfLastEvent = currentPage * eventsPerPage;
+const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
 
+const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
+
+const totalPages = Math.ceil(events.length / eventsPerPage);
   return (
     <div>
       {/* Hero Section */}
@@ -154,7 +148,7 @@ export function Home() {
               </p>
               <Link
                 to="/about"
-                className="home-link-primary"
+                className="btn btn-secondary-lms"
               >
                 <span>{t("common.readMore")}</span>
                 <ArrowRight className="btn-icon" />
@@ -164,132 +158,183 @@ export function Home() {
         </div>
       </section>
 
-      {/* Latest News */}
-      <section className="home-news-section">
-        {/*<div className="home-news-bg-decor"></div>*/}
-        <div className="home-news-container">
-          <div className="home-section-header">
-            <div className="home-news-title-wrapper">
-              <div className="home-news-icon-wrapper">
-                <div className="home-news-icon-line"></div>
-                <BookOpen className="home-news-icon" />
-                <div className="home-news-icon-line"></div>
-              </div>
-              <h2 className="home-section-title">
-                {t("home.latestNews")}
-              </h2>
-              <div className="home-news-divider"></div>
-            </div>
-          </div>
-          <div className="news-grid">
-            {newsItems.slice(0, 3).map((news, index) => (
-              <div
-                key={news.id}
-                className="news-card"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                <div className="news-image">
-                  <ImageWithFallback
-                    src={news.image}
-                    alt={news.title}
-                    className="home-news-img"
-                  />
-                </div>
-                <div className="news-content">
-                  <div className="news-date">
-                    {news.date.split(",")[0]}
-                  </div>
-                  <h3 className="news-title">
-                    {t(news.titleKey)}
-                  </h3>
-                  <p className="news-excerpt">
-                    {t(news.excerptKey)}
-                  </p>
-                  <Link
-                    to="/news"
-                    className="home-link-news group"
-                  >
+               
+     {/* Latest News */}
+<section className="home-news-section">
+  <div className="home-news-container">
 
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="home-news-footer">
-            <Link
-              to="/news"
-              className="btn btn-primary"
-            >
-              <span className="btn-text">{t("home.viewAll")}</span>
-              <ArrowRight className="icon-lg" />
-            </Link>
-          </div>
-        </div>
-      </section>
+    <div className="home-section-header">
+      <h2 className="home-section-title">
+        Latest News
+      </h2>
+      <div className="home-news-divider"></div>
+    </div>
 
-      {/* Upcoming Events */}
-      <section className="home-section-white">
-        <div className="container">
-          <div className="home-section-header">
-            <h2 className="home-section-title">
-              {t("home.upcomingEvents")}
-            </h2>
-            <div className="home-section-divider home-section-divider-mb4"></div>
-          </div>
-          <div className="home-events-grid">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="home-event-card"
-              >
-                <h3 className="home-event-title">
-                  {t(event.titleKey)}
+    {newsItems.length > 0 ? (
+      <>
+        <div className="news-grid">
+          {newsItems.slice(0, 3).map((news) => (
+            <div key={news.id} className="news-card">
+
+              <div className="news-image">
+                <img
+                  src={
+                    news.image
+                      ? news.image.startsWith("http")
+                        ? news.image
+                        : `http://localhost:8080${
+                            news.image.startsWith("/")
+                              ? news.image
+                              : "/" + news.image
+                          }`
+                      : "https://via.placeholder.com/400x250"
+                  }
+                  alt={news.title}
+                  className="home-news-img"
+                />
+              </div>
+
+              <div className="news-content">
+
+                <div className="news-date">
+                  {news.date}
+                </div>
+
+                <h3 className="news-title">
+                  {news.title}
                 </h3>
 
-                <p className="home-event-desc">
-                  {t(event.descriptionKey)}
+                <p className="news-excerpt">
+                  {news.content?.length > 120
+                    ? news.content.substring(0, 120) + "..."
+                    : news.content}
                 </p>
 
-                <div className="home-event-details">
-                  <div className="home-event-detail-item">
-                    <div className="home-event-icon">
-                      📅
-                    </div>
-                    <span className="home-event-text">
-                      {event.date}
-                    </span>
-                  </div>
-                  <div className="home-event-detail-item">
-                    <div className="home-event-icon">
-                      🕐
-                    </div>
-                    <span className="home-event-text">
-                      {event.time}
-                    </span>
-                  </div>
-                  <div className="home-event-detail-item">
-                    <div className="home-event-icon">
-                      📍
-                    </div>
-                    <span className="home-event-text">
-                      {t(event.locationKey)}
-                    </span>
-                  </div>
-                </div>
               </div>
-            ))}
-          </div>
+
+            </div>
+          ))}
         </div>
+
         <div className="home-news-footer">
-          <Link
-            to="/news"
-            className="btn btn-primary"
-          >
-            <span className="btn-text">{t("home.viewAll")}</span>
-            <ArrowRight className="icon-lg" />
+          <Link to="/news" className="btn btn-primary">
+            View All
           </Link>
         </div>
-      </section>
+      </>
+    ) : (
+      <div className="no-news-container">
+        <h3>No News Available Yet</h3>
+        <p>
+          There are currently no news articles published.
+          Please check back later for the latest updates.
+        </p>
+      </div>
+    )}
+
+  </div>
+</section>
+
+      {/* Upcoming Events */}
+<section className="home-section-white">
+  <div className="container">
+
+    <div className="home-section-header">
+      <h2 className="home-section-title">
+        {t("home.upcomingEvents")}
+      </h2>
+      <div className="home-section-divider home-section-divider-mb4"></div>
+    </div>
+
+    {currentEvents.length > 0 ? (
+      <>
+        <div className="home-events-grid">
+          {currentEvents.map((event) => (
+            <div
+              key={event.id}
+              className="home-event-card"
+            >
+              <h3 className="home-event-title">
+                {event.topic}
+              </h3>
+
+              <p className="home-event-desc">
+                {event.description}
+              </p>
+
+              <div className="home-event-details">
+
+                <div className="home-event-detail-item">
+                  <div className="home-event-icon">📅</div>
+                  <span className="home-event-text">
+                    {event.date}
+                  </span>
+                </div>
+
+                <div className="home-event-detail-item">
+                  <div className="home-event-icon">🕐</div>
+                  <span className="home-event-text">
+                    {event.time}
+                  </span>
+                </div>
+
+                <div className="home-event-detail-item">
+                  <div className="home-event-icon">📍</div>
+                  <span className="home-event-text">
+                    {event.venue}
+                  </span>
+                </div>
+
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Show pagination only when there are events */}
+        <div className="pagination">
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+            className="page-btn"
+          >
+            Prev
+          </button>
+
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`page-btn ${currentPage === i + 1 ? "active" : ""}`}
+            >
+              {i + 1}
+            </button>
+          ))}
+
+          <button
+            onClick={() =>
+              setCurrentPage((p) => Math.min(p + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="page-btn"
+          >
+            Next
+          </button>
+
+        </div>
+      </>
+    ) : (
+      <div className="no-event-container">
+        <h3>No Upcoming Events</h3>
+        <p>
+          There are currently no upcoming events scheduled.
+          Please check back later for new announcements.
+        </p>
+      </div>
+    )}
+
+  </div>
+</section>
       {/* LMS Section */}
       <section className="home-lms-section">
         <div className="container">

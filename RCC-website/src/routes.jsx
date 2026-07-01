@@ -1,5 +1,6 @@
 import React from "react";
 import { createBrowserRouter } from "react-router";
+
 import { RootLayout } from "./components/RootLayout";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
@@ -19,6 +20,7 @@ import { SportCricket } from "./pages/SportCricket";
 import { SportRugby } from "./pages/SportRugby";
 import { SportKarate } from "./pages/SportKarate";
 import { SportAthletics } from "./pages/SportAthletics";
+import { ClubsSocieties } from "./pages/clubs-societies";
 import { LiveStream } from "./pages/LiveStream";
 import { Contact } from "./pages/Contact";
 import { NotFound } from "./pages/NotFound";
@@ -38,7 +40,7 @@ export const router = createBrowserRouter([
       { path: "academic/staff/ordinary-level", element: <StaffOLevel /> },
       { path: "academic/staff/advanced-level", element: <StaffALevel /> },
       { path: "academic/staff/science", element: <StaffScience /> },
-      { path: "staff", element: <AllStaff /> },
+      { path: "academic/AllStaff", element: <AllStaff /> },
       { path: "news", element: <News /> },
       { path: "sports", element: <Sports /> },
       { path: "sports/volleyball", element: <SportVolleyball /> },
@@ -46,8 +48,11 @@ export const router = createBrowserRouter([
       { path: "sports/rugby", element: <SportRugby /> },
       { path: "sports/karate", element: <SportKarate /> },
       { path: "sports/athletics", element: <SportAthletics /> },
+      { path: "clubs-societies", element: <ClubsSocieties /> },
       { path: "live-stream", element: <LiveStream /> },
+      
       { path: "contact", element: <Contact /> },
+
       { path: "*", element: <NotFound /> },
     ],
   },

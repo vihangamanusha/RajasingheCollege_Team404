@@ -13,6 +13,7 @@ export function Header() {
     { name: t("nav.home"), path: "/" },
     { name: t("nav.about"), path: "/about" },
     { name: t("nav.academic"), path: "/academic" },
+    { name: t("nav.clubs-societies"), path: "/clubs-societies" },
     { name: t("nav.news"), path: "/news" },
     { name: t("nav.sports"), path: "/sports" },
     { name: t("nav.liveStream"), path: "/live-stream" },
@@ -69,14 +70,14 @@ export function Header() {
                 );
               })}
 
-              {/* Language Switch */}
+              {/* Language Switch 
               <button
                 onClick={toggleLanguage}
                 className="language-btn"
               >
                 <Globe className="header-icon" />
                 <span>{language === "en" ? "සිං" : "EN"}</span>
-              </button>
+              </button>*/}
             </nav>
 
             {/* Mobile Menu Button */}

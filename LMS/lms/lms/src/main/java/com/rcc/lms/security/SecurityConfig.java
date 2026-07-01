@@ -1,5 +1,9 @@
 package com.rcc.lms.security;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+<<<<<<< HEAD
                 // =========================
                 // DISABLE CSRF-Cross Site Request Forgery--used for sesssion and cokkies
                 // this disabled in REST APIs.
@@ -43,10 +48,17 @@ public class SecurityConfig {
                 // STATELESS SESSION (JWT)
                 // Server does NOT store login sessions,Client stores and JWT token
                 // =========================
+=======
+                .csrf(csrf -> csrf.disable())
+
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+>>>>>>> TG1388
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
 
+<<<<<<< HEAD
                 // =========================
                 // AUTH RULES
                 // =========================
@@ -67,20 +79,48 @@ public class SecurityConfig {
                 .httpBasic(basic -> basic.disable());
 
         // Add JWT filter
+=======
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/user/login",
+                                "/user/register",
+                                "/api/news/**",
+                                "/api/contact/**",
+                                "/api/students/**",
+                                "/api/events/**",
+                                "/api/announcements/**",
+                                "/api/livestreams/**",
+                                "/api/files/**",
+                                "/api/sports/**",
+                                "/uploads/**"
+
+                        ).permitAll()
+                        .anyRequest().authenticated()
+                )
+
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable());
+
+>>>>>>> TG1388
         http.addFilterBefore(jwtFilter,
                 UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+<<<<<<< HEAD
     // =========================
     // CORS CONFIG
     // =========================
+=======
+    // IMPORTANT CORS FIX
+>>>>>>> TG1388
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration config = new CorsConfiguration();
 
+<<<<<<< HEAD
         // IMPORTANT: allow all localhost ports for now (DEV MODE FIX). different port.
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
@@ -99,6 +139,26 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);//Apply this CORS config to all endpoints.
+=======
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5176",
+                "http://localhost:5173",
+                "http://localhost:5174",
+
+                "http://localhost:3000"
+        ));
+
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        config.setAllowedHeaders(List.of("*"));
+
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+
+        source.registerCorsConfiguration("/**", config);
+>>>>>>> TG1388
 
         return source;
     }

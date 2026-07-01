@@ -1,112 +1,245 @@
+import { useEffect, useState } from "react";
 import { Radio, Calendar, Clock } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import LiveStreamImage from "../assets/livestream.jpeg";
+import "../styles/styles.css";
+
+// Yt url - EMBED URL
+const getEmbedUrl = (url) => {
+  if (!url) return "";
+
+  url = url.trim();
+
+  // already embed
+  if (url.includes("embed")) return url;
+
+  // watch?v=
+  if (url.includes("watch?v=")) {
+    const id = url.split("watch?v=")[1].split("&")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  // youtu.be
+  if (url.includes("youtu.be/")) {
+    const id = url.split("youtu.be/")[1].split("?")[0];
+    return `https://www.youtube.com/embed/${id}`;
+  }
+
+  return url;
+};
 
 export function LiveStream() {
+
   const { t } = useLanguage();
-  const upcomingStreams = [
-    {
-      titleKey: "stream1.title",
-      date: "May 25, 2026",
-      time: "2:00 PM",
-      descriptionKey: "stream1.desc",
-    },
-    {
-      titleKey: "stream2.title",
-      date: "May 15, 2026",
-      time: "8:00 AM",
-      descriptionKey: "stream2.desc",
-    },
-    {
-      titleKey: "stream3.title",
-      date: "June 5, 2026",
-      time: "10:00 AM",
-      descriptionKey: "stream3.desc",
-    },
-  ];
+
+  const [streams, setStreams] = useState([]);
+
+  // FETCH STREAMS
+  useEffect(() => {
+    fetchStreams();
+  }, []);
+
+  const fetchStreams = async () => {
+
+    try {
+
+      const res = await fetch(
+        "http://localhost:8080/api/livestreams"
+      );
+
+      const data = await res.json();
+
+      setStreams(data);
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // live stream
+  
+  // backend should return "live" OR "isLive"
+
+  const liveStream = streams.find(
+    (stream) => stream.live === true
+  );
 
   return (
-    <div>
-      {/* Hero Banner */}
-      <section className="relative h-80 overflow-hidden">
+
+    <div className="live-page">
+
+      {/* HERO SECTION */}
+
+      <section className="live-hero">
+
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1492619375914-88005aa9e8fb?w=1920&h=1080&fit=crop"
+          src={LiveStreamImage}
+          className="live-hero-image"
           alt="Live Stream"
-          className="w-full h-full object-cover"
         />
 
-        <div className="absolute inset-0 bg-[#002147]/70 flex items-center justify-center">
-          <h1 className="text-5xl md:text-6xl text-white">
+        <div className="live-hero-overlay">
+
+          <h1 className="live-hero-title">
             {t("livestream.title")}
           </h1>
+
         </div>
+
       </section>
 
-      {/* Current Live Stream */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="bg-gradient-to-br from-[#002147] to-[#003366] rounded-lg overflow-hidden shadow-2xl">
-            <div className="aspect-video bg-black/50 flex items-center justify-center">
-              <div className="text-center">
-                <Radio className="w-24 h-24 text-[#FFD700] mx-auto mb-6 animate-pulse" />
-                <p className="text-2xl text-white mb-4">
-                  {t("livestream.noLive")}
+      {/* Live stream section */}
+
+      <section className="live-current-section">
+
+        <div className="live-container">
+
+          {liveStream ? (
+
+            <div className="live-card">
+
+              {/* VIDEO */}
+
+              <div className="live-video-box">
+
+                <iframe
+                  width="100%"
+                  height="450"
+                  src={getEmbedUrl(liveStream.videoURL)}
+                  title={liveStream.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  frameBorder="0"
+                ></iframe>
+
+              </div>
+
+              {/* DETAILS */}
+
+              <div className="live-details">
+
+                <div className="live-status">
+
+                  <span className="live-dot"></span>
+
+                  <span>LIVE NOW</span>
+
+                </div>
+
+                <h2 className="live-heading">
+                  {liveStream.title}
+                </h2>
+
+                <p className="live-description">
+                  {liveStream.description}
                 </p>
+
               </div>
+
             </div>
-            <div className="p-8 text-white">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="px-4 py-2 bg-red-600 rounded-full text-sm flex items-center gap-2">
-                  <span className="w-2 h-2 bg-white rounded-full animate-pulse"></span>
-                  <span>OFFLINE</span>
-                </div>
+
+          ) : (
+
+            <div className="live-card offline-card">
+
+              <div className="live-video-content">
+
+                <Radio className="live-radio-icon" />
+
+                <p className="live-offline-text">
+                  No Live Stream Now
+                </p>
+
               </div>
-              <h2 className="text-3xl mb-4">School Events Live Stream</h2>
-              <p className="text-gray-300">
-                Stay connected with RRCC by watching our live streams of major
-                school events, ceremonies, and competitions. Enable
-                notifications to never miss a stream!
-              </p>
+
             </div>
-          </div>
+
+          )}
+
         </div>
+
       </section>
 
-      {/* Upcoming Streams */}
-      <section className="py-20 bg-[#F5F5F5]">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl text-[#002147] mb-4">
-              {t("livestream.upcoming")}
-            </h2>
-            <div className="w-24 h-1 bg-[#FFD700] mx-auto"></div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {upcomingStreams.map((stream, index) => (
-              <div
-                key={index}
-                className="bg-white p-8 rounded-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-              >
-                <div className="w-16 h-16 bg-[#002147] rounded-full flex items-center justify-center mb-6">
-                  <Calendar className="w-8 h-8 text-[#FFD700]" />
-                </div>
-                <h3 className="text-[#002147] mb-4">{t(stream.titleKey)}</h3>
-                <div className="space-y-2 mb-4">
-                  <div className="flex items-center gap-3 text-gray-600">
-                    <Calendar className="w-5 h-5" />
-                    <span>{stream.date}</span>
-                  </div>
-                  <div className="flex items-center gap-3 text-gray-600">
-                    <Clock className="w-5 h-5" />
-                    <span>{stream.time}</span>
-                  </div>
-                </div>
-                <p className="text-gray-700">{t(stream.descriptionKey)}</p>
+      {/* UPCOMING STREAMS */}
+
+<section className="upcoming-section">
+
+  <div className="live-container">
+
+    <div className="upcoming-header">
+
+      <h2 className="upcoming-title">
+        Upcoming Streams
+      </h2>
+
+      <div className="upcoming-line"></div>
+
+    </div>
+
+    {streams.filter((stream) => !stream.live).length > 0 ? (
+
+      <div className="upcoming-grid">
+
+        {streams
+          .filter((stream) => !stream.live)
+          .map((stream) => (
+
+            <div
+              key={stream.id}
+              className="upcoming-card"
+            >
+
+              <div className="upcoming-icon-box">
+                <Calendar className="upcoming-icon" />
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
+              <h3 className="upcoming-card-title">
+                {stream.title}
+              </h3>
+
+              <div className="upcoming-info">
+
+                <div className="upcoming-info-row">
+                  <Calendar className="small-icon" />
+                  <span>{stream.date}</span>
+                </div>
+
+                <div className="upcoming-info-row">
+                  <Clock className="small-icon" />
+                  <span>{stream.time}</span>
+                </div>
+
+              </div>
+
+              <p className="upcoming-description">
+                {stream.description}
+              </p>
+
+            </div>
+
+          ))}
+
+      </div>
+
+    ) : (
+
+      <div className="no-stream-container">
+
+        <h3>No Upcoming Streams Yet</h3>
+
+        <p>
+          There are currently no upcoming live streams scheduled.
+          Please check back later for future broadcasts.
+        </p>
+
+      </div>
+
+    )}
+
+  </div>
+
+</section>
     </div>
   );
 }

@@ -89,7 +89,7 @@ export function Academic() {
           <div className="academic-program-grid">
             {/* Grades 6-9 */}
             <Link
-              to="/academic/grades-6-9"
+              /*to="/academic/grades-6-9"*/
               className="academic-program-card"
             >
               <div className="academic-program-image-wrap">
@@ -111,7 +111,7 @@ export function Academic() {
 
             {/* Ordinary Level */}
             <Link
-              to="/academic/ordinary-level"
+              /*to="/academic/ordinary-level"*/
               className="academic-program-card"
             >
               <div className="academic-program-image-wrap">
@@ -251,7 +251,8 @@ export function Academic() {
           </a>
         </div>
       </section>
-      {/* Academic Staff Section */}
+      
+    {/* Academic Staff Section */}
       <section className="academic-staff-section">
         <div className="academic-section-wrapper">
           <div className="academic-staff-grid">
@@ -268,16 +269,16 @@ export function Academic() {
                   <BookOpen className="academic-staff-icon-symbol" />
                 </div>
                 <h2 className="academic-staff-title">
-                  {t("academic.staff")}
+                  {t("Academic Staff")}
                 </h2>
               </div>
               <p className="academic-staff-description">
                 {t("academic.staffDesc")}
               </p>
               <Link
-                to="/academic/all-staff"
-                className="academic-button"
-              >
+                 to="/academic/AllStaff"
+                 className="academic-button"
+>
                 <span>{t("academic.seeAllStaff")}</span>
                 <BookOpen className="academic-button-icon" />
               </Link>
@@ -285,7 +286,6 @@ export function Academic() {
           </div>
         </div>
       </section>
-
       
     </div>
   );
