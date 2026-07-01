@@ -102,8 +102,8 @@ function App() {
                 <Route path="users/teacher" element={<TeacherRegister />} />
                 <Route path="users/tech" element={<TechRegister />} />
 
-                {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- */}
-                <Route path="announcements" element={<Announcement />} />
+                {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- 
+                <Route path="announcements" element={<Announcement />} />*/}
 
                 {/* --> CLASS MANAGEMENT <-- */}
                 <Route path="classes" element={<AdminClassManagement />} />

@@ -78,7 +78,7 @@ export default function Login() {
             } else if (role === "STUDENT" || role === "ROLE_STUDENT") {
                 navigate("/student");
             } else if (role === "TECHNICAL_OFFICER" || role === "ROLE_TECHNICAL_OFFICER") {
-                navigate("/events");
+                navigate("/");
             } else {
                 setMessage("Unknown role: " + role);
                 setMessageType("error");

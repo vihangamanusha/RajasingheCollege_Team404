@@ -17,7 +17,7 @@ export default function Sidebar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     sessionStorage.clear();
-    navigate("/");
+    navigate("/login");
   };
 
   return (
