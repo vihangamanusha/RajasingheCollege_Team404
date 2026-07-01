@@ -1,16 +1,17 @@
 import { BookOpen, Users } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 
-import scienceImg from "../assets/about.jpeg";
-import arduinoImg from "../assets/about.jpeg";
-import cadetImg from "../assets/about.jpeg";
-import scoutsImg from "../assets/about.jpeg";
-import stjohnImg from "../assets/about.jpeg";
-import astronomyImg from "../assets/about.jpeg";
-import techImg from "../assets/about.jpeg";
-import buddhistImg from "../assets/about.jpeg";
-import artImg from "../assets/about.jpeg";
-import mediaImg from "../assets/about.jpeg";
+import scienceImg from "../assets/science_club.jpeg";
+import arduinoImg from "../assets/arduno_club.jpg";
+import cadetImg from "../assets/cadet_club.jpeg";
+import scoutsImg from "../assets/scout_club.png";
+import stjohnImg from "../assets/st_john.webp";
+import astronomyImg from "../assets/astronomy_club.jpeg";
+import techImg from "../assets/tech_club.jpeg";
+import buddhistImg from "../assets/buddisht_club.jpeg";
+import artImg from "../assets/art_club.jpeg";
+import mediaImg from "../assets/media_club.jpeg";
+import ClubsImage from "../assets/club & society.png";
 
 import "../styles/styles.css";
 
@@ -105,7 +106,7 @@ export function ClubsSocieties() {
       <section className="clubs-hero">
 
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1920&h=1080&fit=crop"
+          src={ClubsImage}
           alt="Clubs and Societies"
           className="clubs-hero-image"
         />
