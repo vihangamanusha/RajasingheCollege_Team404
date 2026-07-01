@@ -6,6 +6,7 @@ public class TeacherMarksDTO {
     private String subjectId;
     private String term;
     private int assignmentMark;
+    private int academicYear;
 
     public String getStudentId() {
         return studentId;
@@ -21,6 +22,10 @@ public class TeacherMarksDTO {
 
     public String getSubjectId() {
         return subjectId;
+    }
+
+    public int getAcademicYear() {
+        return academicYear;
     }
 
     public void setStudentId(String studentId) {
@@ -39,5 +44,7 @@ public class TeacherMarksDTO {
         this.assignmentMark = assignmentMark;
     }
 
-    // Getters & Setters
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
+    }
 }

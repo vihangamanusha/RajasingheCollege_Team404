@@ -1,6 +1,7 @@
 package com.rcc.lms.entity;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "marks")
@@ -20,6 +21,12 @@ public class TeacherMarks {
 
     private int assignmentMark;
 
+    @Column(name = "academic_year", nullable = false)
+    private int academicYear;
+
+    @Column(name = "exam_date")
+    private LocalDate examDate = LocalDate.now();
+
     public int getMarkId() {
         return markId;
     }
@@ -38,6 +45,14 @@ public class TeacherMarks {
 
     public String getStudentId() {
         return studentId;
+    }
+
+    public int getAcademicYear() {
+        return academicYear;
+    }
+
+    public LocalDate getExamDate() {
+        return examDate;
     }
 
     public void setMarkId(int markId) {
@@ -60,5 +75,11 @@ public class TeacherMarks {
         this.assignmentMark = assignmentMark;
     }
 
-    // Getters & Setters
+    public void setAcademicYear(int academicYear) {
+        this.academicYear = academicYear;
+    }
+
+    public void setExamDate(LocalDate examDate) {
+        this.examDate = examDate;
+    }
 }
