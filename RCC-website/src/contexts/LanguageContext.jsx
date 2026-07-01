@@ -351,13 +351,13 @@ const translations = {
   "about.missionVision": { en: "Mission & Vision", si: "මෙහෙවර සහ දැක්ම" },
   "about.ourMission": { en: "Our Mission", si: "අපගේ මෙහෙවර" },
   "about.missionDesc": {
-    en: "To provide comprehensive, quality education that develops students academically, socially, and morally, preparing them to be responsible citizens and future leaders of our nation.",
-    si: "සිසුන් අධ්‍යාපනික, සමාජීය සහ සදාචාරාත්මකව වර්ධනය කරමින්, ඔවුන් අපේ ජාතියේ වගකිවයුතු පුරවැසියන් සහ අනාගත නායකයින් වීමට සූදානම් කරන විස්තීර්ණ, ගුණාත්මක අධ්‍යාපනයක් ලබා දීම.",
+    en: "To become the most distingusished college in Sabaragamuwa by providing worthy citizens for the country.",
+    si: "රට දැයට වැඩදායක වටිනා දරුවන් හදන සබරගමුවේ විශිෂ්ටතම විදුබිම බවට පත්වීම"
   },
   "about.ourVision": { en: "Our Vision", si: "අපගේ දැක්ම" },
   "about.visionDesc": {
-    en: "To be recognized as a leading educational institution that nurtures excellence in academics, sports, arts, and character development, producing well-rounded individuals who contribute positively to society.",
-    si: "අධ්‍යාපනය, ක්‍රීඩා, කලාව සහ චරිත වර්ධනයේ විශිෂ්ටත්වය පෝෂණය කරන ප්‍රමුඛ අධ්‍යාපන ආයතනයක් ලෙස හඳුනා ගැනීම, සමාජයට ධනාත්මකව දායක වන සමබර පුද්ගලයින් බිහි කිරීම.",
+    en: "In accordanance with the national academic goals, with an understanding about the natinal identity, to dedicate as a single body in marking creative disciplined individials to fulfil future needs by giving all the students' affection, security and guidance to develop their qualities, morals and knowledge.",
+    si: "ජාතික අධ්‍යාපන අභිමතාර්ථවලට අනුගත ව පාසලේ අනන්‍යතාව සුරකිමින් විදුපියසට පා තබන සියලු දූ පුතුනට සෙනෙහස, රැකවරණය හා මඟපෙන්වීම ලබා දෙමින් සිසුන් තුළ ගුණ, නැණ, බල වඩා අනාගතයට අවශ්‍ය කරන නිර්මාණශීලී, විනයගරුක, අභිමානවත් දූ පුතුන් බිහිකිරීම අපගේ මෙහෙවරයි.",
   },
   "about.principalMessage": {
     en: "Principal's Message",

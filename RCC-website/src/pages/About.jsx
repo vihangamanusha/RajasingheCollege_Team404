@@ -78,7 +78,7 @@ export function About() {
                 className="about-principal-image"
               />
               <div className="about-principal-meta">
-                <h3 className="about-principal-name">Mr. K.P. Jayasinghe</h3>
+                <h3 className="about-principal-name">Mr.Hemantha Abeykoon</h3>
                 <p className="about-principal-role">{t("about.principal")}</p>
               </div>
             </div>
@@ -86,7 +86,7 @@ export function About() {
               <p className="about-principal-text">{t("about.principalMsg")}</p>
               <p className="about-principal-text">{t("about.principalMsg2")}</p>
               <p className="about-principal-signature">
-                - Mr. K.P. Jayasinghe, {t("about.principal")}
+                - Mr.Hemantha Abeykoon, {t("about.principal")}
               </p>
             </div>
           </div>
