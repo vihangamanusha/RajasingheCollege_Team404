@@ -85,14 +85,17 @@ export default function AdminLayout() {
                     </div>
 
                     {/* Classes */}
-                    <div className="nav-item">
+                    <div
+                        className={`nav-item ${isActive("/admin/classes")}`}
+                        onClick={() => navigate("/admin/classes")}
+                    >
                         <FiBook className="nav-icon" /> Classes
                     </div>
 
                     {/* Announcements */}
                     <div
                         className={`nav-item ${isActive("/admin/announcements")}`}
-                       // onClick={() => navigate("/admin/announcements")}
+                        onClick={() => navigate("/admin/announcements")}
                     >
                         <FiMessageSquare className="nav-icon" /> Announcements
                     </div>

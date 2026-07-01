@@ -14,8 +14,10 @@ import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
 import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
+import AdminClassManagement from "./pages/AdminClassManagement"; // NEW: Class Management
 // --> NEW: ANNOUNCEMENTS <--
 import Announcement from "./pages/Announcements";
+
 
 // --> MANAGEMENT TABLES <--
 import AdminStudentManagement from "./pages/AdminStudentManagement";
@@ -85,6 +87,10 @@ function App() {
 
                 {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- */}
                 <Route path="announcements" element={<Announcement />} />
+
+                {/* --> CLASS MANAGEMENT <-- */}
+                <Route path="classes" element={<AdminClassManagement />} />
+
 
             </Route>
 

@@ -15,11 +15,16 @@ import {
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
+import AdminClassManagement from "./AdminClassManagement";
+import Announcement from "./Announcements";
+import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
+
 
 export default function DeputyPrincipalDashboard() {
     const navigate = useNavigate();
     const [subRole, setSubRole] = useState("Deputy Principal");
     const [username, setUsername] = useState("Deputy Principal");
+    const [activeTab, setActiveTab] = useState("dashboard");
     const [stats, setStats] = useState({
         totalStudents: 0,
         totalTeachers: 0,
@@ -78,22 +83,22 @@ export default function DeputyPrincipalDashboard() {
 
                 <div className="sidebar-nav">
                     {/* Dashboard */}
-                    <div className="nav-item active">
+                    <div className={`nav-item ${activeTab === "dashboard" ? "active" : ""}`} onClick={() => setActiveTab("dashboard")}>
                         <Users className="nav-icon" /> Dashboard
                     </div>
 
                     {/* Classes */}
-                    <div className="nav-item" onClick={() => navigate("/admin/classes")}>
+                    <div className={`nav-item ${activeTab === "classes" ? "active" : ""}`} onClick={() => setActiveTab("classes")}>
                         <FileSpreadsheet className="nav-icon" /> Classes
                     </div>
 
                     {/* Announcements */}
-                    <div className="nav-item" onClick={() => navigate("/admin/announcements")}>
+                    <div className={`nav-item ${activeTab === "announcements" ? "active" : ""}`} onClick={() => setActiveTab("announcements")}>
                         <Bell className="nav-icon" /> Announcements
                     </div>
 
                     {/* Reports */}
-                    <div className="nav-item" onClick={() => navigate("/admin/analytics")}>
+                    <div className={`nav-item ${activeTab === "reports" ? "active" : ""}`} onClick={() => setActiveTab("reports")}>
                         <FileText className="nav-icon" /> Reports
                     </div>
                 </div>
@@ -125,167 +130,175 @@ export default function DeputyPrincipalDashboard() {
 
                 {/* MAIN CONTENT AREA */}
                 <div className="dashboard-content">
-                    {/* Center aligned title */}
-                    <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
-                        <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
-                            Deputy Principal Dashboard
-                        </h1>
-                        <p style={{ fontSize: "16px", color: "#64748b" }}>
-                            Academic Administration & School Development Workspace
-                        </p>
-                    </div>
-
-                    {/* STATS ROW */}
-                    <div className="stats-row" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: "30px" }}>
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Total Students</p>
-                                <h3>{stats.totalStudents.toLocaleString()}</h3>
+                    {activeTab === "dashboard" && (
+                        <>
+                            {/* Center aligned title */}
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    Deputy Principal Dashboard
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Academic Administration & School Development Workspace
+                                </p>
                             </div>
-                            <div className="stat-icon blue"><Users size={20} /></div>
-                        </div>
 
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Total Teachers</p>
-                                <h3>{stats.totalTeachers.toLocaleString()}</h3>
-                            </div>
-                            <div className="stat-icon yellow"><UserCheck size={20} /></div>
-                        </div>
+                            {/* STATS ROW */}
+                            <div className="stats-row" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: "30px" }}>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Total Students</p>
+                                        <h3>{stats.totalStudents.toLocaleString()}</h3>
+                                    </div>
+                                    <div className="stat-icon blue"><Users size={20} /></div>
+                                </div>
 
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Total Classes</p>
-                                <h3>{stats.totalClasses}</h3>
-                            </div>
-                            <div className="stat-icon green"><BookOpen size={20} /></div>
-                        </div>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Total Teachers</p>
+                                        <h3>{stats.totalTeachers.toLocaleString()}</h3>
+                                    </div>
+                                    <div className="stat-icon yellow"><UserCheck size={20} /></div>
+                                </div>
 
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Total Subjects</p>
-                                <h3>{stats.totalSubjects}</h3>
-                            </div>
-                            <div className="stat-icon purple"><Layers size={20} /></div>
-                        </div>
-                    </div>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Total Classes</p>
+                                        <h3>{stats.totalClasses}</h3>
+                                    </div>
+                                    <div className="stat-icon green"><BookOpen size={20} /></div>
+                                </div>
 
-                    {/* BOTTOM GRID */}
-                    <div className="content-grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "25px" }}>
-                        {/* Left Card: Recent Activity */}
-                        <div className="content-card">
-                            <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
-                                <Activity size={18} style={{ color: "#3b82f6" }} />
-                                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Recent School Activity</h3>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Total Subjects</p>
+                                        <h3>{stats.totalSubjects}</h3>
+                                    </div>
+                                    <div className="stat-icon purple"><Layers size={20} /></div>
+                                </div>
                             </div>
-                            <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "14px", maxHeight: "380px", overflowY: "auto" }}>
-                                {stats.recentActivities && stats.recentActivities.length > 0 ? (
-                                    stats.recentActivities.map((activity, index) => (
-                                        <div className="activity-item" key={index} style={{
-                                            display: "flex",
-                                            gap: "15px",
-                                            paddingBottom: "15px",
-                                            borderBottom: "1px solid #f8fafc"
-                                        }}>
-                                            <div className="activity-avatar" style={{
-                                                width: "32px",
-                                                height: "32px",
-                                                backgroundColor: "#f1f5f9",
-                                                color: "#64748b",
-                                                borderRadius: "50%",
+
+                            {/* BOTTOM GRID */}
+                            <div className="content-grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "25px" }}>
+                                {/* Left Card: Recent Activity */}
+                                <div className="content-card">
+                                    <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        <Activity size={18} style={{ color: "#3b82f6" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Recent School Activity</h3>
+                                    </div>
+                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "14px", maxHeight: "380px", overflowY: "auto" }}>
+                                        {stats.recentActivities && stats.recentActivities.length > 0 ? (
+                                            stats.recentActivities.map((activity, index) => (
+                                                <div className="activity-item" key={index} style={{
+                                                    display: "flex",
+                                                    gap: "15px",
+                                                    paddingBottom: "15px",
+                                                    borderBottom: "1px solid #f8fafc"
+                                                }}>
+                                                    <div className="activity-avatar" style={{
+                                                        width: "32px",
+                                                        height: "32px",
+                                                        backgroundColor: "#f1f5f9",
+                                                        color: "#64748b",
+                                                        borderRadius: "50%",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        fontWeight: "600",
+                                                        fontSize: "12px"
+                                                    }}>{activity.initial}</div>
+                                                    <div className="activity-details">
+                                                        <p style={{ margin: "0 0 4px 0", color: "#334155", fontSize: "13px" }}>
+                                                            <strong>{activity.name}</strong> {activity.action}
+                                                        </p>
+                                                        <span style={{ color: "#94a3b8", fontSize: "11px" }}>{activity.timeAgo}</span>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            <p style={{ color: "#94a3b8", fontSize: "14px" }}>No recent activity to display.</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Right Card: Quick Actions */}
+                                <div className="content-card">
+                                    <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        <TrendingUp size={18} style={{ color: "#f59e0b" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Administrative Tasks</h3>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                        <button
+                                            onClick={() => setActiveTab("announcements")}
+                                            style={{
                                                 display: "flex",
                                                 alignItems: "center",
                                                 justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#2b55cc",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
                                                 fontWeight: "600",
-                                                fontSize: "12px"
-                                            }}>{activity.initial}</div>
-                                            <div className="activity-details">
-                                                <p style={{ margin: "0 0 4px 0", color: "#334155", fontSize: "13px" }}>
-                                                    <strong>{activity.name}</strong> {activity.action}
-                                                </p>
-                                                <span style={{ color: "#94a3b8", fontSize: "11px" }}>{activity.timeAgo}</span>
-                                            </div>
-                                        </div>
-                                    ))
-                                ) : (
-                                    <p style={{ color: "#94a3b8", fontSize: "14px" }}>No recent activity to display.</p>
-                                )}
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <Bell size={16} />
+                                            <span>Create Announcement</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("reports")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#f59e0b",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <TrendingUp size={16} />
+                                            <span>View Reports & Analytics</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("classes")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#10b981",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <FileSpreadsheet size={16} />
+                                            <span>Manage Academic Classes</span>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        </>
+                    )}
 
-                        {/* Right Card: Quick Actions */}
-                        <div className="content-card">
-                            <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
-                                <TrendingUp size={18} style={{ color: "#f59e0b" }} />
-                                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Administrative Tasks</h3>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                                <button
-                                    onClick={() => navigate("/admin/announcements")}
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: "8px",
-                                        padding: "14px",
-                                        backgroundColor: "#2b55cc",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "8px",
-                                        fontWeight: "600",
-                                        fontSize: "14px",
-                                        cursor: "pointer",
-                                        transition: "opacity 0.2s"
-                                    }}
-                                >
-                                    <Bell size={16} />
-                                    <span>Create Announcement</span>
-                                </button>
-                                <button
-                                    onClick={() => navigate("/admin/analytics")}
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: "8px",
-                                        padding: "14px",
-                                        backgroundColor: "#f59e0b",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "8px",
-                                        fontWeight: "600",
-                                        fontSize: "14px",
-                                        cursor: "pointer",
-                                        transition: "opacity 0.2s"
-                                    }}
-                                >
-                                    <TrendingUp size={16} />
-                                    <span>View Reports & Analytics</span>
-                                </button>
-                                <button
-                                    onClick={() => navigate("/admin/classes")}
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: "8px",
-                                        padding: "14px",
-                                        backgroundColor: "#10b981",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "8px",
-                                        fontWeight: "600",
-                                        fontSize: "14px",
-                                        cursor: "pointer",
-                                        transition: "opacity 0.2s"
-                                    }}
-                                >
-                                    <FileSpreadsheet size={16} />
-                                    <span>Manage Academic Classes</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    {activeTab === "classes" && <AdminClassManagement />}
+                    {activeTab === "announcements" && <Announcement />}
+                    {activeTab === "reports" && <AdminAcademicAnalytics />}
                 </div>
             </div>
         </div>

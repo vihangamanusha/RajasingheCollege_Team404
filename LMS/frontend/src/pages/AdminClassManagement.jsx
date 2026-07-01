@@ -1,291 +1,623 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./AdminClassManagement.css";
-import { FiUsers, FiBook, FiPlus, FiSearch } from "react-icons/fi";
+import {
+  FiBook,
+  FiPlus,
+  FiSearch,
+  FiUsers,
+  FiTrash2,
+  FiUnlock,
+  FiLock,
+  FiUserCheck,
+  FiX,
+  FiChevronRight,
+} from "react-icons/fi";
+
+const API = "http://localhost:8080";
+
+// Helper to get auth headers
+const authHeaders = () => {
+  const token = localStorage.getItem("token");
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+};
 
 export default function AdminClassManagement() {
-  const [formData, setFormData] = useState({
+  // ── Filter State ──────────────────────────────────────────
+  const [dobFrom, setDobFrom] = useState("");
+  const [dobTo, setDobTo] = useState("");
+  const [batchLoaded, setBatchLoaded] = useState(false);
+
+  // ── Data State ────────────────────────────────────────────
+  const [classes, setClasses] = useState([]);
+  const [pool, setPool] = useState([]);
+  const [roster, setRoster] = useState([]);
+  const [selectedClass, setSelectedClass] = useState(null);
+
+  // ── UI State ──────────────────────────────────────────────
+  const [poolSearch, setPoolSearch] = useState("");
+  const [rosterSearch, setRosterSearch] = useState("");
+  const [classSearch, setClassSearch] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [toast, setToast] = useState({ show: false, msg: "", type: "success" });
+
+  // ── Create Class Modal ────────────────────────────────────
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [newClass, setNewClass] = useState({
     grade: "9",
-    dobFrom: "2012-02-01",
-    dobTo: "2013-01-31",
-    numberOfClasses: 10,
-    academicYear: 2026,
+    section: "A",
+    year: 2026,
   });
 
-  const [classes, setClasses] = useState([]);
-
-  const [generatedStudents, setGeneratedStudents] = useState([]);
-  const [message, setMessage] = useState({ text: "", type: "" });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchClasses();
-  }, []);
-
-  const fetchClasses = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/api/classes");
-      if (response.ok) {
-        const data = await response.json();
-        setClasses(data.map(cls => ({
-          id: cls.classId,
-          name: cls.className,
-          students: 0 
-        })));
-      }
-    } catch (error) {
-      console.error("Error fetching classes:", error);
-    }
+  // ── Toast helper ──────────────────────────────────────────
+  const showToast = (msg, type = "success") => {
+    setToast({ show: true, msg, type });
+    setTimeout(() => setToast({ show: false, msg: "", type: "success" }), 3000);
   };
 
-  const grades = ["6", "7", "8", "9", "10", "11", "12", "13"];
-  const availableSections = ["A", "B", "C", "D", "E", "F", "G", "H"];
-
-  const handleCheckboxChange = (section) => {
-    setFormData((prev) => {
-      if (prev.classSections.includes(section)) {
-        return {
-          ...prev,
-          classSections: prev.classSections.filter((s) => s !== section),
-        };
-      } else {
-        return { ...prev, classSections: [...prev.classSections, section] };
-      }
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage({ text: "", type: "" });
-
-    try {
-      const response = await fetch(
-        "http://localhost:8080/api/classes/generate",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            // Add auth token if needed, but the request didn't specify it.
-            // Assuming open or handled by interceptor if any.
-          },
-          body: JSON.stringify({
-            grade: parseInt(formData.grade),
-            dobFrom: formData.dobFrom,
-            dobTo: formData.dobTo,
-            numberOfClasses: parseInt(formData.numberOfClasses),
-            academicYear: parseInt(formData.academicYear),
-          }),
-        },
-      );
-
-      if (response.ok) {
-        setMessage({ text: "Classes Generated Successfully", type: "success" });
-        fetchClasses();
-      } else {
-        const errorData = await response.json();
-        setMessage({
-          text: errorData.message || "Failed to generate classes",
-          type: "error",
-        });
-      }
-    } catch (error) {
-      setMessage({ text: "Error connecting to server", type: "error" });
-      console.error("Error generating classes:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchStudentsByDob = async () => {
-    if (!formData.dobFrom || !formData.dobTo) {
-      setMessage({ text: "Please select both dates", type: "error" });
+  // ── LOAD BATCH ────────────────────────────────────────────
+  const loadBatch = useCallback(async (keepSelection = false) => {
+    if (!dobFrom || !dobTo) {
+      showToast("Please select both DOB dates", "error");
       return;
     }
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/api/student/by-dob?from=${formData.dobFrom}&to=${formData.dobTo}`);
-      if (response.ok) {
-        const data = await response.json();
-        setGeneratedStudents(data.map(s => ({
-          id: s.studentId,
-          name: s.fullName,
-          dob: s.dateOfBirth,
-          class: s.classEntity ? s.classEntity.className : "Not Assigned"
-        })));
-        setMessage({ text: `Found ${data.length} students`, type: "success" });
-      } else {
-        setMessage({ text: "Failed to fetch students", type: "error" });
+      const [classRes, poolRes] = await Promise.all([
+        fetch(`${API}/api/classes?dobFrom=${dobFrom}&dobTo=${dobTo}`, {
+          headers: authHeaders(),
+        }),
+        fetch(`${API}/api/classes/pool?dobFrom=${dobFrom}&dobTo=${dobTo}`, {
+          headers: authHeaders(),
+        }),
+      ]);
+      if (classRes.ok) {
+        const classesData = await classRes.json();
+        setClasses(classesData);
+        if (keepSelection && selectedClass) {
+          const updated = classesData.find(c => c.classId === selectedClass.classId);
+          if (updated) setSelectedClass(updated);
+        }
       }
-    } catch (error) {
-      setMessage({ text: "Error connecting to server", type: "error" });
-      console.error("Error fetching students:", error);
+      if (poolRes.ok) setPool(await poolRes.json());
+      setBatchLoaded(true);
+      if (!keepSelection) {
+        setSelectedClass(null);
+        setRoster([]);
+      }
+    } catch {
+      showToast("Failed to load batch", "error");
     } finally {
       setLoading(false);
     }
+  }, [dobFrom, dobTo, selectedClass]);
+
+  // ── SELECT CLASS → load roster ────────────────────────────
+  const selectClass = async (cls) => {
+    setSelectedClass(cls);
+    try {
+      const res = await fetch(`${API}/api/classes/${cls.classId}/students`, {
+        headers: authHeaders(),
+      });
+      if (res.ok) setRoster(await res.json());
+    } catch {
+      showToast("Failed to load roster", "error");
+    }
   };
 
+  // ── CREATE CLASS ──────────────────────────────────────────
+  const handleCreateClass = async () => {
+    if (!dobFrom || !dobTo) {
+      showToast("Load a DOB batch first", "error");
+      return;
+    }
+    try {
+      const res = await fetch(`${API}/api/classes/create`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({
+          ...newClass,
+          dobFrom,
+          dobTo,
+          year: parseInt(newClass.year),
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(`Class ${data.className} created!`);
+        setShowCreateModal(false);
+        loadBatch();
+      } else {
+        showToast(data.error || "Failed to create class", "error");
+      }
+    } catch {
+      showToast("Error creating class", "error");
+    }
+  };
+
+  // ── ASSIGN STUDENT → CLASS ────────────────────────────────
+  const assignStudent = async (studentId) => {
+    if (!selectedClass) {
+      showToast("Select a class first", "error");
+      return;
+    }
+    try {
+      const res = await fetch(
+        `${API}/api/classes/${selectedClass.classId}/assign/${studentId}`,
+        { method: "PUT", headers: authHeaders() },
+      );
+      if (res.ok) {
+        showToast("Student assigned!");
+        refreshAfterChange();
+      } else {
+        const d = await res.json();
+        showToast(d.error || "Failed", "error");
+      }
+    } catch {
+      showToast("Error assigning student", "error");
+    }
+  };
+
+  // ── REMOVE STUDENT ← CLASS ────────────────────────────────
+  const removeStudent = async (studentId) => {
+    if (!selectedClass) return;
+    try {
+      const res = await fetch(
+        `${API}/api/classes/${selectedClass.classId}/remove/${studentId}`,
+        { method: "DELETE", headers: authHeaders() },
+      );
+      if (res.ok) {
+        showToast("Student returned to pool");
+        refreshAfterChange();
+      } else {
+        const d = await res.json();
+        showToast(d.error || "Failed", "error");
+      }
+    } catch {
+      showToast("Error removing student", "error");
+    }
+  };
+
+  // ── TOGGLE TEACHER EDIT ───────────────────────────────────
+  const toggleTeacherEdit = async (classId, e) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(
+        `${API}/api/classes/${classId}/toggle-teacher-edit`,
+        { method: "PUT", headers: authHeaders() },
+      );
+      if (res.ok) {
+        const data = await res.json();
+        showToast(data.message);
+        setClasses((prev) =>
+          prev.map((c) =>
+            c.classId === classId
+              ? { ...c, assignmentOpen: data.assignmentOpen }
+              : c,
+          ),
+        );
+        if (selectedClass?.classId === classId) {
+          setSelectedClass((prev) => ({
+            ...prev,
+            assignmentOpen: data.assignmentOpen,
+          }));
+        }
+      }
+    } catch {
+      showToast("Toggle failed", "error");
+    }
+  };
+
+  // ── DELETE CLASS ──────────────────────────────────────────
+  const deleteClass = async (classId, e) => {
+    e.stopPropagation();
+    if (!window.confirm("Delete this class? It must be empty.")) return;
+    try {
+      const res = await fetch(`${API}/api/classes/${classId}`, {
+        method: "DELETE",
+        headers: authHeaders(),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message);
+        if (selectedClass?.classId === classId) {
+          setSelectedClass(null);
+          setRoster([]);
+        }
+        loadBatch();
+      } else {
+        showToast(data.error || "Cannot delete", "error");
+      }
+    } catch {
+      showToast("Error deleting class", "error");
+    }
+  };
+
+  // ── Refresh pool + roster + class list after change ───────
+  const refreshAfterChange = async () => {
+    await loadBatch(true);
+    if (selectedClass) {
+      const res = await fetch(
+        `${API}/api/classes/${selectedClass.classId}/students`,
+        { headers: authHeaders() },
+      );
+      if (res.ok) setRoster(await res.json());
+    }
+  };
+
+  // ── Filtered lists ────────────────────────────────────────
+  const filteredPool = pool.filter(
+    (s) =>
+      s.fullName?.toLowerCase().includes(poolSearch.toLowerCase()) ||
+      s.studentId?.toLowerCase().includes(poolSearch.toLowerCase()),
+  );
+  const filteredRoster = roster.filter(
+    (s) =>
+      s.fullName?.toLowerCase().includes(rosterSearch.toLowerCase()) ||
+      s.studentId?.toLowerCase().includes(rosterSearch.toLowerCase()),
+  );
+  const filteredClasses = classes.filter((c) =>
+    c.className?.toLowerCase().includes(classSearch.toLowerCase()),
+  );
+
+  const grades = ["6", "7", "8", "9", "10", "11", "12", "13"];
+  const sections = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+
   return (
-    <div className="admin-class-management-container">
-      <div className="page-header-flex">
-        <div className="header-text">
-          <h1>Class Management</h1>
-          <p>Generate and manage student classes dynamically.</p>
+    <div className="acm-container">
+      {/* ── TOAST ── */}
+      {toast.show && (
+        <div className={`acm-toast acm-toast--${toast.type}`}>{toast.msg}</div>
+      )}
+
+      {/* ── HEADER ── */}
+      <div className="acm-header">
+        <div>
+          <h1 className="acm-title">Class Management</h1>
+          <p className="acm-subtitle">
+            Filter students by date of birth, create classes, and manually
+            assign students.
+          </p>
         </div>
       </div>
 
-      <div className="content-grid-split">
-        {/* LEFT SIDE: CLASS LIST */}
-        <div className="table-card class-list-card">
-          <div className="card-header">
-            <h3>Current Classes</h3>
-            <div className="search-box-mini">
-              <FiSearch />
-              <input type="text" placeholder="Search classes..." />
-            </div>
+      {/* ── DOB FILTER BAR ── */}
+      <div className="acm-filter-bar">
+        <div className="acm-filter-group">
+          <label>DOB From</label>
+          <input
+            type="date"
+            value={dobFrom}
+            onChange={(e) => setDobFrom(e.target.value)}
+          />
+        </div>
+        <div className="acm-filter-group">
+          <label>DOB To</label>
+          <input
+            type="date"
+            value={dobTo}
+            onChange={(e) => setDobTo(e.target.value)}
+          />
+        </div>
+        <button
+          className="acm-btn acm-btn--primary"
+          onClick={loadBatch}
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Load Student Pool"}
+        </button>
+        {batchLoaded && (
+          <div className="acm-batch-stats">
+            <span className="acm-stat-pill">
+              <FiUsers /> {pool.length} Unassigned
+            </span>
+            <span className="acm-stat-pill">
+              <FiBook /> {classes.length} Classes
+            </span>
           </div>
-          <div className="class-list">
-            {classes.map((cls) => (
-              <div className="class-item" key={cls.id}>
-                <div className="class-icon">
+        )}
+      </div>
+
+      {/* ── 3-PANEL LAYOUT ── */}
+      <div className="acm-panels">
+        {/* ── PANEL 1: CLASS LIST ── */}
+        <div className="acm-panel acm-panel--classes">
+          <div className="acm-panel-header">
+            <h3>Classes</h3>
+            <button
+              className="acm-btn-add-class"
+              onClick={() => setShowCreateModal(true)}
+              title="Create new class"
+            >
+              <FiPlus style={{ marginRight: "4px" }} /> Create
+            </button>
+          </div>
+          <div className="acm-search">
+            <FiSearch className="acm-search-icon" />
+            <input
+              placeholder="Search classes..."
+              value={classSearch}
+              onChange={(e) => setClassSearch(e.target.value)}
+            />
+          </div>
+          <div className="acm-class-list">
+            {filteredClasses.length === 0 && (
+              <div className="acm-empty">
+                {batchLoaded
+                  ? "No classes for this batch. Create one!"
+                  : "Load a DOB batch to see classes."}
+              </div>
+            )}
+            {filteredClasses.map((cls) => (
+              <div
+                key={cls.classId}
+                className={`acm-class-item ${selectedClass?.classId === cls.classId ? "acm-class-item--active" : ""}`}
+                onClick={() => selectClass(cls)}
+              >
+                <div className="acm-class-icon">
                   <FiBook />
                 </div>
-                <div className="class-info">
-                  <h4>{cls.name}</h4>
-                  <p>{cls.students} Students</p>
+                <div className="acm-class-info">
+                  <h4>{cls.className}</h4>
+                  <p>
+                    {cls.studentCount ?? "?"} students
+                    {cls.teacherName && <> · {cls.teacherName}</>}
+                  </p>
                 </div>
-                <button className="view-btn">View</button>
+                <div className="acm-class-actions">
+                  <button
+                    className={`acm-toggle-btn ${cls.assignmentOpen ? "acm-toggle-btn--open" : ""}`}
+                    onClick={(e) => toggleTeacherEdit(cls.classId, e)}
+                    title={
+                      cls.assignmentOpen
+                        ? "Disable teacher edit"
+                        : "Enable teacher edit"
+                    }
+                  >
+                    {cls.assignmentOpen ? <FiUnlock /> : <FiLock />}
+                  </button>
+                  <button
+                    className="acm-delete-btn"
+                    onClick={(e) => deleteClass(cls.classId, e)}
+                    title="Delete class"
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
+                <FiChevronRight className="acm-chevron" />
               </div>
             ))}
           </div>
         </div>
 
-        {/* RIGHT SIDE: GENERATE FORM */}
-        <div className="table-card form-card">
-          <h3>Generate Classes</h3>
-          <form onSubmit={handleSubmit} className="generate-form">
-            <div className="form-group">
-              <label>Grade</label>
-              <select
-                value={formData.grade}
-                onChange={(e) =>
-                  setFormData({ ...formData, grade: e.target.value })
-                }
-              >
-                {grades.map((g) => (
-                  <option key={g} value={g}>
-                    Grade {g}
-                  </option>
-                ))}
-              </select>
+        {/* ── PANEL 2: STUDENT POOL ── */}
+        <div className="acm-panel acm-panel--pool">
+          <div className="acm-panel-header">
+            <h3>Student Pool</h3>
+            <span className="acm-badge">{pool.length}</span>
+          </div>
+          <div className="acm-search">
+            <FiSearch className="acm-search-icon" />
+            <input
+              placeholder="Search students..."
+              value={poolSearch}
+              onChange={(e) => setPoolSearch(e.target.value)}
+            />
+          </div>
+          {!batchLoaded ? (
+            <div className="acm-empty acm-empty--lg">
+              <FiUsers size={40} />
+              <p>
+                Set a DOB range and click <strong>Load Student Pool</strong>
+              </p>
             </div>
-
-            <div className="form-group-row">
-              <div className="form-group">
-                <label>DOB From</label>
-                <input
-                  type="date"
-                  value={formData.dobFrom}
-                  onChange={(e) =>
-                    setFormData({ ...formData, dobFrom: e.target.value })
-                  }
-                />
-              </div>
-              <div className="form-group">
-                <label>DOB To</label>
-                <input
-                  type="date"
-                  value={formData.dobTo}
-                  onChange={(e) =>
-                    setFormData({ ...formData, dobTo: e.target.value })
-                  }
-                />
-              </div>
+          ) : (
+            <div className="acm-student-list">
+              {filteredPool.length === 0 && (
+                <div className="acm-empty">
+                  All students in this batch are assigned! 🎉
+                </div>
+              )}
+              {filteredPool.map((student) => (
+                <div key={student.studentId} className="acm-student-item">
+                  <div className="acm-student-avatar">
+                    {student.fullName?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="acm-student-info">
+                    <h4>{student.fullName}</h4>
+                    <p>
+                      {student.studentId} · {student.dateOfBirth}
+                    </p>
+                  </div>
+                  <button
+                    className="acm-assign-btn"
+                    onClick={() => assignStudent(student.studentId)}
+                    disabled={!selectedClass}
+                    title={
+                      selectedClass
+                        ? `Add to ${selectedClass.className}`
+                        : "Select a class first"
+                    }
+                  >
+                    <FiPlus />{" "}
+                    {selectedClass ? selectedClass.className : "Select class"}
+                  </button>
+                </div>
+              ))}
             </div>
-            
-            <button type="button" className="preview-btn" onClick={fetchStudentsByDob} disabled={loading}>
-              {loading ? "Loading..." : "Preview Students by DOB"}
-            </button>
+          )}
+        </div>
 
-            <div className="form-group">
-              <label>Academic Year</label>
-              <input
-                type="number"
-                value={formData.academicYear}
-                onChange={(e) =>
-                  setFormData({ ...formData, academicYear: e.target.value })
-                }
-                placeholder="e.g. 2026"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Number of Classes</label>
-              <input
-                type="number"
-                value={formData.numberOfClasses}
-                onChange={(e) =>
-                  setFormData({ ...formData, numberOfClasses: e.target.value })
-                }
-                placeholder="e.g. 10"
-              />
-            </div>
-
-            <button type="submit" className="generate-btn" disabled={loading}>
-              {loading ? "Generating..." : "Generate Classes"}
-            </button>
-
-            {message.text && (
-              <div className={`inline-form-message ${message.type}`}>
-                {message.text}
-              </div>
+        {/* ── PANEL 3: CLASS ROSTER ── */}
+        <div className="acm-panel acm-panel--roster">
+          <div className="acm-panel-header">
+            <h3>
+              {selectedClass ? (
+                <>
+                  <span className="acm-selected-class">
+                    {selectedClass.className}
+                  </span>{" "}
+                  Roster
+                </>
+              ) : (
+                "Class Roster"
+              )}
+            </h3>
+            {selectedClass && (
+              <span className="acm-badge">{roster.length}</span>
             )}
-          </form>
+          </div>
+          {selectedClass && (
+            <div className="acm-roster-meta">
+              <span
+                className={`acm-status-pill ${selectedClass.assignmentOpen ? "acm-status-pill--open" : ""}`}
+              >
+                {selectedClass.assignmentOpen ? (
+                  <>
+                    <FiUnlock /> Teacher Edit ON
+                  </>
+                ) : (
+                  <>
+                    <FiLock /> Teacher Edit OFF
+                  </>
+                )}
+              </span>
+              {selectedClass.teacherName && (
+                <span className="acm-teacher-pill">
+                  <FiUserCheck /> {selectedClass.teacherName}
+                </span>
+              )}
+            </div>
+          )}
+          <div className="acm-search">
+            <FiSearch className="acm-search-icon" />
+            <input
+              placeholder="Search roster..."
+              value={rosterSearch}
+              onChange={(e) => setRosterSearch(e.target.value)}
+            />
+          </div>
+          {!selectedClass ? (
+            <div className="acm-empty acm-empty--lg">
+              <FiBook size={40} />
+              <p>Click a class on the left to view its students</p>
+            </div>
+          ) : (
+            <div className="acm-student-list">
+              {filteredRoster.length === 0 && (
+                <div className="acm-empty">
+                  No students assigned yet. Add from the pool →
+                </div>
+              )}
+              {filteredRoster.map((student) => (
+                <div key={student.studentId} className="acm-student-item">
+                  <div className="acm-student-avatar acm-student-avatar--assigned">
+                    {student.fullName?.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="acm-student-info">
+                    <h4>{student.fullName}</h4>
+                    <p>
+                      {student.studentId} · {student.dateOfBirth}
+                    </p>
+                  </div>
+                  <button
+                    className="acm-remove-btn"
+                    onClick={() => removeStudent(student.studentId)}
+                    title="Remove from class"
+                  >
+                    <FiX />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* BOTTOM: GENERATED STUDENTS TABLE */}
-      <div className="table-card bottom-table-card">
-        <h3>Recently Generated/Assigned Students</h3>
-        <p className="subtitle">
-          Students will appear here after class generation.
-        </p>
-
-        <table className="student-table">
-          <thead>
-            <tr>
-              <th>Student ID</th>
-              <th>Name</th>
-              <th>DOB</th>
-              <th>Assigned Class</th>
-            </tr>
-          </thead>
-          <tbody>
-            {generatedStudents.length > 0 ? (
-              generatedStudents.map((student) => (
-                <tr key={student.id}>
-                  <td>{student.id}</td>
-                  <td>{student.name}</td>
-                  <td>{student.dob}</td>
-                  <td>{student.class}</td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="4"
-                  style={{
-                    textAlign: "center",
-                    color: "#64748b",
-                    padding: "30px",
-                  }}
+      {/* ── CREATE CLASS MODAL ── */}
+      {showCreateModal && (
+        <div
+          className="acm-modal-overlay"
+          onClick={() => setShowCreateModal(false)}
+        >
+          <div className="acm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="acm-modal-header">
+              <h3>Create New Class</h3>
+              <button
+                className="acm-modal-close"
+                onClick={() => setShowCreateModal(false)}
+              >
+                <FiX />
+              </button>
+            </div>
+            <div className="acm-modal-body">
+              <div className="acm-form-group">
+                <label>Grade</label>
+                <select
+                  value={newClass.grade}
+                  onChange={(e) =>
+                    setNewClass({ ...newClass, grade: e.target.value })
+                  }
                 >
-                  No students to display yet. Generate classes to populate.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                  {grades.map((g) => (
+                    <option key={g} value={g}>
+                      Grade {g}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="acm-form-group">
+                <label>Section</label>
+                <select
+                  value={newClass.section}
+                  onChange={(e) =>
+                    setNewClass({ ...newClass, section: e.target.value })
+                  }
+                >
+                  {sections.map((s) => (
+                    <option key={s} value={s}>
+                      Section {s}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="acm-form-group">
+                <label>Academic Year</label>
+                <input
+                  type="number"
+                  value={newClass.year}
+                  onChange={(e) =>
+                    setNewClass({ ...newClass, year: e.target.value })
+                  }
+                  placeholder="e.g. 2026"
+                />
+              </div>
+              <div className="acm-modal-batch-info">
+                <span>DOB Batch:</span>
+                <strong>
+                  {dobFrom} → {dobTo}
+                </strong>
+              </div>
+            </div>
+            <div className="acm-modal-footer">
+              <button
+                className="acm-btn acm-btn--ghost"
+                onClick={() => setShowCreateModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="acm-btn acm-btn--primary"
+                onClick={handleCreateClass}
+              >
+                <FiPlus /> Create Class
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

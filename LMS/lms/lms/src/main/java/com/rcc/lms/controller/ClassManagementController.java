@@ -1,10 +1,15 @@
 package com.rcc.lms.controller;
 
-import com.rcc.lms.dto.GenerateClassRequest;
+import com.rcc.lms.dto.CreateClassRequest;
 import com.rcc.lms.service.ClassManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/classes")
@@ -14,20 +19,146 @@ public class ClassManagementController {
     @Autowired
     private ClassManagementService classManagementService;
 
-    @PostMapping("/generate")
-    public ResponseEntity<String> generateClasses(
-            @RequestBody GenerateClassRequest request
+    // ─────────────────────────────────────────
+    // GET all classes
+    // ─────────────────────────────────────────
+    @GetMapping
+    public ResponseEntity<List<Map<String, Object>>> getAllClasses(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dobFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dobTo
     ) {
-
-        classManagementService.generateClasses(request);
-
-        return ResponseEntity.ok(
-                "Classes generated successfully"
-        );
+        if (dobFrom != null && dobTo != null) {
+            return ResponseEntity.ok(classManagementService.getClassesForBatch(dobFrom, dobTo));
+        }
+        // Return all classes with student counts
+        List<com.rcc.lms.entity.student.ClassEntity> all = classManagementService.getAllClasses();
+        List<Map<String, Object>> result = new java.util.ArrayList<>();
+        for (var c : all) {
+            Map<String, Object> m = new java.util.HashMap<>();
+            m.put("classId", c.getClassId());
+            m.put("className", c.getClassName());
+            m.put("grade", c.getGrade());
+            m.put("year", c.getYear());
+            m.put("assignmentOpen", c.isAssignmentOpen());
+            m.put("dobFrom", c.getDobFrom() != null ? c.getDobFrom().toString() : null);
+            m.put("dobTo", c.getDobTo() != null ? c.getDobTo().toString() : null);
+            m.put("teacherName", c.getTeacher() != null ? c.getTeacher().getFullName() : null);
+            m.put("teacherId", c.getTeacher() != null ? c.getTeacher().getTeacherId() : null);
+            result.add(m);
+        }
+        return ResponseEntity.ok(result);
     }
 
-    @GetMapping
-    public ResponseEntity<java.util.List<com.rcc.lms.entity.student.ClassEntity>> getAllClasses() {
-        return ResponseEntity.ok(classManagementService.getAllClasses());
+    // ─────────────────────────────────────────
+    // GET student pool (DOB range, unassigned)
+    // ─────────────────────────────────────────
+    @GetMapping("/pool")
+    public ResponseEntity<List<Map<String, Object>>> getPool(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dobFrom,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dobTo
+    ) {
+        return ResponseEntity.ok(classManagementService.getStudentPool(dobFrom, dobTo));
+    }
+
+    // ─────────────────────────────────────────
+    // GET class roster (students in a class)
+    // ─────────────────────────────────────────
+    @GetMapping("/{classId}/students")
+    public ResponseEntity<List<Map<String, Object>>> getClassRoster(@PathVariable String classId) {
+        return ResponseEntity.ok(classManagementService.getClassRoster(classId));
+    }
+
+    // ─────────────────────────────────────────
+    // POST create a new empty class
+    // ─────────────────────────────────────────
+    @PostMapping("/create")
+    public ResponseEntity<?> createClass(@RequestBody CreateClassRequest request) {
+        try {
+            Map<String, Object> created = classManagementService.createClass(request);
+            return ResponseEntity.ok(created);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // PUT assign student to a class
+    // ─────────────────────────────────────────
+    @PutMapping("/{classId}/assign/{studentId}")
+    public ResponseEntity<Map<String, String>> assignStudent(
+            @PathVariable String classId,
+            @PathVariable String studentId
+    ) {
+        try {
+            String msg = classManagementService.assignStudent(classId, studentId);
+            return ResponseEntity.ok(Map.of("message", msg));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // DELETE remove student from class (back to pool)
+    // ─────────────────────────────────────────
+    @DeleteMapping("/{classId}/remove/{studentId}")
+    public ResponseEntity<Map<String, String>> removeStudent(
+            @PathVariable String classId,
+            @PathVariable String studentId
+    ) {
+        try {
+            String msg = classManagementService.removeStudent(classId, studentId);
+            return ResponseEntity.ok(Map.of("message", msg));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // PUT toggle teacher edit permission
+    // ─────────────────────────────────────────
+    @PutMapping("/{classId}/toggle-teacher-edit")
+    public ResponseEntity<Map<String, Object>> toggleTeacherEdit(@PathVariable String classId) {
+        try {
+            return ResponseEntity.ok(classManagementService.toggleTeacherEdit(classId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // PUT assign a teacher to a class
+    // ─────────────────────────────────────────
+    @PutMapping("/{classId}/assign-teacher/{teacherId}")
+    public ResponseEntity<Map<String, String>> assignTeacher(
+            @PathVariable String classId,
+            @PathVariable String teacherId
+    ) {
+        try {
+            String msg = classManagementService.assignTeacher(classId, teacherId);
+            return ResponseEntity.ok(Map.of("message", msg));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // DELETE a class (only if empty)
+    // ─────────────────────────────────────────
+    @DeleteMapping("/{classId}")
+    public ResponseEntity<Map<String, String>> deleteClass(@PathVariable String classId) {
+        try {
+            String msg = classManagementService.deleteClass(classId);
+            return ResponseEntity.ok(Map.of("message", msg));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // Legacy endpoint kept for backward compat
+    @PostMapping("/generate")
+    public ResponseEntity<String> generateClasses(
+            @RequestBody com.rcc.lms.dto.GenerateClassRequest request) {
+        classManagementService.generateClasses(request);
+        return ResponseEntity.ok("Classes generated successfully");
     }
 }

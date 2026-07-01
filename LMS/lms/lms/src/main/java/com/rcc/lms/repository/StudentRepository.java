@@ -10,12 +10,13 @@ import java.util.Optional;
 @Repository
 public interface StudentRepository extends JpaRepository<Student, String> {
 
-    // ========================================================================
-    // CUSTOM QUERY: FIND BY USER ID
-    // Spring Boot is smart enough to read "findByUserUserId" and automatically
-    // write a SQL query that joins the Student table to the User table
-    // and searches for the specific User ID!
-    // ========================================================================
     Optional<Student> findByUserUserId(String userId);
-    List<Student> findByDateOfBirthBetween(LocalDate start,LocalDate end);
+
+    List<Student> findByDateOfBirthBetween(LocalDate start, LocalDate end);
+
+    // Students in DOB range with NO class assigned yet = the pool
+    List<Student> findByDateOfBirthBetweenAndClassEntityIsNull(LocalDate start, LocalDate end);
+
+    // Students already assigned to a specific class
+    List<Student> findByClassEntityClassId(String classId);
 }
