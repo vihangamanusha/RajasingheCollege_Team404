@@ -308,8 +308,7 @@ if (!formData.phone.trim()) {
           <div className="contact-map-wrapper">
             <div className="contact-map">
               <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8!2d80.4!3d6.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNsKwNTQnMDAuMCJOIDgwwrAyNCcwMC4wIkU!5e0!3m2!1sen!2slk!4v1234567890"
-                width="100%"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3959.73983551935!2d80.25565449999999!3d7.0398315!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae3063630c66203%3A0xbcf3e39c871bdde3!2sRajasinghe%20Central%20College!5e0!3m2!1sen!2slk!4v1782851525099!5m2!1sen!2slk" 
                 height="100%"
                 style={{ border: 0 }}
                 allowFullScreen
@@ -319,6 +318,7 @@ if (!formData.phone.trim()) {
               ></iframe>
             </div>
           </div>
+        
         </div>
       </section>
     </div>
