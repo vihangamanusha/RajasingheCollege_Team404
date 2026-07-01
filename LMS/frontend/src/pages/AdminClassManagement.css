@@ -124,15 +124,24 @@
   color: #475569;
 }
 .acm-btn--ghost:hover { background: #f8fafc; }
+.acm-btn--danger {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border: none;
+}
+.acm-btn--danger:hover { background: linear-gradient(135deg, #dc2626, #b91c1c); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(220,38,38,0.35); }
 
 /* ── 3-PANEL GRID ────────────────────────────────────────────── */
 .acm-panels {
   display: grid;
-  grid-template-columns: 280px 1fr 1fr;
+  grid-template-columns: 320px 1fr 1fr;
   gap: 18px;
   align-items: start;
 }
-@media (max-width: 1100px) {
+@media (max-width: 1200px) {
+  .acm-panels { grid-template-columns: 300px 1fr 1fr; }
+}
+@media (max-width: 1024px) {
   .acm-panels { grid-template-columns: 1fr 1fr; }
   .acm-panel--classes { grid-column: 1 / -1; }
 }
@@ -216,6 +225,26 @@
   font-size: 18px;
   transition: all 0.2s;
 }
+
+/* Force react-icon SVGs to be visible inside small icon-only buttons */
+.acm-toggle-btn svg,
+.acm-delete-btn svg,
+.acm-remove-btn svg,
+.acm-modal-close svg,
+.acm-confirm-icon {
+  width: 16px;
+  height: 16px;
+  display: block;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.acm-confirm-icon {
+  width: 26px;
+  height: 26px;
+  color: #dc2626;
+}
+
 .acm-btn-add-class {
   display: inline-flex;
   align-items: center;
@@ -249,13 +278,14 @@
 .acm-class-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 8px;
+  padding: 10px 10px;
   border-radius: 10px;
   cursor: pointer;
   border: 1px solid transparent;
   transition: all 0.2s;
   background: #f8fafc;
+  overflow: visible;
 }
 .acm-class-item:hover { background: #f1f5f9; border-color: #e2e8f0; }
 .acm-class-item--active {
@@ -263,8 +293,8 @@
   border-color: #c7d2fe;
 }
 .acm-class-icon {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: white;
   border-radius: 9px;
@@ -272,27 +302,39 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  font-size: 16px;
+  font-size: 15px;
 }
-.acm-class-info { flex: 1; min-width: 0; }
+.acm-class-info {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
 .acm-class-info h4 {
-  margin: 0 0 3px 0;
-  font-size: 14px;
+  margin: 0 0 2px 0;
+  font-size: 13px;
   font-weight: 700;
   color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .acm-class-info p {
   margin: 0;
-  font-size: 12px;
+  font-size: 11px;
   color: #64748b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.acm-class-actions { display: flex; gap: 4px; }
+.acm-class-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;   /* ← NEVER compress the action buttons */
+  align-items: center;
+}
 .acm-toggle-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 7px;
   border: 1px solid #cbd5e1;
   background: white;
@@ -301,14 +343,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 15px;
+  font-size: 14px;
+  flex-shrink: 0;
   transition: all 0.2s;
 }
 .acm-toggle-btn--open { color: #16a34a; border-color: #86efac; background: #f0fdf4; }
 .acm-toggle-btn:hover { border-color: #64748b; background: #f8fafc; }
 .acm-delete-btn {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 7px;
   border: 1px solid #fca5a5;
   background: #fff5f5;
@@ -317,13 +360,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 13px;
+  flex-shrink: 0;
   transition: all 0.2s;
 }
 .acm-delete-btn:hover { background: #fee2e2; border-color: #ef4444; }
 .acm-chevron {
   color: #cbd5e1;
-  font-size: 14px;
+  font-size: 13px;
   flex-shrink: 0;
 }
 
@@ -380,16 +424,20 @@
 .acm-assign-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
+  gap: 4px;
+  padding: 6px 10px;
   border: none;
   border-radius: 7px;
   background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: white;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  flex-shrink: 0;     /* ← Never let it squash */
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: all 0.2s;
 }
 .acm-assign-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,0.4); }
@@ -508,6 +556,7 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;         /* clip children, not the footer */
   box-shadow: 0 24px 60px rgba(0,0,0,0.2);
   animation: acmScaleIn 0.25s ease;
   margin: auto;
@@ -525,20 +574,28 @@
 }
 .acm-modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #0f172a; }
 .acm-modal-close {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  background: white;
-  color: #475569;
+  border: 1.5px solid #fca5a5;
+  background: #fff1f2;
+  color: #dc2626;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 17px;
+  font-weight: 700;
   transition: all 0.2s;
+  box-shadow: 0 1px 4px rgba(220,38,38,0.10);
 }
-.acm-modal-close:hover { background: #fff5f5; color: #dc2626; border-color: #fca5a5; }
+.acm-modal-close:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #b91c1c;
+  transform: scale(1.08);
+  box-shadow: 0 2px 8px rgba(220,38,38,0.20);
+}
 
 /* Custom Sleek Scrollbar */
 .acm-class-list::-webkit-scrollbar,
@@ -567,8 +624,9 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  overflow-y: auto;
-  max-height: calc(90vh - 140px);
+  overflow-y: auto;        /* scroll the form fields if needed */
+  flex: 1;                 /* take remaining space after header */
+  min-height: 0;           /* required for flex overflow to work */
 }
 .acm-form-group { display: flex; flex-direction: column; gap: 7px; }
 .acm-form-group label {
@@ -609,4 +667,245 @@
   gap: 10px;
   padding: 16px 24px 20px;
   border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;          /* ALWAYS visible — never get squeezed out */
+  background: white;
+  border-radius: 0 0 16px 16px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TABS
+════════════════════════════════════════════════════════════ */
+.acm-tabs {
+  display: flex;
+  gap: 4px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 5px;
+  margin-bottom: 20px;
+}
+.acm-tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.acm-tab:hover { color: #1e293b; background: rgba(255,255,255,0.6); }
+.acm-tab--active {
+  background: white;
+  color: #4f46e5;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+}
+
+/* ════════════════════════════════════════════════════════════
+   OVERVIEW PANEL
+════════════════════════════════════════════════════════════ */
+.acm-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Toolbar (search + refresh) */
+.acm-overview-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: white;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.acm-search--standalone {
+  position: relative;
+  flex: 1;
+}
+.acm-search--standalone .acm-search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 15px;
+  pointer-events: none;
+}
+.acm-search--standalone input {
+  width: 100%;
+  padding: 9px 10px 9px 36px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: #f8fafc;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.acm-search--standalone input:focus {
+  border-color: #6366f1;
+  background: white;
+}
+
+/* Class card list */
+.acm-overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Individual class card */
+.acm-ov-card {
+  background: white;
+  border-radius: 13px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  overflow: hidden;
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+.acm-ov-card--open {
+  border-color: #c7d2fe;
+  box-shadow: 0 4px 18px rgba(99,102,241,0.12);
+}
+.acm-ov-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.acm-ov-card-header:hover { background: #f8fafc; }
+
+.acm-ov-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.acm-ov-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+}
+.acm-ov-detail {
+  font-size: 12px;
+  color: #64748b;
+}
+.acm-ov-badges {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.acm-ov-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.acm-ov-chevron {
+  color: #94a3b8;
+  font-size: 20px;
+  transition: transform 0.25s ease;
+  flex-shrink: 0;
+}
+.acm-ov-chevron--open { transform: rotate(180deg); }
+
+/* Expanded student list inside card */
+.acm-ov-students {
+  border-top: 1px solid #f1f5f9;
+  padding: 12px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f8fafc;
+}
+.acm-ov-loading,
+.acm-ov-empty {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 13px;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* Student row inside expanded card */
+.acm-ov-student-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: white;
+  border: 1px solid #f1f5f9;
+  transition: all 0.15s;
+}
+.acm-ov-student-row:hover {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+/* ════════════════════════════════════════════════════════════
+   CONFIRMATION DIALOG MODAL
+════════════════════════════════════════════════════════════ */
+.acm-confirm-modal {
+  width: 380px;
+  max-width: 95vw;
+  text-align: center;
+  padding-bottom: 0;
+}
+.acm-confirm-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #fff1f2;
+  border: 2px solid #fecaca;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 28px auto 0;
+}
+.acm-confirm-icon {
+  font-size: 26px;
+  color: #dc2626;
+}
+.acm-confirm-body {
+  padding: 18px 28px 24px;
+}
+.acm-confirm-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.acm-confirm-message {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+}
+.acm-confirm-footer {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 24px 24px;
+  border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 0 0 16px 16px;
+}
+.acm-confirm-footer .acm-btn {
+  min-width: 110px;
+  justify-content: center;
 }

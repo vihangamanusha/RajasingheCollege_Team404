@@ -10,6 +10,7 @@ import {
   FiLock,
   FiUserCheck,
   FiX,
+  FiChevronDown,
   FiChevronRight,
 } from "react-icons/fi";
 
@@ -51,11 +52,33 @@ export default function AdminClassManagement() {
     year: 2026,
   });
 
+  // ── Overview Tab State ────────────────────────────────────
+  const [activeTab, setActiveTab] = useState("manage");
+  const [allClasses, setAllClasses] = useState([]);
+  const [expandedClassId, setExpandedClassId] = useState(null);
+  const [classStudents, setClassStudents] = useState({});
+  const [overviewLoading, setOverviewLoading] = useState(false);
+  const [overviewSearch, setOverviewSearch] = useState("");
+
+  // ── Confirm Dialog State ───────────────────────────────
+  const [confirmDialog, setConfirmDialog] = useState({
+    show: false,
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
+
   // ── Toast helper ──────────────────────────────────────────
   const showToast = (msg, type = "success") => {
     setToast({ show: true, msg, type });
     setTimeout(() => setToast({ show: false, msg: "", type: "success" }), 3000);
   };
+
+  // ── Confirm dialog helpers ────────────────────────────
+  const showConfirm = (title, message, onConfirm) =>
+    setConfirmDialog({ show: true, title, message, onConfirm });
+  const closeConfirm = () =>
+    setConfirmDialog({ show: false, title: "", message: "", onConfirm: null });
 
   // ── LOAD BATCH ────────────────────────────────────────────
   const loadBatch = useCallback(async (keepSelection = false) => {
@@ -247,6 +270,104 @@ export default function AdminClassManagement() {
     }
   };
 
+  // ── OVERVIEW: Load ALL classes (no DOB filter) ────────────
+  const loadAllClasses = useCallback(async () => {
+    setOverviewLoading(true);
+    try {
+      const res = await fetch(`${API}/api/classes`, { headers: authHeaders() });
+      if (res.ok) setAllClasses(await res.json());
+    } catch {
+      showToast("Failed to load classes", "error");
+    } finally {
+      setOverviewLoading(false);
+    }
+  }, []);
+
+  // ── OVERVIEW: Toggle class expand → load its students ─────
+  const toggleClassExpand = async (classId) => {
+    if (expandedClassId === classId) { setExpandedClassId(null); return; }
+    setExpandedClassId(classId);
+    if (!classStudents[classId]) {
+      try {
+        const res = await fetch(`${API}/api/classes/${classId}/students`, {
+          headers: authHeaders(),
+        });
+        if (res.ok) {
+          const students = await res.json();
+          setClassStudents((prev) => ({ ...prev, [classId]: students }));
+        }
+      } catch {
+        showToast("Failed to load students", "error");
+      }
+    }
+  };
+
+  // ── OVERVIEW: Remove a student from a class ───────────────
+  const removeStudentOverview = (classId, studentId, studentName) => {
+    showConfirm(
+      "Remove Student",
+      `Remove ${studentName ? `"${studentName}"` : "this student"} from the class? They will return to the unassigned pool.`,
+      async () => {
+        try {
+          const res = await fetch(
+            `${API}/api/classes/${classId}/remove/${studentId}`,
+            { method: "DELETE", headers: authHeaders() },
+          );
+          if (res.ok) {
+            showToast("Student removed from class");
+            setClassStudents((prev) => ({
+              ...prev,
+              [classId]: (prev[classId] || []).filter((s) => s.studentId !== studentId),
+            }));
+            setAllClasses((prev) =>
+              prev.map((c) =>
+                c.classId === classId
+                  ? { ...c, studentCount: Math.max(0, (c.studentCount || 1) - 1) }
+                  : c,
+              ),
+            );
+          } else {
+            const d = await res.json();
+            showToast(d.error || "Failed to remove student", "error");
+          }
+        } catch {
+          showToast("Error removing student", "error");
+        }
+      },
+    );
+  };
+
+  // ── OVERVIEW: Delete an entire class ─────────────────────
+  const deleteClassOverview = (classId, className) => {
+    showConfirm(
+      "Delete Class",
+      `Are you sure you want to delete "${className}"? The class must be empty before it can be deleted.`,
+      async () => {
+        try {
+          const res = await fetch(`${API}/api/classes/${classId}`, {
+            method: "DELETE",
+            headers: authHeaders(),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(data.message);
+            setAllClasses((prev) => prev.filter((c) => c.classId !== classId));
+            if (expandedClassId === classId) setExpandedClassId(null);
+          } else {
+            showToast(data.error || "Cannot delete class", "error");
+          }
+        } catch {
+          showToast("Error deleting class", "error");
+        }
+      },
+    );
+  };
+
+  // ── Auto-load overview when that tab is selected ──────────
+  useEffect(() => {
+    if (activeTab === "overview") loadAllClasses();
+  }, [activeTab, loadAllClasses]);
+
   // ── Filtered lists ────────────────────────────────────────
   const filteredPool = pool.filter(
     (s) =>
@@ -283,8 +404,27 @@ export default function AdminClassManagement() {
         </div>
       </div>
 
-      {/* ── DOB FILTER BAR ── */}
-      <div className="acm-filter-bar">
+      {/* ── TABS ── */}
+      <div className="acm-tabs">
+        <button
+          className={`acm-tab ${activeTab === "manage" ? "acm-tab--active" : ""}`}
+          onClick={() => setActiveTab("manage")}
+        >
+          <FiPlus /> Manage Classes
+        </button>
+        <button
+          className={`acm-tab ${activeTab === "overview" ? "acm-tab--active" : ""}`}
+          onClick={() => setActiveTab("overview")}
+        >
+          <FiBook /> All Classes &amp; Students
+        </button>
+      </div>
+
+      {/* ── MANAGE TAB ── */}
+      {activeTab === "manage" && (
+        <>
+          {/* ── DOB FILTER BAR ── */}
+          <div className="acm-filter-bar">
         <div className="acm-filter-group">
           <label>DOB From</label>
           <input
@@ -535,6 +675,134 @@ export default function AdminClassManagement() {
           )}
         </div>
       </div>
+        </>
+      )}
+
+      {/* ── OVERVIEW TAB ── */}
+      {activeTab === "overview" && (
+        <div className="acm-overview">
+          {/* Toolbar */}
+          <div className="acm-overview-toolbar">
+            <div className="acm-search--standalone">
+              <FiSearch className="acm-search-icon" />
+              <input
+                placeholder="Search classes..."
+                value={overviewSearch}
+                onChange={(e) => setOverviewSearch(e.target.value)}
+              />
+            </div>
+            <button
+              className="acm-btn acm-btn--primary"
+              onClick={loadAllClasses}
+              disabled={overviewLoading}
+            >
+              ↻ Refresh
+            </button>
+          </div>
+
+          {overviewLoading ? (
+            <div className="acm-empty acm-empty--lg"><p>Loading all classes...</p></div>
+          ) : allClasses.length === 0 ? (
+            <div className="acm-empty acm-empty--lg">
+              <FiBook size={44} />
+              <p>No classes yet. Use the <strong>Manage Classes</strong> tab to create one.</p>
+            </div>
+          ) : (
+            <div className="acm-overview-list">
+              {allClasses
+                .filter((c) =>
+                  c.className?.toLowerCase().includes(overviewSearch.toLowerCase()),
+                )
+                .map((cls) => (
+                  <div
+                    key={cls.classId}
+                    className={`acm-ov-card ${
+                      expandedClassId === cls.classId ? "acm-ov-card--open" : ""
+                    }`}
+                  >
+                    {/* ── Class header row ── */}
+                    <div
+                      className="acm-ov-card-header"
+                      onClick={() => toggleClassExpand(cls.classId)}
+                    >
+                      <div className="acm-class-icon"><FiBook /></div>
+                      <div className="acm-ov-meta">
+                        <span className="acm-ov-name">{cls.className}</span>
+                        <span className="acm-ov-detail">
+                          Year {cls.year} &nbsp;·&nbsp; {cls.studentCount ?? 0} students
+                          {cls.teacherName && ` · ${cls.teacherName}`}
+                          {cls.dobFrom && ` · DOB ${cls.dobFrom} → ${cls.dobTo}`}
+                        </span>
+                      </div>
+                      <div className="acm-ov-badges">
+                        <span
+                          className={`acm-status-pill ${
+                            cls.assignmentOpen ? "acm-status-pill--open" : ""
+                          }`}
+                        >
+                          {cls.assignmentOpen
+                            ? <><FiUnlock /> Open</>
+                            : <><FiLock /> Locked</>}
+                        </span>
+                      </div>
+                      <div className="acm-ov-actions">
+                        <button
+                          className="acm-delete-btn"
+                          title="Delete class (must be empty)"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            deleteClassOverview(cls.classId, cls.className);
+                          }}
+                        >
+                          <FiTrash2 />
+                        </button>
+                        <FiChevronDown
+                          className={`acm-ov-chevron ${
+                            expandedClassId === cls.classId ? "acm-ov-chevron--open" : ""
+                          }`}
+                        />
+                      </div>
+                    </div>
+
+                    {/* ── Expanded student roster ── */}
+                    {expandedClassId === cls.classId && (
+                      <div className="acm-ov-students">
+                        {!classStudents[cls.classId] ? (
+                          <div className="acm-ov-loading">Loading students...</div>
+                        ) : classStudents[cls.classId].length === 0 ? (
+                          <div className="acm-ov-empty">
+                            No students assigned to this class yet.
+                          </div>
+                        ) : (
+                          classStudents[cls.classId].map((student) => (
+                            <div key={student.studentId} className="acm-ov-student-row">
+                              <div className="acm-student-avatar acm-student-avatar--assigned">
+                                {student.fullName?.charAt(0).toUpperCase()}
+                              </div>
+                              <div className="acm-student-info">
+                                <h4>{student.fullName}</h4>
+                                <p>{student.studentId} · {student.dateOfBirth}</p>
+                              </div>
+                              <button
+                                className="acm-remove-btn"
+                                title="Remove student from class"
+                                onClick={() =>
+                                  removeStudentOverview(cls.classId, student.studentId, student.fullName)
+                                }
+                              >
+                                <FiX />
+                              </button>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ── CREATE CLASS MODAL ── */}
       {showCreateModal && (
@@ -613,6 +881,35 @@ export default function AdminClassManagement() {
                 onClick={handleCreateClass}
               >
                 <FiPlus /> Create Class
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── CONFIRMATION DIALOG ── */}
+      {confirmDialog.show && (
+        <div className="acm-modal-overlay" onClick={closeConfirm}>
+          <div className="acm-modal acm-confirm-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="acm-confirm-icon-wrap">
+              <FiTrash2 className="acm-confirm-icon" />
+            </div>
+            <div className="acm-confirm-body">
+              <h3 className="acm-confirm-title">{confirmDialog.title}</h3>
+              <p className="acm-confirm-message">{confirmDialog.message}</p>
+            </div>
+            <div className="acm-confirm-footer">
+              <button className="acm-btn acm-btn--ghost" onClick={closeConfirm}>
+                Cancel
+              </button>
+              <button
+                className="acm-btn acm-btn--danger"
+                onClick={() => {
+                  confirmDialog.onConfirm();
+                  closeConfirm();
+                }}
+              >
+                <FiTrash2 /> Yes, Delete
               </button>
             </div>
           </div>
