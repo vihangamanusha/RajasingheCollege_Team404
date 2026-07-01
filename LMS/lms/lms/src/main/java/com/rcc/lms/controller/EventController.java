@@ -67,7 +67,7 @@ public class EventController {
 
             announcement.setTitle(event.getTopic());
 
-            announcement.setCategory("Events");
+            announcement.setCatego("Events");
 
             announcement.setTargetAudience(
                     event.getAnnouncementAudience()

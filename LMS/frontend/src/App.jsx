@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 // =========================
 // ADMIN PAGES
 // =========================
-import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/Dashboard";
 import AdminUsers from "./pages/AdminUsers";
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
@@ -47,6 +47,22 @@ import AdminLayout from "./layouts/AdminLayout";
 import StudentLayout from "./Component/student/StudentLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
+
+// ========================
+// TECHNICAL OFFICER DASHBOARD
+// ========================
+import Layout from "./layouts/Layout";
+import ToDashboard from "./pages/ToDashboard";
+import NewsList from "./pages/NewsList";
+import AddNews from "./pages/AddNews";
+import FeedbackList from "./pages/FeedbackList";
+import Event from "./pages/Event";
+import AdminAnnouncements from "./pages/AdminAnnouncements";
+import LiveStreamAdmin from "./pages/LiveStreamAdmin";
+import { SportAchievements } from "./pages/SportAchievements";
+import SportsList from "./pages/SportsList";
+
+
 function App() {
     return (
         <Routes>
@@ -68,7 +84,7 @@ function App() {
                 }
             >
                 {/* Default view when navigating to /admin */}
-                <Route index element={<Dashboard />} />
+                <Route index element={<AdminDashboard />} />
 
                 {/* USER MANAGEMENT MAIN MENU */}
                 <Route path="users" element={<AdminUsers />} />
@@ -160,6 +176,25 @@ function App() {
                     </ProtectedRoute>
                 }
             />
+            {/* ============================================================
+                TECHNICAL OFFICER PANEL (PROTECTED)
+            ============================================================ */
+            }
+            <Route path="/" element={<Layout />}>
+          
+          <Route index element={<ToDashboard />} />
+          <Route path="news" element={<NewsList />} />
+          <Route path="add" element={<AddNews />} />
+          <Route path="feedback" element={<FeedbackList />} />
+
+      
+          <Route path="student-register" element={<StudentRegister />} />
+          <Route path="events" element={<Event />} />
+          <Route path="/admin/announcements" element={<AdminAnnouncements />} />
+          <Route path="livestream-admin" element={<LiveStreamAdmin />} />
+          <Route path="sport-achievements/:sportName" element={<SportAchievements />} />
+          <Route path="/SportsList" element={<SportsList />} />
+        </Route>
         </Routes>
     );
 }

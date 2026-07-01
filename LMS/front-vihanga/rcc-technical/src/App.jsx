@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Layout from "./layout/Layout";
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/ToDashboard";
 import NewsList from "./pages/NewsList";
 import AddNews from "./pages/AddNews";
 import FeedbackList from "./pages/FeedbackList";

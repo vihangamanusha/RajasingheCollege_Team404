@@ -47,18 +47,18 @@ public class UserService {
     private JwtUtil jwtUtil;//used to generate token
 
     private static final List<String> UNIQUE_LEADERSHIP_ROLES = List.of(
-        "Class Teacher",
-        "Section Head Grade 6",
-        "Section Head Grade 7",
-        "Section Head Grade 8",
-        "Section Head Grade 9",
-        "Section Head Grade 10",
-        "Section Head Grade 11",
-        "Deputy Principal 1",
-        "Deputy Principal",
-        "Deputy Principal (Administrative)",
-        "Deputy Principal (Development)",
-        "Vice Principal"
+            "Class Teacher",
+            "Section Head Grade 6",
+            "Section Head Grade 7",
+            "Section Head Grade 8",
+            "Section Head Grade 9",
+            "Section Head Grade 10",
+            "Section Head Grade 11",
+            "Deputy Principal 1",
+            "Deputy Principal",
+            "Deputy Principal (Administrative)",
+            "Deputy Principal (Development)",
+            "Vice Principal"
     );
 
     // =========================
@@ -116,7 +116,7 @@ public class UserService {
     // ==============================================================
     // REGISTER USER WIZARDS WITH UNIQUENESS CHECKS
     // ==============================================================
-
+/*
     @Transactional//connect with the two tables, (multiple tables)
     public String registerNewStudent(StudentRegistrationRequest request) {
         // 1. Uniqueness Checks
@@ -150,11 +150,11 @@ public class UserService {
         newStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
         newStudent.setContactNumber(request.getContactNumber());
         newStudent.setUser(newUser);
-        studentRepository.save(newStudent);
+        StudentRepository.save(student);
 
         return "Student successfully registered!";
     }
-
+*/
     @Transactional//connect with the two tables, (multiple tables)
     public String registerNewTeacher(TeacherRegistrationRequest request) {
         // 1. Check for existing IDs/Users to prevent duplicates
@@ -252,7 +252,7 @@ public class UserService {
         }
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
-
+/*
     public Student getStudentProfile(String username) {//get student profile by username
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {//find student profile by id
@@ -285,7 +285,7 @@ public class UserService {
         }
         return "Student profile updated successfully!";
     }
-
+*/
     public Teacher getTeacherProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
