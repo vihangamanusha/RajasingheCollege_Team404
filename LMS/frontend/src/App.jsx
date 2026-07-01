@@ -39,6 +39,7 @@ import TeacherDashboard from "./pages/TeacherDashboard";
 import SectionHeadDashboard from "./pages/SectionHeadDashboard";
 import DeputyPrincipalDashboard from "./pages/DeputyPrincipalDashboard";
 import DeputyPrincipalDevDashboard from "./pages/DeputyPrincipalDevDashboard";
+import AdminNonAcademicManagement from "./pages/AdminNonAcademicManagement";
 
 // =========================
 // LAYOUT & SECURITY
@@ -91,6 +92,9 @@ function App() {
 
                 {/* --> CLASS MANAGEMENT <-- */}
                 <Route path="classes" element={<AdminClassManagement />} />
+
+                {/* --> NON ACADEMIC STAFF (READ ONLY FOR ADMIN) <-- */}
+                <Route path="non-academic" element={<AdminNonAcademicManagement readOnly={true} />} />
 
 
             </Route>

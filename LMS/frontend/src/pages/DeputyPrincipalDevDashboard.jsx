@@ -13,16 +13,22 @@ import {
     FileText,
     Activity,
     Wrench,
-    Plus
+    Plus,
+    Award
 } from "lucide-react";
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
+import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
 
 export default function DeputyPrincipalDevDashboard() {
     const navigate = useNavigate();
     const [subRole, setSubRole] = useState("Deputy Principal (Development)");
     const [username, setUsername] = useState("DevPrincipal");
+    const [activeTab, setActiveTab] = useState("dashboard");
+    const [academicYear, setAcademicYear] = useState("2026");
+    const [term, setTerm] = useState("Term 1");
+    const [examConfigMessage, setExamConfigMessage] = useState({ text: "", type: "" });
     const [stats, setStats] = useState({
         totalStudents: 0,
         totalTeachers: 0,
@@ -51,7 +57,24 @@ export default function DeputyPrincipalDevDashboard() {
         if (token) {
             fetchStats(token);
         }
+        fetchExamSettings();
     }, []);
+
+    const fetchExamSettings = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch("http://localhost:8080/admin/config/active-exam-settings", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                if (data.academicYear) setAcademicYear(data.academicYear);
+                if (data.term) setTerm(data.term);
+            }
+        } catch (err) {
+            console.error("Failed to fetch exam settings:", err);
+        }
+    };
 
     const fetchStats = async (token) => {
         try {
@@ -106,18 +129,18 @@ export default function DeputyPrincipalDevDashboard() {
 
                 <div className="sidebar-nav">
                     {/* Dashboard */}
-                    <div className="nav-item active">
+                    <div className={`nav-item ${activeTab === "dashboard" ? "active" : ""}`} onClick={() => setActiveTab("dashboard")}>
                         <Layers className="nav-icon" /> Dashboard
                     </div>
 
-                    {/* Infrastructure Projects */}
-                    <div className="nav-item" onClick={() => navigate("/admin/announcements")}>
-                        <Bell className="nav-icon" /> Announcements
+                    {/* Examination */}
+                    <div className={`nav-item ${activeTab === "examination" ? "active" : ""}`} onClick={() => setActiveTab("examination")}>
+                        <Award className="nav-icon" /> Examination
                     </div>
 
                     {/* Reports */}
-                    <div className="nav-item" onClick={() => navigate("/admin/analytics")}>
-                        <FileText className="nav-icon" /> Dev Reports
+                    <div className={`nav-item ${activeTab === "reports" ? "active" : ""}`} onClick={() => setActiveTab("reports")}>
+                        <FileText className="nav-icon" /> Report
                     </div>
                 </div>
 
@@ -148,130 +171,239 @@ export default function DeputyPrincipalDevDashboard() {
 
                 {/* MAIN CONTENT AREA */}
                 <div className="dashboard-content" style={{ padding: "30px" }}>
-                    <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
-                        <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
-                            Deputy Principal (Development) Dashboard
-                        </h1>
-                        <p style={{ fontSize: "16px", color: "#64748b" }}>
-                            Manage school resources, infrastructure projects, and strategic development
-                        </p>
-                    </div>
-
-                    {/* STATS ROW */}
-                    <div className="stats-row" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: "30px" }}>
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Total Students</p>
-                                <h3>{stats.totalStudents.toLocaleString()}</h3>
+                    
+                    {/* TAB 1: DASHBOARD */}
+                    {activeTab === "dashboard" && (
+                        <>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    Deputy Principal (Development) Dashboard
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Manage school resources, infrastructure projects, and strategic development
+                                </p>
                             </div>
-                            <div className="stat-icon blue"><Users size={20} /></div>
-                        </div>
 
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Total Teachers</p>
-                                <h3>{stats.totalTeachers.toLocaleString()}</h3>
-                            </div>
-                            <div className="stat-icon yellow"><UserCheck size={20} /></div>
-                        </div>
-
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Active Projects</p>
-                                <h3>{projects.filter(p => p.status === "In Progress").length}</h3>
-                            </div>
-                            <div className="stat-icon green"><Wrench size={20} /></div>
-                        </div>
-
-                        <div className="stat-card">
-                            <div className="stat-info">
-                                <p>Development Grants</p>
-                                <h3>Rs. 4.8M</h3>
-                            </div>
-                            <div className="stat-icon purple"><Layers size={20} /></div>
-                        </div>
-                    </div>
-
-                    {/* BOTTOM GRID */}
-                    <div className="content-grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "25px" }}>
-                        {/* Left Card: Projects Status */}
-                        <div className="content-card">
-                            <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
-                                <Activity size={18} style={{ color: "#3b82f6" }} />
-                                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Infrastructure & Resource Projects</h3>
-                            </div>
-                            <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                                {projects.map((proj) => (
-                                    <div key={proj.id} style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                                            <h4 style={{ margin: 0, fontSize: "15px", color: "#1e293b", fontWeight: "600" }}>{proj.name}</h4>
-                                            <span className={`badge ${proj.status === "Completed" ? "active" : "pending"}`} style={{ fontSize: "11px" }}>{proj.status}</span>
-                                        </div>
-                                        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                                            <div style={{ flex: 1, height: "8px", backgroundColor: "#e2e8f0", borderRadius: "4px", overflow: "hidden" }}>
-                                                <div style={{ width: proj.progress, height: "100%", backgroundColor: proj.status === "Completed" ? "#10b981" : "#3b82f6" }}></div>
-                                            </div>
-                                            <span style={{ fontSize: "13px", fontWeight: "600", color: "#475569" }}>{proj.progress}</span>
-                                        </div>
+                            {/* STATS ROW */}
+                            <div className="stats-row" style={{ gridTemplateColumns: "repeat(4, 1fr)", marginBottom: "30px" }}>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Total Students</p>
+                                        <h3>{stats.totalStudents.toLocaleString()}</h3>
                                     </div>
-                                ))}
-                            </div>
-                        </div>
+                                    <div className="stat-icon blue"><Users size={20} /></div>
+                                </div>
 
-                        {/* Right Card: Proposals Form */}
-                        <div className="content-card">
-                            <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
-                                <TrendingUp size={18} style={{ color: "#f59e0b" }} />
-                                <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>New Project Proposal</h3>
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Total Teachers</p>
+                                        <h3>{stats.totalTeachers.toLocaleString()}</h3>
+                                    </div>
+                                    <div className="stat-icon yellow"><UserCheck size={20} /></div>
+                                </div>
+
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Active Projects</p>
+                                        <h3>{projects.filter(p => p.status === "In Progress").length}</h3>
+                                    </div>
+                                    <div className="stat-icon green"><Wrench size={20} /></div>
+                                </div>
+
+                                <div className="stat-card">
+                                    <div className="stat-info">
+                                        <p>Development Grants</p>
+                                        <h3>Rs. 4.8M</h3>
+                                    </div>
+                                    <div className="stat-icon purple"><Layers size={20} /></div>
+                                </div>
                             </div>
-                            <form onSubmit={handleCreateProject} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                                <div className="modal-form-group">
-                                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Project Name</label>
-                                    <input
-                                        type="text"
-                                        placeholder="e.g. Auditorium Audio Setup"
-                                        value={projectName}
-                                        onChange={(e) => setProjectName(e.target.value)}
-                                        required
-                                        style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                    />
+
+                            {/* BOTTOM GRID */}
+                            <div className="content-grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "25px" }}>
+                                {/* Left Card: Projects Status */}
+                                <div className="content-card">
+                                    <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        <Activity size={18} style={{ color: "#3b82f6" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Infrastructure & Resource Projects</h3>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                                        {projects.map((proj) => (
+                                            <div key={proj.id} style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                                                    <h4 style={{ margin: 0, fontSize: "15px", color: "#1e293b", fontWeight: "600" }}>{proj.name}</h4>
+                                                    <span className={`badge ${proj.status === "Completed" ? "active" : "pending"}`} style={{ fontSize: "11px" }}>{proj.status}</span>
+                                                </div>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                                                    <div style={{ flex: 1, height: "8px", backgroundColor: "#e2e8f0", borderRadius: "4px", overflow: "hidden" }}>
+                                                        <div style={{ width: proj.progress, height: "100%", backgroundColor: proj.status === "Completed" ? "#10b981" : "#3b82f6" }}></div>
+                                                    </div>
+                                                    <span style={{ fontSize: "13px", fontWeight: "600", color: "#475569" }}>{proj.progress}</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="modal-form-group">
-                                    <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Category</label>
-                                    <select
-                                        value={projectCategory}
-                                        onChange={(e) => setProjectCategory(e.target.value)}
-                                        style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+
+                                {/* Right Card: Proposals Form */}
+                                <div className="content-card">
+                                    <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        <TrendingUp size={18} style={{ color: "#f59e0b" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>New Project Proposal</h3>
+                                    </div>
+                                    <form onSubmit={handleCreateProject} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
+                                        <div className="modal-form-group">
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Project Name</label>
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. Auditorium Audio Setup"
+                                                value={projectName}
+                                                onChange={(e) => setProjectName(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            />
+                                        </div>
+                                        <div className="modal-form-group">
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Category</label>
+                                            <select
+                                                value={projectCategory}
+                                                onChange={(e) => setProjectCategory(e.target.value)}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option>Infrastructure</option>
+                                                <option>Technology</option>
+                                                <option>Academics</option>
+                                                <option>Sports</option>
+                                            </select>
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#f59e0b",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer"
+                                            }}
+                                        >
+                                            <Plus size={16} />
+                                            <span>Submit Proposal</span>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </>
+                    )}
+
+                    {/* TAB 2: EXAMINATION */}
+                    {activeTab === "examination" && (
+                        <div style={{ maxWidth: "600px", margin: "0 auto" }}>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    System Examination Control
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Set the active academic year and term test for marks processing across the entire school
+                                </p>
+                            </div>
+
+                            <div className="content-card" style={{ padding: "30px", borderRadius: "12px", border: "1px solid #e2e8f0", backgroundColor: "white" }}>
+                                <h3 style={{ margin: "0 0 20px 0", color: "#1e293b", fontSize: "18px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                    Active Academic Term Settings
+                                </h3>
+                                <form onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    setExamConfigMessage({ text: "", type: "" });
+
+                                    if (!academicYear.match(/^\d{4}$/)) {
+                                        setExamConfigMessage({ text: "Academic Year must be a valid 4-digit number!", type: "error" });
+                                        return;
+                                    }
+
+                                    try {
+                                        const token = localStorage.getItem("token");
+                                        const res = await fetch("http://localhost:8080/admin/config/active-exam-settings", {
+                                            method: "POST",
+                                            headers: {
+                                                "Content-Type": "application/json",
+                                                Authorization: `Bearer ${token}`
+                                            },
+                                            body: JSON.stringify({ academicYear, term })
+                                        });
+                                        const text = await res.text();
+                                        if (res.ok) {
+                                            setExamConfigMessage({ text: "System examination settings updated successfully!", type: "success" });
+                                        } else {
+                                            setExamConfigMessage({ text: text || "Update failed", type: "error" });
+                                        }
+                                    } catch (err) {
+                                        setExamConfigMessage({ text: "Error connecting to server", type: "error" });
+                                    }
+                                }} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                                    <div className="modal-form-group">
+                                        <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#334155", marginBottom: "8px" }}>Active Academic Year *</label>
+                                        <select
+                                            value={academicYear}
+                                            onChange={(e) => setAcademicYear(e.target.value)}
+                                            required
+                                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1", backgroundColor: "white" }}
+                                        >
+                                            {Array.from({ length: 6 }, (_, i) => new Date().getFullYear() + i).map(year => (
+                                                <option key={year} value={year}>{year}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    <div className="modal-form-group">
+                                        <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#334155", marginBottom: "8px" }}>Active Term Test *</label>
+                                        <select
+                                            value={term}
+                                            onChange={(e) => setTerm(e.target.value)}
+                                            required
+                                            style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1", backgroundColor: "white" }}
+                                        >
+                                            <option value="Term 1">Term 1</option>
+                                            <option value="Term 2">Term 2</option>
+                                            <option value="Term 3">Term 3</option>
+                                        </select>
+                                    </div>
+
+                                    {examConfigMessage.text && (
+                                        <div className={`inline-form-message ${examConfigMessage.type}`}>
+                                            {examConfigMessage.text}
+                                        </div>
+                                    )}
+
+                                    <button
+                                        type="submit"
+                                        style={{
+                                            padding: "14px",
+                                            backgroundColor: "#f59e0b",
+                                            color: "white",
+                                            border: "none",
+                                            borderRadius: "8px",
+                                            fontWeight: "600",
+                                            fontSize: "15px",
+                                            cursor: "pointer",
+                                            marginTop: "10px"
+                                        }}
                                     >
-                                        <option>Infrastructure</option>
-                                        <option>Technology</option>
-                                        <option>Academics</option>
-                                        <option>Sports</option>
-                                    </select>
-                                </div>
-                                <button
-                                    type="submit"
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                        gap: "8px",
-                                        padding: "14px",
-                                        backgroundColor: "#f59e0b",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "8px",
-                                        fontWeight: "600",
-                                        fontSize: "14px",
-                                        cursor: "pointer"
-                                    }}
-                                >
-                                    <Plus size={16} />
-                                    <span>Submit Proposal</span>
-                                </button>
-                            </form>
+                                        Save Configuration Settings
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </div>
+                    )}
+
+                    {/* TAB 3: REPORT */}
+                    {activeTab === "reports" && <AdminAcademicAnalytics />}
+
                 </div>
             </div>
         </div>

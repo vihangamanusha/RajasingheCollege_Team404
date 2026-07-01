@@ -6,6 +6,7 @@ import com.rcc.lms.repository.TeacherMarksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -22,6 +23,8 @@ public class TeacherMarksService {
             m.setSubjectId(dto.getSubjectId());
             m.setTerm(dto.getTerm());
             m.setAssignmentMark(dto.getAssignmentMark());
+            m.setAcademicYear(dto.getAcademicYear());
+            m.setExamDate(LocalDate.now());
 
             return m;
         }).toList();
