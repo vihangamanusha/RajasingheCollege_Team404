@@ -345,8 +345,8 @@ const translations = {
   // About Page
   "about.ourHistory": { en: "Our History", si: "අපගේ ඉතිහාසය" },
   "about.historyDesc": {
-    en: "Ruwanwella Rajasinghe Central College was established in 1960 with the vision of providing quality education to students in the Ruwanwella area. Over the past six decades, we have grown from a small school with limited resources to a prestigious educational institution serving thousands of students.",
-    si: "රුවන්වැල්ල රාජසිංහ මධ්‍ය විද්‍යාලය 1960 දී රුවන්වැල්ල ප්‍රදේශයේ සිසුන්ට ගුණාත්මක අධ්‍යාපනයක් ලබා දීමේ දැක්මෙන් ස්ථාපිත කරන ලදී. පසුගිය දශක හය තුළ, අපි සීමිත සම්පත් ඇති කුඩා පාසලකින් දහස් ගණන් සිසුන්ට සේවය කරන කීර්තිමත් අධ්‍යාපන ආයතනයක් දක්වා වර්ධනය වී ඇත.",
+    en: "Founded on July 19, 1945, under the landmark Free Education initiative of Dr. C.W.W. Kannangara, Rajasinghe Central College began its journey with just 240 students and a deep commitment to rural education. Driven by the fierce dedication of local pioneers and its first principal, Mr. E.S. de Silva, the school initially overcame severe infrastructure shortages through the generosity of local community members who shared their homes for facilities. Recognizing its rapid academic rise and holistic development, the institution was officially elevated to a National School in 1994.Today, the college stands as a premier educational beacon in the Kegalle District, accommodating nearly 1,700 students from Grade 6 to Grade 13. With robust academic pathways spanning Science, Arts, and Commerce streams—including English-medium classes introduced in 2002—the school remains deeply devoted to nurturing creative, disciplined, and proud citizens equipped for the future.",
+    si: "ආචාර්ය සී.ඩබ්ලිව්.ඩබ්ලිව්. කන්නන්ගර මහතාගේ නිදහස් අධ්‍යාපන සංකල්පයට සමගාමීව 1945 ජූලි 19 වන දින සිසුන් 240 දෙනෙකුගෙන් යුතුව රුවන්වැල්ල රාජසිංහ මධ්‍ය මහා විද්‍යාලය ආරම්භ කරන ලදී. ප්‍රදේශයේ පුරෝගාමීන්ගේ කැපවීම සහ ප්‍රථම විදුහල්පති ඩබ්ලිව්.එම්.එස්. ද සිල්වා මහතාගේ මෙහෙයවීම මත මුල්කාලීන භෞතික අඩුපාඩු රැසක් මධ්‍යයේ වුවද ප්‍රජාවගේ සහාය ඇතිව විද්‍යාලයේ අඩිතාලම ශක්තිමත් වූ අතර, එහි කැපී පෙනෙන වර්ධනය හේතුවෙන් 1994 වසරේදී විද්‍යාලය ජාතික පාසලක් බවට පත් කරන ලදී. වර්තමානය වන විට මෙම විද්‍යාලය කෑගල්ල දිස්ත්‍රික්කයේ ප්‍රමුඛතම අධ්‍යාපන කේන්ද්‍රස්ථානයක් වන අතර, 6 ශ්‍රේණියේ සිට 13 ශ්‍රේණිය දක්වා සිසුන් 1,700කට ආසන්න සංඛ්‍යාවකට සෙවණ සලසයි. 2002 වසරේ සිට ක්‍රියාත්මක වන ඉංග්‍රීසි මාධ්‍ය පන්ති මෙන්ම විද්‍යා, කලා සහ වාණිජ අංශයන්ගෙන් සන්නද්ධ වූ මෙම සබරගමුවේ විශිෂ්ටතම විදුබිම, අනාගතයට අවශ්‍ය නිර්මාණශීලී, විනයගරුක සහ අභිමානවත් දූ පුතුන් බිහිකිරීම වෙනුවෙන් අදටත් නොසැලී කැපවී සිටී.",
   },
   "about.missionVision": { en: "Mission & Vision", si: "මෙහෙවර සහ දැක්ම" },
   "about.ourMission": { en: "Our Mission", si: "අපගේ මෙහෙවර" },
@@ -365,12 +365,12 @@ const translations = {
   },
   "about.principal": { en: "Principal", si: "විදුහල්පති" },
   "about.principalMsg": {
-    en: "Welcome to Ruwanwella Rajasinghe Central College. As the principal, I am honored to lead this esteemed institution that has been shaping young minds for over six decades. Our commitment to academic excellence, character development, and holistic education remains unwavering.",
-    si: "රුවන්වැල්ල රාජසිංහ මධ්‍ය විද්‍යාලයට ඔබව සාදරයෙන් පිළිගනිමු. විදුහල්පති ලෙස, දශක හයකට වැඩි කාලයක් තරුණ මනස හැඩගස්වන මෙම කීර්තිමත් ආයතනය මෙහෙයවීමට හැකි වීම ගෞරවයකි. අධ්‍යයන විශිෂ්ටත්වය, චරිත වර්ධනය සහ සමස්ත අධ්‍යාපනය සඳහා වූ අපගේ කැපවීම නොසැලෙන්නකි.",
+    en: "It is an immense privilege and a profound blessing to serve as the Principal of Ruwanwella Rajasinghe Central College, a historic institution defined by its rich heritage, grandeur, and noble educational mission. I earnestly and wholeheartedly invite you all to unite with us, with utmost devotion and sincerity, as we work together to elevate our beloved school to the pinnacle of excellence within the Sri Lankan educational landscape.",
+    si: "ඉතා දිගු ඉතිහාසයකට හිමිකම් කියන, අතිශය විශිෂ්ට වූත් ප්‍රතාපවත් වූත් පූණ්‍යභූමියක් බඳු වූ රුවන්වැල්ල රාජසිංහ මධ්‍ය මහා විද්‍යාලයේ විදුහල්පතිවරයා ලෙස කටයුතු කිරීමට ලැබීම මා ලැබූ මහඟු භාග්‍යයකි. එහෙයින් අප සැම එකා මෙන් එකතු වී, අපගේ මේ ආදරණීය විද්‍යාලය ශ්‍රී ලාංකීය ධරණී තලයේ ප්‍රමුඛස්ථානය කරා ඉහළටම ඔසවා තැබීමට, ඉතා භක්තිමත් ව හා හෘදයාංගම ව දායක වන ලෙස ඔබ සැමට ගෞරවයෙන් ඇරයුම් කර සිටිමි.",
   },
   "about.principalMsg2": {
-    en: "We believe in providing a nurturing environment where every student can discover their potential and pursue their passions. Together with our dedicated staff and supportive parent community, we strive to prepare our students not just for examinations, but for life.",
-    si: "සෑම සිසුවෙකුටම තම හැකියාව සොයා ගැනීමට සහ තමන්ගේ ආශාවන් අනුගමනය කිරීමට හැකි පෝෂණීය පරිසරයක් ලබා දීම අපි විශ්වාස කරමු. අපගේ කැපවූ කාර්ය මණ්ඩලය සහ සහාය දක්වන දෙමාපිය ප්‍රජාව සමඟ එක්ව, අපි අපගේ සිසුන් විභාග සඳහා පමණක් නොව, ජීවිතය සඳහා සූදානම් කිරීමට උත්සාහ කරමු.",
+    en: "Furthermore, it is my deepest and most heartfelt prayer that this prestigious institution continues to reign supreme across the nation, standing forever as a majestic beacon of knowledge and brilliance for generations to come.",
+    si: "තවද, මෙම අභිමානවත් විද්‍යාලය ශ්‍රී ලංකා ධරණී තලය තුළ සදා අභිෂේක ගන්වමින්, ලක් මෑණියන්ගේ කුසලතාවලින් පිරිපුන් දරුවන් බිහිකරන ප්‍රමුඛතම විදුබිම ලෙස සදා වැජඹේවා! යන්න මගේ හදවතින්ම නැගෙන ඒකායන ප්‍රාර්ථනාවයි.",
   },
 
   // Academic Page
