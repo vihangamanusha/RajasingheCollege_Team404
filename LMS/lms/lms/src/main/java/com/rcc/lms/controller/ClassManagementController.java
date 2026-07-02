@@ -126,6 +126,16 @@ public class ClassManagementController {
     }
 
     // ─────────────────────────────────────────
+    // GET available subject teachers
+    // ─────────────────────────────────────────
+    @GetMapping("/available-teachers")
+    public ResponseEntity<List<Map<String, Object>>> getAvailableTeachers(
+            @RequestParam(required = false) String currentClassId
+    ) {
+        return ResponseEntity.ok(classManagementService.getAvailableTeachers(currentClassId));
+    }
+
+    // ─────────────────────────────────────────
     // PUT assign a teacher to a class
     // ─────────────────────────────────────────
     @PutMapping("/{classId}/assign-teacher/{teacherId}")
@@ -135,6 +145,19 @@ public class ClassManagementController {
     ) {
         try {
             String msg = classManagementService.assignTeacher(classId, teacherId);
+            return ResponseEntity.ok(Map.of("message", msg));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // PUT unassign a teacher from a class
+    // ─────────────────────────────────────────
+    @PutMapping("/{classId}/unassign-teacher")
+    public ResponseEntity<Map<String, String>> unassignTeacher(@PathVariable String classId) {
+        try {
+            String msg = classManagementService.unassignTeacher(classId);
             return ResponseEntity.ok(Map.of("message", msg));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

@@ -19,6 +19,18 @@ export default function TeacherRegister() {
 
     const [step, setStep] = useState(1);//Controls which page is shown
     const [occupiedRoles, setOccupiedRoles] = useState([]);
+    const [availableSubjects, setAvailableSubjects] = useState([
+        "Mathematics",
+        "Science",
+        "English",
+        "Sinhala",
+        "History",
+        "ICT",
+        "Geography",
+        "Commerce",
+        "Art",
+        "Music"
+    ]);
 
     useEffect(() => {
         const fetchOccupied = async () => {
@@ -36,7 +48,23 @@ export default function TeacherRegister() {
                 console.error("Failed to fetch occupied designations", err);
             }
         };
+
+        const fetchSubjects = async () => {
+            try {
+                const res = await fetch("http://localhost:8080/api/curriculum-subjects");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        setAvailableSubjects(data);
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch curriculum subjects:", err);
+            }
+        };
+
         fetchOccupied();
+        fetchSubjects();
     }, []);
 
     const allDesignations = [
@@ -69,19 +97,6 @@ export default function TeacherRegister() {
 
     const [message, setMessage] = useState("");//show messge
     const [messageType, setMessageType] = useState("");
-
-    const availableSubjects = [
-        "Mathematics",
-        "Science",
-        "English",
-        "Sinhala",
-        "History",
-        "ICT",
-        "Geography",
-        "Commerce",
-        "Art",
-        "Music"
-    ];
 
 
     // =========================
