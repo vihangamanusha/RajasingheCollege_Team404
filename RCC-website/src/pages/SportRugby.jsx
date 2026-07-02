@@ -101,63 +101,76 @@ export function SportRugby() {
 
       {/* ACHIEVEMENTS */}
 
-      <section className="achievement-section">
+      {/* ACHIEVEMENTS */}
 
-        <div className="section-heading">
+<section className="achievement-section">
 
-          <h2>
-            Achievements
-          </h2>
+  <div className="section-heading">
+    <h2>Achievements</h2>
+    <div className="title-line"></div>
+  </div>
 
-          <div className="title-line"></div>
+  {achievements.length > 0 ? (
+
+    <div className="achievement-grid">
+
+      {achievements.map((item, index) => (
+
+        <div
+          className="achievement-card"
+          key={index}
+        >
+
+          <div className="achievement-image">
+
+            {item.image ? (
+              <img
+                src={
+                  item.image.startsWith("http")
+                    ? item.image
+                    : `http://localhost:8080${item.image}`
+                }
+                alt={item.topic}
+              />
+            ) : (
+              <div className="image-placeholder">
+                No Image
+              </div>
+            )}
+
+          </div>
+
+          <div className="achievement-content">
+
+            <h3>{item.topic}</h3>
+
+            <p>{item.description}</p>
+
+          </div>
 
         </div>
 
-        <div className="achievement-grid">
+      ))}
 
-          {achievements.map((item, index) => (
-
-            <div
-              className="achievement-card"
-              key={index}
-            >
-
-              <div className="achievement-image">
-
-                {item.image ? (
-    <img
-      src={
-        item.image.startsWith("http")
-          ? item.image
-          : `http://localhost:8080${item.image}`
-      }
-      alt={item.topic}
-    />
-  ) : (<div className="image-placeholder">
-      No Image
     </div>
+
+  ) : (
+
+    <div className="no-achievement-container">
+
+      <h3>No Achievements Yet</h3>
+
+      <p>
+        There are currently no achievements available for the Rugby team.
+        Please check back later for the latest tournament victories and sports
+        accomplishments.
+      </p>
+
+    </div>
+
   )}
-              </div>
 
-              <div className="achievement-content">
-
-                <h3>
-                  {item.topic}
-                </h3>
-
-                <p>
-                  {item.description}
-                </p>
-
-              </div>
-
-            </div>
-
-          ))}
-
-        </div>
-
-      </section>
+</section>
 
     </div>
   );

@@ -4757,6 +4757,35 @@ h6,
   margin-bottom: 25px;
 }
 
+/* No Achievement Message */
+
+.no-achievement-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 70px 30px;
+  text-align: center;
+  background: #ffffff;
+  border: 2px dashed #d9d9d9;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+}
+
+.no-achievement-container h3 {
+  font-size: 30px;
+  color: #002147;
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.no-achievement-container p {
+  font-size: 17px;
+  color: #6b7280;
+  line-height: 1.7;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 /* BUTTON */
 .sport-view-btn {
   background: #002147;
