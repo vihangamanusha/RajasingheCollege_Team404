@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { getBySportType } from "../api/sportApi";
+import rugbyTeamImage from "../assets/rugbypage.jpg";
+import rugbyTeam from "../assets/rugby.jpeg";
 import "../styles/styles.css";
 
 export function SportRugby() {
@@ -37,7 +39,7 @@ export function SportRugby() {
       <section className="sport-hero">
 
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=1920&h=1080&fit=crop"
+          src={rugbyTeamImage}
           alt="Rugby"
         />
 
@@ -75,23 +77,25 @@ export function SportRugby() {
           <div className="title-line"></div>
 
           <p>
-            Rugby is one of the most exciting and competitive sports in our
-            school. Students are trained with discipline, physical fitness,
-            teamwork, and leadership qualities while participating in major
-            tournaments.
-          </p>
-
+            Rising to New Heights! 🏉
+            Our school’s rugby journey dates back to the vibrant 1980s, built on raw passion, grit, and an unyielding team spirit. What started as a foundational dream decades ago has now evolved into a powerhouse of talent.
+            
+</p>
           <p>
-            Our rugby teams have achieved success at regional and national
-            levels, producing talented players who proudly represent the school.
+           Today, our boys are performing at an absolute peak—showcasing incredible skills, fierce discipline, and high-octane performances on the field. With a string of outstanding recent achievements and dominant victories under our belt, the roaring spirit of our rugby legacy has never been stronger.
+            Stay tuned as we continue to tackle boundaries and chase glory! 
           </p>
+          <p>
+            #SchoolRugby #GoldStandard #RugbyLegacy #RisingChampions
+          </p>
+          
 
         </div>
 
         <div className="about-right">
 
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1546519638-68e109498ffc?w=900&h=700&fit=crop"
+            src={rugbyTeam}
             alt="Rugby Team"
           />
 
