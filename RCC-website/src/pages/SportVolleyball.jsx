@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { getBySportType } from "../api/sportApi";
+import VolleyballImage from "../assets/volleyballs.jpg";
 import "../styles/styles.css";
 
 export function SportVolleyball() {
@@ -37,7 +38,7 @@ export function SportVolleyball() {
       <section className="sport-hero">
 
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=1920&h=1080&fit=crop"
+          src={VolleyballImage}
           alt="Volleyball"
         />
 
@@ -46,7 +47,7 @@ export function SportVolleyball() {
           <div className="hero-content">
 
             <div className="hero-icon">
-              <Trophy size={40} />
+              <Trophy size={33} />
             </div>
 
             <h1>Volleyball</h1>

@@ -4827,7 +4827,7 @@ h6,
 
 .sport-hero {
   position: relative;
-  height: 500px;
+  height: 385px;
   overflow: hidden;
 }
 
@@ -4854,8 +4854,8 @@ h6,
 }
 
 .hero-icon {
-  width: 90px;
-  height: 90px;
+  width: 65px;
+  height: 65px;
   background: #FFD700;
   color: #002147;
   border-radius: 50%;

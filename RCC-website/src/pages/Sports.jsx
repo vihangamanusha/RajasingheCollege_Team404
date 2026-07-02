@@ -147,10 +147,8 @@ export function Sports() {
           </div>
 
           <p className="sport-row-description">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            Students are trained professionally with modern coaching
-            methods and participate in district and national level
-            tournaments.
+            Our sports program promotes teamwork, discipline, leadership, and physical 
+            fitness while encouraging students to excel in both school and competitive sporting events.
           </p>
 
           
