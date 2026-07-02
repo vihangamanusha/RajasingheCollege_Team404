@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { getBySportType } from "../api/sportApi";
+import otherSportsImage from "../assets/othergames.jpg";
+import other from "../assets/sportothers.jpeg";
 import "../styles/styles.css";
 
 export function SportAthletics() {
@@ -36,7 +38,7 @@ export function SportAthletics() {
       <section className="sport-hero">
 
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=1920&h=1080&fit=crop"
+          src={otherSportsImage}
           alt="Athletics"
         />
 
@@ -45,10 +47,10 @@ export function SportAthletics() {
           <div className="hero-content">
 
             <div className="hero-icon">
-              <Trophy size={40} />
+              <Trophy size={28} />
             </div>
 
-            <h1>Athletics</h1>
+            <h1>Other Sports</h1>
 
             <p>
               Inspiring speed, endurance,
@@ -68,22 +70,23 @@ export function SportAthletics() {
         <div className="about-left">
 
           <h2>
-            About Athletics
+            About Other Sports
           </h2>
 
           <div className="title-line"></div>
 
           <p>
-            Athletics plays a major role in developing physical fitness,
-            discipline, endurance, and confidence among students. Our athletes
-            participate in sprinting, relay races, long-distance running, and
-            field events throughout the year.
+            Our school offers a wide range of sports including Netball, Badminton, athletics,Chess, and many other
+            activities. These sports provide students with opportunities to develop
+            teamwork, discipline, leadership, physical fitness, and confidence through
+            regular training and competitive participation.
           </p>
 
           <p>
-            With professional coaching and dedicated training, our athletics
-            teams continue to achieve success in district, provincial, and
-            national competitions.
+            Under the guidance of experienced coaches and dedicated teachers, our
+  students proudly represent the school in inter-house, district, provincial,
+  and national competitions, achieving outstanding success while promoting
+  sportsmanship, unity, and excellence in every sporting event
           </p>
 
         </div>
@@ -91,7 +94,7 @@ export function SportAthletics() {
         <div className="about-right">
 
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1486218119243-13883505764c?w=900&h=700&fit=crop"
+            src={other}
             alt="Athletics Team"
           />
 
@@ -159,7 +162,7 @@ export function SportAthletics() {
       <h3>No Achievements Yet</h3>
 
       <p>
-        There are currently no achievements available for the Volleyball team.
+        There are currently no achievements available.
         Please check back later for the latest tournament victories and sports
         accomplishments.
       </p>

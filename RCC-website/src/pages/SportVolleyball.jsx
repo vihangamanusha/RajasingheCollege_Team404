@@ -48,7 +48,7 @@ export function SportVolleyball() {
           <div className="hero-content">
 
             <div className="hero-icon">
-              <Trophy size={33} />
+              <Trophy size={28} />
             </div>
 
             <h1>Volleyball</h1>

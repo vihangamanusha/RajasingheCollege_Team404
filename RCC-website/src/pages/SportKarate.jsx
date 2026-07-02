@@ -46,7 +46,7 @@ export function SportKarate() {
           <div className="hero-content">
 
             <div className="hero-icon">
-              <Trophy size={40} />
+              <Trophy size={28} />
             </div>
 
             <h1>Karate</h1>
