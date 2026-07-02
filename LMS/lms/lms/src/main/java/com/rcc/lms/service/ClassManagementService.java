@@ -74,13 +74,38 @@ public class ClassManagementService {
     @Transactional
     public Map<String, Object> createClass(CreateClassRequest request) {
         String className = request.getGrade() + "-" + request.getSection();
-        String classId   = "CLS-" + request.getGrade() + request.getSection()
-                + "-" + request.getYear();
-
-        // Check if class already exists
-        if (classRepository.existsById(classId)) {
-            throw new RuntimeException("Class " + className + " already exists for " + request.getYear());
+        
+        // 1. Validation: Class uniqueness for the academic year
+        boolean classExists = classRepository.findAll().stream()
+                .anyMatch(c -> c.getGrade().equalsIgnoreCase(request.getGrade())
+                        && c.getClassName().substring(c.getClassName().indexOf("-") + 1).equalsIgnoreCase(request.getSection())
+                        && c.getYear() == request.getYear());
+        if (classExists) {
+            throw new RuntimeException("Class " + className + " already exists for the year " + request.getYear());
         }
+
+        // 2. Validation: Teacher eligibility and assignment
+        Teacher teacher = null;
+        if (request.getTeacherId() != null && !request.getTeacherId().trim().isEmpty()) {
+            teacher = teacherRepository.findById(request.getTeacherId())
+                    .orElseThrow(() -> new RuntimeException("Teacher not found: " + request.getTeacherId()));
+            
+            // Check if teacher has subRole "Subject Teacher"
+            if (teacher.getSubRole() == null || !teacher.getSubRole().equalsIgnoreCase("Subject Teacher")) {
+                throw new RuntimeException("Selected teacher is not a Subject Teacher");
+            }
+            
+            // Check if teacher is already assigned to another class
+            boolean teacherAssigned = classRepository.findAll().stream()
+                    .anyMatch(c -> c.getTeacher() != null && c.getTeacher().getTeacherId().equals(request.getTeacherId()));
+            if (teacherAssigned) {
+                throw new RuntimeException("Teacher " + teacher.getFullName() + " is already assigned to another class");
+            }
+        }
+
+        // Append a random 4-char suffix to class ID to support creating same class name multiple times
+        String classId   = "CLS-" + request.getGrade() + request.getSection()
+                + "-" + request.getYear() + "-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase();
 
         ClassEntity classEntity = new ClassEntity();
         classEntity.setClassId(classId);
@@ -90,6 +115,7 @@ public class ClassManagementService {
         classEntity.setDobFrom(request.getDobFrom());
         classEntity.setDobTo(request.getDobTo());
         classEntity.setAssignmentOpen(false);
+        classEntity.setTeacher(teacher);
         classRepository.save(classEntity);
 
         return toClassMap(classEntity);
@@ -177,6 +203,61 @@ public class ClassManagementService {
 
         classRepository.delete(classEntity);
         return "Class " + classEntity.getClassName() + " deleted";
+    }
+
+    // =========================================================
+    // GET AVAILABLE SUBJECT TEACHERS (unassigned subject teachers)
+    // =========================================================
+    public List<Map<String, Object>> getAvailableTeachers(String currentClassId) {
+        List<Teacher> allTeachers = teacherRepository.findAll();
+        List<Map<String, Object>> available = new ArrayList<>();
+
+        // Find teacher ID of currentClassId if any
+        String currentTeacherId = null;
+        if (currentClassId != null) {
+            Optional<ClassEntity> o = classRepository.findById(currentClassId);
+            if (o.isPresent() && o.get().getTeacher() != null) {
+                currentTeacherId = o.get().getTeacher().getTeacherId();
+            }
+        }
+
+        // Find all teachers already assigned to any class
+        Set<String> assignedTeacherIds = new HashSet<>();
+        for (ClassEntity c : classRepository.findAll()) {
+            if (c.getTeacher() != null) {
+                assignedTeacherIds.add(c.getTeacher().getTeacherId());
+            }
+        }
+
+        for (Teacher t : allTeachers) {
+            // Must have subRole as "Subject Teacher"
+            if (t.getSubRole() != null && t.getSubRole().equalsIgnoreCase("Subject Teacher")) {
+                String tid = t.getTeacherId();
+                // Must be unassigned, OR be the teacher of the current class
+                if (!assignedTeacherIds.contains(tid) || tid.equals(currentTeacherId)) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("teacherId", t.getTeacherId());
+                    map.put("fullName", t.getFullName());
+                    map.put("subjectSpecialization", t.getSubjectSpecialization());
+                    map.put("subRole", t.getSubRole());
+                    map.put("isCurrent", tid.equals(currentTeacherId));
+                    available.add(map);
+                }
+            }
+        }
+        return available;
+    }
+
+    // =========================================================
+    // UNASSIGN TEACHER FROM CLASS
+    // =========================================================
+    @Transactional
+    public String unassignTeacher(String classId) {
+        ClassEntity classEntity = classRepository.findById(classId)
+                .orElseThrow(() -> new RuntimeException("Class not found: " + classId));
+        classEntity.setTeacher(null);
+        classRepository.save(classEntity);
+        return "Teacher unassigned successfully";
     }
 
     // =========================================================

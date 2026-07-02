@@ -29,6 +29,11 @@ export default function DeputyPrincipalDevDashboard() {
     const [academicYear, setAcademicYear] = useState("2026");
     const [term, setTerm] = useState("Term 1");
     const [examConfigMessage, setExamConfigMessage] = useState({ text: "", type: "" });
+    const [subjectsList, setSubjectsList] = useState([]);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [subjectToDelete, setSubjectToDelete] = useState("");
+    const [deletionReason, setDeletionReason] = useState("");
+    const [deletionError, setDeletionError] = useState("");
     const [stats, setStats] = useState({
         totalStudents: 0,
         totalTeachers: 0,
@@ -47,6 +52,15 @@ export default function DeputyPrincipalDevDashboard() {
     const [projectName, setProjectName] = useState("");
     const [projectCategory, setProjectCategory] = useState("Infrastructure");
 
+    const loadSubjects = async () => {
+        try {
+            const res = await fetch("http://localhost:8080/api/curriculum-subjects");
+            if (res.ok) setSubjectsList(await res.json());
+        } catch (err) {
+            console.error("Failed to load curriculum subjects", err);
+        }
+    };
+
     useEffect(() => {
         const storedSubRole = localStorage.getItem("subRole");
         const storedUsername = localStorage.getItem("username");
@@ -58,6 +72,7 @@ export default function DeputyPrincipalDevDashboard() {
             fetchStats(token);
         }
         fetchExamSettings();
+        loadSubjects();
     }, []);
 
     const fetchExamSettings = async () => {
@@ -136,6 +151,11 @@ export default function DeputyPrincipalDevDashboard() {
                     {/* Examination */}
                     <div className={`nav-item ${activeTab === "examination" ? "active" : ""}`} onClick={() => setActiveTab("examination")}>
                         <Award className="nav-icon" /> Examination
+                    </div>
+
+                    {/* Subject */}
+                    <div className={`nav-item ${activeTab === "subject" ? "active" : ""}`} onClick={() => setActiveTab("subject")}>
+                        <BookOpen className="nav-icon" /> Subject
                     </div>
 
                     {/* Reports */}
@@ -401,11 +421,295 @@ export default function DeputyPrincipalDevDashboard() {
                         </div>
                     )}
 
+                    {/* TAB: SUBJECT MANAGEMENT */}
+                    {activeTab === "subject" && (
+                        <div style={{ maxWidth: "750px", margin: "0 auto" }}>
+                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
+                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                    Curriculum Subject Management
+                                </h1>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                    Create and configure master subjects available in the teacher registration module
+                                </p>
+                            </div>
+
+                            {/* Toast / Message */}
+                            {examConfigMessage.text && (
+                                <div className={`inline-form-message ${examConfigMessage.type}`} style={{ marginBottom: "20px" }}>
+                                    {examConfigMessage.text}
+                                </div>
+                            )}
+
+                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "30px", alignItems: "start" }}>
+                                
+                                {/* ADD SUBJECT CARD */}
+                                <div className="content-card" style={{ padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0", backgroundColor: "white", boxShadow: "0 4px 6px rgba(0,0,0,0.01)" }}>
+                                    <h3 style={{ margin: "0 0 20px 0", color: "#1e293b", fontSize: "16px", fontWeight: "700", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        Add New Subject
+                                    </h3>
+                                    <form onSubmit={async (e) => {
+                                        e.preventDefault();
+                                        const subjectInput = e.target.elements.subjectName.value.trim();
+                                        if (!subjectInput) return;
+
+                                        setExamConfigMessage({ text: "", type: "" });
+                                        const duplicateExists = subjectsList.some(
+                                            (sub) => sub.toLowerCase() === subjectInput.toLowerCase()
+                                        );
+                                        if (duplicateExists) {
+                                            setExamConfigMessage({ text: "Subject already exists", type: "error" });
+                                            return;
+                                        }
+                                        try {
+                                            const token = localStorage.getItem("token");
+                                            const res = await fetch("http://localhost:8080/api/curriculum-subjects", {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                    Authorization: `Bearer ${token}`
+                                                },
+                                                body: JSON.stringify({ subjectName: subjectInput })
+                                            });
+                                            const data = await res.json();
+                                            if (res.ok) {
+                                                setExamConfigMessage({ text: "Subject created successfully!", type: "success" });
+                                                e.target.reset();
+                                                loadSubjects();
+                                            } else {
+                                                setExamConfigMessage({ text: data.error || "Failed to create subject", type: "error" });
+                                            }
+                                        } catch (err) {
+                                            setExamConfigMessage({ text: "Failed to connect to server", type: "error" });
+                                        }
+                                    }}>
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#475569", marginBottom: "8px" }}>
+                                                Subject Name
+                                            </label>
+                                            <input
+                                                name="subjectName"
+                                                type="text"
+                                                placeholder="e.g. History, Buddhism"
+                                                required
+                                                style={{ width: "100%", padding: "12px", borderRadius: "8px", border: "1px solid #cbd5e1" }}
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            style={{
+                                                width: "100%",
+                                                padding: "12px",
+                                                backgroundColor: "#f59e0b",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                cursor: "pointer"
+                                            }}
+                                        >
+                                            Add Subject
+                                        </button>
+                                    </form>
+                                </div>
+
+                                {/* ACTIVE SUBJECTS CARD */}
+                                <div className="content-card" style={{ padding: "24px", borderRadius: "12px", border: "1px solid #e2e8f0", backgroundColor: "white", boxShadow: "0 4px 6px rgba(0,0,0,0.01)" }}>
+                                    <h3 style={{ margin: "0 0 20px 0", color: "#1e293b", fontSize: "16px", fontWeight: "700", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                                        Current Subjects
+                                    </h3>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "10px", maxHeight: "350px", overflowY: "auto" }}>
+                                        {subjectsList.length === 0 ? (
+                                            <p style={{ fontSize: "13px", color: "#94a3b8", fontStyle: "italic", textAlign: "center", margin: "20px 0" }}>No subjects defined.</p>
+                                        ) : (
+                                            subjectsList.map((sub) => (
+                                                <div
+                                                    key={sub}
+                                                    style={{
+                                                        display: "flex",
+                                                        justifyContent: "space-between",
+                                                        alignItems: "center",
+                                                        padding: "10px 14px",
+                                                        backgroundColor: "#f8fafc",
+                                                        border: "1px solid #e2e8f0",
+                                                        borderRadius: "8px",
+                                                        fontSize: "14px",
+                                                        color: "#334155"
+                                                    }}
+                                                >
+                                                    <span style={{ fontWeight: "500" }}>{sub}</span>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSubjectToDelete(sub);
+                                                            setDeletionReason("");
+                                                            setDeletionError("");
+                                                            setShowDeleteModal(true);
+                                                        }}
+                                                        style={{
+                                                            background: "none",
+                                                            border: "none",
+                                                            color: "#ef4444",
+                                                            fontWeight: "600",
+                                                            cursor: "pointer",
+                                                            fontSize: "13px"
+                                                        }}
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+
                     {/* TAB 3: REPORT */}
                     {activeTab === "reports" && <AdminAcademicAnalytics />}
 
                 </div>
             </div>
+
+            {/* Soft Delete Custom Modal */}
+            {showDeleteModal && (
+                <div style={{ 
+                    position: "fixed", 
+                    inset: 0, 
+                    backgroundColor: "rgba(15, 23, 42, 0.4)", 
+                    backdropFilter: "blur(4px)", 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center", 
+                    zIndex: 9999 
+                }}>
+                    <div style={{ 
+                        backgroundColor: "white", 
+                        padding: "32px", 
+                        borderRadius: "16px", 
+                        width: "480px", 
+                        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                        fontFamily: "'Inter', sans-serif"
+                    }}>
+                        <h2 style={{ 
+                            color: "#ef4444", 
+                            fontSize: "24px", 
+                            fontWeight: "700", 
+                            margin: "0 0 16px 0" 
+                        }}>
+                            Confirm Soft Deletion
+                        </h2>
+                        
+                        <p style={{ 
+                            color: "#334155", 
+                            fontSize: "14.5px", 
+                            lineHeight: "1.6", 
+                            margin: "0 0 20px 0" 
+                        }}>
+                            Are you sure you want to deactivate the curriculum subject <strong>{subjectToDelete}</strong>? This action soft deletes their record from all active service listings.
+                        </p>
+
+                        <div style={{ marginBottom: "24px" }}>
+                            <label style={{ 
+                                display: "block", 
+                                fontSize: "14px", 
+                                fontWeight: "600", 
+                                color: "#1e293b", 
+                                marginBottom: "8px" 
+                            }}>
+                                Reason for Deactivation *
+                            </label>
+                            <textarea
+                                value={deletionReason}
+                                onChange={(e) => {
+                                    setDeletionReason(e.target.value);
+                                    if (e.target.value.trim().length >= 5) {
+                                        setDeletionError("");
+                                    }
+                                }}
+                                placeholder="Enter reason (at least 5 characters)..."
+                                style={{ 
+                                    width: "100%", 
+                                    height: "90px", 
+                                    padding: "12px", 
+                                    borderRadius: "8px", 
+                                    border: "1px solid #cbd5e1", 
+                                    resize: "none", 
+                                    fontSize: "14px",
+                                    outline: "none",
+                                    boxSizing: "border-box"
+                                }}
+                            />
+                            {deletionError && (
+                                <p style={{ color: "#ef4444", fontSize: "12px", margin: "4px 0 0 0", fontWeight: "500" }}>
+                                    {deletionError}
+                                </p>
+                            )}
+                        </div>
+
+                        <div style={{ 
+                            display: "flex", 
+                            justifyContent: "flex-end", 
+                            gap: "12px" 
+                        }}>
+                            <button
+                                onClick={() => setShowDeleteModal(false)}
+                                style={{ 
+                                    padding: "10px 20px", 
+                                    backgroundColor: "white", 
+                                    border: "1px solid #cbd5e1", 
+                                    borderRadius: "8px", 
+                                    color: "#1e293b", 
+                                    fontSize: "14px", 
+                                    fontWeight: "600", 
+                                    cursor: "pointer" 
+                                }}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={async () => {
+                                    if (deletionReason.trim().length < 5) {
+                                        setDeletionError("Please enter a reason with at least 5 characters.");
+                                        return;
+                                    }
+                                    
+                                    setShowDeleteModal(false);
+                                    setExamConfigMessage({ text: "", type: "" });
+                                    try {
+                                        const token = localStorage.getItem("token");
+                                        const res = await fetch(`http://localhost:8080/api/curriculum-subjects/${subjectToDelete}?deletionNote=${encodeURIComponent(deletionReason.trim())}`, {
+                                            method: "DELETE",
+                                            headers: { Authorization: `Bearer ${token}` }
+                                        });
+                                        if (res.ok) {
+                                            setExamConfigMessage({ text: "Subject deleted successfully", type: "success" });
+                                            loadSubjects();
+                                        } else {
+                                            setExamConfigMessage({ text: "Failed to delete subject", type: "error" });
+                                        }
+                                    } catch {
+                                        setExamConfigMessage({ text: "Server connection failed", type: "error" });
+                                    }
+                                }}
+                                style={{ 
+                                    padding: "10px 20px", 
+                                    backgroundColor: "#ef4444", 
+                                    border: "none", 
+                                    borderRadius: "8px", 
+                                    color: "white", 
+                                    fontSize: "14px", 
+                                    fontWeight: "600", 
+                                    cursor: "pointer" 
+                                }}
+                            >
+                                Soft Delete Subject
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

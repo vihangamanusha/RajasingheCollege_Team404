@@ -50,7 +50,146 @@ export default function AdminClassManagement() {
     grade: "9",
     section: "A",
     year: 2026,
+    teacherId: "",
   });
+  const [teacherSearchQuery, setTeacherSearchQuery] = useState("");
+  const [detailsTeacherSearchQuery, setDetailsTeacherSearchQuery] = useState("");
+  const [availableTeachers, setAvailableTeachers] = useState([]);
+
+  // Role detection
+  const userSubRole = localStorage.getItem("subRole") || "";
+  const userRole = localStorage.getItem("role") || "";
+  const isAdmin = userRole.toLowerCase() === "admin";
+  const isDeputyAdmin = userSubRole.toLowerCase().includes("deputy principal") && !isAdmin;
+
+  // ── LOAD ALL CLASSES FOR DEPUTY ────────────────────────────
+  const loadAllClassesForDeputy = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API}/api/classes`, { headers: authHeaders() });
+      if (res.ok) {
+        const data = await res.json();
+        setClasses(data);
+      }
+    } catch {
+      showToast("Failed to load classes", "error");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // ── LOAD AVAILABLE SUBJECT TEACHERS ────────────────────────
+  const loadAvailableTeachers = async (classId) => {
+    try {
+      const url = classId 
+        ? `${API}/api/classes/available-teachers?currentClassId=${classId}`
+        : `${API}/api/classes/available-teachers`;
+      const res = await fetch(url, {
+        headers: authHeaders(),
+      });
+      if (res.ok) {
+        setAvailableTeachers(await res.json());
+      }
+    } catch (err) {
+      console.error("Failed to load available teachers", err);
+    }
+  };
+
+  // ── ASSIGN TEACHER ────────────────────────────────────────
+  const handleAssignTeacher = async (teacherId) => {
+    if (!selectedClass) return;
+    try {
+      const res = await fetch(`${API}/api/classes/${selectedClass.classId}/assign-teacher/${teacherId}`, {
+        method: "PUT",
+        headers: authHeaders(),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || "Teacher assigned successfully!");
+        if (isDeputyAdmin) {
+          await loadAllClassesForDeputy();
+        } else {
+          await loadBatch(true);
+        }
+        // Sync selectedClass to show new teacher immediately
+        const assignedName = availableTeachers.find(t => t.teacherId === teacherId)?.fullName || selectedClass.teacherName;
+        setSelectedClass(prev => ({
+          ...prev,
+          teacherId: teacherId,
+          teacherName: assignedName
+        }));
+        await loadAvailableTeachers(selectedClass.classId);
+      } else {
+        showToast(data.error || "Failed to assign teacher", "error");
+      }
+    } catch (err) {
+      showToast("Error assigning teacher", "error");
+    }
+  };
+
+  // ── UNASSIGN TEACHER ──────────────────────────────────────
+  const handleUnassignTeacher = async () => {
+    if (!selectedClass) return;
+    try {
+      const res = await fetch(`${API}/api/classes/${selectedClass.classId}/unassign-teacher`, {
+        method: "PUT",
+        headers: authHeaders(),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        showToast(data.message || "Teacher unassigned successfully!");
+        if (isDeputyAdmin) {
+          await loadAllClassesForDeputy();
+        } else {
+          await loadBatch(true);
+        }
+        setSelectedClass(prev => ({
+          ...prev,
+          teacherId: null,
+          teacherName: null
+        }));
+        await loadAvailableTeachers(selectedClass.classId);
+      } else {
+        showToast(data.error || "Failed to unassign teacher", "error");
+      }
+    } catch (err) {
+      showToast("Error unassigning teacher", "error");
+    }
+  };
+
+  // ── DELETE CLASS FOR DEPUTY ───────────────────────────────
+  const deleteClassForDeputy = (classId, className) => {
+    showConfirm(
+      "Delete Class",
+      `Are you sure you want to delete class "${className}"?`,
+      async () => {
+        try {
+          const res = await fetch(`${API}/api/classes/${classId}`, {
+            method: "DELETE",
+            headers: authHeaders(),
+          });
+          const data = await res.json();
+          if (res.ok) {
+            showToast(data.message || "Class deleted successfully");
+            setSelectedClass(null);
+            setRoster([]);
+            loadAllClassesForDeputy();
+          } else {
+            showToast(data.error || "Cannot delete class", "error");
+          }
+        } catch {
+          showToast("Error deleting class", "error");
+        }
+      }
+    );
+  };
+
+  // Load classes initially if deputy principal
+  useEffect(() => {
+    if (isDeputyAdmin) {
+      loadAllClassesForDeputy();
+    }
+  }, [isDeputyAdmin, loadAllClassesForDeputy]);
 
   // ── Overview Tab State ────────────────────────────────────
   const [activeTab, setActiveTab] = useState("manage");

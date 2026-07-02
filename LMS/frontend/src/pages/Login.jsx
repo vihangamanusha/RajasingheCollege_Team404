@@ -57,7 +57,7 @@ export default function Login() {
             // GET USER ROLE & SUBROLE
             // =========================
             const role = res.data.role?.toUpperCase();
-            const subRole = res.data.subRole;
+            const subRole = res.data.subRole?.trim();
             console.log("USER ROLE:", role, "SUBROLE:", subRole);
 
             // =========================
@@ -66,11 +66,11 @@ export default function Login() {
             if (role === "ADMIN" || role === "ROLE_ADMIN") {
                 navigate("/admin");
             } else if (role === "TEACHER" || role === "ROLE_TEACHER") {
-                if (subRole && subRole.startsWith("Section Head")) {
+                if (subRole && subRole.toLowerCase().startsWith("section head")) {
                     navigate("/section-head");
-                } else if (subRole && subRole === "Deputy Principal (Development)") {
+                } else if (subRole && subRole.toLowerCase().includes("development")) {
                     navigate("/deputy-principal-dev");
-                } else if (subRole && (subRole.startsWith("Deputy Principal") || subRole.startsWith("Vice Principal"))) {
+                } else if (subRole && (subRole.toLowerCase().includes("deputy principal") || subRole.toLowerCase().includes("vice principal") || subRole.toLowerCase().includes("administrative"))) {
                     navigate("/deputy-principal");
                 } else {
                     navigate("/teacher");

@@ -9,6 +9,7 @@ public class TeacherMarks {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "mark_id")
     private int markId;
 
     @Column(name="student_id",nullable = false)
