@@ -15,7 +15,7 @@ import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import "./SectionHeadDashboard.css";
 import schoolLogo from "../assets/school-logo.jpeg";
-import AdminClassManagement from "./AdminClassManagement";
+import SectionHeadClassManagement from "./SectionHeadClassManagement";
 import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
 
 export default function SectionHeadDashboard() {
@@ -363,7 +363,7 @@ export default function SectionHeadDashboard() {
                         </>
                     )}
 
-                    {activeTab === "classes" && <AdminClassManagement />}
+                    {activeTab === "classes" && <SectionHeadClassManagement />}
                     {activeTab === "reports" && <AdminAcademicAnalytics />}
                 </div>
             </div>

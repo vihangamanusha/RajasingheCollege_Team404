@@ -327,6 +327,15 @@ public class ClassManagementService {
     public Map<String, Object> toggleDevEnabled(String classId) {
         ClassEntity classEntity = classRepository.findById(classId)
                 .orElseThrow(() -> new RuntimeException("Class not found: " + classId));
+        
+        // If class is currently enabled and we want to disable it
+        if (classEntity.isDevEnabled()) {
+            long subjectCount = studentSubjectRepository.findByClassId(classId).size();
+            if (subjectCount > 0) {
+                throw new RuntimeException("Cannot disable class. Remove all assigned subjects first.");
+            }
+        }
+        
         classEntity.setDevEnabled(!classEntity.isDevEnabled());
         classRepository.save(classEntity);
 
@@ -345,6 +354,15 @@ public class ClassManagementService {
     public Map<String, Object> toggleSecEnabled(String classId) {
         ClassEntity classEntity = classRepository.findById(classId)
                 .orElseThrow(() -> new RuntimeException("Class not found: " + classId));
+        
+        // If class is currently enabled and we want to disable it
+        if (classEntity.isSecEnabled()) {
+            long studentCount = studentRepository.findByClassEntityClassId(classId).size();
+            if (studentCount > 0) {
+                throw new RuntimeException("Cannot disable class. Remove all assigned students first.");
+            }
+        }
+        
         classEntity.setSecEnabled(!classEntity.isSecEnabled());
         classRepository.save(classEntity);
 

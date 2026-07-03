@@ -41,6 +41,7 @@ public class ClassManagementController {
             m.put("year", c.getYear());
             m.put("assignmentOpen", c.isAssignmentOpen());
             m.put("devEnabled", c.isDevEnabled());
+            m.put("secEnabled", c.isSecEnabled());
             m.put("dobFrom", c.getDobFrom() != null ? c.getDobFrom().toString() : null);
             m.put("dobTo", c.getDobTo() != null ? c.getDobTo().toString() : null);
             m.put("teacherName", c.getTeacher() != null ? c.getTeacher().getFullName() : null);
@@ -193,6 +194,18 @@ public class ClassManagementController {
     public ResponseEntity<Map<String, Object>> toggleDevEnabled(@PathVariable String classId) {
         try {
             return ResponseEntity.ok(classManagementService.toggleDevEnabled(classId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    // ─────────────────────────────────────────
+    // PUT toggle class sec enabled flag
+    // ─────────────────────────────────────────
+    @PutMapping("/{classId}/toggle-sec")
+    public ResponseEntity<Map<String, Object>> toggleSecEnabled(@PathVariable String classId) {
+        try {
+            return ResponseEntity.ok(classManagementService.toggleSecEnabled(classId));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

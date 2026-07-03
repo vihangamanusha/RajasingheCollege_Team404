@@ -20,6 +20,8 @@ export default function DeputyPrincipalDevClassManagement() {
   const [curriculumSubjects, setCurriculumSubjects] = useState([]);
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
   const [selectedSubjects, setSelectedSubjects] = useState([]);
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
+  const [subjectToRemove, setSubjectToRemove] = useState(null);
   
   // Teacher selection states for a specific subject
   const [activeSubjectForTeacher, setActiveSubjectForTeacher] = useState(null); // subject object
@@ -141,21 +143,22 @@ export default function DeputyPrincipalDevClassManagement() {
   };
 
   // Remove subject from class
-  const handleRemoveSubject = async (subjectId, subjectName) => {
-    if (!selectedClass) return;
-    if (!window.confirm(`Are you sure you want to remove "${subjectName}" from this class?`)) return;
+  const handleRemoveSubject = async () => {
+    if (!selectedClass || !subjectToRemove) return;
     try {
-      const res = await fetch(`${API}/api/classes/${selectedClass.classId}/subjects/${subjectId}`, {
+      const res = await fetch(`${API}/api/classes/${selectedClass.classId}/subjects/${subjectToRemove.id}`, {
         method: "DELETE",
         headers: authHeaders()
       });
       const data = await res.json();
       if (res.ok) {
         showNotification("Subject removed successfully");
-        if (showTeacherDropdownId === subjectId) {
+        if (showTeacherDropdownId === subjectToRemove.id) {
           setShowTeacherDropdownId(null);
           setActiveSubjectForTeacher(null);
         }
+        setShowRemoveModal(false);
+        setSubjectToRemove(null);
         await loadClassSubjects(selectedClass.classId);
       } else {
         showNotification(data.error || "Failed to remove subject", "error");
@@ -315,24 +318,60 @@ export default function DeputyPrincipalDevClassManagement() {
               <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "700", color: "#0f172a" }}>
                 Class Subjects: {selectedClass.className}
               </h3>
-              <button
-                onClick={() => setShowAddSubjectModal(true)}
-                style={{
-                  padding: "8px 14px",
-                  backgroundColor: "#3b82f6",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  fontSize: "13px",
-                  fontWeight: "600",
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "4px"
-                }}
-              >
-                <Plus size={16} /> Add Subject
-              </button>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(`${API}/api/classes/${selectedClass.classId}/toggle-sec`, {
+                        method: "PUT",
+                        headers: authHeaders()
+                      });
+                      if (res.ok) {
+                        const data = await res.json();
+                        const updatedCls = { ...selectedClass, secEnabled: data.secEnabled };
+                        setSelectedClass(updatedCls);
+                        setClasses(classes.map(c => c.classId === selectedClass.classId ? updatedCls : c));
+                        showNotification(data.message);
+                      }
+                    } catch {
+                      showNotification("Failed to toggle Section Head visibility", "error");
+                    }
+                  }}
+                  style={{
+                    padding: "8px 14px",
+                    backgroundColor: selectedClass.secEnabled ? "#ef4444" : "#10b981",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px"
+                  }}
+                >
+                  {selectedClass.secEnabled ? "Disable for Section Head" : "Enable for Section Head"}
+                </button>
+                <button
+                  onClick={() => setShowAddSubjectModal(true)}
+                  style={{
+                    padding: "8px 14px",
+                    backgroundColor: "#3b82f6",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "8px",
+                    fontSize: "13px",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px"
+                  }}
+                >
+                  <Plus size={16} /> Add Subject
+                </button>
+              </div>
             </div>
 
             {/* List of class subjects */}
@@ -355,7 +394,10 @@ export default function DeputyPrincipalDevClassManagement() {
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
                       <span style={{ fontSize: "15px", fontWeight: "700", color: "#1e293b" }}>{subj.subjectName}</span>
                       <button
-                        onClick={() => handleRemoveSubject(subj.subjectId, subj.subjectName)}
+                        onClick={() => {
+                          setSubjectToRemove({ id: subj.subjectId, name: subj.subjectName });
+                          setShowRemoveModal(true);
+                        }}
                         style={{ background: "none", border: "none", color: "#ef4444", cursor: "pointer" }}
                         title="Remove subject"
                       >
