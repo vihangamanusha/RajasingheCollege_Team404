@@ -55,10 +55,4 @@ public class Announcement {
     public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
-
-    public void setCatego(String events) {
-    }
-
-    public void setTargetAudience(String announcementAudience) {
-    }
 }

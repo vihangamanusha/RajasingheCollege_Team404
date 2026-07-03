@@ -106,7 +106,7 @@ export default function AdminTeacherManagement() {
     // SUBJECTS + DESIGNATIONS
     // =========================================
 
-    const subjectsList = [//List of available subjects
+    const [subjectsList, setSubjectsList] = useState([//List of available subjects
         "Mathematics",
         "Science",
         "English",
@@ -115,7 +115,24 @@ export default function AdminTeacherManagement() {
         "Commerce",
         "Art",
         "Music"
-    ];
+    ]);
+
+    useEffect(() => {
+        const fetchCurriculumSubjects = async () => {
+            try {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/curriculum-subjects`);
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        setSubjectsList(data);
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch curriculum subjects:", err);
+            }
+        };
+        fetchCurriculumSubjects();
+    }, []);
 
     const designationList = [//list of teacher roles
         "Subject Teacher",
@@ -571,8 +588,11 @@ export default function AdminTeacherManagement() {
         "Deputy Principal (Development)"
     ];
 
-    const editDesignations = allDesignationsList.filter(role => 
-        role === "Subject Teacher" || 
+    // The currently logged-in user's own sub-role – they cannot reassign this designation
+    const loggedInSubRole = localStorage.getItem("subRole") || "";
+
+    const editDesignations = allDesignationsList.filter(role =>
+        role === "Subject Teacher" ||
         (editFormData && editFormData.subRole === role) ||
         !occupiedRoles.includes(role)
     );
@@ -854,7 +874,16 @@ export default function AdminTeacherManagement() {
                                     }
                                 >
                                     {editDesignations.map((role) => (
-                                        <option key={role} value={role}>{role}</option>
+                                        <option
+                                            key={role}
+                                            value={role}
+                                            disabled={
+                                                loggedInSubRole &&
+                                                role.toLowerCase() === loggedInSubRole.toLowerCase()
+                                            }
+                                        >
+                                            {role}{loggedInSubRole && role.toLowerCase() === loggedInSubRole.toLowerCase() ? " (cannot change)" : ""}
+                                        </option>
                                     ))}
                                 </select>
 

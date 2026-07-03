@@ -8,6 +8,7 @@ public class CreateClassRequest {
     private int year;
     private LocalDate dobFrom;
     private LocalDate dobTo;
+    private String teacherId;
 
     public String getGrade() { return grade; }
     public void setGrade(String grade) { this.grade = grade; }
@@ -23,4 +24,7 @@ public class CreateClassRequest {
 
     public LocalDate getDobTo() { return dobTo; }
     public void setDobTo(LocalDate dobTo) { this.dobTo = dobTo; }
+
+    public String getTeacherId() { return teacherId; }
+    public void setTeacherId(String teacherId) { this.teacherId = teacherId; }
 }

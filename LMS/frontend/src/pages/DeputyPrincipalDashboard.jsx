@@ -10,7 +10,10 @@ import {
     BookOpen,
     Layers,
     FileText,
-    Activity
+    Activity,
+    GraduationCap,
+    Wrench,
+    Briefcase
 } from "lucide-react";
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
@@ -18,6 +21,9 @@ import schoolLogo from "../assets/school-logo.jpeg";
 import AdminClassManagement from "./AdminClassManagement";
 import Announcement from "./Announcements";
 import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
+import AdminTeacherManagement from "./AdminTeacherManagement";
+import AdminTechOfficerManagement from "./AdminTechOfficerManagement";
+import AdminNonAcademicManagement from "./AdminNonAcademicManagement";
 
 
 export default function DeputyPrincipalDashboard() {
@@ -90,6 +96,22 @@ export default function DeputyPrincipalDashboard() {
                     {/* Classes */}
                     <div className={`nav-item ${activeTab === "classes" ? "active" : ""}`} onClick={() => setActiveTab("classes")}>
                         <FileSpreadsheet className="nav-icon" /> Classes
+                    </div>
+
+
+                    {/* Teacher */}
+                    <div className={`nav-item ${activeTab === "teachers" ? "active" : ""}`} onClick={() => setActiveTab("teachers")}>
+                        <UserCheck className="nav-icon" /> Teacher
+                    </div>
+
+                    {/* Technical Officer */}
+                    <div className={`nav-item ${activeTab === "tech-officers" ? "active" : ""}`} onClick={() => setActiveTab("tech-officers")}>
+                        <Wrench className="nav-icon" /> Technical Officer
+                    </div>
+
+                    {/* Non Academic */}
+                    <div className={`nav-item ${activeTab === "non-academic" ? "active" : ""}`} onClick={() => setActiveTab("non-academic")}>
+                        <Briefcase className="nav-icon" /> Non Academic
                     </div>
 
                     {/* Announcements */}
@@ -297,6 +319,9 @@ export default function DeputyPrincipalDashboard() {
                     )}
 
                     {activeTab === "classes" && <AdminClassManagement />}
+                    {activeTab === "teachers" && <AdminTeacherManagement />}
+                    {activeTab === "tech-officers" && <AdminTechOfficerManagement />}
+                    {activeTab === "non-academic" && <AdminNonAcademicManagement />}
                     {activeTab === "announcements" && <Announcement />}
                     {activeTab === "reports" && <AdminAcademicAnalytics />}
                 </div>

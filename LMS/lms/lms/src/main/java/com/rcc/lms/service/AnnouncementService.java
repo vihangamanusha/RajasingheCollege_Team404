@@ -5,43 +5,34 @@ import com.rcc.lms.repository.AnnouncementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class AnnouncementService {
 
     @Autowired
-    private AnnouncementRepository repository;
+    private AnnouncementRepository announcementRepository;
 
-    // CREATE
-    public Announcement saveAnnouncement(Announcement announcement) {
-        return repository.save(announcement);
+    // =========================
+    // CREATE ANNOUNCEMENT
+    // =========================
+    public String createAnnouncement(Announcement announcement) {
+
+        // automatically save current date/time
+        announcement.setCreatedDate(LocalDateTime.now());
+
+        // save announcement
+        announcementRepository.save(announcement);
+
+        return "Announcement Added Successfully!";
     }
 
-    // READ ALL
+    // =========================
+    // GET ALL ANNOUNCEMENTS
+    // NEWEST FIRST
+    // =========================
     public List<Announcement> getAllAnnouncements() {
-        return repository.findAllByOrderByCreatedDateDesc();
-    }
-
-    // READ ONE
-    public Announcement getAnnouncementById(Integer id) {
-        return repository.findById(id).orElse(null);
-    }
-
-    // UPDATE
-    public Announcement updateAnnouncement(Integer id, Announcement newData) {
-
-        Announcement existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Announcement not found"));
-
-        existing.setTitle(newData.getTitle());
-        existing.setContent(newData.getContent());
-
-        return repository.save(existing);
-    }
-
-    // DELETE
-    public void deleteAnnouncement(Integer id) {
-        repository.deleteById(id);
+        return announcementRepository.findAllByOrderByCreatedDateDesc();
     }
 }

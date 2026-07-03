@@ -67,18 +67,14 @@ public class EventController {
 
             announcement.setTitle(event.getTopic());
 
-            announcement.setCatego("Events");
-
-            announcement.setTargetAudience(
-                    event.getAnnouncementAudience()
-            );
-
             announcement.setContent(
                     event.getDescription()
                             + "\nDate: " + event.getDate()
                             + "\nTime: " + event.getTime()
                             + "\nVenue: " + event.getVenue()
             );
+
+            announcement.setCreatedDate(java.time.LocalDateTime.now());
 
             announcementRepository.save(announcement);
         }

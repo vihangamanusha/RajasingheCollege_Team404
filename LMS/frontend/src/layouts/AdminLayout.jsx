@@ -1,6 +1,6 @@
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import {
-    FiGrid, FiUsers, FiBook, FiLogOut, FiMessageSquare, FiBarChart2
+    FiGrid, FiUsers, FiBook, FiLogOut, FiMessageSquare, FiBarChart2, FiBriefcase
 } from "react-icons/fi";
 import { FaChalkboardTeacher, FaUserShield } from "react-icons/fa";
 import "./AdminLayout.css";
@@ -106,6 +106,14 @@ export default function AdminLayout() {
                         onClick={() => navigate("/admin/analytics")}
                     >
                         <FiBarChart2 className="nav-icon" /> Reports
+                    </div>
+
+                    {/* Non Academic */}
+                    <div
+                        className={`nav-item ${isActive("/admin/non-academic")}`}
+                        onClick={() => navigate("/admin/non-academic")}
+                    >
+                        <FiBriefcase className="nav-icon" /> Non Academic
                     </div>
 
                 </div>

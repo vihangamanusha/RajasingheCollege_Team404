@@ -41,6 +41,15 @@ public class UserService {
     private TechnicalOfficerRepository technicalOfficerRepository;
 
     @Autowired
+    private com.rcc.lms.repository.ClassRepository classRepository;
+
+    @Autowired
+    private com.rcc.lms.repository.SubjectRepository subjectRepository;
+
+    @Autowired
+    private com.rcc.lms.repository.CurriculumSubjectRepository curriculumSubjectRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;//used to encrypt password
 
     @Autowired
@@ -94,10 +103,18 @@ public class UserService {
 
     public DashboardStatsDTO getAdminDashboardStats() {
         DashboardStatsDTO stats = new DashboardStatsDTO();
-        stats.setTotalStudents(userRepository.countByRoleAndStatusNot("ROLE_STUDENT", "DELETED"));//count the student
-        stats.setTotalTeachers(userRepository.countByRoleAndStatusNot("ROLE_TEACHER", "DELETED"));//count the teacher
-        stats.setTotalClasses(42);
-        stats.setTotalSubjects(24);
+        long totalStudents = studentRepository.findAll().stream()
+                .filter(s -> s.getUser() != null && !"DELETED".equals(s.getUser().getStatus()))
+                .count();
+        long totalTeachers = teacherRepository.findAll().stream()
+                .filter(t -> t.getUser() != null && !"DELETED".equals(t.getUser().getStatus()))
+                .count();
+
+        stats.setTotalStudents(totalStudents);
+        stats.setTotalTeachers(totalTeachers);
+        stats.setTotalClasses((int) classRepository.count());
+        
+        stats.setTotalSubjects((int) curriculumSubjectRepository.countByStatus("ACTIVE"));
 
         List<RecentActivityDTO> activityList = userRepository.findTop5ByStatusNotOrderByCreatedDateDescUserIdDesc("DELETED")
                 .stream()
