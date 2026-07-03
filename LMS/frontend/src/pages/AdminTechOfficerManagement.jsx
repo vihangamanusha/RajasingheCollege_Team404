@@ -42,7 +42,7 @@ export default function AdminTechOfficerManagement() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8080/admin/users/search?role=ROLE_TECHNICAL_OFFICER&term=${searchTerm}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/search?role=ROLE_TECHNICAL_OFFICER&term=${searchTerm}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -85,7 +85,7 @@ export default function AdminTechOfficerManagement() {
         // 2. Fetch the rest of their profile from the database
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/tech/${officer.username}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/tech/${officer.username}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -186,7 +186,7 @@ export default function AdminTechOfficerManagement() {
 
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/tech/update/${editFormData.username}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/tech/update/${editFormData.username}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -236,7 +236,7 @@ export default function AdminTechOfficerManagement() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8080/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionReason)}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionReason)}`,
                 {
                     method: "DELETE",
                     headers: { Authorization: `Bearer ${token}` }

@@ -45,7 +45,7 @@ export function LiveStream() {
     try {
 
       const res = await fetch(
-        "http://localhost:8080/api/livestreams"
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams`
       );
 
       const data = await res.json();

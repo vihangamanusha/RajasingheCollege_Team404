@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FileText, Video, Download, Loader2, BookOpen } from "lucide-react";
 
-const BASE_URL = "http://localhost:8080/api/student";
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/student`;
 
 export default function StudentMaterials() {
   const [docs, setDocs]       = useState([]);
@@ -99,7 +99,7 @@ export default function StudentMaterials() {
                     {/* Download Button */}
                     <button
                         className="dl-btn"
-                        onClick={() => window.open(`http://localhost:8080/files/download/${doc.filePath}`, "_blank")}
+                        onClick={() => window.open(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/files/download/${doc.filePath}`, "_blank")}
                         title="Download File"
                     >
                       <Download size={18} />

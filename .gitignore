@@ -11,6 +11,9 @@ yarn-error.log*
 # dotenv environment variables
 .env
 
+# Docker MySQL data (bind mount)
+mysql-data/
+
 # React build
 build/
 

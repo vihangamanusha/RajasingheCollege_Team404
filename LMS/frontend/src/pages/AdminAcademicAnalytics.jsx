@@ -33,7 +33,7 @@ export default function AdminAcademicAnalytics() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8080/admin/reports/marks?year=${year}&term=${term}&section=${selectedClass}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/reports/marks?year=${year}&term=${term}&section=${selectedClass}`,
                 {
                     headers: token ? { Authorization: `Bearer ${token}` } : {}
                 }

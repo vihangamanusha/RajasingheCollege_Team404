@@ -44,7 +44,7 @@ export default function Dashboard() {
     // 5. Function to fetch live data from your AdminController endpoint
     const fetchDashboardStats = async (token) => {//becuase api call take time so we use async
         try {
-            const response = await fetch("http://localhost:8080/admin/dashboard/stats", {//frontend send request.
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/dashboard/stats`, {//frontend send request.
                 headers: { "Authorization": `Bearer ${token}` }
             });
             if (response.ok) {
@@ -74,7 +74,7 @@ export default function Dashboard() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8080/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
                 {
                     method: "PUT",
                     headers: {

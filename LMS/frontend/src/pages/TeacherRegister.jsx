@@ -23,7 +23,7 @@ export default function TeacherRegister() {
     useEffect(() => {
         const fetchOccupied = async () => {
             try {
-                const res = await fetch("http://localhost:8080/admin/users/occupied-designations", {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/occupied-designations`, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -202,7 +202,7 @@ export default function TeacherRegister() {
         if (validateStep()) {
             setMessage("");
             try {
-                const res = await fetch("http://localhost:8080/admin/users/generate-id?role=ROLE_TEACHER", {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/generate-id?role=ROLE_TEACHER`, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -238,7 +238,7 @@ export default function TeacherRegister() {
             };
 
             const res = await fetch(//Send data to backend,res-This stores the response from backend
-                "http://localhost:8080/admin/users/teacher/create",
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/teacher/create`,
                 {
                     method: "POST",
                     headers: {
@@ -273,7 +273,7 @@ export default function TeacherRegister() {
 
                 // Refresh occupied roles
                 try {
-                    const resOcc = await fetch("http://localhost:8080/admin/users/occupied-designations", {
+                    const resOcc = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/occupied-designations`, {
                         headers: {
                             Authorization: "Bearer " + localStorage.getItem("token")
                         }

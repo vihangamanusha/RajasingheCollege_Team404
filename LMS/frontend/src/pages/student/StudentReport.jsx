@@ -5,7 +5,7 @@ import {
   Loader2, CheckCircle, FileText, BarChart2,
 } from "lucide-react";
 
-const BASE_URL = "http://localhost:8080/api/student";
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/student`;
 
 export default function StudentReport({ studentId }) {
   const [report, setReport]   = useState(null);

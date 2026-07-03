@@ -125,7 +125,7 @@ export default function TechRegister() {
         if (validateStep()) {
             setMessage("");
             try {
-                const res = await fetch("http://localhost:8080/admin/users/generate-id?role=ROLE_TECHNICAL_OFFICER", {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/generate-id?role=ROLE_TECHNICAL_OFFICER`, {
                     headers: {
                         Authorization: "Bearer " + localStorage.getItem("token")
                     }
@@ -158,7 +158,7 @@ export default function TechRegister() {
         if (!validateStep()) return;
 
         try {//Send data to backend,res-This stores the response from backend
-            const res = await fetch("http://localhost:8080/admin/users/tech/create", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/tech/create`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

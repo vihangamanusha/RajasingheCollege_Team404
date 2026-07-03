@@ -21,7 +21,7 @@ export default function ManageUsers() {
             const token = localStorage.getItem("token");
             // Calling the new search API we built in Spring Boot
             const response = await fetch(
-                `http://localhost:8080/admin/users/search?role=${activeTab}&term=${searchTerm}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/search?role=${activeTab}&term=${searchTerm}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,

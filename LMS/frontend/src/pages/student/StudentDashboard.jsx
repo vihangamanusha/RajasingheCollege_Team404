@@ -3,7 +3,7 @@ import axios from "axios";
 import { Award, ClipboardList, Download, BookOpen, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const BASE_URL = "http://localhost:8080/api/student";
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/student`;
 
 export default function StudentDashboard({ studentId }) {
   const [student, setStudent] = useState(null);

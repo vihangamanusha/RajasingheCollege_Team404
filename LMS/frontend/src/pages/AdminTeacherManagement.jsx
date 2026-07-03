@@ -31,7 +31,7 @@ export default function AdminTeacherManagement() {
     const fetchOccupied = async () => {
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:8080/admin/users/occupied-designations", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/occupied-designations`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -138,7 +138,7 @@ export default function AdminTeacherManagement() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(//secnd request to backend
-                `http://localhost:8080/admin/users/search?role=ROLE_TEACHER&term=${searchTerm}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/search?role=ROLE_TEACHER&term=${searchTerm}`,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -220,7 +220,7 @@ export default function AdminTeacherManagement() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `http://localhost:8080/admin/users/teacher/${teacher.username}`,//call backend controller.
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/teacher/${teacher.username}`,//call backend controller.
                 {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -423,7 +423,7 @@ export default function AdminTeacherManagement() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `http://localhost:8080/admin/users/teacher/update/${editFormData.username}`,//call controller
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/teacher/update/${editFormData.username}`,//call controller
                 {
                     method: "PUT",
 
@@ -520,7 +520,7 @@ export default function AdminTeacherManagement() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8080/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionReason)}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionReason)}`,
                 {
                     method: "DELETE",
                     headers: {

@@ -17,7 +17,7 @@ export default function AdminAnnouncements() {
 
   const [editingId, setEditingId] = useState(null);
 
-  const API_URL = "http://localhost:8080/api/announcements";
+  const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`;
   //backend endpoint
 
   useEffect(() => {

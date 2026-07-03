@@ -55,7 +55,7 @@ export default function DeputyPrincipalDevDashboard() {
 
     const fetchStats = async (token) => {
         try {
-            const response = await fetch("http://localhost:8080/admin/dashboard/stats", {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/dashboard/stats`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.ok) {

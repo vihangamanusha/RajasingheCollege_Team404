@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/api/events";
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/events`;
 
 //get all events
 export const getAllEvents = async () => {

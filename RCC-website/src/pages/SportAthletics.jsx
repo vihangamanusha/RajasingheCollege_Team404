@@ -129,7 +129,7 @@ export function SportAthletics() {
                 src={
                   item.image.startsWith("http")
                     ? item.image
-                    : `http://localhost:8080${item.image}`
+                    : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${item.image}`
                 }
                 alt={item.topic}
               />

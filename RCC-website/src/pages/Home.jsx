@@ -182,7 +182,7 @@ const totalPages = Math.ceil(events.length / eventsPerPage);
                     news.image
                       ? news.image.startsWith("http")
                         ? news.image
-                        : `http://localhost:8080${
+                        : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${
                             news.image.startsWith("/")
                               ? news.image
                               : "/" + news.image

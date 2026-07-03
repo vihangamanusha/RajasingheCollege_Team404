@@ -17,7 +17,7 @@ export function News() {
 
   const fetchNews = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/news");
+      const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/news`);
 
       if (!response.ok) {
         throw new Error("Failed to fetch news");
@@ -102,7 +102,7 @@ export function News() {
                           news.image
                             ? news.image.startsWith("http")
                               ? news.image
-                              : `http://localhost:8080/${news.image.replace(/^\/+/, "")}`
+                              : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/${news.image.replace(/^\/+/, "")}`
                             : "https://via.placeholder.com/800x600?text=No+Image"
                         }
                         alt={news.title}

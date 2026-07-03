@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { getBySportType } from "../api/sportApi";
-import VolleyballImage from "../assets/volleyballs.jpg";
+import VolleyballImage from "../assets/volleyballs.JPG";
 import newsImage from "../assets/news.jpeg";
 import "../styles/styles.css";
 
@@ -137,7 +137,7 @@ export function SportVolleyball() {
                 src={
                   item.image.startsWith("http")
                     ? item.image
-                    : `http://localhost:8080${item.image}`
+                    : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${item.image}`
                 }
                 alt={item.topic}
               />

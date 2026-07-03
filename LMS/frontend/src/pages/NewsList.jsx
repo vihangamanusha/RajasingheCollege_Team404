@@ -166,7 +166,7 @@ const [achievementForm, setAchievementForm] = useState({
     try {
 
       const response = await fetch(
-        "http://localhost:8080/api/livestreams"
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams`
       );
 
       const data = await response.json();
@@ -306,7 +306,7 @@ const [achievementForm, setAchievementForm] = useState({
     formData.append("file", file);
 
     const res = await fetch(
-      "http://localhost:8080/api/files/upload",
+      `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/files/upload`,
       {
         method: "POST",
         body: formData,
@@ -364,7 +364,7 @@ const [achievementForm, setAchievementForm] = useState({
       const formData = new FormData();
       formData.append("file", newsForm.image);
 
-      const res = await fetch("http://localhost:8080/api/files/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/files/upload`, {
         method: "POST",
         body: formData,
       });
@@ -388,7 +388,7 @@ const [achievementForm, setAchievementForm] = useState({
 
     if (editingNewsId) {
       response = await fetch(
-        `http://localhost:8080/api/news/${editingNewsId}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/news/${editingNewsId}`,
         {
           method: "PUT",
           headers: {
@@ -398,7 +398,7 @@ const [achievementForm, setAchievementForm] = useState({
         }
       );
     } else {
-      response = await fetch("http://localhost:8080/api/news", {
+      response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/news`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -473,7 +473,7 @@ const handleDeleteNews = async (id) => {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}/start`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}/start`,
         {
           method: "PUT",
         }
@@ -496,7 +496,7 @@ const handleDeleteNews = async (id) => {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}/stop`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}/stop`,
         {
           method: "PUT",
         }
@@ -519,7 +519,7 @@ const handleDeleteNews = async (id) => {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}`,
         {
           method: "DELETE",
         }
@@ -569,7 +569,7 @@ const handleDeleteNews = async (id) => {
       if (editingId) {
 
         response = await fetch(
-          `http://localhost:8080/api/livestreams/${editingId}`,
+          `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${editingId}`,
           {
             method: "PUT",
             headers: {
@@ -582,7 +582,7 @@ const handleDeleteNews = async (id) => {
       } else {
 
         response = await fetch(
-          "http://localhost:8080/api/livestreams",
+          `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams`,
           {
             method: "POST",
             headers: {
@@ -814,7 +814,7 @@ const handleDeleteNews = async (id) => {
     article.image?.startsWith("http")
       ? article.image
       : article.image
-      ? `http://localhost:8080${article.image}`
+      ? `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${article.image}`
       : "https://via.placeholder.com/400"
   }
   alt={article.title}

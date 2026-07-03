@@ -54,7 +54,7 @@ export default function LiveStreamAdmin() {
     try {
 
       const response = await fetch(
-        "http://localhost:8080/api/livestreams"
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams`
       );
 
       const data = await response.json();
@@ -72,7 +72,7 @@ export default function LiveStreamAdmin() {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}/start`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}/start`,
         {
           method: "PUT",
         }
@@ -93,7 +93,7 @@ export default function LiveStreamAdmin() {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}/stop`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}/stop`,
         {
           method: "PUT",
         }
@@ -120,7 +120,7 @@ export default function LiveStreamAdmin() {
       if (editingId) {
 
         response = await fetch(
-          `http://localhost:8080/api/livestreams/${editingId}`,
+          `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${editingId}`,
           {
             method: "PUT",
             headers: {
@@ -133,7 +133,7 @@ export default function LiveStreamAdmin() {
       } else {
 
         response = await fetch(
-          "http://localhost:8080/api/livestreams",
+          `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams`,
           {
             method: "POST",
             headers: {
@@ -185,7 +185,7 @@ export default function LiveStreamAdmin() {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}`,
         {
           method: "DELETE",
         }

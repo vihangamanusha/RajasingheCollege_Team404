@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/api/sports";
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/sports`;
 
 export async function addSportAchievement(data) {
   const response = await fetch(BASE_URL, {

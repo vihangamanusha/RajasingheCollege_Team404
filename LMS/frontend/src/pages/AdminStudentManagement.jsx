@@ -38,7 +38,7 @@ export default function AdminStudentManagement() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8080/admin/users/search?role=ROLE_STUDENT&term=${searchTerm}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/search?role=ROLE_STUDENT&term=${searchTerm}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
@@ -71,7 +71,7 @@ export default function AdminStudentManagement() {
 
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/student/${student.username}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/student/${student.username}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -149,7 +149,7 @@ export default function AdminStudentManagement() {
         // ---------------------------------------------------------
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/student/update/${editFormData.username}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/student/update/${editFormData.username}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -187,7 +187,7 @@ export default function AdminStudentManagement() {
         setDeleteMessage({ text: "", type: "" });
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/delete/${userToDelete}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/delete/${userToDelete}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });

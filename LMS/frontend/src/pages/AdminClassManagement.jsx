@@ -14,7 +14,7 @@ import {
   FiChevronRight,
 } from "react-icons/fi";
 
-const API = "http://localhost:8080";
+const API = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}`;
 
 // Helper to get auth headers
 const authHeaders = () => {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { getBySportType } from "../api/sportApi";
-import rugbyTeamImage from "../assets/rugbypage.jpg";
+import rugbyTeamImage from "../assets/rugbypage.JPG";
 import rugbyTeam from "../assets/rugby.jpeg";
 import "../styles/styles.css";
 
@@ -132,7 +132,7 @@ export function SportRugby() {
                 src={
                   item.image.startsWith("http")
                     ? item.image
-                    : `http://localhost:8080${item.image}`
+                    : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${item.image}`
                 }
                 alt={item.topic}
               />

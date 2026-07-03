@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 @RestController
 @RequestMapping("/admin/reports")
-@CrossOrigin(origins = "http://localhost:3000") // Allows your React app to talk to the Backend
+@CrossOrigin(origins = "*")
 public class ReportController {
 
     @Autowired
