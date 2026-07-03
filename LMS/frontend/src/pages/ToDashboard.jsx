@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getNews } from "../api/newsApi";
-import "./Dashboard.css";
+import "./ToDashboard.css";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -24,7 +24,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="page dashboard-page">
+    <div className="to-dashboard-page">
       <div className="page-header">
         <div>
           <p className="page-org">Rajasinghe Central College</p>

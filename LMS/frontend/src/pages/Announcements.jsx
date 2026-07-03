@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAnnouncements, createAnnouncement } from "../services/api";
+import "./Announcements.css";
 
 export default function Announcement() {
 
@@ -43,50 +44,71 @@ export default function Announcement() {
     };
 
     return (
-        <div>
-
-            <h2>Announcements</h2>
-
-            {/* =========================
-                CREATE FORM
-            ========================= */}
-            <form onSubmit={handleSubmit}>
-                <input
-                    name="title"
-                    placeholder="Title"
-                    value={form.title}
-                    onChange={handleChange}
-                />
-                <br /><br />
-
-                <textarea
-                    name="content"
-                    placeholder="Content"
-                    value={form.content}
-                    onChange={handleChange}
-                />
-                <br /><br />
-
-                <button>Create Announcement</button>
-            </form>
-
-            <hr />
-
-            {/* =========================
-                LIST VIEW
-            ========================= */}
-            {list.map((a) => (
-                <div key={a.announcementId} style={{
-                    padding: "10px",
-                    marginBottom: "10px",
-                    background: "#eee"
-                }}>
-                    <h3>{a.title}</h3>
-                    <p>{a.content}</p>
-                    <small>{a.createdDate}</small>
+        <div className="announcement-container">
+            <div className="page-header">
+                <div className="header-text">
+                    <p className="page-org">Rajasinghe Central College</p>
+                    <h2>Announcements & Notices</h2>
+                    <p>Manage school-wide announcements for all relevant audiences.</p>
                 </div>
-            ))}
+            </div>
 
+            <div className="announcement-actions">
+                <form className="announcement-form" onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label htmlFor="title">Title</label>
+                        <input
+                            id="title"
+                            name="title"
+                            className="announcement-input"
+                            placeholder="Enter announcement title"
+                            value={form.title}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="content">Content</label>
+                        <textarea
+                            id="content"
+                            name="content"
+                            className="announcement-textarea"
+                            placeholder="Write announcement content"
+                            value={form.content}
+                            onChange={handleChange}
+                            rows={6}
+                            required
+                        />
+                    </div>
+
+                    <button type="submit" className="btn primary">Create Announcement</button>
+                </form>
+            </div>
+
+            <div className="announcement-list">
+                {list.length === 0 ? (
+                    <div className="empty-state">
+                        No announcements yet. Create one to share updates with the school.
+                    </div>
+                ) : (
+                    list.map((a) => (
+                        <div key={a.announcementId} className="announcement-card">
+                            <div className="card-content">
+                                <div className="card-header">
+                                    <div>
+                                        <h3 className="card-title">{a.title}</h3>
+                                        <p className="card-desc">{a.content}</p>
+                                    </div>
+                                </div>
+                                <div className="card-footer">
+                                    <span className="footer-item">Posted on {a.createdDate}</span>
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
     );
 }

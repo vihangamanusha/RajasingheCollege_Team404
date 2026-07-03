@@ -9,27 +9,29 @@ public class Announcement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "announcement_id")
-    private Integer announcementId;
+    private Long id;
 
-    @Column(name = "title")
     private String title;
 
-    @Column(name = "content")
+    private String category;
+
+    private String targetAudience;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
     public Announcement() {
+        this.createdAt = LocalDateTime.now();
     }
 
-    public Integer getAnnouncementId() {
-        return announcementId;
+    public Long getId() {
+        return id;
     }
 
-    public void setAnnouncementId(Integer announcementId) {
-        this.announcementId = announcementId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -40,6 +42,22 @@ public class Announcement {
         this.title = title;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getTargetAudience() {
+        return targetAudience;
+    }
+
+    public void setTargetAudience(String targetAudience) {
+        this.targetAudience = targetAudience;
+    }
+
     public String getContent() {
         return content;
     }
@@ -48,17 +66,14 @@ public class Announcement {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public void setCatego(String events) {
-    }
-
-    public void setTargetAudience(String announcementAudience) {
     }
 }

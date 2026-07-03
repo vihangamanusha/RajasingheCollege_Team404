@@ -15,36 +15,31 @@ public class AnnouncementController {
     @Autowired
     private AnnouncementService service;
 
-    // CREATE
     @PostMapping
     public Announcement createAnnouncement(@RequestBody Announcement announcement) {
         return service.saveAnnouncement(announcement);
     }
 
-    // GET ALL
     @GetMapping
     public List<Announcement> getAllAnnouncements() {
         return service.getAllAnnouncements();
     }
 
-    // GET ONE
     @GetMapping("/{id}")
-    public Announcement getAnnouncement(@PathVariable Integer id) {
+    public Announcement getAnnouncement(@PathVariable Long id) {
         return service.getAnnouncementById(id);
     }
 
-    // UPDATE
     @PutMapping("/{id}")
     public Announcement updateAnnouncement(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestBody Announcement announcement) {
 
         return service.updateAnnouncement(id, announcement);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
-    public String deleteAnnouncement(@PathVariable Integer id) {
+    public String deleteAnnouncement(@PathVariable Long id) {
 
         service.deleteAnnouncement(id);
 

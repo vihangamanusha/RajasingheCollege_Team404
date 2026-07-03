@@ -1,158 +1,147 @@
 /* Container & Layout */
 .announcement-container {
-    padding: 24px;
+    padding: 28px 32px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f8fafc; /* Light background behind cards */
+    background-color: #f3f6ff;
     min-height: 100vh;
 }
 
-/* Header Section */
 .page-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.header-text {
+    text-align: left;
+}
+
+.header-text .page-org {
+    margin: 0;
+    color: #44516a;
+    font-size: 0.92rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
 }
 
 .header-text h2 {
     margin: 0;
-    font-size: 24px;
-    font-weight: 600;
-    color: #0f172a;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #14223f;
 }
 
 .header-text p {
-    margin: 4px 0 0 0;
-    color: #64748b;
-    font-size: 14px;
+    margin: 0;
+    color: #5e6d89;
+    font-size: 1rem;
+    line-height: 1.6;
 }
 
-/* Buttons */
-.btn-primary {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    background-color: #2563eb;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+.announcement-actions {
+    background: #ffffff;
+    border: 1px solid rgba(47, 109, 255, 0.08);
+    border-radius: 28px;
+    padding: 28px;
+    margin-bottom: 28px;
+    box-shadow: 0 26px 55px rgba(31, 69, 122, 0.08);
 }
 
-.btn-primary:hover {
-    background-color: #1d4ed8;
+.announcement-form {
+    display: grid;
+    gap: 20px;
 }
 
-.btn-secondary {
-    background-color: #f1f5f9;
-    color: #334155;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: 14px;
-    cursor: pointer;
+.announcement-input,
+.announcement-textarea {
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(47, 109, 255, 0.12);
+    background: #f8fbff;
+    color: #14223f;
+    font-size: 1rem;
+    resize: vertical;
 }
 
-.btn-secondary:hover {
-    background-color: #e2e8f0;
+.announcement-input:focus,
+.announcement-textarea:focus {
+    outline: none;
+    border-color: #2f6dff;
+    box-shadow: 0 8px 25px rgba(47, 109, 255, 0.12);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1c2f55;
+}
+
+.btn.primary {
+    width: fit-content;
+    padding: 14px 24px;
+}
+
+.btn.primary:hover {
+    transform: translateY(-1px);
 }
 
 /* Announcement Cards */
 .announcement-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: grid;
+    gap: 18px;
 }
 
 .announcement-card {
-    display: flex;
     background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 20px;
-    gap: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.card-icon-wrapper {
-    flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    background-color: #eff6ff;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.card-icon {
-    color: #3b82f6;
+    border-radius: 28px;
+    padding: 28px;
+    border: 1px solid rgba(47, 109, 255, 0.08);
+    box-shadow: 0 26px 55px rgba(31, 69, 122, 0.08);
 }
 
 .card-content {
-    flex: 1;
+    display: grid;
+    gap: 18px;
 }
 
 .card-header {
     display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 8px;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .card-title {
     margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #0f172a;
-}
-
-/* Badges */
-.badge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-}
-
-.badge-important {
-    background-color: #fee2e2;
-    color: #ef4444;
-}
-
-.badge-academic {
-    background-color: #e0e7ff;
-    color: #4f46e5;
-}
-
-.badge-event {
-    background-color: #f3e8ff;
-    color: #9333ea;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #172a46;
 }
 
 .card-desc {
-    margin: 0 0 16px 0;
-    color: #475569;
-    font-size: 14px;
-    line-height: 1.5;
+    margin: 0;
+    color: #45546d;
+    line-height: 1.8;
+    font-size: 1rem;
 }
 
 .card-footer {
     display: flex;
-    gap: 24px;
-    color: #64748b;
-    font-size: 13px;
+    justify-content: flex-start;
+    gap: 12px;
+    color: #6c7a97;
+    font-size: 0.95rem;
 }
 
 .footer-item {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .empty-state {
@@ -160,8 +149,17 @@
     padding: 40px;
     color: #64748b;
     background: #ffffff;
-    border-radius: 12px;
-    border: 1px dashed #cbd5e1;
+    border-radius: 18px;
+    border: 1px dashed rgba(47, 109, 255, 0.24);
+}
+
+.card-icon-wrapper,
+.card-icon,
+.badge,
+.badge-important,
+.badge-academic,
+.badge-event {
+    display: none;
 }
 
 /* Modal Styling */
