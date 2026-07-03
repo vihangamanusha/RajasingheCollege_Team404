@@ -17,6 +17,7 @@ export function Header() {
     { name: t("nav.news"), path: "/news" },
     { name: t("nav.sports"), path: "/sports" },
     { name: t("nav.liveStream"), path: "/live-stream" },
+    { name: t("nav.Downloads"), path: "#lms" },
     { name: t("nav.contact"), path: "/contact" },
     { name: t("nav.lms"), path: "#lms" },
   ];
@@ -35,6 +36,7 @@ export function Header() {
                 src={logo}
                 alt="RRCC Logo"
                 className="logo"
+                style={{ marginLeft: "-100px" }}
               />
 
               <div className="header-title-wrapper">
