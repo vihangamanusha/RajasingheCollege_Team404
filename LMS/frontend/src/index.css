@@ -2787,22 +2787,19 @@ button {
   font-weight: 600;
 }
 
-.tab:hover {
-  background: white;
-  color: #1c2f55;
-} 
 
-.tab.active {
-  background: #ffffff;
-  color: #1c2f55;
-  box-shadow: 0 10px 24px rgba(36, 58, 119, 0.08);
-}
 
 .section-title {
   margin: 24px 0 14px;
   font-size: 1rem;
   color: #1c2f55;
   font-weight: 700;
+}
+
+.tab.active-tab {
+  background: #ffffff;
+  color: #1c2f55;
+  box-shadow: 0 10px 24px rgba(36, 58, 119, 0.08);
 }
 
 .news-list {
