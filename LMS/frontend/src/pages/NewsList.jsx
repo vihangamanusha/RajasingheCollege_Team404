@@ -138,8 +138,8 @@ const [achievementForm, setAchievementForm] = useState({
     },
 
     {
-      id: "athletics",
-      name: "Athletics",
+      id: "Other Sports",
+      name: "Other Sports",
       image:
         "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&h=600&fit=crop",
       description:

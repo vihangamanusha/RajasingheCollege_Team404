@@ -7,6 +7,29 @@ export default function FeedbackList() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    try {
+      const decoded = jwtDecode(token);
+
+      setUsername(decoded.sub);
+
+      const role = localStorage.getItem("role");
+      setUserRole(
+        role === "ROLE_TECHNICAL_OFFICER" || role === "TECHNICAL_OFFICER"
+          ? "Technical Officer"
+          : "Admin"
+      );
+    } catch (error) {
+      console.log("Invalid token");
+    }
+  }
+
+  loadFeedback();
+}, []);
+
+  useEffect(() => {
     loadFeedback();
   }, []);
 
@@ -40,6 +63,7 @@ export default function FeedbackList() {
   );
 
   return (
+    
     <div className="page feedback-page">
       <div className="page-header">
         <div>
