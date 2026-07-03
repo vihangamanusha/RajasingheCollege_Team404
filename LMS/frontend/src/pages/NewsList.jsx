@@ -1246,18 +1246,15 @@ const handleDeleteNews = async (id) => {
 
               <div>
 
-                <div className="section-label">
-                  Live Stream Management
-                </div>
+                <h1 style={{ fontSize: "22px", fontWeight: "700",marginTop:"15px",marginleft:"30px" }}>Manage Live Streams</h1>
 
-                <h2 className="section-title">
-                  Manage Live Streams
-                </h2>
+                <h2 style={{ fontSize: "16px", fontWeight: "400", color: "#64748b", marginTop:"5px" }}>Manage and broadcast live school events, ceremonies, sports, and special programs.</h2>
 
               </div>
 
               <button
                 className="btn primary"
+                style={{ marginLeft: "1000px" , marginTop: "-82px", position: "absolute",borderRadius: "10px", padding: "5px 20px",fontStyle: "normal" }}
                 onClick={() =>
                   setShowForm(true)
                 }
@@ -1408,8 +1405,26 @@ const handleDeleteNews = async (id) => {
 
             {/* STREAM LIST */}
             <div className="stream-list">
+ {streams.length === 0 ? (
 
-              {streams.map((stream) => (
+    <div className="empty-state" style={{  marginTop: "10px"}}>
+
+      <div className="empty-icon">
+        📺
+      </div>
+
+      <h3>No Live Streams Available</h3>
+
+      <p>
+        There are currently no live streams available.
+        <br />
+        Add a new live stream to get started.
+      </p>
+
+    </div>
+
+  ) : (
+              streams.map((stream) => (
 
                 <div
                   key={stream.id}
@@ -1487,36 +1502,28 @@ const handleDeleteNews = async (id) => {
 
                 </div>
 
-              ))}
-
+              ))
+            )}
+          
             </div>
           </>
         )}
+     
 
 {/* EVENTS */}
 
 {activeTab === "Events" && (
   
 
-<div className="event-page">
+<div>
 
       {/* HEADER */}
 
       <div className="event-header">
 
         <div>
-          <p className="event-school-name">
-            Rajasinghe Central College
-          </p>
-
-          <h1 className="event-main-title">
-            Upcoming Events
-          </h1>
-
-          <p className="event-subtitle">
-            Manage and display upcoming events,
-            workshops, and school functions.
-          </p>
+          <h1 style={{ fontSize: "22px", fontWeight: "700px", marginTop: "18px" }}>Manage Events</h1>
+          <p style={{ marginTop: "5px" }}>Manage and publish school events, ceremonies, and special programs.</p>
         </div>
 
         <button
@@ -1532,7 +1539,26 @@ const handleDeleteNews = async (id) => {
 
       <div className="event-card-container">
 
-        {events.map((event) => (
+  {events.length === 0 ? (
+
+    <div className="empty-state" style={{ marginTop: "25px" }}>
+
+      <div className="empty-icon">
+        📅
+      </div>
+
+      <h3>No Events Available</h3>
+
+      <p>
+        There are currently no upcoming events available.
+        <br />
+        Create a new event to keep students and staff informed.
+      </p>
+
+    </div>
+
+  ) : (
+        events.map((event) => (
 
           <div
             key={event.id}
@@ -1583,8 +1609,9 @@ const handleDeleteNews = async (id) => {
 
           </div>
 
-        ))}
-
+        ))
+      )}
+    
       </div>
 
       {/* if true show MODAL */}

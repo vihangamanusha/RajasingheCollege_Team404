@@ -3793,14 +3793,15 @@ textarea {
 }
 
 .event-add-btn{
-  background: #2563eb;
+  background: #2f6dff;
   color: white;
   border: none;
-  padding: 14px 25px;
+  padding: 19px 27px;
   border-radius: 12px;
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  margin-top: 15px;
 }
 
 .event-add-btn:hover{
@@ -3814,10 +3815,10 @@ textarea {
 }
 
 .event-card{
-  background: white;
+  background: rgb(240, 239, 239);
   border-radius: 20px;
   padding: 25px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 20px rgba(8, 2, 2, 0.08);
   transition: 0.3s;
 }
 
@@ -4197,6 +4198,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  margin-top: 70px;
 }
 
 /* =========================
@@ -4206,7 +4208,7 @@ textarea {
 .stream-card {
   display: flex;
   gap: 24px;
-  background: white;
+  background: rgba(237, 236, 236, 0.852);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
