@@ -14,8 +14,17 @@ public class StudentDocument {
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 255)
+    @Column(length = 255)
     private String filePath;
+
+    @Column(length = 20)
+    private String classId;
+
+    @Column(columnDefinition = "TEXT")
+    private String note;
+
+    @Column(name = "youtube_link", length = 255)
+    private String youtubeLink;
 
     private LocalDate uploadDate;
 
@@ -46,4 +55,13 @@ public class StudentDocument {
 
     public String getSubjectId() { return subjectId; }
     public void setSubjectId(String subjectId) { this.subjectId = subjectId; }
+
+    public String getClassId() { return classId; }
+    public void setClassId(String classId) { this.classId = classId; }
+
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
+
+    public String getYoutubeLink() { return youtubeLink; }
+    public void setYoutubeLink(String youtubeLink) { this.youtubeLink = youtubeLink; }
 }

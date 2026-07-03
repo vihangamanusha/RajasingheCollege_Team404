@@ -507,4 +507,38 @@ public class ClassManagementService {
         }
         return result;
     }
+
+    public List<Map<String, Object>> getClassesByTeacher(String teacherId) {
+        List<ClassEntity> classList = classRepository.findAll();
+        Set<ClassEntity> teacherClasses = new LinkedHashSet<>();
+        for (ClassEntity c : classList) {
+            if (c.getTeacher() != null && c.getTeacher().getTeacherId().equalsIgnoreCase(teacherId)) {
+                teacherClasses.add(c);
+            }
+        }
+        
+        List<Subject> subjects = studentSubjectRepository.findByTeacherId(teacherId);
+        for (Subject s : subjects) {
+            if (s.getClassId() != null) {
+                classRepository.findById(s.getClassId()).ifPresent(teacherClasses::add);
+            }
+        }
+
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (ClassEntity c : teacherClasses) {
+            Map<String, Object> m = toClassMap(c);
+            List<Student> students = studentRepository.findByClassEntityClassId(c.getClassId());
+            String medium = "English";
+            if (!students.isEmpty() && students.get(0).getMedium() != null) {
+                medium = students.get(0).getMedium().toString();
+            }
+            m.put("medium", medium);
+            result.add(m);
+        }
+        return result;
+    }
+
+    public List<Subject> getSubjectsByTeacher(String teacherId) {
+        return studentSubjectRepository.findByTeacherId(teacherId);
+    }
 }

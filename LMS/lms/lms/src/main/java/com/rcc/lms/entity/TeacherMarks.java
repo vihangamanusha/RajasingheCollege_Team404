@@ -20,6 +20,7 @@ public class TeacherMarks {
 
     private String term;
 
+    @Column(name = "assignment_mark", nullable = false)
     private int assignmentMark;
 
     @Column(name = "academic_year", nullable = false)

@@ -20,4 +20,14 @@ public class TeacherMarksController {
         marksService.saveMarks(marks);
         return "Marks saved successfully";
     }
+
+    @GetMapping("/class/{classId}/subject/{subjectId}/term/{term}/year/{year}")
+    public List<com.rcc.lms.entity.TeacherMarks> getMarks(
+            @PathVariable String classId,
+            @PathVariable String subjectId,
+            @PathVariable String term,
+            @PathVariable int year
+    ) {
+        return marksService.getMarks(classId, subjectId, term, year);
+    }
 }
