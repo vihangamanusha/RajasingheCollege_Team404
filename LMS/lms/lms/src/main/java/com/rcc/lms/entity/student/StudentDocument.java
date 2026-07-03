@@ -8,16 +8,16 @@ import java.time.LocalDate;
 public class StudentDocument {
 
     @Id
-    @Column(length = 20)
+    @Column(name = "document_id", length = 20)
     private String documentId;
 
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(length = 255)
+    @Column(name = "file_path", length = 255)
     private String filePath;
 
-    @Column(length = 20)
+    @Column(name = "classId", length = 20)
     private String classId;
 
     @Column(columnDefinition = "TEXT")
@@ -26,12 +26,13 @@ public class StudentDocument {
     @Column(name = "youtube_link", length = 255)
     private String youtubeLink;
 
+    @Column(name = "upload_date")
     private LocalDate uploadDate;
 
-    @Column(length = 20)
+    @Column(name = "teacher_id", length = 20)
     private String teacherId;
 
-    @Column(length = 20)
+    @Column(name = "subject_id", length = 20)
     private String subjectId;
 
     // Constructors
