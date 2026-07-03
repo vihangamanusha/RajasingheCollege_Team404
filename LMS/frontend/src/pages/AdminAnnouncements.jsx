@@ -362,6 +362,9 @@ export default function AdminAnnouncements() {
                   value={formData.title}
                   onChange={handleChange}
                   required
+                  style={{
+                         width: "550px",
+                  }}
                 />
                 <br />
                 <select
@@ -396,12 +399,16 @@ export default function AdminAnnouncements() {
                 value={formData.content}
                 onChange={handleChange}
                 required
+                
               />
               <div className="modalActions">
                 <button
                   type="button"
                   className="cancelBtn"
                   onClick={() => setShowModal(false)}
+                  style={{
+                 
+                }}
                 >
                   Cancel
                 </button>
