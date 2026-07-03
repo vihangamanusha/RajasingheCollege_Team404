@@ -583,13 +583,15 @@ export default function AdminClassManagement() {
   const grades = ["6", "7", "8", "9", "10", "11", "12", "13"];
   const sections = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
 
+  const allowedGrades = ["6", "7", "8", "9", "10", "11"];
   const filteredAllClasses = allClasses.filter(c => {
+    const gradeAllowed = allowedGrades.includes(c.grade);
     const matchesGrade = selectedReadOnlyGrade === "All" || c.grade === selectedReadOnlyGrade;
-    const matchesSearch = adminSearch === "" || 
+    const matchesSearch = adminSearch === "" ||
       `grade ${c.grade}-${c.className}`.toLowerCase().includes(adminSearch.toLowerCase()) ||
       c.className?.toLowerCase().includes(adminSearch.toLowerCase()) ||
       c.teacherName?.toLowerCase().includes(adminSearch.toLowerCase());
-    return matchesGrade && matchesSearch;
+    return gradeAllowed && matchesGrade && matchesSearch;
   });
 
   if (isAdmin) {
@@ -615,7 +617,7 @@ export default function AdminClassManagement() {
 
         {/* GRADE TABS SCROLLER */}
         <div className="acm-readonly-grade-tabs" style={{ display: "flex", gap: "10px", marginBottom: "20px", overflowX: "auto", paddingBottom: "10px" }}>
-          {["All", "6", "7", "8", "9", "10", "11", "12", "13"].map((g) => (
+          {["All", "6", "7", "8", "9", "10", "11"].map((g) => (
             <button
               key={g}
               className={`acm-readonly-grade-tab ${selectedReadOnlyGrade === g ? "acm-readonly-grade-tab--active" : ""}`}
@@ -678,7 +680,7 @@ export default function AdminClassManagement() {
                       <div className="acm-readonly-card-header">
                         <div className="acm-readonly-class-icon"><FiBook /></div>
                         <div>
-                          <h3>Grade {cls.grade}-{cls.className}</h3>
+                          <h3>Grade {cls.className}</h3>
                           <span className="acm-readonly-class-year">Year {cls.year}</span>
                         </div>
                       </div>
@@ -691,16 +693,10 @@ export default function AdminClassManagement() {
                         </div>
                         <div className="acm-readonly-info-row">
                           <span className="acm-readonly-info-label">Students:</span>
-                          <span className="acm-readonly-info-val">{cls.studentCount ?? 0} enrolled</span>
+                          <span className="acm-readonly-info-val">
+                            {isSelected ? selectedClassRoster.length : (cls.studentCount ?? 0)} enrolled
+                          </span>
                         </div>
-                      </div>
-                      <div className="acm-readonly-card-footer">
-                        <span className={`acm-status-pill ${cls.secEnabled ? "acm-status-pill--open" : ""}`}>
-                          {cls.secEnabled ? "Roster Finalized" : "Roster Open"}
-                        </span>
-                        <span className={`acm-status-pill ${cls.devEnabled ? "acm-status-pill--open" : ""}`}>
-                          {cls.devEnabled ? "Dev Mode" : "Normal"}
-                        </span>
                       </div>
                     </div>
                   );
@@ -721,7 +717,7 @@ export default function AdminClassManagement() {
               <div className="acm-readonly-details-card">
                 {/* Details Header */}
                 <div className="acm-readonly-details-header">
-                  <h2>Grade {selectedReadOnlyClass.grade}-{selectedReadOnlyClass.className}</h2>
+                  <h2>Grade {selectedReadOnlyClass.className}</h2>
                   <p>Year {selectedReadOnlyClass.year} &nbsp;·&nbsp; Class Teacher: <strong>{selectedReadOnlyClass.teacherName || "Not Assigned"}</strong></p>
                 </div>
 

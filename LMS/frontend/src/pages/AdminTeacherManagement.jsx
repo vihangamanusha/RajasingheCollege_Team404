@@ -588,8 +588,11 @@ export default function AdminTeacherManagement() {
         "Deputy Principal (Development)"
     ];
 
-    const editDesignations = allDesignationsList.filter(role => 
-        role === "Subject Teacher" || 
+    // The currently logged-in user's own sub-role – they cannot reassign this designation
+    const loggedInSubRole = localStorage.getItem("subRole") || "";
+
+    const editDesignations = allDesignationsList.filter(role =>
+        role === "Subject Teacher" ||
         (editFormData && editFormData.subRole === role) ||
         !occupiedRoles.includes(role)
     );
@@ -871,7 +874,16 @@ export default function AdminTeacherManagement() {
                                     }
                                 >
                                     {editDesignations.map((role) => (
-                                        <option key={role} value={role}>{role}</option>
+                                        <option
+                                            key={role}
+                                            value={role}
+                                            disabled={
+                                                loggedInSubRole &&
+                                                role.toLowerCase() === loggedInSubRole.toLowerCase()
+                                            }
+                                        >
+                                            {role}{loggedInSubRole && role.toLowerCase() === loggedInSubRole.toLowerCase() ? " (cannot change)" : ""}
+                                        </option>
                                     ))}
                                 </select>
 

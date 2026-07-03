@@ -280,6 +280,7 @@ public class ClassManagementService {
         m.put("fullName", s.getFullName());
         m.put("dateOfBirth", s.getDateOfBirth() != null ? s.getDateOfBirth().toString() : null);
         m.put("medium", s.getMedium() != null ? s.getMedium().toString() : null);
+        m.put("contactNumber", s.getContactNumber());
         m.put("classId", s.getClassEntity() != null ? s.getClassEntity().getClassId() : null);
         m.put("className", s.getClassEntity() != null ? s.getClassEntity().getClassName() : null);
         return m;
