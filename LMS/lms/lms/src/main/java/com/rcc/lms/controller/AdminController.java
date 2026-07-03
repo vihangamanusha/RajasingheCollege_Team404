@@ -39,7 +39,6 @@ public class AdminController {
     // =========================================================
     // USER REGISTRATION
     // =========================================================
-/*
     @PostMapping("/users/create")
     public ResponseEntity<String> createStudent(@RequestBody StudentRegistrationRequest request) {//front send json, Spring converts JSON → Java object.
         try {
@@ -52,7 +51,7 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-*/
+
     @PostMapping("/users/teacher/create")
     public ResponseEntity<String> createTeacher(@RequestBody TeacherRegistrationRequest request) {//json to java object
         try {
@@ -104,7 +103,6 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-/*
     @GetMapping("/users/student/{username}")
     public ResponseEntity<?> getStudentProfile(@PathVariable String username) {
         try {
@@ -132,7 +130,7 @@ public class AdminController {
             return ResponseEntity.badRequest().body("Error: " + e.getMessage());
         }
     }
-*/
+
     @GetMapping("/users/teacher/{username}")
     public ResponseEntity<?> getTeacherProfile(@PathVariable String username) {
         try {

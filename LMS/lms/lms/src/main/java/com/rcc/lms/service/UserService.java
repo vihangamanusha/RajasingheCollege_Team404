@@ -116,7 +116,6 @@ public class UserService {
     // ==============================================================
     // REGISTER USER WIZARDS WITH UNIQUENESS CHECKS
     // ==============================================================
-/*
     @Transactional//connect with the two tables, (multiple tables)
     public String registerNewStudent(StudentRegistrationRequest request) {
         // 1. Uniqueness Checks
@@ -150,11 +149,11 @@ public class UserService {
         newStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
         newStudent.setContactNumber(request.getContactNumber());
         newStudent.setUser(newUser);
-        StudentRepository.save(student);
+        studentRepository.save(newStudent);
 
         return "Student successfully registered!";
     }
-*/
+
     @Transactional//connect with the two tables, (multiple tables)
     public String registerNewTeacher(TeacherRegistrationRequest request) {
         // 1. Check for existing IDs/Users to prevent duplicates
@@ -252,7 +251,6 @@ public class UserService {
         }
         return userRepository.searchActiveUsersByRoleAndTerm(role, searchTerm);
     }
-/*
     public Student getStudentProfile(String username) {//get student profile by username
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {//find student profile by id
@@ -285,7 +283,7 @@ public class UserService {
         }
         return "Student profile updated successfully!";
     }
-*/
+
     public Teacher getTeacherProfile(String username) {
         User user = userRepository.findByUsername(username).orElse(null);
         if (user != null) {
