@@ -1,33 +1,27 @@
+import { useEffect, useState } from "react";
 import { FileText, Download, FolderOpen } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { useLanguage } from "../contexts/LanguageContext";
+import { getDocuments } from "../api/documentApi";
 import downloadBanner from "../assets/volleyball.jpeg";
 
 export function Downloads() {
   const { t } = useLanguage();
 
-  const documents = [
-    {
-      title: "Research Application Form",
-      description: "Application form for student research projects.",
-      file: "/documents/research-application.pdf",
-    },
-    {
-      title: "Student Admission Form",
-      description: "Official admission application form.",
-      file: "/documents/admission-form.pdf",
-    },
-    {
-      title: "Sports Registration Form",
-      description: "Registration form for school sports activities.",
-      file: "/documents/sports-registration.pdf",
-    },
-    {
-      title: "Scholarship Application",
-      description: "Scholarship application document.",
-      file: "/documents/scholarship.pdf",
-    },
-  ];
+  const [documents, setDocuments] = useState([]);
+
+  useEffect(() => {
+    loadDocuments();
+  }, []);
+
+  const loadDocuments = async () => {
+    const data = await getDocuments();
+
+    // Optional: newest first
+    const sorted = (data || []).sort((a, b) => b.id - a.id);
+
+    setDocuments(sorted);
+  };
 
   return (
     <div className="downloads-page">
@@ -45,7 +39,7 @@ export function Downloads() {
         <div className="about-hero-overlay">
           <div className="about-hero-content">
             <h1 className="about-hero-title">
-               Downloads
+              Downloads
             </h1>
           </div>
         </div>
@@ -66,7 +60,8 @@ export function Downloads() {
             </div>
 
             <p className="about-history-text">
-                Access essential forms and documents for students, parents, and staff. Download the necessary files for admissions, research, sports registration, and scholarship applications.
+              Access essential forms and documents for students, parents,
+              and staff. Download the necessary files.
             </p>
           </div>
         </div>
@@ -76,36 +71,48 @@ export function Downloads() {
       <section className="about-mission-vision">
         <div className="about-section-wrapper">
 
-          <div className="about-card-grid">
+          {documents.length === 0 ? (
+            <div
+              style={{
+                textAlign: "center",
+                padding: "50px",
+                fontSize: "18px",
+                fontWeight: "500"
+              }}
+            >
+              No documents available.
+            </div>
+          ) : (
+            <div className="about-card-grid">
 
-            {documents.map((doc, index) => (
-              <div className="about-card" key={index}>
+              {documents.map((doc) => (
+                <div className="about-card" key={doc.id}>
 
-                <div className="about-card-icon">
-                  <FileText className="about-card-icon-symbol" />
+                  <div className="about-card-icon">
+                    <FileText className="about-card-icon-symbol" />
+                  </div>
+
+                  <h3 className="about-card-heading">
+                    {doc.topic}
+                  </h3>
+
+                    
+                  <a
+                    href={`http://localhost:8080/api/documents/download/${doc.id}`}
+                    className="download-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                     <Download size={15} style={{ marginRight: "5px" }} />
+                     Download PDF
+                  </a>
+                  
+
                 </div>
+              ))}
 
-                <h3 className="about-card-heading">
-                  {doc.title}
-                </h3>
-
-                <p className="about-card-text">
-                  {doc.description}
-                </p>
-
-                <a
-                  href={doc.file}
-                  download
-                  className="download-btn"
-                >
-                  <Download size={18} />
-                  Download PDF
-                </a>
-
-              </div>
-            ))}
-
-          </div>
+            </div>
+          )}
 
         </div>
       </section>
