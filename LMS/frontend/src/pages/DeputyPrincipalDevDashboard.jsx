@@ -20,6 +20,7 @@ import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
+import DeputyPrincipalDevClassManagement from "./DeputyPrincipalDevClassManagement";
 
 export default function DeputyPrincipalDevDashboard() {
     const navigate = useNavigate();
@@ -161,6 +162,11 @@ export default function DeputyPrincipalDevDashboard() {
                     {/* Reports */}
                     <div className={`nav-item ${activeTab === "reports" ? "active" : ""}`} onClick={() => setActiveTab("reports")}>
                         <FileText className="nav-icon" /> Report
+                    </div>
+
+                    {/* Class */}
+                    <div className={`nav-item ${activeTab === "class" ? "active" : ""}`} onClick={() => setActiveTab("class")}>
+                        <Layers className="nav-icon" /> Class
                     </div>
                 </div>
 
@@ -568,6 +574,8 @@ export default function DeputyPrincipalDevDashboard() {
                     {/* TAB 3: REPORT */}
                     {activeTab === "reports" && <AdminAcademicAnalytics />}
 
+                    {/* TAB 4: CLASS */}
+                    {activeTab === "class" && <DeputyPrincipalDevClassManagement />}
                 </div>
             </div>
 

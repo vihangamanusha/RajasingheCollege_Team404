@@ -32,6 +32,10 @@ public class ClassEntity {
     @Column(name = "assignment_open", nullable = false)
     private boolean assignmentOpen = false;
 
+    // When true, the class appears on the Deputy Principal Development dashboard
+    @Column(name = "dev_enabled", nullable = false)
+    private boolean devEnabled = false;
+
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
@@ -60,6 +64,9 @@ public class ClassEntity {
 
     public boolean isAssignmentOpen() { return assignmentOpen; }
     public void setAssignmentOpen(boolean assignmentOpen) { this.assignmentOpen = assignmentOpen; }
+
+    public boolean isDevEnabled() { return devEnabled; }
+    public void setDevEnabled(boolean devEnabled) { this.devEnabled = devEnabled; }
 
     public Teacher getTeacher() { return teacher; }
     public void setTeacher(Teacher teacher) { this.teacher = teacher; }

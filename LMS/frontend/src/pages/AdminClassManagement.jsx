@@ -55,6 +55,8 @@ export default function AdminClassManagement() {
   const [teacherSearchQuery, setTeacherSearchQuery] = useState("");
   const [detailsTeacherSearchQuery, setDetailsTeacherSearchQuery] = useState("");
   const [availableTeachers, setAvailableTeachers] = useState([]);
+  const [showTeacherDropdown, setShowTeacherDropdown] = useState(false);
+  const [showDetailsTeacherDropdown, setShowDetailsTeacherDropdown] = useState(false);
 
   // Role detection
   const userSubRole = localStorage.getItem("subRole") || "";
@@ -271,26 +273,42 @@ export default function AdminClassManagement() {
 
   // ── CREATE CLASS ──────────────────────────────────────────
   const handleCreateClass = async () => {
-    if (!dobFrom || !dobTo) {
+    if (!isDeputyAdmin && (!dobFrom || !dobTo)) {
       showToast("Load a DOB batch first", "error");
       return;
     }
     try {
+      const payload = {
+        grade: newClass.grade,
+        section: newClass.section,
+        year: parseInt(newClass.year) || 2026,
+        teacherId: newClass.teacherId || null,
+      };
+      if (!isDeputyAdmin) {
+        payload.dobFrom = dobFrom;
+        payload.dobTo = dobTo;
+      }
       const res = await fetch(`${API}/api/classes/create`, {
         method: "POST",
         headers: authHeaders(),
-        body: JSON.stringify({
-          ...newClass,
-          dobFrom,
-          dobTo,
-          year: parseInt(newClass.year),
-        }),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (res.ok) {
         showToast(`Class ${data.className} created!`);
         setShowCreateModal(false);
-        loadBatch();
+        setNewClass({
+          grade: "9",
+          section: "A",
+          year: 2026,
+          teacherId: "",
+        });
+        setTeacherSearchQuery("");
+        if (isDeputyAdmin) {
+          loadAllClassesForDeputy();
+        } else {
+          loadBatch();
+        }
       } else {
         showToast(data.error || "Failed to create class", "error");
       }
@@ -524,6 +542,584 @@ export default function AdminClassManagement() {
 
   const grades = ["6", "7", "8", "9", "10", "11", "12", "13"];
   const sections = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+
+  if (isDeputyAdmin) {
+    return (
+      <div className="acm-container">
+        {/* ── TOAST ── */}
+        {toast.show && (
+          <div className={`acm-toast acm-toast--${toast.type}`}>{toast.msg}</div>
+        )}
+
+        {/* ── HEADER ── */}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+          <div>
+            <h1 className="acm-title" style={{ textAlign: "left" }}>Class Management</h1>
+            <p className="acm-subtitle" style={{ textAlign: "left" }}>
+              Divide classes by grades 6-11 and allocate subject teachers.
+            </p>
+          </div>
+          <button
+            className="acm-btn acm-btn--primary"
+            onClick={() => {
+              loadAvailableTeachers("");
+              setShowCreateModal(true);
+              setShowTeacherDropdown(false);
+              setTeacherSearchQuery("");
+            }}
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          >
+            <FiPlus /> Create Class
+          </button>
+        </div>
+
+        {/* SEARCH BAR */}
+        <div style={{ marginBottom: "25px" }}>
+          <div style={{ position: "relative" }}>
+            <FiSearch style={{ position: "absolute", left: "14px", color: "#94a3b8", fontSize: "18px", top: "50%", transform: "translateY(-50%)" }} />
+            <input
+              placeholder="Search classes by Grade or Name (e.g. 9 or 9-A)..."
+              value={classSearch}
+              onChange={(e) => setClassSearch(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "12px 12px 12px 40px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "8px",
+                fontSize: "14px",
+                color: "#334155",
+                boxSizing: "border-box"
+              }}
+            />
+          </div>
+        </div>
+
+        {/* MAIN PANEL */}
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "30px", alignItems: "start" }}>
+          {/* CLASSES LIST */}
+          <div className="acm-panel acm-panel--classes" style={{ padding: "24px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b" }}>Active Classes</h3>
+              <button
+                className="acm-btn acm-btn--ghost"
+                onClick={() => loadAllClassesForDeputy()}
+                style={{ padding: "6px 12px", fontSize: "12px" }}
+              >
+                Refresh
+              </button>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "15px", maxHeight: "500px", overflowY: "auto" }}>
+              {filteredClasses.length === 0 ? (
+                <div style={{ textAlign: "center", color: "#64748b", padding: "40px 0" }}>No classes found in the system.</div>
+              ) : (
+                filteredClasses.map((cls) => {
+                  const isSelected = selectedClass?.classId === cls.classId;
+                  return (
+                    <div
+                      key={cls.classId}
+                      style={{
+                        padding: "16px",
+                        borderRadius: "10px",
+                        border: isSelected ? "2px solid #2b55cc" : "1px solid #e2e8f0",
+                        backgroundColor: isSelected ? "#f8fafc" : "white",
+                        cursor: "pointer",
+                        boxShadow: isSelected ? "0 4px 12px rgba(43,85,204,0.1)" : "none",
+                        transition: "all 0.2s"
+                      }}
+                      onClick={async () => {
+                        setSelectedClass(cls);
+                        loadAvailableTeachers(cls.classId);
+                        setDetailsTeacherSearchQuery("");
+                        setShowDetailsTeacherDropdown(false);
+                        try {
+                          const res = await fetch(`${API}/api/classes/${cls.classId}/students`, { headers: authHeaders() });
+                          if (res.ok) setRoster(await res.json());
+                        } catch {
+                          console.error("Failed to load roster");
+                        }
+                      }}
+                    >
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                        <div>
+                          <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "700", color: "#0f172a" }}>
+                            {cls.className} ({cls.year})
+                          </h4>
+                          <p style={{ margin: "2px 0 0 0", fontSize: "12px", color: "#64748b" }}>
+                            Grade: {cls.grade} &nbsp;·&nbsp; {cls.studentCount ?? 0} students assigned
+                          </p>
+                        </div>
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          <button
+                            onClick={async (e) => {
+                              e.stopPropagation();
+                              try {
+                                const res = await fetch(`${API}/api/classes/${cls.classId}/toggle-dev`, {
+                                  method: "PUT",
+                                  headers: authHeaders()
+                                });
+                                const data = await res.json();
+                                if (res.ok) {
+                                  showToast(data.message);
+                                  await loadAllClassesForDeputy();
+                                } else {
+                                  showToast(data.error || "Failed to toggle", "error");
+                                }
+                              } catch {
+                                showToast("Error toggling dev access", "error");
+                              }
+                            }}
+                            style={{
+                              padding: "4px 8px",
+                              backgroundColor: cls.devEnabled ? "#ef4444" : "#10b981",
+                              color: "white",
+                              border: "none",
+                              borderRadius: "4px",
+                              fontSize: "11px",
+                              fontWeight: "600",
+                              cursor: "pointer"
+                            }}
+                          >
+                            {cls.devEnabled ? "Disable" : "Enable"}
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteClassForDeputy(cls.classId, cls.className);
+                            }}
+                            style={{
+                              background: "none",
+                              border: "none",
+                              color: "#ef4444",
+                              cursor: "pointer",
+                              padding: "4px"
+                            }}
+                            title="Delete class"
+                          >
+                            <FiTrash2 size={16} />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div style={{ fontSize: "13px", color: "#475569" }}>
+                        Teacher: {cls.teacherName ? <span style={{ fontWeight: "600", color: "#2b55cc" }}>{cls.teacherName}</span> : <span style={{ color: "#94a3b8" }}>None</span>}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          {/* CLASS ALLOCATION DETAILS CARD */}
+          {selectedClass ? (
+            <div className="acm-panel acm-panel--allocation" style={{ padding: "24px" }}>
+              <h2 style={{ fontSize: "18px", fontWeight: "700", margin: "0 0 15px 0", color: "#0f172a", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+                Class Allocation Details: {selectedClass.className}
+              </h2>
+              
+              <div style={{ marginBottom: "25px" }}>
+                <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#475569", marginBottom: "6px" }}>
+                  Class Teacher
+                </label>
+                
+                {/* Select Field to Toggle Dropdown */}
+                <div className="input-container" style={{ position: "relative", marginBottom: "12px" }}>
+                  <div
+                    onClick={() => setShowDetailsTeacherDropdown(prev => !prev)}
+                    style={{
+                      width: "100%",
+                      padding: "12px",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "8px",
+                      fontSize: "14px",
+                      backgroundColor: "white",
+                      color: selectedClass.teacherName ? "#334155" : "#94a3b8",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      boxSizing: "border-box"
+                    }}
+                  >
+                    <span>
+                      {selectedClass.teacherName 
+                        ? `${selectedClass.teacherName} (${selectedClass.teacherId})`
+                        : "-- Click to Select Class Teacher --"
+                      }
+                    </span>
+                    <FiChevronDown />
+                  </div>
+                </div>
+
+                {/* Search Bar & Table (Shown only when dropdown is open) */}
+                {showDetailsTeacherDropdown && (
+                  <div style={{ border: "1px solid #cbd5e1", borderRadius: "8px", padding: "12px", backgroundColor: "#f8fafc", marginBottom: "15px" }}>
+                    <div style={{ marginBottom: "10px" }}>
+                      <input
+                        type="text"
+                        placeholder="Search available teacher by name or ID..."
+                        value={detailsTeacherSearchQuery}
+                        onChange={(e) => setDetailsTeacherSearchQuery(e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "8px 12px",
+                          border: "1px solid #cbd5e1",
+                          borderRadius: "8px",
+                          fontSize: "13px",
+                          boxSizing: "border-box",
+                          outline: "none"
+                        }}
+                      />
+                    </div>
+
+                    <div style={{ 
+                      maxHeight: "180px", 
+                      overflowY: "auto", 
+                      border: "1px solid #cbd5e1", 
+                      borderRadius: "8px", 
+                      backgroundColor: "white"
+                    }}>
+                      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
+                        <thead>
+                          <tr style={{ backgroundColor: "#e2e8f0", color: "#334155", fontWeight: "600", borderBottom: "1px solid #cbd5e1" }}>
+                            <th style={{ padding: "8px 12px" }}>ID</th>
+                            <th style={{ padding: "8px 12px" }}>Name</th>
+                            <th style={{ padding: "8px 12px" }}>Specialization</th>
+                            <th style={{ padding: "8px 12px", textAlign: "center" }}>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {availableTeachers
+                            .filter(t => {
+                              const query = detailsTeacherSearchQuery.toLowerCase();
+                              const matchesName = t.fullName && t.fullName.toLowerCase().includes(query);
+                              const matchesId = t.teacherId && String(t.teacherId).toLowerCase().includes(query);
+                              return matchesName || matchesId;
+                            })
+                            .map((t) => {
+                              const isCurrent = selectedClass.teacherId === t.teacherId;
+                              return (
+                                <tr 
+                                  key={t.teacherId} 
+                                  style={{ 
+                                    borderBottom: "1px solid #cbd5e1", 
+                                    backgroundColor: isCurrent ? "#eff6ff" : "white"
+                                  }}
+                                >
+                                  <td style={{ padding: "8px 12px", fontWeight: "600", color: "#334155" }}>{t.teacherId}</td>
+                                  <td style={{ padding: "8px 12px", color: "#475569" }}>{t.fullName}</td>
+                                  <td style={{ padding: "8px 12px", color: "#64748b" }}>{t.subjectSpecialization || "N/A"}</td>
+                                  <td style={{ padding: "8px 12px", textAlign: "center" }}>
+                                    <button
+                                      type="button"
+                                      onClick={async () => {
+                                        if (isCurrent) {
+                                          await handleUnassignTeacher();
+                                        } else {
+                                          await handleAssignTeacher(t.teacherId);
+                                        }
+                                        setShowDetailsTeacherDropdown(false);
+                                      }}
+                                      style={{
+                                        padding: "4px 8px",
+                                        backgroundColor: isCurrent ? "#ef4444" : "#2b55cc",
+                                        color: "white",
+                                        border: "none",
+                                        borderRadius: "4px",
+                                        fontSize: "11px",
+                                        fontWeight: "600",
+                                        cursor: "pointer"
+                                      }}
+                                    >
+                                      {isCurrent ? "Remove" : "Assign"}
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
+                            })
+                          }
+                          {availableTeachers.filter(t => {
+                            const query = detailsTeacherSearchQuery.toLowerCase();
+                            const matchesName = t.fullName && t.fullName.toLowerCase().includes(query);
+                            const matchesId = t.teacherId && String(t.teacherId).toLowerCase().includes(query);
+                            return matchesName || matchesId;
+                          }).length === 0 && (
+                            <tr>
+                              <td colSpan="4" style={{ padding: "20px 12px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
+                                No matching teachers found.
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Roster of Students */}
+              <div>
+                <h3 style={{ fontSize: "14px", fontWeight: "700", color: "#475569", marginBottom: "10px", borderBottom: "1px solid #f1f5f9", paddingBottom: "6px" }}>
+                  Assigned Students ({roster.length})
+                </h3>
+                {roster.length === 0 ? (
+                  <p style={{ fontSize: "13px", color: "#94a3b8", fontStyle: "italic" }}>No students assigned to this class yet.</p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "200px", overflowY: "auto" }}>
+                    {roster.map((st) => (
+                      <div
+                        key={st.studentId}
+                        style={{
+                          padding: "8px 12px",
+                          borderRadius: "6px",
+                          backgroundColor: "#f8fafc",
+                          border: "1px solid #e2e8f0",
+                          fontSize: "13px",
+                          color: "#334155",
+                          display: "flex",
+                          justifyContent: "space-between"
+                        }}
+                      >
+                        <span>{st.fullName}</span>
+                        <span style={{ color: "#64748b" }}>{st.studentId}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="acm-panel" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "60px 24px", color: "#64748b", minHeight: "350px" }}>
+              <FiBook size={40} style={{ color: "#94a3b8", marginBottom: "12px" }} />
+              <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", textAlign: "center" }}>Select a class from the list to assign teachers and view details</p>
+            </div>
+          )}
+        </div>
+
+        {/* CREATE CLASS MODAL */}
+        {showCreateModal && (
+          <div className="acm-modal-overlay" onClick={() => setShowCreateModal(false)}>
+            <div className="acm-modal" style={{ width: "500px" }} onClick={(e) => e.stopPropagation()}>
+              <div className="acm-modal-header">
+                <h3>Create New Class</h3>
+                <button className="acm-modal-close" onClick={() => setShowCreateModal(false)}>
+                  <FiX />
+                </button>
+              </div>
+              <div className="acm-modal-body">
+                <div className="acm-form-group">
+                  <label>Grade (6 - 11)</label>
+                  <select
+                    value={newClass.grade}
+                    onChange={(e) => setNewClass({ ...newClass, grade: e.target.value })}
+                  >
+                    {grades.filter(g => parseInt(g) >= 6 && parseInt(g) <= 11).map(g => <option key={g} value={g}>Grade {g}</option>)}
+                  </select>
+                </div>
+
+                <div className="acm-form-group">
+                  <label>Class Name (A - F)</label>
+                  <select
+                    value={newClass.section}
+                    onChange={(e) => setNewClass({ ...newClass, section: e.target.value })}
+                  >
+                    {["A", "B", "C", "D", "E", "F"].map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+
+                <div className="acm-form-group" style={{ position: "relative" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
+                    <label style={{ margin: 0 }}>Class Teacher</label>
+                    {newClass.teacherId && (
+                      <span style={{ fontSize: "12px", color: "#2b55cc", fontWeight: "600" }}>
+                        Selected: {availableTeachers.find(t => t.teacherId === newClass.teacherId)?.fullName || newClass.teacherId}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Dropdown Toggle for Select Class Teacher Field */}
+                  <div
+                    onClick={() => setShowTeacherDropdown(prev => !prev)}
+                    style={{
+                      width: "100%",
+                      padding: "10px 12px",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                      backgroundColor: "white",
+                      color: newClass.teacherId ? "#334155" : "#94a3b8",
+                      cursor: "pointer",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      boxSizing: "border-box"
+                    }}
+                  >
+                    <span>
+                      {newClass.teacherId 
+                        ? `${availableTeachers.find(t => t.teacherId === newClass.teacherId)?.fullName || newClass.teacherId} (${newClass.teacherId})`
+                        : "-- Click to Select Class Teacher --"
+                      }
+                    </span>
+                    <FiChevronDown />
+                  </div>
+
+                  {/* Dropdown Container containing search bar and Table */}
+                  {showTeacherDropdown && (
+                    <div style={{
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "6px",
+                      padding: "10px",
+                      backgroundColor: "#f8fafc",
+                      marginTop: "8px",
+                      boxSizing: "border-box"
+                    }}>
+                      <div style={{ marginBottom: "8px" }}>
+                        <input
+                          type="text"
+                          placeholder="Search teacher by name or ID..."
+                          value={teacherSearchQuery}
+                          onChange={(e) => setTeacherSearchQuery(e.target.value)}
+                          style={{
+                            width: "100%",
+                            padding: "8px 10px",
+                            border: "1px solid #cbd5e1",
+                            borderRadius: "6px",
+                            fontSize: "13px",
+                            boxSizing: "border-box",
+                            outline: "none"
+                          }}
+                        />
+                      </div>
+
+                      <div style={{ 
+                        maxHeight: "150px", 
+                        overflowY: "auto", 
+                        border: "1px solid #cbd5e1", 
+                        borderRadius: "6px", 
+                        backgroundColor: "white"
+                      }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", textAlign: "left" }}>
+                          <thead>
+                            <tr style={{ backgroundColor: "#e2e8f0", color: "#334155", fontWeight: "600", borderBottom: "1px solid #cbd5e1" }}>
+                              <th style={{ padding: "6px 8px" }}>ID</th>
+                              <th style={{ padding: "6px 8px" }}>Name</th>
+                              <th style={{ padding: "6px 8px" }}>Specialization</th>
+                              <th style={{ padding: "6px 8px", textAlign: "center" }}>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {availableTeachers
+                              .filter(t => {
+                                const query = teacherSearchQuery.toLowerCase();
+                                const matchesName = t.fullName && t.fullName.toLowerCase().includes(query);
+                                const matchesId = t.teacherId && String(t.teacherId).toLowerCase().includes(query);
+                                return matchesName || matchesId;
+                              })
+                              .map((t) => {
+                                const isSelected = newClass.teacherId === t.teacherId;
+                                return (
+                                  <tr 
+                                    key={t.teacherId} 
+                                    style={{ 
+                                      borderBottom: "1px solid #cbd5e1", 
+                                      backgroundColor: isSelected ? "#eff6ff" : "white"
+                                    }}
+                                  >
+                                    <td style={{ padding: "6px 8px", fontWeight: "600", color: "#334155" }}>{t.teacherId}</td>
+                                    <td style={{ padding: "6px 8px", color: "#475569" }}>{t.fullName}</td>
+                                    <td style={{ padding: "6px 8px", color: "#64748b" }}>{t.subjectSpecialization || "N/A"}</td>
+                                    <td style={{ padding: "6px 8px", textAlign: "center" }}>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setNewClass(prev => ({
+                                            ...prev,
+                                            teacherId: isSelected ? "" : t.teacherId
+                                          }));
+                                          setShowTeacherDropdown(false);
+                                        }}
+                                        style={{
+                                          padding: "3px 6px",
+                                          backgroundColor: isSelected ? "#ef4444" : "#2b55cc",
+                                          color: "white",
+                                          border: "none",
+                                          borderRadius: "4px",
+                                          fontSize: "10px",
+                                          fontWeight: "600",
+                                          cursor: "pointer"
+                                        }}
+                                      >
+                                        {isSelected ? "Deselect" : "Select"}
+                                      </button>
+                                    </td>
+                                  </tr>
+                                );
+                              })
+                            }
+                            {availableTeachers.filter(t => {
+                              const query = teacherSearchQuery.toLowerCase();
+                              const matchesName = t.fullName && t.fullName.toLowerCase().includes(query);
+                              const matchesId = t.teacherId && String(t.teacherId).toLowerCase().includes(query);
+                              return matchesName || matchesId;
+                            }).length === 0 && (
+                              <tr>
+                                <td colSpan="4" style={{ padding: "15px 8px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
+                                  No matching teachers found.
+                                </td>
+                              </tr>
+                            )}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="acm-modal-footer">
+                <button className="acm-btn acm-btn--ghost" onClick={() => setShowCreateModal(false)}>
+                  Cancel
+                </button>
+                <button className="acm-btn acm-btn--primary" onClick={handleCreateClass}>
+                  Create Class
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* CONFIRMATION DIALOG */}
+        {confirmDialog.show && (
+          <div className="acm-modal-overlay" onClick={closeConfirm}>
+            <div className="acm-modal acm-confirm-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="acm-confirm-icon-wrap">
+                <FiTrash2 className="acm-confirm-icon" />
+              </div>
+              <div className="acm-confirm-body">
+                <h3 className="acm-confirm-title">{confirmDialog.title}</h3>
+                <p className="acm-confirm-message">{confirmDialog.message}</p>
+              </div>
+              <div className="acm-confirm-footer">
+                <button className="acm-btn acm-btn--ghost" onClick={closeConfirm}>
+                  Cancel
+                </button>
+                <button
+                  className="acm-btn acm-btn--danger"
+                  onClick={() => {
+                    confirmDialog.onConfirm();
+                    closeConfirm();
+                  }}
+                >
+                  <FiTrash2 /> Yes, Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="acm-container">
