@@ -1075,33 +1075,62 @@ const handleDeleteNews = async (id) => {
 
         <div className="achievement-header">
 
+          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+             <h1 style={{ fontSize: "24px", fontWeight: "700" }}>
+                {selectedSport.name} Achievements
+             </h1>
+
+             <p style={{ fontSize: "16px", color: "#64748b" }}>
+                 Manage and publish achievements for {selectedSport.name}.
+            </p>
+           </div>
           <div className="achievement-left">
 
-            <button
-              className="back-btn"
-              onClick={handleSportBack}
-            >
-              ← Back to Sports
-            </button>
-
-            <h1>{selectedSport.name} Achievements</h1>
-
+            
           </div>
-
+          <button
+  className="back-btn"
+  onClick={handleSportBack}
+             style={{
+                   borderRadius: "18px",
+                   width: "170px",
+                   height: "50px",
+                   fontSize: "18px",
+                   marginLeft: "215px",
+                   marginRight: "10px",
+                   backgroundColor: "#faf3f3",
+                   border: "1px solid #dd0e0e",
+                   cursor: "pointer",
+                   fontWeight: "600",
+            }}
+         >
+             Back to Sports
+         </button>
           <button
             className="add-achievement-btn"
             onClick={() => openAchievementModal()}
           >
             Add New Achievement
           </button>
-
+          
+            
+            
         </div>
-
+  
         <div className="achievement-list">
+          
           {sportAchievements.length === 0 ? (
-            <div className="empty-state">
-              No achievements found for {selectedSport.name} yet.
+            <>
+            
+            <div className="empty-state" style={{ fontSize: "17px", color: "#00040b" ,fontWeight:"500"}}>
+              <div className="empty-icon">📰</div>
+              No Achievements Found For {selectedSport.name} yet.
+              <p style={{ fontSize: "14px", color: "#64748b", marginTop: "5px", fontWeight: "400" }}>
+                There are currently no achievements to display. Click "Add Achievement" to create your first achievement.
+              </p>
             </div>
+            
+            </>
           ) : (
             sportAchievements.map((item) => (
               <div
