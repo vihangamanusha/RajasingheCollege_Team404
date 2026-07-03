@@ -106,7 +106,7 @@ export default function AdminTeacherManagement() {
     // SUBJECTS + DESIGNATIONS
     // =========================================
 
-    const subjectsList = [//List of available subjects
+    const [subjectsList, setSubjectsList] = useState([//List of available subjects
         "Mathematics",
         "Science",
         "English",
@@ -115,7 +115,24 @@ export default function AdminTeacherManagement() {
         "Commerce",
         "Art",
         "Music"
-    ];
+    ]);
+
+    useEffect(() => {
+        const fetchCurriculumSubjects = async () => {
+            try {
+                const res = await fetch("http://localhost:8080/api/curriculum-subjects");
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.length > 0) {
+                        setSubjectsList(data);
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to fetch curriculum subjects:", err);
+            }
+        };
+        fetchCurriculumSubjects();
+    }, []);
 
     const designationList = [//list of teacher roles
         "Subject Teacher",

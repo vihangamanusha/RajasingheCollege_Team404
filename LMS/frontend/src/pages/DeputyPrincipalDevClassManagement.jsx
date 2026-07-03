@@ -332,6 +332,9 @@ export default function DeputyPrincipalDevClassManagement() {
                         setSelectedClass(updatedCls);
                         setClasses(classes.map(c => c.classId === selectedClass.classId ? updatedCls : c));
                         showNotification(data.message);
+                      } else {
+                        const data = await res.json();
+                        showNotification(data.error || "Failed to toggle Section Head visibility", "error");
                       }
                     } catch {
                       showNotification("Failed to toggle Section Head visibility", "error");
@@ -686,6 +689,50 @@ export default function DeputyPrincipalDevClassManagement() {
                 style={{ flex: 1, padding: "10px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "8px", fontWeight: "600", fontSize: "13px", cursor: "pointer" }}
               >
                 Add Subjects
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* REMOVE SUBJECT CONFIRMATION MODAL */}
+      {showRemoveModal && subjectToRemove && (
+        <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15,23,42,0.4)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
+          <div style={{ backgroundColor: "white", padding: "24px", borderRadius: "12px", width: "400px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)", fontFamily: "'Inter', sans-serif" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#ef4444" }}>Confirm Subject Removal</h3>
+              <button 
+                onClick={() => {
+                  setShowRemoveModal(false);
+                  setSubjectToRemove(null);
+                }}
+                style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer" }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <div style={{ marginBottom: "20px" }}>
+              <p style={{ margin: 0, color: "#334155", fontSize: "14px", lineHeight: "1.5" }}>
+                Are you sure you want to remove the subject <strong>{subjectToRemove.name}</strong> from this class? This will also unassign any teacher allocated to it.
+              </p>
+            </div>
+
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => {
+                  setShowRemoveModal(false);
+                  setSubjectToRemove(null);
+                }}
+                style={{ flex: 1, padding: "10px", backgroundColor: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: "8px", fontWeight: "600", fontSize: "13px", cursor: "pointer", color: "#475569" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleRemoveSubject}
+                style={{ flex: 1, padding: "10px", backgroundColor: "#ef4444", color: "white", border: "none", borderRadius: "8px", fontWeight: "600", fontSize: "13px", cursor: "pointer" }}
+              >
+                Remove Subject
               </button>
             </div>
           </div>
