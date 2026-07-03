@@ -856,6 +856,19 @@ const handleDeleteNews = async (id) => {
           >
             Events
           </button>
+
+          <button
+            className={
+              activeTab === "Downloadable Content"
+                ? "tab active-tab"
+                : "tab"
+            }
+            onClick={() =>
+              setActiveTab("Downloadable Content")
+            }
+          >
+            Downloadable Content
+          </button>
           
         </div>
 
