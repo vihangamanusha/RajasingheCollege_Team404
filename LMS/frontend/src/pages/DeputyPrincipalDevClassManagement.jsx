@@ -19,7 +19,7 @@ export default function DeputyPrincipalDevClassManagement() {
   const [classSubjects, setClassSubjects] = useState([]);
   const [curriculumSubjects, setCurriculumSubjects] = useState([]);
   const [showAddSubjectModal, setShowAddSubjectModal] = useState(false);
-  const [selectedSubjectToAdd, setSelectedSubjectToAdd] = useState("");
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
   
   // Teacher selection states for a specific subject
   const [activeSubjectForTeacher, setActiveSubjectForTeacher] = useState(null); // subject object
@@ -69,8 +69,7 @@ export default function DeputyPrincipalDevClassManagement() {
       const res = await fetch(`${API}/api/curriculum-subjects`, { headers: authHeaders() });
       if (res.ok) {
         const data = await res.json();
-        // Only active subjects
-        setCurriculumSubjects(data.filter(s => s.status === "ACTIVE"));
+        setCurriculumSubjects(data);
       }
     } catch {
       console.error("Failed to load curriculum subjects");
@@ -102,26 +101,42 @@ export default function DeputyPrincipalDevClassManagement() {
     await loadClassSubjects(cls.classId);
   };
 
-  // Add subject to class
+  // Add multiple subjects to class
   const handleAddSubject = async () => {
-    if (!selectedClass || !selectedSubjectToAdd) return;
+    if (!selectedClass || selectedSubjects.length === 0) return;
     try {
-      const res = await fetch(`${API}/api/classes/${selectedClass.classId}/subjects`, {
-        method: "POST",
-        headers: authHeaders(),
-        body: JSON.stringify({ subjectName: selectedSubjectToAdd })
-      });
-      const data = await res.json();
-      if (res.ok) {
-        showNotification("Subject added to class successfully!");
-        setShowAddSubjectModal(false);
-        setSelectedSubjectToAdd("");
-        await loadClassSubjects(selectedClass.classId);
-      } else {
-        showNotification(data.error || "Failed to add subject", "error");
+      const promises = selectedSubjects.map(subjectName => 
+        fetch(`${API}/api/classes/${selectedClass.classId}/subjects`, {
+          method: "POST",
+          headers: authHeaders(),
+          body: JSON.stringify({ subjectName })
+        })
+      );
+      const responses = await Promise.all(promises);
+      
+      let successCount = 0;
+      let errorMessages = [];
+      for (const res of responses) {
+        const data = await res.json();
+        if (res.ok) {
+          successCount++;
+        } else {
+          errorMessages.push(data.error || "Failed to add subject");
+        }
       }
+      
+      if (successCount > 0) {
+        showNotification(`Successfully added ${successCount} subjects!`);
+      }
+      if (errorMessages.length > 0) {
+        showNotification(`Errors: ${[...new Set(errorMessages)].join(", ")}`, "error");
+      }
+      
+      setShowAddSubjectModal(false);
+      setSelectedSubjects([]);
+      await loadClassSubjects(selectedClass.classId);
     } catch {
-      showNotification("Error adding subject", "error");
+      showNotification("Error adding subjects", "error");
     }
   };
 
@@ -527,9 +542,12 @@ export default function DeputyPrincipalDevClassManagement() {
         <div style={{ position: "fixed", inset: 0, backgroundColor: "rgba(15,23,42,0.4)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999 }}>
           <div style={{ backgroundColor: "white", padding: "24px", borderRadius: "12px", width: "400px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
-              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>Add Subject to Class</h3>
+              <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>Add Subjects to Class</h3>
               <button 
-                onClick={() => setShowAddSubjectModal(false)}
+                onClick={() => {
+                  setShowAddSubjectModal(false);
+                  setSelectedSubjects([]);
+                }}
                 style={{ background: "none", border: "none", color: "#64748b", cursor: "pointer" }}
               >
                 <X size={20} />
@@ -537,34 +555,95 @@ export default function DeputyPrincipalDevClassManagement() {
             </div>
 
             <div style={{ marginBottom: "20px" }}>
-              <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#475569", marginBottom: "6px" }}>
-                Select Subject from Curriculum
+              <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#475569", marginBottom: "8px" }}>
+                Select Subjects from Curriculum
               </label>
-              <select
-                value={selectedSubjectToAdd}
-                onChange={(e) => setSelectedSubjectToAdd(e.target.value)}
-                style={{ width: "100%", padding: "10px", border: "1px solid #cbd5e1", borderRadius: "8px", fontSize: "14px" }}
-              >
-                <option value="">-- Choose Subject --</option>
-                {curriculumSubjects.map(s => (
-                  <option key={s.subjectName} value={s.subjectName}>{s.subjectName}</option>
-                ))}
-              </select>
+              <div style={{ 
+                maxHeight: "200px", 
+                overflowY: "auto", 
+                border: "1px solid #cbd5e1", 
+                borderRadius: "8px", 
+                padding: "10px",
+                backgroundColor: "#f8fafc",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "stretch"
+              }}>
+                {curriculumSubjects.map(s => {
+                  const isAssigned = classSubjects.some(cs => cs.subjectName.toLowerCase() === s.toLowerCase());
+                  const isChecked = selectedSubjects.includes(s);
+                  
+                  return (
+                    <label 
+                      key={s} 
+                      style={{ 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "flex-start",
+                        textAlign: "left",
+                        gap: "12px", 
+                        padding: "8px 12px", 
+                        margin: "4px 0",
+                        borderRadius: "6px",
+                        backgroundColor: isAssigned ? "#f1f5f9" : "transparent",
+                        cursor: isAssigned ? "not-allowed" : "pointer",
+                        opacity: isAssigned ? 0.7 : 1,
+                        fontSize: "14px",
+                        color: "#1e293b",
+                        width: "100%",
+                        boxSizing: "border-box"
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        disabled={isAssigned}
+                        checked={isAssigned || isChecked}
+                        style={{ 
+                          width: "16px", 
+                          height: "16px", 
+                          margin: 0, 
+                          padding: 0, 
+                          cursor: isAssigned ? "not-allowed" : "pointer" 
+                        }}
+                        onChange={(e) => {
+                          if (isAssigned) return;
+                          if (e.target.checked) {
+                            setSelectedSubjects(prev => [...prev, s]);
+                          } else {
+                            setSelectedSubjects(prev => prev.filter(name => name !== s));
+                          }
+                        }}
+                      />
+                      <span style={{ margin: 0, padding: 0, lineHeight: "1.2", textAlign: "left" }}>
+                        {s} {isAssigned && <span style={{ fontSize: "11px", color: "#64748b", fontStyle: "italic", marginLeft: "4px" }}>(Already added)</span>}
+                      </span>
+                    </label>
+                  );
+                })}
+                {curriculumSubjects.length === 0 && (
+                  <div style={{ color: "#94a3b8", textAlign: "center", padding: "10px", fontSize: "13px" }}>
+                    No active curriculum subjects found.
+                  </div>
+                )}
+              </div>
             </div>
 
             <div style={{ display: "flex", gap: "10px" }}>
               <button
-                onClick={() => setShowAddSubjectModal(false)}
+                onClick={() => {
+                  setShowAddSubjectModal(false);
+                  setSelectedSubjects([]);
+                }}
                 style={{ flex: 1, padding: "10px", backgroundColor: "#f1f5f9", border: "1px solid #cbd5e1", borderRadius: "8px", fontWeight: "600", fontSize: "13px", cursor: "pointer", color: "#475569" }}
               >
                 Cancel
               </button>
               <button
                 onClick={handleAddSubject}
-                disabled={!selectedSubjectToAdd}
+                disabled={selectedSubjects.length === 0}
                 style={{ flex: 1, padding: "10px", backgroundColor: "#3b82f6", color: "white", border: "none", borderRadius: "8px", fontWeight: "600", fontSize: "13px", cursor: "pointer" }}
               >
-                Add Subject
+                Add Subjects
               </button>
             </div>
           </div>

@@ -36,7 +36,8 @@ public class CurriculumSubjectController {
 
     @GetMapping
     public ResponseEntity<List<String>> getAllSubjects() {
-        List<String> subjects = repository.findByStatus("ACTIVE").stream()
+        List<String> subjects = repository.findAll().stream()
+                .filter(sub -> !"DELETED".equalsIgnoreCase(sub.getStatus()))
                 .map(CurriculumSubject::getSubjectName)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(subjects);

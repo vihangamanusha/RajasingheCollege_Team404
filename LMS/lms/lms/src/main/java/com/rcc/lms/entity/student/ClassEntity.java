@@ -36,6 +36,10 @@ public class ClassEntity {
     @Column(name = "dev_enabled", nullable = false)
     private boolean devEnabled = false;
 
+    // When true, the class appears on the Section Head dashboard
+    @Column(name = "sec_enabled", nullable = false)
+    private boolean secEnabled = false;
+
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
@@ -67,6 +71,9 @@ public class ClassEntity {
 
     public boolean isDevEnabled() { return devEnabled; }
     public void setDevEnabled(boolean devEnabled) { this.devEnabled = devEnabled; }
+
+    public boolean isSecEnabled() { return secEnabled; }
+    public void setSecEnabled(boolean secEnabled) { this.secEnabled = secEnabled; }
 
     public Teacher getTeacher() { return teacher; }
     public void setTeacher(Teacher teacher) { this.teacher = teacher; }

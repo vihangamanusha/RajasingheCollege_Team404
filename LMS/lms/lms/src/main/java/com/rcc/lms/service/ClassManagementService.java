@@ -136,6 +136,12 @@ public class ClassManagementService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new RuntimeException("Student not found: " + studentId));
 
+        // Enforce maximum capacity limit of 50 students per class
+        long currentCount = studentRepository.findByClassEntityClassId(classId).size();
+        if (currentCount >= 50) {
+            throw new RuntimeException("This class has reached the maximum capacity limit of 50 students");
+        }
+
         student.setClassEntity(classEntity);
         studentRepository.save(student);
         return "Student assigned to " + classEntity.getClassName();
@@ -329,6 +335,24 @@ public class ClassManagementService {
         result.put("devEnabled", classEntity.isDevEnabled());
         result.put("message", classEntity.isDevEnabled()
                 ? "Class enabled for Development" : "Class disabled for Development");
+        return result;
+    }
+
+    // ─────────────────────────────────────────
+    // TOGGLE SEC ENABLED
+    // ─────────────────────────────────────────
+    @Transactional
+    public Map<String, Object> toggleSecEnabled(String classId) {
+        ClassEntity classEntity = classRepository.findById(classId)
+                .orElseThrow(() -> new RuntimeException("Class not found: " + classId));
+        classEntity.setSecEnabled(!classEntity.isSecEnabled());
+        classRepository.save(classEntity);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("classId", classId);
+        result.put("secEnabled", classEntity.isSecEnabled());
+        result.put("message", classEntity.isSecEnabled()
+                ? "Class enabled for Section Head" : "Class disabled for Section Head");
         return result;
     }
 
