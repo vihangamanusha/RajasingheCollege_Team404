@@ -9,6 +9,8 @@ export default function AdminAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -83,18 +85,22 @@ export default function AdminAnnouncements() {
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Are you sure?");
-    if (!confirmDelete) return;
+  const handleDeleteClick = (id) => {
+  setDeleteId(id);
+  setShowDeleteModal(true);
+};
 
-    try {
-      await axios.delete(`${API_URL}/${id}`);
-      alert("Deleted Successfully");
-      fetchAnnouncements();
-    } catch (error) {
-      console.log(error);
-    }
-  };
+const confirmDelete = async () => {
+  try {
+    await axios.delete(`${API_URL}/${deleteId}`);
+    fetchAnnouncements();
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setShowDeleteModal(false);
+    setDeleteId(null);
+  }
+};
 
   const handleEdit = (announcement) => {
     setEditingId(announcement.id);
@@ -199,7 +205,48 @@ export default function AdminAnnouncements() {
         </div>
 
         <div className="cardContainer">
-          {announcements.map((a) => (
+          {announcements.length === 0 ? (
+    <div
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "60px 20px",
+    background: "linear-gradient(135deg, #f8fafc, #eef2f7)",
+    borderRadius: "14px",
+    border: "1px solid #e2e8f0",
+    color: "#475569",
+    textAlign: "center",
+    boxShadow: "0 6px 18px rgba(15, 23, 42, 0.06)"
+  }}
+>
+  <div style={{ fontSize: "42px", marginBottom: "12px" }}>📭</div>
+
+  <h3
+    style={{
+      margin: "0 0 6px 0",
+      fontSize: "18px",
+      fontWeight: "600",
+      color: "#1e293b"
+    }}
+  >
+    No Announcements Found
+  </h3>
+
+  <p
+    style={{
+      margin: 0,
+      fontSize: "14px",
+      color: "#64748b"
+    }}
+  >
+    There are currently no announcements available.  
+    Create a new one to get started.
+  </p>
+</div>
+  ) : (
+          announcements.map((a) => (
             <div className="announcementCard" key={a.id}>
               {/* TOP ROW */}
               <div className="cardTop">
@@ -224,12 +271,13 @@ export default function AdminAnnouncements() {
                 <button className="editBtn" onClick={() => handleEdit(a)}>
                   Edit
                 </button>
-                <button className="deleteBtn" onClick={() => handleDelete(a.id)}>
-                  Delete
+                <button className="deleteBtn" onClick={() => handleDeleteClick(a.id)}>
+                    Delete
                 </button>
               </div>
             </div>
-          ))}
+          ))
+        )}
         </div>
       </div>
 
@@ -332,6 +380,65 @@ export default function AdminAnnouncements() {
           </div>
         </div>
       )}
+      {showDeleteModal && (
+  <div className="modal-overlay" style={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(15, 23, 42, 0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 3000
+  }}>
+    <div className="modal-box" style={{
+      backgroundColor: "white",
+      padding: "25px",
+      borderRadius: "12px",
+      width: "350px",
+      textAlign: "center"
+    }}>
+      
+      <h3 style={{ marginBottom: "10px" }}>Delete Announcement</h3>
+      <p style={{ color: "#64748b", marginBottom: "20px" }}>
+        Are you sure you want to delete this announcement?
+      </p>
+
+      <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+        <button
+          onClick={() => setShowDeleteModal(false)}
+          style={{
+            padding: "8px 16px",
+            border: "1px solid #cbd5e1",
+            background: "white",
+            borderRadius: "6px",
+            cursor: "pointer",
+            backgroundColor: "#2d75bc",
+          }}
+        >
+          Cancel
+        </button>
+
+        <button
+          onClick={confirmDelete}
+          style={{
+            padding: "8px 16px",
+            border: "none",
+            background: "#dc2626",
+            color: "white",
+            borderRadius: "6px",
+            cursor: "pointer"
+          }}
+        >
+          Delete
+        </button>
+      </div>
+
+    </div>
+  </div>
+)}
 
       {/* MODAL */}
       {showModal && (
@@ -421,5 +528,6 @@ export default function AdminAnnouncements() {
         </div>
       )}
     </div>
+    
   );
 }

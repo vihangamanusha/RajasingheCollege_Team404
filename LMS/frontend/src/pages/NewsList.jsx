@@ -785,7 +785,7 @@ const handleDeleteNews = async (id) => {
         <div className="page-header">
           <div>
             <h1>Website Content Management</h1>
-            <p className="page-subtitle">
+            <p className="page-subtitle" style={{ marginLeft: "10px" }}>
               Manage website content, sports, and live streams.
             </p>
           </div>

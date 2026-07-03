@@ -13,11 +13,16 @@ export function AllStaff() {
   }, []);
 
   const loadTeachers = async () => {
-    const data = await getAllTeachers();
-    setTeachers(data);
+    try {
+      const data = await getAllTeachers();
+      console.log("Teachers from DB:", data);
+      setTeachers(data);
+    } catch (error) {
+      console.log("Error loading teachers:", error);
+    }
   };
 
-  return (
+  return(
     <div className="staff-page">
 
       {/* Hero */}
@@ -71,28 +76,26 @@ export function AllStaff() {
   <div className="staff-grid">
 
     {teachers.map((t) => (
+  <div key={t.teacherId} className="staff-card">
 
-      <div key={t.teacher_id} className="staff-card">
+    <div className="staff-icon">
+      <Users />
+    </div>
 
-        <div className="staff-icon">
-          <Users />
-        </div>
+    <h3 className="staff-name">
+      {t.fullName}
+    </h3>
 
-        <h3 className="staff-name">
-          {t.full_name}
-        </h3>
+    <p className="staff-role">
+      {t.subjectSpecialization}
+    </p>
 
-        <p className="staff-role">
-          {t.subject_specialization}
-        </p>
+    <p className="staff-dept">
+      {t.contactNumber}
+    </p>
 
-        <p className="staff-dept">
-          {t.contact_number}
-        </p>
-
-      </div>
-
-    ))}
+  </div>
+))}
 
   </div>
 
