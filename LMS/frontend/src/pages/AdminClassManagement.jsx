@@ -201,6 +201,15 @@ export default function AdminClassManagement() {
   const [overviewLoading, setOverviewLoading] = useState(false);
   const [overviewSearch, setOverviewSearch] = useState("");
 
+  // ── Admin Read-Only State ─────────────────────────────────
+  const [selectedReadOnlyGrade, setSelectedReadOnlyGrade] = useState("All");
+  const [selectedReadOnlyClass, setSelectedReadOnlyClass] = useState(null);
+  const [selectedClassSubjects, setSelectedClassSubjects] = useState([]);
+  const [selectedClassRoster, setSelectedClassRoster] = useState([]);
+  const [detailsTab, setDetailsTab] = useState("subjects");
+  const [detailsLoading, setDetailsLoading] = useState(false);
+  const [adminSearch, setAdminSearch] = useState("");
+
   // ── Confirm Dialog State ───────────────────────────────
   const [confirmDialog, setConfirmDialog] = useState({
     show: false,
@@ -440,6 +449,37 @@ export default function AdminClassManagement() {
     }
   }, []);
 
+  // ── ADMIN: Select class in read-only mode and load details ──
+  const handleSelectReadOnlyClass = async (cls) => {
+    setSelectedReadOnlyClass(cls);
+    setDetailsLoading(true);
+    try {
+      const [subjRes, rosterRes] = await Promise.all([
+        fetch(`${API}/api/classes/${cls.classId}/subjects`, { headers: authHeaders() }),
+        fetch(`${API}/api/classes/${cls.classId}/students`, { headers: authHeaders() })
+      ]);
+      
+      let subjects = [];
+      let rosterData = [];
+      
+      if (subjRes.ok) subjects = await subjRes.json();
+      if (rosterRes.ok) rosterData = await rosterRes.json();
+      
+      setSelectedClassSubjects(subjects);
+      setSelectedClassRoster(rosterData);
+    } catch (err) {
+      console.error("Error loading class details:", err);
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAdmin) {
+      loadAllClasses();
+    }
+  }, [isAdmin, loadAllClasses]);
+
   // ── OVERVIEW: Toggle class expand → load its students ─────
   const toggleClassExpand = async (classId) => {
     if (expandedClassId === classId) { setExpandedClassId(null); return; }
@@ -542,6 +582,236 @@ export default function AdminClassManagement() {
 
   const grades = ["6", "7", "8", "9", "10", "11", "12", "13"];
   const sections = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
+
+  const filteredAllClasses = allClasses.filter(c => {
+    const matchesGrade = selectedReadOnlyGrade === "All" || c.grade === selectedReadOnlyGrade;
+    const matchesSearch = adminSearch === "" || 
+      `grade ${c.grade}-${c.className}`.toLowerCase().includes(adminSearch.toLowerCase()) ||
+      c.className?.toLowerCase().includes(adminSearch.toLowerCase()) ||
+      c.teacherName?.toLowerCase().includes(adminSearch.toLowerCase());
+    return matchesGrade && matchesSearch;
+  });
+
+  if (isAdmin) {
+    return (
+      <div className="acm-container">
+        {/* HEADER */}
+        <div className="acm-readonly-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "25px" }}>
+          <div>
+            <h1 className="acm-title" style={{ textAlign: "left" }}>Classes Overview</h1>
+            <p className="acm-subtitle" style={{ textAlign: "left" }}>
+              Read-only view of available classes, assigned teachers, subjects, and student rosters.
+            </p>
+          </div>
+          <button 
+            className="acm-btn acm-btn--ghost"
+            onClick={loadAllClasses}
+            disabled={overviewLoading}
+            style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+          >
+            ↻ Refresh Classes
+          </button>
+        </div>
+
+        {/* GRADE TABS SCROLLER */}
+        <div className="acm-readonly-grade-tabs" style={{ display: "flex", gap: "10px", marginBottom: "20px", overflowX: "auto", paddingBottom: "10px" }}>
+          {["All", "6", "7", "8", "9", "10", "11", "12", "13"].map((g) => (
+            <button
+              key={g}
+              className={`acm-readonly-grade-tab ${selectedReadOnlyGrade === g ? "acm-readonly-grade-tab--active" : ""}`}
+              onClick={() => {
+                setSelectedReadOnlyGrade(g);
+                setSelectedReadOnlyClass(null);
+                setSelectedClassSubjects([]);
+                setSelectedClassRoster([]);
+              }}
+            >
+              {g === "All" ? "All Grades" : `Grade ${g}`}
+            </button>
+          ))}
+        </div>
+
+        {/* SEARCH BAR */}
+        <div style={{ marginBottom: "25px" }}>
+          <div style={{ position: "relative" }}>
+            <FiSearch style={{ position: "absolute", left: "14px", color: "#94a3b8", fontSize: "18px", top: "50%", transform: "translateY(-50%)" }} />
+            <input
+              placeholder="Search classes by Grade, Name, or Teacher..."
+              value={adminSearch}
+              onChange={(e) => setAdminSearch(e.target.value)}
+              style={{
+                width: "100%",
+                padding: "12px 12px 12px 40px",
+                border: "1px solid #cbd5e1",
+                borderRadius: "8px",
+                fontSize: "14px",
+                color: "#334155",
+                boxSizing: "border-box"
+              }}
+            />
+          </div>
+        </div>
+
+        {/* SPLIT SCREEN LAYOUT */}
+        <div className="acm-readonly-split-layout">
+          {/* LEFT: CLASSES GRID */}
+          <div className="acm-readonly-classes-section">
+            {overviewLoading ? (
+              <div className="acm-readonly-loading-placeholder">
+                <p>Loading classes...</p>
+              </div>
+            ) : filteredAllClasses.length === 0 ? (
+              <div className="acm-readonly-empty-placeholder">
+                <FiBook size={40} />
+                <p>No classes found matching the criteria.</p>
+              </div>
+            ) : (
+              <div className="acm-readonly-classes-grid">
+                {filteredAllClasses.map((cls) => {
+                  const isSelected = selectedReadOnlyClass?.classId === cls.classId;
+                  return (
+                    <div
+                      key={cls.classId}
+                      className={`acm-readonly-class-card ${isSelected ? "acm-readonly-class-card--active" : ""}`}
+                      onClick={() => handleSelectReadOnlyClass(cls)}
+                    >
+                      <div className="acm-readonly-card-header">
+                        <div className="acm-readonly-class-icon"><FiBook /></div>
+                        <div>
+                          <h3>Grade {cls.grade}-{cls.className}</h3>
+                          <span className="acm-readonly-class-year">Year {cls.year}</span>
+                        </div>
+                      </div>
+                      <div className="acm-readonly-card-body">
+                        <div className="acm-readonly-info-row">
+                          <span className="acm-readonly-info-label">Class Teacher:</span>
+                          <span className="acm-readonly-info-val">
+                            {cls.teacherName || <em style={{ color: "#94a3b8" }}>Not Assigned</em>}
+                          </span>
+                        </div>
+                        <div className="acm-readonly-info-row">
+                          <span className="acm-readonly-info-label">Students:</span>
+                          <span className="acm-readonly-info-val">{cls.studentCount ?? 0} enrolled</span>
+                        </div>
+                      </div>
+                      <div className="acm-readonly-card-footer">
+                        <span className={`acm-status-pill ${cls.secEnabled ? "acm-status-pill--open" : ""}`}>
+                          {cls.secEnabled ? "Roster Finalized" : "Roster Open"}
+                        </span>
+                        <span className={`acm-status-pill ${cls.devEnabled ? "acm-status-pill--open" : ""}`}>
+                          {cls.devEnabled ? "Dev Mode" : "Normal"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT: DETAILS PANEL */}
+          <div className="acm-readonly-details-section">
+            {!selectedReadOnlyClass ? (
+              <div className="acm-readonly-details-placeholder">
+                <FiBook size={48} style={{ color: "#cbd5e1", marginBottom: "15px" }} />
+                <h3>No Class Selected</h3>
+                <p>Select a class from the left list to view subjects, assigned teachers, and student rosters.</p>
+              </div>
+            ) : (
+              <div className="acm-readonly-details-card">
+                {/* Details Header */}
+                <div className="acm-readonly-details-header">
+                  <h2>Grade {selectedReadOnlyClass.grade}-{selectedReadOnlyClass.className}</h2>
+                  <p>Year {selectedReadOnlyClass.year} &nbsp;·&nbsp; Class Teacher: <strong>{selectedReadOnlyClass.teacherName || "Not Assigned"}</strong></p>
+                </div>
+
+                {/* Details Tab Buttons */}
+                <div className="acm-readonly-details-tabs">
+                  <button
+                    className={`acm-readonly-details-tab ${detailsTab === "subjects" ? "acm-readonly-details-tab--active" : ""}`}
+                    onClick={() => setDetailsTab("subjects")}
+                  >
+                    Subjects
+                  </button>
+                  <button
+                    className={`acm-readonly-details-tab ${detailsTab === "roster" ? "acm-readonly-details-tab--active" : ""}`}
+                    onClick={() => setDetailsTab("roster")}
+                  >
+                    Student Roster
+                  </button>
+                </div>
+
+                {/* Details Tab Content */}
+                <div className="acm-readonly-details-content">
+                  {detailsLoading ? (
+                    <div className="acm-readonly-loading-placeholder" style={{ minHeight: "200px" }}>
+                      <p>Loading details...</p>
+                    </div>
+                  ) : detailsTab === "subjects" ? (
+                    <div className="acm-readonly-subjects-list">
+                      {selectedClassSubjects.length === 0 ? (
+                        <div className="acm-readonly-empty-placeholder" style={{ minHeight: "150px" }}>
+                          <p>No subjects assigned to this class yet.</p>
+                        </div>
+                      ) : (
+                        <div className="acm-readonly-table-container">
+                          <table className="acm-readonly-table">
+                            <thead>
+                              <tr>
+                                <th>Subject Name</th>
+                                <th>Assigned Teacher</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {selectedClassSubjects.map((s) => (
+                                <tr key={s.subjectId}>
+                                  <td><strong>{s.subjectName}</strong></td>
+                                  <td>{s.teacherName || <em style={{ color: "#94a3b8" }}>Not Allocated</em>}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="acm-readonly-roster-list">
+                      {selectedClassRoster.length === 0 ? (
+                        <div className="acm-readonly-empty-placeholder" style={{ minHeight: "150px" }}>
+                          <p>No students enrolled in this class.</p>
+                        </div>
+                      ) : (
+                        <div className="acm-readonly-table-container">
+                          <table className="acm-readonly-table">
+                            <thead>
+                              <tr>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Contact</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {selectedClassRoster.map((s) => (
+                                <tr key={s.studentId}>
+                                  <td><code>{s.studentId}</code></td>
+                                  <td><strong>{s.fullName}</strong></td>
+                                  <td>{s.contactNumber || "—"}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isDeputyAdmin) {
     return (

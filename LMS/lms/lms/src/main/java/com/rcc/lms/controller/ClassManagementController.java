@@ -46,6 +46,7 @@ public class ClassManagementController {
             m.put("dobTo", c.getDobTo() != null ? c.getDobTo().toString() : null);
             m.put("teacherName", c.getTeacher() != null ? c.getTeacher().getFullName() : null);
             m.put("teacherId", c.getTeacher() != null ? c.getTeacher().getTeacherId() : null);
+            m.put("studentCount", classManagementService.getClassRoster(c.getClassId()).size());
             result.add(m);
         }
         return ResponseEntity.ok(result);
