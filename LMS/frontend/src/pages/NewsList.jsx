@@ -885,7 +885,7 @@ const handleDeleteNews = async (id) => {
       + Add Article
     </button>
 
-    
+    <div className="section-header" >
     {/* NEWS LIST */}
 <div className="news-list">
   {news.length > 0 ? (
@@ -939,7 +939,7 @@ const handleDeleteNews = async (id) => {
     </div>
   )}
 </div>
-
+</div>
     {/* POPUP FORM  */}
     {showNewsForm && (
       <div
@@ -1023,16 +1023,23 @@ const handleDeleteNews = async (id) => {
 
         </div>
       </div>
+      
     )}
   </>
+
 )}
 
         {/* SPORTS */}
        {activeTab === "Sports" && (
   <>
     {!selectedSport ? (
+      <>
+      <div>
+            <h1 style={{ fontSize: "22px", fontWeight: "700",marginTop:"15px",marginleft:"30px" }}>Manage Sports Achievements</h1>
+            <h2 style={{ fontSize: "16px", fontWeight: "400", color: "#64748b", marginTop:"5px" }}>Manage and publish achievements for each sport.</h2>
+          </div>
       <div className="sports-grid">
-
+        
         {sports.map((sport) => (
           <div key={sport.id} className="sport-card">
 
@@ -1062,6 +1069,7 @@ const handleDeleteNews = async (id) => {
         ))}
 
       </div>
+      </>
     ) : (
       <div className="achievement-page">
 
