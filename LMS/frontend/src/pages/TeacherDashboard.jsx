@@ -23,6 +23,7 @@ import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import TeacherAddMarks from "../Component/TeacherAddMarks";
 import { getTeacherMaterials, saveMaterial, deleteMaterial, uploadFile } from "../Service/TeacherMaterialService";
+import { getTeacherAssignments, saveAssignment, deleteAssignment } from "../Service/TeacherAssignmentService";
 
 export default function TeacherDashboard() {
     const navigate = useNavigate();
@@ -46,15 +47,16 @@ export default function TeacherDashboard() {
     const [dbMaterials, setDbMaterials] = useState([]);
     const [materialUploading, setMaterialUploading] = useState(false);
 
-    // Local state for assignments mock
-    const [assignments, setAssignments] = useState([
-        { id: 1, title: "Mathematics Midterm Assignment", dueDate: "2026-07-15", maxMarks: 100, subject: "Mathematics", submissions: "35/42" },
-        { id: 2, title: "Trigonometry Homework Quiz", dueDate: "2026-07-02", maxMarks: 20, subject: "Mathematics", submissions: "12/40" }
-    ]);
+    // State for Assignments
+    const [assignmentsView, setAssignmentsView] = useState("form"); // "form" or "list"
+    const [assignmentClassId, setAssignmentClassId] = useState("");
+    const [assignmentSubjectId, setAssignmentSubjectId] = useState("");
     const [assignmentTitle, setAssignmentTitle] = useState("");
     const [assignmentDueDate, setAssignmentDueDate] = useState("");
-    const [assignmentMaxMarks, setAssignmentMaxMarks] = useState("100");
-    const [assignmentSubject, setAssignmentSubject] = useState("Mathematics");
+    const [assignmentPdfFile, setAssignmentPdfFile] = useState(null);
+    const [assignmentNote, setAssignmentNote] = useState("");
+    const [dbAssignments, setDbAssignments] = useState([]);
+    const [assignmentUploading, setAssignmentUploading] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -120,6 +122,57 @@ export default function TeacherDashboard() {
             } catch (err) {
                 console.error("Failed to delete material:", err);
                 alert("Error deleting material");
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (teacherClasses.length > 0 && !assignmentClassId) {
+            const firstClassId = teacherClasses[0].classId;
+            setAssignmentClassId(firstClassId);
+            const classSubs = teacherSubjects.filter(s => s.classId === firstClassId);
+            if (classSubs.length > 0) {
+                setAssignmentSubjectId(classSubs[0].subjectId);
+            }
+        }
+    }, [teacherClasses, teacherSubjects, assignmentClassId]);
+
+    const loadAssignments = async () => {
+        if (!teacherId) return;
+        try {
+            const res = await getTeacherAssignments(teacherId);
+            setDbAssignments(res.data || []);
+        } catch (err) {
+            console.error("Failed to load assignments:", err);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "assignments" && teacherId) {
+            loadAssignments();
+        }
+    }, [activeTab, teacherId]);
+
+    const handleAssignmentClassChange = (e) => {
+        const classId = e.target.value;
+        setAssignmentClassId(classId);
+        const classSubs = teacherSubjects.filter(s => s.classId === classId);
+        if (classSubs.length > 0) {
+            setAssignmentSubjectId(classSubs[0].subjectId);
+        } else {
+            setAssignmentSubjectId("");
+        }
+    };
+
+    const handleDeleteAssignment = async (id) => {
+        if (window.confirm("Are you sure you want to delete this assignment?")) {
+            try {
+                await deleteAssignment(id);
+                alert("Assignment deleted successfully!");
+                await loadAssignments();
+            } catch (err) {
+                console.error("Failed to delete assignment:", err);
+                alert("Error deleting assignment");
             }
         }
     };
@@ -246,21 +299,50 @@ export default function TeacherDashboard() {
         }
     };
 
-    const handleCreateAssignment = (e) => {
+    const handleCreateAssignment = async (e) => {
         e.preventDefault();
-        if (!assignmentTitle.trim() || !assignmentDueDate) return;
+        if (!assignmentClassId || !assignmentSubjectId || !assignmentTitle.trim() || !assignmentDueDate) {
+            alert("Please fill in Class, Subject, Title, and Due Date fields");
+            return;
+        }
 
-        const newAssignment = {
-            id: Date.now(),
-            title: assignmentTitle,
-            dueDate: assignmentDueDate,
-            maxMarks: parseInt(assignmentMaxMarks),
-            subject: assignmentSubject,
-            submissions: "0/40"
-        };
-        setAssignments([newAssignment, ...assignments]);
-        setAssignmentTitle("");
-        setAssignmentDueDate("");
+        setAssignmentUploading(true);
+        try {
+            let uploadedUrl = "";
+            if (assignmentPdfFile) {
+                const uploadRes = await uploadFile(assignmentPdfFile);
+                uploadedUrl = uploadRes.data;
+            }
+
+            const payload = {
+                title: assignmentTitle.trim(),
+                dueDate: assignmentDueDate,
+                filePath: uploadedUrl,
+                note: assignmentNote.trim(),
+                teacherId: teacherId,
+                subjectId: assignmentSubjectId,
+                classId: assignmentClassId
+            };
+
+            await saveAssignment(payload);
+            alert("Assignment saved successfully!");
+            
+            setAssignmentTitle("");
+            setAssignmentDueDate("");
+            setAssignmentNote("");
+            setAssignmentPdfFile(null);
+
+            const fileInput = document.getElementById("assignment-pdf-file");
+            if (fileInput) fileInput.value = "";
+
+            await loadAssignments();
+            setAssignmentsView("list");
+        } catch (err) {
+            console.error("Failed to save assignment:", err);
+            alert("Error saving assignment");
+        } finally {
+            setAssignmentUploading(false);
+        }
     };
 
     const filteredClasses = selectedSubjectFilter
@@ -408,7 +490,7 @@ export default function TeacherDashboard() {
                                 <div className="stat-card">
                                     <div className="stat-info">
                                         <p>Pending Assignments</p>
-                                        <h3>{assignments.length}</h3>
+                                        <h3>{dbAssignments.length}</h3>
                                     </div>
                                     <div className="stat-icon purple"><Briefcase size={20} /></div>
                                 </div>
@@ -806,32 +888,86 @@ export default function TeacherDashboard() {
                     {/* TAB 6: ASSIGNMENTS */}
                     {activeTab === "assignments" && (
                         <>
-                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
-                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
-                                    Student Assignments
-                                </h1>
-                                <p style={{ fontSize: "16px", color: "#64748b" }}>
-                                    Publish assignments, set due deadlines, and view submitted coursework
-                                </p>
+                            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+                                <div>
+                                    <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                        Student Assignments
+                                    </h1>
+                                    <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                        Publish assignments, set due deadlines, and view submitted coursework
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => setAssignmentsView(assignmentsView === "form" ? "list" : "form")}
+                                    style={{ padding: "10px 20px", display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#0f766e", color: "white", border: "none", borderRadius: "6px", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}
+                                >
+                                    {assignmentsView === "form" ? (
+                                        <>
+                                            <Eye size={16} /> View Assignments
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Plus size={16} /> Add Assignment
+                                        </>
+                                    )}
+                                </button>
                             </div>
-                            <div className="content-grid" style={{ gridTemplateColumns: "1fr 2fr", gap: "25px" }}>
-                                {/* Left Side: Create Assignment Form */}
-                                <div className="content-card">
-                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Create Assignment</h3>
+
+                            {assignmentsView === "form" ? (
+                                <div className="content-card" style={{ maxWidth: "600px", margin: "0 auto" }}>
+                                    <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: "600", color: "#1e293b" }}>Create Assignment</h3>
                                     <form onSubmit={handleCreateAssignment}>
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Assignment Title</label>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Select Class *</label>
+                                            <select
+                                                value={assignmentClassId}
+                                                onChange={handleAssignmentClassChange}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option value="">-- Choose Class --</option>
+                                                {teacherClasses.map(c => (
+                                                    <option key={c.classId} value={c.classId}>
+                                                        Grade {c.className}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Choose Subject *</label>
+                                            <select
+                                                value={assignmentSubjectId}
+                                                onChange={(e) => setAssignmentSubjectId(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option value="">-- Choose Subject --</option>
+                                                {teacherSubjects
+                                                    .filter(sub => sub.classId === assignmentClassId)
+                                                    .map(sub => (
+                                                        <option key={sub.subjectId} value={sub.subjectId}>
+                                                            {sub.subjectName}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Assignment Title *</label>
                                             <input
                                                 type="text"
-                                                placeholder="e.g. Midterm Algebra Homework"
+                                                placeholder="e.g. Vectors Midterm Assignment"
                                                 value={assignmentTitle}
                                                 onChange={(e) => setAssignmentTitle(e.target.value)}
                                                 required
                                                 style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                                             />
                                         </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Due Date</label>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Due Date *</label>
                                             <input
                                                 type="date"
                                                 value={assignmentDueDate}
@@ -840,53 +976,88 @@ export default function TeacherDashboard() {
                                                 style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                                             />
                                         </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Max Marks</label>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>PDF File</label>
                                             <input
-                                                type="number"
-                                                value={assignmentMaxMarks}
-                                                onChange={(e) => setAssignmentMaxMarks(e.target.value)}
-                                                required
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                                id="assignment-pdf-file"
+                                                type="file"
+                                                accept="application/pdf"
+                                                onChange={(e) => setAssignmentPdfFile(e.target.files[0])}
+                                                style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", backgroundColor: "white" }}
                                             />
                                         </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "20px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Subject</label>
-                                            <select
-                                                value={assignmentSubject}
-                                                onChange={(e) => setAssignmentSubject(e.target.value)}
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                            >
-                                                <option>Mathematics</option>
-                                                <option>Science</option>
-                                                <option>English</option>
-                                            </select>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Note / Instruction</label>
+                                            <textarea
+                                                placeholder="Add homework notes or instructions here..."
+                                                value={assignmentNote}
+                                                onChange={(e) => setAssignmentNote(e.target.value)}
+                                                rows={4}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", resize: "vertical" }}
+                                            />
                                         </div>
-                                        <button type="submit" className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center" }}>
-                                            <Plus size={16} style={{ marginRight: "6px" }} /> Create Task
+
+                                        <button type="submit" disabled={assignmentUploading} className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center", padding: "12px", backgroundColor: "#2b55cc", color: "white", fontSize: "15px", fontWeight: "600" }}>
+                                            {assignmentUploading ? "Uploading & Saving..." : "Save Assignment"}
                                         </button>
                                     </form>
                                 </div>
-
-                                {/* Right Side: Assignments List */}
+                            ) : (
                                 <div className="content-card">
-                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Active Assignments</h3>
-                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                                        {assignments.map((as) => (
-                                            <div key={as.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                                                <div>
-                                                    <h4 style={{ margin: "0 0 5px 0", fontSize: "14px", color: "#1e293b" }}>{as.title}</h4>
-                                                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>{as.subject} • Max Marks: {as.maxMarks}</span>
-                                                </div>
-                                                <div style={{ textAlign: "right" }}>
-                                                    <span style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#2b55cc", marginBottom: "3px" }}>Submissions: {as.submissions}</span>
-                                                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>Due Date: {as.dueDate}</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: "600", color: "#1e293b" }}>Active Assignments</h3>
+                                    {dbAssignments.length === 0 ? (
+                                        <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
+                                            No assignments created yet.
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+                                            {dbAssignments.map((a) => {
+                                                const cl = teacherClasses.find(c => c.classId === a.classId);
+                                                const sub = teacherSubjects.find(s => s.subjectId === a.subjectId);
+                                                return (
+                                                    <div key={a.assignmentId} className="content-card" style={{ border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                                                        <div>
+                                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                                                                <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b" }}>{a.title}</h4>
+                                                                <button 
+                                                                    onClick={() => handleDeleteAssignment(a.assignmentId)}
+                                                                    style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+                                                                    title="Delete Assignment"
+                                                                >
+                                                                    <Trash2 size={18} />
+                                                                </button>
+                                                            </div>
+                                                            <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 8px 0", fontWeight: "600" }}>
+                                                                Grade {cl ? cl.className : a.classId} • {sub ? sub.subjectName : a.subjectId}
+                                                            </p>
+                                                            <div style={{ fontSize: "13px", fontWeight: "600", color: "#b91c1c", marginBottom: "12px" }}>
+                                                                Due Date: {a.dueDate}
+                                                            </div>
+                                                            {a.note && (
+                                                                <div style={{ fontSize: "13px", color: "#475569", backgroundColor: "#f8fafc", padding: "10px", borderRadius: "6px", marginBottom: "12px", whiteSpace: "pre-wrap" }}>
+                                                                    {a.note}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div style={{ marginTop: "12px" }}>
+                                                            {a.filePath && (
+                                                                <a href={a.filePath} target="_blank" rel="noopener noreferrer" style={{ display: "block", textAlign: "center", padding: "8px", backgroundColor: "#e0f2fe", color: "#0369a1", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none", marginBottom: "12px" }}>
+                                                                    Download Assignment PDF
+                                                                </a>
+                                                            )}
+                                                            <div style={{ fontSize: "11px", color: "#94a3b8", textAlign: "right" }}>
+                                                                Created: {a.uploadDate}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
+                            )}
                         </>
                     )}
 
