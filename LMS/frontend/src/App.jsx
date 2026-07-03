@@ -16,7 +16,7 @@ import TechRegister from "./pages/TechRegister";
 import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
 import AdminClassManagement from "./pages/AdminClassManagement"; // NEW: Class Management
 // --> NEW: ANNOUNCEMENTS <--
-import Announcement from "./pages/Announcements";
+
 
 
 // --> MANAGEMENT TABLES <--
@@ -102,8 +102,8 @@ function App() {
                 <Route path="users/teacher" element={<TeacherRegister />} />
                 <Route path="users/tech" element={<TechRegister />} />
 
-                {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- 
-                <Route path="announcements" element={<Announcement />} />*/}
+                {/* --> NEW: ANNOUNCEMENTS ROUTE ADDED HERE <-- */}
+                <Route path="announcements" element={<AdminAnnouncements />} />
 
                 {/* --> CLASS MANAGEMENT <-- */}
                 <Route path="classes" element={<AdminClassManagement />} />
@@ -176,25 +176,31 @@ function App() {
                     </ProtectedRoute>
                 }
             />
-            {/* ============================================================
-                TECHNICAL OFFICER PANEL (PROTECTED)
-            ============================================================ */
-            }
-            <Route path="/" element={<Layout />}>
-          
-          <Route index element={<ToDashboard />} />
-          <Route path="news" element={<NewsList />} />
-          <Route path="add" element={<AddNews />} />
-          <Route path="feedback" element={<FeedbackList />} />
 
-      
-          <Route path="student-register" element={<StudentRegister />} />
-          <Route path="events" element={<Event />} />
-          <Route path="/admin/announcements" element={<AdminAnnouncements />} />
-          <Route path="livestream-admin" element={<LiveStreamAdmin />} />
-          <Route path="sport-achievements/:sportName" element={<SportAchievements />} />
-          <Route path="/SportsList" element={<SportsList />} />
-        </Route>
+            {/* ============================================================
+                TECHNICAL OFFICER PANEL — uses /to as base to avoid
+                conflicting with /admin routes
+            ============================================================ */}
+            <Route path="/to" element={<Layout />}>
+                <Route index element={<ToDashboard />} />
+                <Route path="news" element={<NewsList />} />
+                <Route path="add" element={<AddNews />} />
+                <Route path="feedback" element={<FeedbackList />} />
+
+                {/* Admin sub-pages rendered inside TO sidebar (no AdminLayout) */}
+                <Route path="admin/students" element={<AdminStudentManagement />} />
+                <Route path="admin/teachers" element={<AdminTeacherManagement />} />
+                <Route path="admin/tech-officers" element={<AdminTechOfficerManagement />} />
+                <Route path="admin/announcements" element={<AdminAnnouncements />} />
+                <Route path="admin/analytics" element={<AdminAcademicAnalytics />} />
+                <Route path="admin/classes" element={<AdminClassManagement />} />
+
+                <Route path="student-register" element={<StudentRegister />} />
+                <Route path="events" element={<Event />} />
+                <Route path="livestream-admin" element={<LiveStreamAdmin />} />
+                <Route path="sport-achievements/:sportName" element={<SportAchievements />} />
+                <Route path="SportsList" element={<SportsList />} />
+            </Route>
         </Routes>
     );
 }

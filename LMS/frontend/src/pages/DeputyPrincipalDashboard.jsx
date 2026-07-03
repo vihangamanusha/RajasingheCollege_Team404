@@ -16,7 +16,7 @@ import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import AdminClassManagement from "./AdminClassManagement";
-import Announcement from "./Announcements";
+/*import Announcement from "./Announcements";*/
 import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
 
 

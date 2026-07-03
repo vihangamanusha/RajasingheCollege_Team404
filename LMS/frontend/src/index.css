@@ -3447,6 +3447,8 @@ body {
   margin-bottom: 25px;
 }
 
+
+
 .org {
   font-size: 14px;
   color: gray;
@@ -3456,6 +3458,8 @@ body {
 .subtitle {
   color: gray;
   margin: 0;
+  position: relative;
+  left: -10px;
 }
 
 .addBtn {
@@ -4953,4 +4957,72 @@ textarea {
   .sports-grid {
     gap: 18px;
   }
+}
+
+/* ============================================================
+   GLOBAL TOP HEADER & MAIN PAGE CONTAINER FOR TO DASHBOARD SECTIONS
+============================================================ */
+.main-page-container {
+  margin: -30px -32px;
+  min-height: 100vh;
+  background: #f8fafc;
+}
+
+.main-page-container .top-header {
+  height: 70px;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 0;
+}
+
+.main-page-container .header-title h3 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.main-page-container .user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.main-page-container .user-info {
+  text-align: right;
+}
+
+.main-page-container .user-role {
+  margin: 0;
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.main-page-container .user-name {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.main-page-container .user-avatar {
+  width: 35px;
+  height: 35px;
+  background-color: #2b55cc;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.main-page-container .page-content {
+  padding: 30px;
 }
