@@ -869,61 +869,76 @@ const handleDeleteNews = async (id) => {
   <>
     <div className="section-header">
       <div>
-        <div className="section-label">Website Content</div>
-        <h2 className="section-title">Manage News Articles</h2>
+       
+        <h1 style={{ fontSize: "22px", fontWeight: "700",marginTop:"15px",marginleft:"30px" }}>Manage News Articles</h1>
+        <h2 style={{ fontSize: "16px", fontWeight: "400", color: "#64748b", marginTop:"5px" }}>Manage and publish school news, announcements, and important updates.</h2>
       </div>
     </div>
 
     {/* ADD BUTTON (FIXED) */}
-    <button
+    <button 
       className="btn primary"
+      style={{ marginLeft: "1000px" , marginTop: "-82px", position: "absolute",borderRadius: "10px", padding: "5px 20px",fontStyle: "normal" }}
       onClick={() => openNewsForm()}
+    
     >
       + Add Article
     </button>
 
+    
     {/* NEWS LIST */}
-    <div className="news-list">
-      {news.map((article) => (
-        <div key={article.id} className="news-card">
+<div className="news-list">
+  {news.length > 0 ? (
+    news.map((article) => (
+      <div key={article.id} className="news-card">
 
-          <div className="news-image-wrapper">
-            <img
-  src={
-    article.image?.startsWith("http")
-      ? article.image
-      : article.image
-      ? `http://localhost:8080${article.image}`
-      : "https://via.placeholder.com/400"
-  }
-  alt={article.title}
-  className="news-image"
-/>
-          </div>
-
-          <div>
-            <h2>{article.title}</h2>
-            <p className="meta">{article.date}</p>
-            <p>{article.content}</p>
-
-            <button
-              className="update-btn"
-              onClick={() => openNewsForm(article)}
-            >
-              Edit
-            </button>
-
-            <button
-              className="delete-btn"
-              onClick={() => handleDeleteNews(article.id)}
-            >
-              Delete
-            </button>
-          </div>
-
+        <div className="news-image-wrapper">
+          <img
+            src={
+              article.image?.startsWith("http")
+                ? article.image
+                : article.image
+                ? `http://localhost:8080${article.image}`
+                : "https://via.placeholder.com/400"
+            }
+            alt={article.title}
+            className="news-image"
+          />
         </div>
-      ))}
+
+        <div>
+          <h2>{article.title}</h2>
+          <p className="meta">{article.date}</p>
+          <p>{article.content}</p>
+
+          <button
+            className="update-btn"
+            onClick={() => openNewsForm(article)}
+          >
+            Edit
+          </button>
+
+          <button
+            className="delete-btn"
+            onClick={() => handleDeleteNews(article.id)}
+          >
+            Delete
+          </button>
+        </div>
+
+      </div>
+    ))
+  ) : (
+    <div className="empty-state">
+      <div className="empty-icon">📰</div>
+      <h3>No News Articles Available</h3>
+      <p>
+        There are currently no news articles to display.
+        Click <strong>"Add Article"</strong> to publish your first news article.
+      </p>
     </div>
+  )}
+</div>
 
     {/* POPUP FORM  */}
     {showNewsForm && (

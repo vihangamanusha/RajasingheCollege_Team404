@@ -218,7 +218,8 @@ const confirmDelete = async () => {
     border: "1px solid #e2e8f0",
     color: "#475569",
     textAlign: "center",
-    boxShadow: "0 6px 18px rgba(15, 23, 42, 0.06)"
+    boxShadow: "0 6px 18px rgba(15, 23, 42, 0.06)",
+    
   }}
 >
   <div style={{ fontSize: "42px", marginBottom: "12px" }}>📭</div>
