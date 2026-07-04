@@ -3883,10 +3883,11 @@ textarea {
 
 .event-modal{
   background: white;
-  width: 90%;
-  max-width: 700px;
+  width: 50%;
+  max-width: 490px;
+  height: 610px;
   border-radius: 20px;
-  padding: 35px;
+  padding: 20px;
   position: relative;
 }
 
@@ -3908,7 +3909,7 @@ textarea {
 .event-form{
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 8px;
 }
 
 .event-input,
@@ -3918,10 +3919,11 @@ textarea {
   border: 1px solid #ccc;
   border-radius: 10px;
   font-size: 15px;
+  height: 50px;
 }
 
 .event-textarea{
-  height: 120px;
+  height: 100px;
   resize: none;
 }
 
