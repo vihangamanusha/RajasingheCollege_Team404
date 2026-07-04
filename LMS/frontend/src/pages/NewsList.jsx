@@ -53,6 +53,7 @@ export default function AdminDashboard() {
 const [news, setNews] = useState([]);
 const [showNewsForm, setShowNewsForm] = useState(false);
 const [editingNewsId, setEditingNewsId] = useState(null);
+const [imageError, setImageError] = useState("");
 
 const [newsForm, setNewsForm] = useState({
   title: "",
@@ -398,8 +399,10 @@ const loadDocuments = async () => {
         await apiDeleteNews(deleteConfirm.id);
         await loadNews();
       } else if (deleteConfirm.type === "achievement") {
-        await deleteSportAchievement(deleteConfirm.id);
-        await loadSportAchievements(selectedSport?.id);
+        const deleted = await deleteSportAchievement(deleteConfirm.id);
+        if (deleted) {
+          await loadSportAchievements(selectedSport?.id);
+        }
       } else if (deleteConfirm.type === "event") {
         const deleted = await deleteEvent(deleteConfirm.id);
         if (deleted) {
@@ -417,7 +420,7 @@ const loadDocuments = async () => {
       }
     } catch (error) {
       console.log("Delete error:", error.message || error);
-      alert("Failed to delete item");
+      showNewsFeedback("error", "Failed to delete item. Please try again.");
     } finally {
       closeDeleteConfirm();
     }
@@ -995,24 +998,33 @@ const handleDeleteDocument = (id) => {
           />
         </div>
 
-        <div>
-          <h2>{article.title}</h2>
-          <p className="meta">{article.date}</p>
-          <p>{article.content}</p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "10px", width: "100%" }}>
+          <div style={{ flex: 1 }}>
+            <h2>{article.title}</h2>
+            <p className="meta">{article.date}</p>
+            <p>{article.content}</p>
+          </div>
 
-          <button
-            className="update-btn"
-            onClick={() => openNewsForm(article)}
-          >
-            Edit
-          </button>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "auto", paddingTop: "8px", borderTop: "1px solid #e2e8f0" }}>
+            <span style={{ fontSize: "13px", color: "#64748b" }}>Manage article</span>
+            <div style={{ display: "flex", gap: "8px" }}>
+              <button
+                className="update-btn"
+                onClick={() => openNewsForm(article)}
+                style={{ padding: "7px 12px", borderRadius: "8px", minWidth: "72px" }}
+              >
+                Edit
+              </button>
 
-          <button
-            className="delete-btn"
-            onClick={() => handleDeleteNews(article.id)}
-          >
-            Delete
-          </button>
+              <button
+                className="delete-btn"
+                onClick={() => handleDeleteNews(article.id)}
+                style={{ padding: "7px 12px", borderRadius: "8px", minWidth: "72px" }}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -1033,24 +1045,21 @@ const handleDeleteDocument = (id) => {
     {showNewsForm && (
       <div
         className="popup-overlay"
+        
         onClick={() => setShowNewsForm(false)}
       >
         <div
           className="popup-form"
+          style={{ height: "550px" }}
           onClick={(e) => e.stopPropagation()}
         >
 
           <div className="popup-header">
-            <h2>
+            <h2 style={{marginBottom:"-10px"}}>
               {editingNewsId ? "Update Article" : "Add Article"}
             </h2>
 
-            <button
-              className="close-btn"
-              onClick={() => setShowNewsForm(false)}
-            >
-              ×
-            </button>
+            
           </div>
 
           <form onSubmit={handleNewsSubmit} className="stream-form">
@@ -1086,26 +1095,56 @@ const handleDeleteDocument = (id) => {
             <input
   type="file"
   accept="image/*"
-  onChange={(e) =>
+  required={!editingNewsId}
+  onChange={(e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    const maxSize = 1 * 1024 * 1024; // 1 MB
+
+    if (file.size > maxSize) {
+      setImageError("Image size must be less than or equal to 1 MB.");
+      setNewsForm((prev) => ({
+        ...prev,
+        image: null,
+      }));
+
+      e.target.value = ""; // Clear the selected file
+      return;
+    }
+
+    setImageError("");
     setNewsForm((prev) => ({
       ...prev,
-      image: e.target.files[0],
-    }))
-  }
+      image: file,
+    }));
+  }}
 />
+<div>
+  <p style={{ color: "red", fontSize: "14px", marginTop: "5px" }}>
+    Do not allow image size greater than 1 MB.
+  </p>
+</div>  
 
             <div className="form-buttons">
-              <button type="submit" className="submit-btn">
-                {editingNewsId ? "Update" : "Save"}
-              </button>
 
               <button
                 type="button"
                 className="cancel-btn"
+                style={{ width: "240px" }}
                 onClick={() => setShowNewsForm(false)}
               >
                 Cancel
               </button>
+
+              <button type="submit" 
+              className="submit-btn"
+              style={{ width: "240px" }}>
+                {editingNewsId ? "Update" : "Save"}
+              </button>
+
+              
             </div>
 
           </form>
@@ -1271,24 +1310,26 @@ const handleDeleteDocument = (id) => {
         {showAchievementModal && (
           <div
             className="popup-overlay"
+            
             onClick={() => setShowAchievementModal(false)}
           >
             <div
               className="popup-form"
+              style={{height:"520px"}}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="popup-header">
-                <h2>
+                <h2 style={{marginBottom:"-10px"}}  >
                   {editingAchievementId
                     ? "Update Achievement"
                     : "Add New Achievement"}
                 </h2>
-                <button
+                {/*<button
                   className="close-btn"
                   onClick={() => setShowAchievementModal(false)}
                 >
                   ×
-                </button>
+                </button>*/}
               </div>
 
               <form onSubmit={handleAchievementSubmit} className="stream-form">
@@ -1320,7 +1361,7 @@ const handleDeleteDocument = (id) => {
                 
 
                 <div className="form-group">
-                  <label>Upload Image</label>
+                  <label style={{ marginBottom: "-8px", marginTop: "15px" }}>Upload Image</label>
                   <input
                     type="file"
                     accept="image/*"
@@ -1328,17 +1369,20 @@ const handleDeleteDocument = (id) => {
                   />
                 </div>
 
-                {achievementForm.image && (
+                {/* {achievementForm.image && (
                   <div className="preview-image">
                     <img
                       src={achievementForm.image}
                       alt="preview"
                     />
                   </div>
-                )}
+                )} */}
 
                 <div className="form-buttons">
-                  <button type="button" className="cancel-btn" onClick={() => setShowAchievementModal(false)}>
+                  <button type="button" 
+                  className="cancel-btn" 
+                  style={{ width: "440px" }}
+                  onClick={() => setShowAchievementModal(false)}>
                     Cancel
                   </button>
                   <button type="submit" className="submit-btn">

@@ -48,8 +48,9 @@ export async function deleteSportAchievement(id) {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to delete achievement");
+    const errorText = await response.text();
+    throw new Error(errorText || "Failed to delete achievement");
   }
 
-  return response.json();
+  return true;
 }
