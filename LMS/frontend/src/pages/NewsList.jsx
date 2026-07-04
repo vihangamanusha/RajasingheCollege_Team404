@@ -1713,17 +1713,18 @@ const handleDeleteDocument = (id) => {
 
             <div className="event-row">
               <input
-                type="date"
-                value={eventForm.date}
-                onChange={(e) =>
-                  setEventForm({
-                    ...eventForm,
-                    date: e.target.value,
-                  })
-                }
-                className="event-input"
-                required
-              />
+  type="date"
+  value={eventForm.date}
+  min={new Date().toISOString().split("T")[0]}
+  onChange={(e) =>
+    setEventForm({
+      ...eventForm,
+      date: e.target.value,
+    })
+  }
+  className="event-input"
+  required
+/>
 
               <input
                 type="time"
@@ -1770,10 +1771,14 @@ const handleDeleteDocument = (id) => {
             </select>
 
             <div className="event-form-buttons">
-              <button type="button" onClick={() => setShowModal(false)} className="event-cancel-btn">
+              <button type="button" 
+              style={{ width: "240px",backgroundColor: "white" ,color: "#1e293b",border: "1px solid #cbd5e1"}}
+              onClick={() => setShowModal(false)} className="event-cancel-btn">
                 Cancel
               </button>
-              <button type="submit" className="event-save-btn">
+              <button type="submit" 
+              style={{ width: "240px" }}
+              className="event-save-btn">
                 {editingEventId ? "Update Event" : "Add Event"}
               </button>
             </div>
@@ -1896,13 +1901,18 @@ const handleDeleteDocument = (id) => {
                Maximum file size allowed is 1MB (PDF only)
             </p>
             <div className="form-buttons">
-              <button type="submit" className="submit-btn">
+              <button type="button" 
+              className="cancel-btn" 
+              style={{ width: "240px" }}
+              onClick={() => setShowDocumentModal(false)}>
+                Cancel
+              </button>
+              <button type="submit" className="submit-btn"
+               style={{ width: "240px" }}>
                 Upload
               </button>
 
-              <button type="button" className="cancel-btn" onClick={() => setShowDocumentModal(false)}>
-                Cancel
-              </button>
+              
             </div>
           </form>
         </div>
