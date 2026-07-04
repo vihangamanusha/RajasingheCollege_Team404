@@ -166,6 +166,12 @@ const [documentForm, setDocumentForm] = useState({
   topic: "",
   file: null,
 });
+const [deleteConfirm, setDeleteConfirm] = useState({
+  open: false,
+  id: null,
+  type: "",
+  title: "this item",
+});
 
 const loadDocuments = async () => {
     const data = await getDocuments();
@@ -361,19 +367,47 @@ const loadDocuments = async () => {
     });
   };
 
-  const handleDeleteAchievement = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this achievement?"
-    );
-    if (!confirmDelete) return;
+  const openDeleteConfirm = (id, type, title = "this item") => {
+    setDeleteConfirm({ open: true, id, type, title });
+  };
+
+  const closeDeleteConfirm = () => {
+    setDeleteConfirm({ open: false, id: null, type: "", title: "this item" });
+  };
+
+  const confirmDeleteAction = async () => {
+    if (!deleteConfirm.id) return;
 
     try {
-      await deleteSportAchievement(id);
-      await loadSportAchievements(selectedSport.id);
+      if (deleteConfirm.type === "news") {
+        await apiDeleteNews(deleteConfirm.id);
+        await loadNews();
+      } else if (deleteConfirm.type === "achievement") {
+        await deleteSportAchievement(deleteConfirm.id);
+        await loadSportAchievements(selectedSport?.id);
+      } else if (deleteConfirm.type === "event") {
+        await deleteEvent(deleteConfirm.id);
+        loadEvents();
+      } else if (deleteConfirm.type === "stream") {
+        await fetch(`http://localhost:8080/api/livestreams/${deleteConfirm.id}`, {
+          method: "DELETE",
+        });
+        loadStreams();
+        setMessage("Stream deleted");
+      } else if (deleteConfirm.type === "document") {
+        await deleteDocument(deleteConfirm.id);
+        loadDocuments();
+      }
     } catch (error) {
-      console.log("Delete achievement error:", error.message || error);
-      alert("Failed to delete achievement");
+      console.log("Delete error:", error.message || error);
+      alert("Failed to delete item");
+    } finally {
+      closeDeleteConfirm();
     }
+  };
+
+  const handleDeleteAchievement = (id) => {
+    openDeleteConfirm(id, "achievement", "this achievement");
   };
 
   const handleSportBack = () => {
@@ -520,13 +554,8 @@ const loadDocuments = async () => {
     console.log("Submit error:", err.message);
   }
 };
-const handleDeleteNews = async (id) => {
-  try {
-    await apiDeleteNews(id);
-    await loadNews(); // IMPORTANT
-  } catch (err) {
-    console.log("Delete error:", err.message);
-  }
+const handleDeleteNews = (id) => {
+  openDeleteConfirm(id, "news", "this news article");
 };
   /* YOUTUBE EMBED URL */
   const getEmbedUrl = (url) => {
@@ -607,26 +636,8 @@ const handleDeleteNews = async (id) => {
   };
 
   /* DELETE STREAM */
-  const deleteStream = async (id) => {
-
-    try {
-
-      await fetch(
-        `http://localhost:8080/api/livestreams/${id}`,
-        {
-          method: "DELETE",
-        }
-      );
-
-      loadStreams();
-
-      setMessage("Stream deleted");
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
+  const deleteStream = (id) => {
+    openDeleteConfirm(id, "stream", "this stream");
   };
 
   /* EDIT STREAM */
@@ -742,24 +753,8 @@ const handleDeleteNews = async (id) => {
 
   loadEvents();
 };
-  const handleDelete = async (id) => {
-  console.log("Deleting ID:", id);
-
-  const confirmDelete = window.confirm("Are you sure you want to delete?");
-  if (!confirmDelete) return;
-
-  try {
-    await deleteEvent(id);   //api  call
-
-    console.log("Deleted successfully");
-
-    alert("Event Deleted!");
-
-    loadEvents(); // refresh list
-  } catch (error) {
-    console.error("Delete failed:", error);
-    alert("Delete failed! Check backend or API.");
-  }
+  const handleDelete = (id) => {
+  openDeleteConfirm(id, "event", "this event");
 };
 
 //runs when edit button click
@@ -799,13 +794,8 @@ const handleDocumentSubmit = async (e) => {
 };
 
 
-const handleDeleteDocument = async (id) => {
-
-    if (!window.confirm("Delete this document?")) return;
-
-    await deleteDocument(id);
-
-    loadDocuments();
+const handleDeleteDocument = (id) => {
+    openDeleteConfirm(id, "document", "this document");
 };
 
 
@@ -1869,7 +1859,8 @@ const handleDeleteDocument = async (id) => {
               }
               required
             />
-
+            
+ 
             <input
               type="file"
               accept="application/pdf"
@@ -1881,7 +1872,9 @@ const handleDeleteDocument = async (id) => {
               }
               required
             />
-
+            <p style={{ color: "red", fontSize: "12px", marginTop: "1px" }}>
+               Maximum file size allowed is 1MB (PDF only)
+            </p>
             <div className="form-buttons">
               <button type="submit" className="submit-btn">
                 Upload
@@ -1892,6 +1885,51 @@ const handleDeleteDocument = async (id) => {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    )}
+
+    {deleteConfirm.open && (
+      <div className="modal-overlay" style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(15, 23, 42, 0.6)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 2100
+      }}>
+        <div className="modal-box" style={{
+          backgroundColor: "white",
+          padding: "30px",
+          borderRadius: "12px",
+          width: "400px",
+          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
+        }}>
+          <h3 style={{ marginBottom: "10px", color: "#1e293b" }}>Delete Confirmation</h3>
+          <p style={{ marginBottom: "20px", color: "#475569" }}>
+            Are you sure you want to delete {deleteConfirm.title}?
+          </p>
+          <div className="modal-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+            <button type="button" className="cancel-btn" onClick={closeDeleteConfirm} style={{
+              padding: "8px 16px",
+              border: "1px solid #cbd5e1",
+              borderRadius: "6px",
+              backgroundColor: "white",
+              cursor: "pointer"
+            }}>Cancel</button>
+            <button type="button" className="confirm-delete-btn" onClick={confirmDeleteAction} style={{
+              padding: "8px 16px",
+              border: "none",
+              borderRadius: "6px",
+              backgroundColor: "#dc2626",
+              color: "white",
+              cursor: "pointer"
+            }}>Delete</button>
+          </div>
         </div>
       </div>
     )}
