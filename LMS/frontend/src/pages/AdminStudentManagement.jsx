@@ -12,6 +12,7 @@ export default function AdminStudentManagement() {
     const [searchTerm, setSearchTerm] = useState("");//serch
     const [students, setStudents] = useState([]);//store the students
     const [loading, setLoading] = useState(false);//loading
+    const [deletionNote, setDeletionNote] = useState(""); // note for soft delete
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);//delete popup
     const [userToDelete, setUserToDelete] = useState(null);//store the messge.
@@ -179,25 +180,31 @@ export default function AdminStudentManagement() {
     // =========================
     const triggerDelete = (username) => {
         setUserToDelete(username);
+        setDeletionNote("");
         setDeleteMessage({ text: "", type: "" });
         setShowDeleteModal(true);
     };
 
     const confirmDelete = async () => {
+        if (!deletionNote.trim()) {
+            setDeleteMessage({ text: "Deletion note is required.", type: "error" });
+            return;
+        }
         setDeleteMessage({ text: "", type: "" });
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`http://localhost:8080/admin/users/delete/${userToDelete}`, {
+            const response = await fetch(`http://localhost:8080/admin/users/delete/${userToDelete}?reason=${encodeURIComponent(deletionNote.trim())}`, {
                 method: "DELETE",
                 headers: { Authorization: `Bearer ${token}` },
             });
 
             if (response.ok) {
-                setDeleteMessage({ text: "Student permanently deleted.", type: "success" });
+                setDeleteMessage({ text: "Student soft deleted successfully.", type: "success" });
                 fetchStudents();
                 setTimeout(() => {
                     setShowDeleteModal(false);
                     setUserToDelete(null);
+                    setDeletionNote("");
                 }, 1500);
             } else {
                 setDeleteMessage({ text: "Failed to delete student.", type: "error" });
@@ -246,7 +253,7 @@ export default function AdminStudentManagement() {
                         </tr>
                         </thead>
                         <tbody>
-                        {students.map((student, index) => (
+                        {students.slice(0, 10).map((student, index) => (
                             <tr key={index}>
                                 <td><strong>{student.userId}</strong></td>
                                 <td>{student.username}</td>
@@ -384,13 +391,46 @@ export default function AdminStudentManagement() {
                     <div className="modal-box">
                         <div className="modal-header">
                             <FiAlertTriangle className="warning-icon" style={{color: "#dc2626"}} />
-                            <h2>Permanently Delete Student?</h2>
+                            <h2>Soft Delete Student</h2>
                         </div>
-                        <p>Are you sure you want to delete <strong>{userToDelete}</strong>?</p>
-                        {deleteMessage.text && <div className={`inline-form-message ${deleteMessage.type}`}>{deleteMessage.text}</div>}
+                        <p style={{ marginBottom: "15px" }}>Are you sure you want to soft delete <strong>{userToDelete}</strong>?</p>
+                        
+                        <div className="modal-form-group" style={{ marginBottom: "20px", textAlign: "left" }}>
+                            <label style={{ display: "block", fontSize: "14px", fontWeight: "600", color: "#374151", marginBottom: "8px" }}>
+                                Deletion Note / Reason <span style={{ color: "#dc2626" }}>*</span>
+                            </label>
+                            <textarea
+                                placeholder="Enter reason for soft delete (required)..."
+                                value={deletionNote}
+                                onChange={(e) => setDeletionNote(e.target.value)}
+                                rows="3"
+                                required
+                                style={{
+                                    width: "100%",
+                                    padding: "10px",
+                                    border: "1px solid #cbd5e1",
+                                    borderRadius: "8px",
+                                    fontSize: "14px",
+                                    outline: "none",
+                                    resize: "none"
+                                }}
+                            />
+                        </div>
+
+                        {deleteMessage.text && <div className={`inline-form-message ${deleteMessage.type}`} style={{ marginBottom: "15px" }}>{deleteMessage.text}</div>}
                         <div className="modal-actions">
                             <button className="cancel-btn" onClick={() => setShowDeleteModal(false)}>Cancel</button>
-                            <button className="confirm-delete-btn" onClick={confirmDelete}>Delete</button>
+                            <button 
+                                className="confirm-delete-btn" 
+                                onClick={confirmDelete}
+                                disabled={!deletionNote.trim()}
+                                style={{
+                                    backgroundColor: deletionNote.trim() ? "#dc2626" : "#cbd5e1",
+                                    cursor: deletionNote.trim() ? "pointer" : "not-allowed"
+                                }}
+                            >
+                                Delete
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -39,19 +39,9 @@ export default function DeputyPrincipalDevDashboard() {
         totalStudents: 0,
         totalTeachers: 0,
         totalClasses: 0,
-        totalSubjects: 0
+        totalSubjects: 0,
+        recentActivities: []
     });
-
-    // Mock projects for the infrastructure management view
-    const [projects, setProjects] = useState([
-        { id: 1, name: "Smart Classroom Setup (Block B)", progress: "80%", status: "In Progress", category: "Technology" },
-        { id: 2, name: "Science Laboratory Renovation", progress: "40%", status: "In Progress", category: "Infrastructure" },
-        { id: 3, name: "New Library Books Acquisition", progress: "100%", status: "Completed", category: "Academics" },
-        { id: 4, name: "Main Playground Drainage Upgrade", progress: "10%", status: "Planning", category: "Sports" }
-    ]);
-
-    const [projectName, setProjectName] = useState("");
-    const [projectCategory, setProjectCategory] = useState("Infrastructure");
 
     const loadSubjects = async () => {
         try {
@@ -106,20 +96,7 @@ export default function DeputyPrincipalDevDashboard() {
         }
     };
 
-    const handleCreateProject = (e) => {
-        e.preventDefault();
-        if (!projectName.trim()) return;
 
-        const newProj = {
-            id: Date.now(),
-            name: projectName,
-            progress: "0%",
-            status: "Planning",
-            category: projectCategory
-        };
-        setProjects([newProj, ...projects]);
-        setProjectName("");
-    };
 
     const handleLogout = () => {
         localStorage.clear();
@@ -206,7 +183,7 @@ export default function DeputyPrincipalDevDashboard() {
                                     Deputy Principal (Development) Dashboard
                                 </h1>
                                 <p style={{ fontSize: "16px", color: "#64748b" }}>
-                                    Manage school resources, infrastructure projects, and strategic development
+                                    Academic Administration & School Development Workspace
                                 </p>
                             </div>
 
@@ -230,16 +207,16 @@ export default function DeputyPrincipalDevDashboard() {
 
                                 <div className="stat-card">
                                     <div className="stat-info">
-                                        <p>Active Projects</p>
-                                        <h3>{projects.filter(p => p.status === "In Progress").length}</h3>
+                                        <p>Total Classes</p>
+                                        <h3>{stats.totalClasses}</h3>
                                     </div>
-                                    <div className="stat-icon green"><Wrench size={20} /></div>
+                                    <div className="stat-icon green"><BookOpen size={20} /></div>
                                 </div>
 
                                 <div className="stat-card">
                                     <div className="stat-info">
-                                        <p>Development Grants</p>
-                                        <h3>Rs. 4.8M</h3>
+                                        <p>Total Subjects</p>
+                                        <h3>{stats.totalSubjects}</h3>
                                     </div>
                                     <div className="stat-icon purple"><Layers size={20} /></div>
                                 </div>
@@ -247,63 +224,77 @@ export default function DeputyPrincipalDevDashboard() {
 
                             {/* BOTTOM GRID */}
                             <div className="content-grid" style={{ gridTemplateColumns: "2fr 1fr", gap: "25px" }}>
-                                {/* Left Card: Projects Status */}
+                                {/* Left Card: Recent Activity */}
                                 <div className="content-card">
                                     <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
                                         <Activity size={18} style={{ color: "#3b82f6" }} />
-                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Infrastructure & Resource Projects</h3>
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Recent School Activity</h3>
                                     </div>
-                                    <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                                        {projects.map((proj) => (
-                                            <div key={proj.id} style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                                                    <h4 style={{ margin: 0, fontSize: "15px", color: "#1e293b", fontWeight: "600" }}>{proj.name}</h4>
-                                                    <span className={`badge ${proj.status === "Completed" ? "active" : "pending"}`} style={{ fontSize: "11px" }}>{proj.status}</span>
-                                                </div>
-                                                <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                                                    <div style={{ flex: 1, height: "8px", backgroundColor: "#e2e8f0", borderRadius: "4px", overflow: "hidden" }}>
-                                                        <div style={{ width: proj.progress, height: "100%", backgroundColor: proj.status === "Completed" ? "#10b981" : "#3b82f6" }}></div>
+                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "14px", maxHeight: "380px", overflowY: "auto" }}>
+                                        {stats.recentActivities && stats.recentActivities.length > 0 ? (
+                                            stats.recentActivities.map((activity, index) => (
+                                                <div className="activity-item" key={index} style={{
+                                                    display: "flex",
+                                                    gap: "15px",
+                                                    paddingBottom: "15px",
+                                                    borderBottom: "1px solid #f8fafc"
+                                                }}>
+                                                    <div className="activity-avatar" style={{
+                                                        width: "32px",
+                                                        height: "32px",
+                                                        backgroundColor: "#f1f5f9",
+                                                        color: "#64748b",
+                                                        borderRadius: "50%",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent: "center",
+                                                        fontWeight: "600",
+                                                        fontSize: "12px"
+                                                    }}>{activity.initial}</div>
+                                                    <div className="activity-details">
+                                                        <p style={{ margin: "0 0 4px 0", color: "#334155", fontSize: "13px" }}>
+                                                            <strong>{activity.name}</strong> {activity.action}
+                                                        </p>
+                                                        <span style={{ color: "#94a3b8", fontSize: "11px" }}>{activity.timeAgo}</span>
                                                     </div>
-                                                    <span style={{ fontSize: "13px", fontWeight: "600", color: "#475569" }}>{proj.progress}</span>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))
+                                        ) : (
+                                            <p style={{ color: "#94a3b8", fontSize: "14px" }}>No recent activity to display.</p>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Right Card: Proposals Form */}
+                                {/* Right Card: Quick Actions / Development Tasks */}
                                 <div className="content-card">
                                     <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
                                         <TrendingUp size={18} style={{ color: "#f59e0b" }} />
-                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>New Project Proposal</h3>
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Development Tasks</h3>
                                     </div>
-                                    <form onSubmit={handleCreateProject} style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                                        <div className="modal-form-group">
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Project Name</label>
-                                            <input
-                                                type="text"
-                                                placeholder="e.g. Auditorium Audio Setup"
-                                                value={projectName}
-                                                onChange={(e) => setProjectName(e.target.value)}
-                                                required
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                            />
-                                        </div>
-                                        <div className="modal-form-group">
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Category</label>
-                                            <select
-                                                value={projectCategory}
-                                                onChange={(e) => setProjectCategory(e.target.value)}
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                            >
-                                                <option>Infrastructure</option>
-                                                <option>Technology</option>
-                                                <option>Academics</option>
-                                                <option>Sports</option>
-                                            </select>
-                                        </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                                         <button
-                                            type="submit"
+                                            onClick={() => setActiveTab("examination")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#2b55cc",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <Award size={16} />
+                                            <span>Manage System Exams</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("subject")}
                                             style={{
                                                 display: "flex",
                                                 alignItems: "center",
@@ -316,13 +307,56 @@ export default function DeputyPrincipalDevDashboard() {
                                                 borderRadius: "8px",
                                                 fontWeight: "600",
                                                 fontSize: "14px",
-                                                cursor: "pointer"
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
                                             }}
                                         >
-                                            <Plus size={16} />
-                                            <span>Submit Proposal</span>
+                                            <BookOpen size={16} />
+                                            <span>Manage Master Subjects</span>
                                         </button>
-                                    </form>
+                                        <button
+                                            onClick={() => setActiveTab("reports")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#10b981",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <TrendingUp size={16} />
+                                            <span>View Reports & Analytics</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("class")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#6366f1",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <FileSpreadsheet size={16} />
+                                            <span>Manage School Classes</span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </>

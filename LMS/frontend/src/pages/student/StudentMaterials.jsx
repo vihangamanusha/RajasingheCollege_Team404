@@ -14,9 +14,11 @@ export default function StudentMaterials() {
       setLoading(true);
       setError(null);
       try {
+        const token = localStorage.getItem("token");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
         // Returns List<StudentDocument> from real 'document' table
         // Fields: documentId (String), title, filePath, uploadDate, teacherId, subjectId
-        const res = await axios.get(`${BASE_URL}/documents`);
+        const res = await axios.get(`${BASE_URL}/documents`, config);
         setDocs(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Documents fetch error:", err);

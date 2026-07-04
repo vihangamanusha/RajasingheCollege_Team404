@@ -8,17 +8,35 @@ export default function StudentMarks({ studentId }) {
   const [marks, setMarks]     = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
+  const [rank, setRank]       = useState("—");
 
   useEffect(() => {
-    if (!studentId) return;
-
     const fetchMarks = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Returns List<StudentMarksDTO> — each item has: markId, subjectName, term, assignmentMark
-        const res = await axios.get(`${BASE_URL}/${studentId}/marks`);
-        setMarks(Array.isArray(res.data) ? res.data : []);
+        const token = localStorage.getItem("token");
+        const loggedInUsername = localStorage.getItem("username");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        // 1. Resolve studentId dynamically
+        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const realStudentId = profileRes.data.studentId;
+
+        // 2. Fetch marks (required)
+        const marksRes = await axios.get(`${BASE_URL}/${realStudentId}/marks`, config);
+        const fetchedMarks = Array.isArray(marksRes.data) ? marksRes.data : [];
+        setMarks(fetchedMarks);
+
+        // 3. Fetch dynamic class rank (optional, don't crash if it fails or is not calculated yet)
+        try {
+          const currentTerm = fetchedMarks.length > 0 ? fetchedMarks[0].term : "Term 1";
+          const rankRes = await axios.get(`${BASE_URL}/${realStudentId}/rank?term=${currentTerm}`, config);
+          setRank(rankRes.data.rank || "—");
+        } catch (rankErr) {
+          console.error("Optional dynamic rank fetch failed:", rankErr);
+          setRank("—");
+        }
       } catch (err) {
         console.error("Marks fetch error:", err);
         setError("Failed to load marks. Please try again.");
@@ -28,13 +46,18 @@ export default function StudentMarks({ studentId }) {
     };
 
     fetchMarks();
-  }, [studentId]);
+  }, []);
 
   // Compute real average and grade from DB data
   const average =
       marks.length > 0
           ? (marks.reduce((sum, m) => sum + (m.assignmentMark || 0), 0) / marks.length).toFixed(1)
           : null;
+
+  const totalMarks =
+      marks.length > 0
+          ? marks.reduce((sum, m) => sum + (m.assignmentMark || 0), 0)
+          : 0;
 
   const getGrade = (avg) => {
     if (avg === null) return "—";
@@ -114,21 +137,26 @@ export default function StudentMarks({ studentId }) {
         {marks.length > 0 && (
             <div style={{
               background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)",
-              color: "white", padding: "2rem", borderRadius: "1rem",
-              display: "flex", gap: "4rem", marginTop: "1.5rem",
-              boxShadow: "0 8px 20px rgba(30,58,138,0.2)"
+              padding: "2rem", borderRadius: "1rem",
+              display: "flex", justifyContent: "space-between", gap: "2rem", marginTop: "1.5rem",
+              boxShadow: "0 8px 20px rgba(30,58,138,0.2)",
+              flexWrap: "wrap"
             }}>
-              <div>
-                <p style={{ margin: 0, opacity: 0.8, fontSize: "0.875rem" }}>Overall Average</p>
-                <h2 style={{ margin: "6px 0 0", fontSize: "2rem", fontWeight: 800 }}>{average}%</h2>
+              <div style={{ flex: "1 1 120px" }}>
+                <p style={{ margin: 0, opacity: 0.85, fontSize: "0.875rem", color: "#ffffff" }}>Overall Average</p>
+                <h2 style={{ margin: "6px 0 0", fontSize: "2rem", fontWeight: 800, color: "#ffffff" }}>{average}%</h2>
               </div>
-              <div>
-                <p style={{ margin: 0, opacity: 0.8, fontSize: "0.875rem" }}>Overall Grade</p>
-                <h2 style={{ margin: "6px 0 0", fontSize: "2rem", fontWeight: 800 }}>{getGrade(parseFloat(average))}</h2>
+              <div style={{ flex: "1 1 120px" }}>
+                <p style={{ margin: 0, opacity: 0.85, fontSize: "0.875rem", color: "#ffffff" }}>Total Marks</p>
+                <h2 style={{ margin: "6px 0 0", fontSize: "2rem", fontWeight: 800, color: "#ffffff" }}>{totalMarks}</h2>
               </div>
-              <div>
-                <p style={{ margin: 0, opacity: 0.8, fontSize: "0.875rem" }}>Total Subjects</p>
-                <h2 style={{ margin: "6px 0 0", fontSize: "2rem", fontWeight: 800 }}>{marks.length}</h2>
+              <div style={{ flex: "1 1 120px" }}>
+                <p style={{ margin: 0, opacity: 0.85, fontSize: "0.875rem", color: "#ffffff" }}>Total Subjects</p>
+                <h2 style={{ margin: "6px 0 0", fontSize: "2rem", fontWeight: 800, color: "#ffffff" }}>{marks.length}</h2>
+              </div>
+              <div style={{ flex: "1 1 120px" }}>
+                <p style={{ margin: 0, opacity: 0.85, fontSize: "0.875rem", color: "#ffffff" }}>My Rank</p>
+                <h2 style={{ margin: "6px 0 0", fontSize: "2rem", fontWeight: 800, color: "#ffffff" }}>{rank !== "—" ? `#${rank}` : "—"}</h2>
               </div>
             </div>
         )}

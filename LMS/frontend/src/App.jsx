@@ -31,6 +31,7 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentMarks from "./pages/student/StudentMarks";
 import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
+import MySubjects from "./pages/student/MySubjects";
 
 // =========================
 // TEACHER & SECTION HEAD & DEPUTY PRINCIPAL ROLE DASHBOARDS
@@ -111,10 +112,11 @@ function App() {
                 }
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
-                <Route path="dashboard" element={<StudentDashboard studentId="STU001" />} />
-                <Route path="marks" element={<StudentMarks studentId="STU001" />} />
+                <Route path="dashboard" element={<StudentDashboard />} />
+                <Route path="marks" element={<StudentMarks />} />
                 <Route path="materials" element={<StudentMaterials />} />
-                <Route path="report" element={<StudentReport studentId="STU001" />} />
+                <Route path="report" element={<StudentReport />} />
+                <Route path="subjects" element={<MySubjects />} />
             </Route>
 
             {/* ============================================================

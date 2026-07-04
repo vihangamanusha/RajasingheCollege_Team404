@@ -16,16 +16,23 @@ export default function StudentReport({ studentId }) {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    if (!studentId) return;
-
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
+        const token = localStorage.getItem("token");
+        const loggedInUsername = localStorage.getItem("username");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        // 1. Resolve studentId dynamically
+        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const realStudentId = profileRes.data.studentId;
+
+        // 2. Fetch student details, report, and marks
         const [studentRes, reportRes, marksRes] = await Promise.all([
-          axios.get(`${BASE_URL}/${studentId}`),        // → StudentProfileDTO
-          axios.get(`${BASE_URL}/${studentId}/report`), // → List<StudentReport>
-          axios.get(`${BASE_URL}/${studentId}/marks`),  // → List<StudentMarksDTO>
+          axios.get(`${BASE_URL}/${realStudentId}`, config),        // → StudentProfileDTO
+          axios.get(`${BASE_URL}/${realStudentId}/report`, config), // → List<StudentReport>
+          axios.get(`${BASE_URL}/${realStudentId}/marks`, config),  // → List<StudentMarksDTO>
         ]);
 
         setStudent(studentRes.data);
@@ -44,7 +51,7 @@ export default function StudentReport({ studentId }) {
     };
 
     fetchData();
-  }, [studentId]);
+  }, []);
 
   // Calculate average from real marks data
   const marksAverage =
@@ -53,7 +60,7 @@ export default function StudentReport({ studentId }) {
           : null;
 
   const handleDownload = () => {
-    window.open(`${BASE_URL}/${studentId}/report/pdf`, "_blank");
+    window.open(`${BASE_URL}/${student?.studentId}/report/pdf`, "_blank");
     setShowModal(true);
   };
 
