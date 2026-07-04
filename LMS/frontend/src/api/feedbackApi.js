@@ -18,19 +18,24 @@ export const getFeedback = async () => {
 
 // DELETE feedback
 export const deleteFeedback = async (id) => {
+  const token = localStorage.getItem("token");
+
   try {
     const res = await fetch(`${BASE_URL}/${id}`, {
       method: "DELETE",
+      headers: {
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
     });
 
-    // FIX: accept 200 OR 204 as success
+    // accept 200 OR 204 as success
     if (res.status === 200 || res.status === 204) {
-      return true;
+      return { success: true, status: res.status };
     }
 
-    return false;
+    return { success: false, status: res.status };
   } catch (error) {
     console.error("Error deleting feedback:", error);
-    return false;
+    return { success: false, status: 0 }; // 0 = network/CORS failure
   }
 };

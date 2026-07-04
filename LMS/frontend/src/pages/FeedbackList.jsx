@@ -10,6 +10,7 @@ export default function FeedbackList() {
   const [userRole, setUserRole] = useState("Admin");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [popup, setPopup] = useState(null); // { type: 'success'|'error', msg: string }
   
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -32,6 +33,11 @@ export default function FeedbackList() {
 
     loadFeedback();
   }, []);
+
+  const showPopup = (type, msg) => {
+    setPopup({ type, msg });
+    setTimeout(() => setPopup(null), 3000);
+  };
 
   const loadFeedback = async () => {
     setLoading(true);
@@ -56,22 +62,28 @@ export default function FeedbackList() {
   if (!deleteTargetId) return;
 
   try {
-    const success = await deleteFeedback(deleteTargetId);
+    const { success, status } = await deleteFeedback(deleteTargetId);
 
-    console.log("Delete result:", success);
+    console.log("Delete result:", success, "Status:", status);
 
     if (success) {
       setFeedback((prev) =>
         prev.filter((item) => item.id !== deleteTargetId)
       );
-
       showPopup("success", "Feedback deleted successfully!");
     } else {
-      showPopup("error", "Delete failed");
+      const msg =
+        status === 401 ? "Not authorized — please log in again." :
+        status === 403 ? "You don't have permission to delete this." :
+        status === 404 ? "Feedback not found — it may already be deleted." :
+        status === 500 ? "Server error — the backend failed to delete. Please try again." :
+        status === 0   ? "Network error — could not reach the server." :
+        `Delete failed (server error ${status}).`;
+      showPopup("error", msg);
     }
   } catch (err) {
     console.log(err);
-    showPopup("error", "Server error during delete");
+    showPopup("error", "Unexpected error during delete.");
   }
 
   setShowDeleteModal(false);
@@ -192,6 +204,24 @@ export default function FeedbackList() {
               </button>
             </div>
           </div>
+        </div>
+      )}
+      {popup && (
+        <div style={{
+          position: "fixed",
+          bottom: "620px",
+          right: "28px",
+          background: popup.type === "success" ? "#16a34a" : "#dc2626",
+          color: "white",
+          padding: "12px 20px",
+          borderRadius: "12px",
+          fontWeight: 600,
+          fontSize: "14px",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+          zIndex: 2000,
+          marginTop:"20px"
+        }}>
+          {popup.msg}
         </div>
       )}
     </div>
