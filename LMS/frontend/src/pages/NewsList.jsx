@@ -161,6 +161,7 @@ const [achievementForm, setAchievementForm] = useState({
   const [documents, setDocuments] = useState([]);
 const [showDocumentModal, setShowDocumentModal] = useState(false);
 const [editingDocumentId, setEditingDocumentId] = useState(null);
+const [fileError, setFileError] = useState("");
 
 const [documentForm, setDocumentForm] = useState({
   topic: "",
@@ -1862,16 +1863,35 @@ const handleDeleteDocument = (id) => {
             
  
             <input
-              type="file"
-              accept="application/pdf"
-              onChange={(e) =>
-                setDocumentForm({
-                  ...documentForm,
-                  file: e.target.files[0],
-                })
-              }
-              required
-            />
+  type="file"
+  accept="application/pdf"
+  onChange={(e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const maxSize = 1 * 1024 * 1024; // 1MB in bytes
+
+      if (file.size > maxSize) {
+        setFileError("File size exceeds 1MB. Please upload a smaller PDF.");
+        e.target.value = null; // reset input
+        return;
+      }
+
+      setFileError(""); // clear error if valid
+
+      setDocumentForm({
+        ...documentForm,
+        file: file,
+      });
+    }
+  }}
+  required
+/>
+{fileError && (
+  <p style={{ color: "red", fontSize: "12px", marginTop: "5px" }}>
+    {fileError}
+  </p>
+)}
             <p style={{ color: "red", fontSize: "12px", marginTop: "1px" }}>
                Maximum file size allowed is 1MB (PDF only)
             </p>
