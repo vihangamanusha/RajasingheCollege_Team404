@@ -72,6 +72,8 @@ const [newsForm, setNewsForm] = useState({
 
   const [editingId, setEditingId] = useState(null);
   const [videoUrlError, setVideoUrlError] = useState("");
+  const [streamError, setStreamError] = useState("");
+const [streamSuccess, setStreamSuccess] = useState("");
 
   const [form, setForm] = useState({
     title: "",
