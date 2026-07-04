@@ -129,8 +129,10 @@ export default function FeedbackList() {
         {/* PAGE HEADER */}
         <div className="header page-header">
           <div>
-            <h1>User Feedback</h1>
-            <p className="subtitle">Manage messages submitted through the Contact Us form in a clear and professional view.</p>
+            <h1 style={{ marginLeft: "-495px" }}>User Feedback</h1>
+            <p 
+            style={{marginLeft:"12px"}} 
+            className="subtitle">Manage messages submitted through the Contact Us form in a clear and professional view.</p>
           </div>
         </div>
 
