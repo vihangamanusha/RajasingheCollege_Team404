@@ -16,7 +16,7 @@ import "../layouts/AdminLayout.css";
 import "./SectionHeadDashboard.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import SectionHeadClassManagement from "./SectionHeadClassManagement";
-import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
+import SectionHeadReport from "./SectionHeadReport";
 
 export default function SectionHeadDashboard() {
     const navigate = useNavigate();
@@ -364,7 +364,7 @@ export default function SectionHeadDashboard() {
                     )}
 
                     {activeTab === "classes" && <SectionHeadClassManagement />}
-                    {activeTab === "reports" && <AdminAcademicAnalytics />}
+                    {activeTab === "reports" && <SectionHeadReport />}
                 </div>
             </div>
 

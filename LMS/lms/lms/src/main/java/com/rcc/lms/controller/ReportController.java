@@ -1,6 +1,7 @@
 package com.rcc.lms.controller;
 
 import com.rcc.lms.dto.AdminSectionMarkDTO; // <-- NEW: Imported our backpack!
+import com.rcc.lms.dto.SectionMarkDTO;
 import com.rcc.lms.repository.MarksRepository;
 import com.rcc.lms.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,5 +76,14 @@ public class ReportController {
         // Calls the query we wrote in Step 2!
         List<AdminSectionMarkDTO> reportData = marksRepository.getAdminSectionMarksReport(year, term, section);
         return ResponseEntity.ok(reportData);
+    }
+
+    @CrossOrigin(origins = "*")
+    @GetMapping("/section-marks")
+    public ResponseEntity<List<SectionMarkDTO>> getSectionMarks(
+            @RequestParam int year,
+            @RequestParam String term,
+            @RequestParam String grade) {
+        return ResponseEntity.ok(marksRepository.getSectionMarksReport(year, term, grade));
     }
 }
