@@ -25,6 +25,15 @@ import rugbyImage from "../assets/rugby.jpeg";
 import cricketImage from "../assets/cricket.jpeg";
 
 
+import {
+    getDocuments,
+    uploadDocument,
+    deleteDocument
+} from "../api/documentApi";
+
+
+
+
 export default function AdminDashboard() {
 
   const navigate = useNavigate();
@@ -148,6 +157,24 @@ const [achievementForm, setAchievementForm] = useState({
 
   ];
 
+  //documetable content states
+  const [documents, setDocuments] = useState([]);
+const [showDocumentModal, setShowDocumentModal] = useState(false);
+const [editingDocumentId, setEditingDocumentId] = useState(null);
+
+const [documentForm, setDocumentForm] = useState({
+  topic: "",
+  file: null,
+});
+
+const loadDocuments = async () => {
+    const data = await getDocuments();
+
+    const sorted = (data || []).sort((a, b) => b.id - a.id);
+
+    setDocuments(sorted);
+};
+
   /* LOAD DATA */
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -164,6 +191,7 @@ const [achievementForm, setAchievementForm] = useState({
     loadNews();
     loadStreams();
     loadEvents();
+    loadDocuments();
   }, []);
 
   const handlePasswordChange = async (e) => {
@@ -748,6 +776,39 @@ const handleDeleteNews = async (id) => {
   setEditingEventId(event.id);
   setShowModal(true);
 };
+//documental content
+
+const handleDocumentSubmit = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("topic", documentForm.topic);
+    formData.append("file", documentForm.file);
+
+    await uploadDocument(formData);
+
+    setDocumentForm({
+        topic: "",
+        file: null,
+    });
+
+    setShowDocumentModal(false);
+
+    loadDocuments();
+};
+
+
+const handleDeleteDocument = async (id) => {
+
+    if (!window.confirm("Delete this document?")) return;
+
+    await deleteDocument(id);
+
+    loadDocuments();
+};
+
+
 
   return (
     <div className="main-page-container">
@@ -1555,279 +1616,273 @@ const handleDeleteNews = async (id) => {
 {/* EVENTS */}
 
 {activeTab === "Events" && (
-  
-
-<div>
-
-      {/* HEADER */}
-
-      <div className="event-header">
-
-        <div>
-          <h1 style={{ fontSize: "22px", fontWeight: "700px", marginTop: "18px" }}>Manage Events</h1>
-          <p style={{ marginTop: "5px" }}>Manage and publish school events, ceremonies, and special programs.</p>
-        </div>
-
-        <button
-          onClick={() => setShowModal(true)}
-          className="event-add-btn"
-        >
-          + Add Event
-        </button>
-
+  <div>
+    <div className="event-header">
+      <div>
+        <h1 style={{ fontSize: "22px", fontWeight: "700px", marginTop: "18px" }}>Manage Events</h1>
+        <p style={{ marginTop: "5px" }}>Manage and publish school events, ceremonies, and special programs.</p>
       </div>
 
-      {/* EVENT CARDS //loops through events and display each event in a card format with edit and delete buttons*/}
-
-      <div className="event-card-container">
-
-  {events.length === 0 ? (
-
-    <div className="empty-state" style={{ marginTop: "25px" }}>
-
-      <div className="empty-icon">
-        📅
-      </div>
-
-      <h3>No Events Available</h3>
-
-      <p>
-        There are currently no upcoming events available.
-        <br />
-        Create a new event to keep students and staff informed.
-      </p>
-
+      <button
+        onClick={() => setShowModal(true)}
+        className="event-add-btn"
+      >
+        + Add Event
+      </button>
     </div>
 
-  ) : (
+    <div className="event-card-container">
+      {events.length === 0 ? (
+        <div className="empty-state" style={{ marginTop: "25px" }}>
+          <div className="empty-icon">📅</div>
+          <h3>No Events Available</h3>
+          <p>
+            There are currently no upcoming events available.
+            <br />
+            Create a new event to keep students and staff informed.
+          </p>
+        </div>
+      ) : (
         events.map((event) => (
-
-          <div
-            key={event.id}
-            className="event-card"
-          >
-
-            <h2 className="event-card-title">
-              {event.topic}
-            </h2>
-
-            <p className="event-card-description">
-              {event.description}
-            </p>
+          <div key={event.id} className="event-card">
+            <h2 className="event-card-title">{event.topic}</h2>
+            <p className="event-card-description">{event.description}</p>
 
             <div className="event-details">
-
-              <p>
-                <strong>Date:</strong> {event.date}
-              </p>
-
-              <p>
-                <strong>Time:</strong> {event.time}
-              </p>
-
-              <p>
-                <strong>Venue:</strong> {event.venue}
-              </p>
-
+              <p><strong>Date:</strong> {event.date}</p>
+              <p><strong>Time:</strong> {event.time}</p>
+              <p><strong>Venue:</strong> {event.venue}</p>
             </div>
 
             <div className="event-card-buttons">
-
-              <button
-                onClick={() => handleEdit(event)}
-                className="event-edit-btn"
-              >
+              <button onClick={() => handleEdit(event)} className="event-edit-btn">
                 Edit
               </button>
-
-              <button
-                onClick={() => handleDelete(event.id)}
-                className="event-delete-btn"
-              >
+              <button onClick={() => handleDelete(event.id)} className="event-delete-btn">
                 Delete
               </button>
-
             </div>
-
           </div>
-
         ))
       )}
-    
-      </div>
+    </div>
 
-      {/* if true show MODAL */}
+    {showModal && (
+      <div className="event-modal-overlay">
+        <div className="event-modal">
+          <button
+            onClick={() => {
+              setShowModal(false);
+              setEditingEventId(null);
+              setEventForm({
+                topic: "",
+                description: "",
+                date: "",
+                time: "",
+                venue: "",
+                announcementAudience: "",
+              });
+            }}
+            className="event-close-btn"
+          >
+            ×
+          </button>
 
-      {showModal && (
+          <h2 className="event-modal-title">
+            {editingEventId ? "Update Event" : "Create New Event"}
+          </h2>
 
-        <div className="event-modal-overlay">
-
-          <div className="event-modal">
-
-            <button
-              onClick={() => {
-                setShowModal(false);
-
-                setEditingEventId(null);
-
+          <form onSubmit={handleEventSubmit} className="event-form">
+            <input
+              type="text"
+              placeholder="Event Topic"
+              value={eventForm.topic}
+              onChange={(e) =>
                 setEventForm({
-                  topic: "",
-                  description: "",
-                  date: "",
-                  time: "",
-                  venue: "",
-                  announcementAudience: "",
-                });
-              }}
-              className="event-close-btn"
-            >
-              ×
-            </button>
+                  ...eventForm,
+                  topic: e.target.value,
+                })
+              }
+              className="event-input"
+              required
+            />
 
-            <h2 className="event-modal-title">
+            <textarea
+              placeholder="Description"
+              value={eventForm.description}
+              onChange={(e) =>
+                setEventForm({
+                  ...eventForm,
+                  description: e.target.value,
+                })
+              }
+              className="event-textarea"
+              required
+            />
 
-              {editingEventId
-                ? "Update Event"
-                : "Create New Event"}
-
-            </h2>
-
-            <form
-             onSubmit={handleEventSubmit}
-              className="event-form"
-            >
-
+            <div className="event-row">
               <input
-                type="text"
-                placeholder="Event Topic"
-                value={eventForm.topic}
+                type="date"
+                value={eventForm.date}
                 onChange={(e) =>
                   setEventForm({
                     ...eventForm,
-                    topic: e.target.value
+                    date: e.target.value,
                   })
                 }
                 className="event-input"
                 required
               />
 
-              <textarea
-                placeholder="Description"
-                value={eventForm.description}
-                onChange={(e) =>
-                  setEventForm({
-                    ...eventForm,
-                    description: e.target.value
-                  })
-                }
-                className="event-textarea"
-                required
-              />
-
-              <div className="event-row">
-
-                <input
-                  type="date"
-                  value={eventForm.date}
-                  onChange={(e) =>
-                    setEventForm({
-                      ...eventForm,
-                      date: e.target.value
-                    })
-                  }
-                  className="event-input"
-                  required
-                />
-
-                <input
-                  type="time"
-                  value={eventForm.time}
-                  onChange={(e) =>
-                    setEventForm({
-                      ...eventForm,
-                      time: e.target.value
-                    })
-                  }
-                  className="event-input"
-                  required
-                />
-
-              </div>
-
               <input
-                type="text"
-                placeholder="Venue"
-                value={eventForm.venue}
+                type="time"
+                value={eventForm.time}
                 onChange={(e) =>
                   setEventForm({
                     ...eventForm,
-                    venue: e.target.value
+                    time: e.target.value,
                   })
                 }
                 className="event-input"
                 required
               />
-            {/*  select announcement audience */}
-              <select
-                  value={eventForm.announcementAudience || ""}
-                  onChange={(e) =>
-                       setEventForm({
-                       ...eventForm,
-                       announcementAudience: e.target.value
-                      })
-                   }
-                  className="event-input"
-              >
+            </div>
+
+            <input
+              type="text"
+              placeholder="Venue"
+              value={eventForm.venue}
+              onChange={(e) =>
+                setEventForm({
+                  ...eventForm,
+                  venue: e.target.value,
+                })
+              }
+              className="event-input"
+              required
+            />
+
+            <select
+              value={eventForm.announcementAudience || ""}
+              onChange={(e) =>
+                setEventForm({
+                  ...eventForm,
+                  announcementAudience: e.target.value,
+                })
+              }
+              className="event-input"
+            >
               <option value="">Do Not Show in Announcements</option>
+              <option value="Students">Show for Students</option>
+              <option value="Teachers">Show for Teachers</option>
+              <option value="All">Show for All</option>
+            </select>
 
-              <option value="Students">
-                     Show for Students
-              </option>
-
-              <option value="Teachers">
-                     Show for Teachers
-              </option>
-
-
-              <option value="All">
-                     Show for All
-               </option>
-              </select>
-              <div className="event-form-buttons">
-
-                <button
-                  type="button"
-                  onClick={() => setShowModal(false)}
-                  className="event-cancel-btn"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  className="event-save-btn"
-                >
-                  {editingEventId
-                    ? "Update Event"
-                    : "Add Event"}
-                </button>
-
-              </div>
-
-            </form>
-
-          </div>
-
+            <div className="event-form-buttons">
+              <button type="button" onClick={() => setShowModal(false)} className="event-cancel-btn">
+                Cancel
+              </button>
+              <button type="submit" className="event-save-btn">
+                {editingEventId ? "Update Event" : "Add Event"}
+              </button>
+            </div>
+          </form>
         </div>
-
-      )}
-
-    </div>
- )}
       </div>
-      
+    )}
+  </div>
+)}
+
+{activeTab === "Downloadable Content" && (
+  <div className="document-section">
+    <div className="document-header">
+      <div>
+        <h1>Manage Downloadable Documents</h1>
+        <p>Upload PDF documents that visitors can download.</p>
+      </div>
+
+      <button
+          className="btn primary"
+          style={{ borderRadius: "10px",marginRight:"-20px" }}
+         onClick={() => setShowDocumentModal(true)}
+       >
+           + Add Document
+      </button>
     </div>
 
+    <div className="document-list">
+      {documents.length === 0 ? (
+        <div className="document-empty">
+          <div className="icon">📄</div>
+          <h3>No Documents Uploaded</h3>
+          <p>Upload your first PDF document.</p>
+        </div>
+      ) : (
+        documents.map((doc) => (
+          <div key={doc.id} className="document-card">
+            <div className="document-info">
+              <h2>{doc.topic}</h2>
+              <p>{doc.fileName}</p>
+            </div>
+
+            <div className="document-actions">
+              <button className="document-delete-btn" onClick={() => handleDeleteDocument(doc.id)}>
+                Delete
+              </button>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+)}
+      </div>
+    </div>
+
+    {showDocumentModal && (
+      <div className="popup-overlay">
+        <div className="popup-form" style={{ height: "320px" }}>
+          <h2>Upload Document</h2>
+
+          <form onSubmit={handleDocumentSubmit}>
+            <input
+              type="text"
+              placeholder="Document Topic"
+              value={documentForm.topic}
+              onChange={(e) =>
+                setDocumentForm({
+                  ...documentForm,
+                  topic: e.target.value,
+                })
+              }
+              required
+            />
+
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={(e) =>
+                setDocumentForm({
+                  ...documentForm,
+                  file: e.target.files[0],
+                })
+              }
+              required
+            />
+
+            <div className="form-buttons">
+              <button type="submit" className="submit-btn">
+                Upload
+              </button>
+
+              <button type="button" className="cancel-btn" onClick={() => setShowDocumentModal(false)}>
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    )}
 
     {/* CHANGE PASSWORD MODAL */}
     {showPasswordModal && (
@@ -1929,7 +1984,6 @@ const handleDeleteNews = async (id) => {
       </div>
     )}
   </div>
-    
-  );
- 
+);
+
 }
