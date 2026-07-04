@@ -173,6 +173,11 @@ const [deleteConfirm, setDeleteConfirm] = useState({
   type: "",
   title: "this item",
 });
+const [newsFeedback, setNewsFeedback] = useState({
+  open: false,
+  type: "success",
+  text: "",
+});
 
 const loadDocuments = async () => {
     const data = await getDocuments();
@@ -354,7 +359,7 @@ const loadDocuments = async () => {
       await loadSportAchievements(selectedSport.id);
     } catch (error) {
       console.log("Save achievement error:", error.message || error);
-      alert("Failed to save achievement");
+      showNewsFeedback("error", "Failed to save achievement. Please try again.");
       return;
     }
 
@@ -366,6 +371,7 @@ const loadDocuments = async () => {
       /*date: "",*/
       image: "",
     });
+    showNewsFeedback("success", editingAchievementId ? "Sport achievement updated successfully!" : "Sport achievement added successfully!");
   };
 
   const openDeleteConfirm = (id, type, title = "this item") => {
@@ -374,6 +380,14 @@ const loadDocuments = async () => {
 
   const closeDeleteConfirm = () => {
     setDeleteConfirm({ open: false, id: null, type: "", title: "this item" });
+  };
+
+  const showNewsFeedback = (type, text) => {
+    setNewsFeedback({ open: true, type, text });
+  };
+
+  const closeNewsFeedback = () => {
+    setNewsFeedback({ open: false, type: "success", text: "" });
   };
 
   const confirmDeleteAction = async () => {
@@ -387,8 +401,10 @@ const loadDocuments = async () => {
         await deleteSportAchievement(deleteConfirm.id);
         await loadSportAchievements(selectedSport?.id);
       } else if (deleteConfirm.type === "event") {
-        await deleteEvent(deleteConfirm.id);
-        loadEvents();
+        const deleted = await deleteEvent(deleteConfirm.id);
+        if (deleted) {
+          loadEvents();
+        }
       } else if (deleteConfirm.type === "stream") {
         await fetch(`http://localhost:8080/api/livestreams/${deleteConfirm.id}`, {
           method: "DELETE",
@@ -479,6 +495,7 @@ const loadDocuments = async () => {
     setEditingNewsId(null);
   }
 
+  setMessage("");
   setShowNewsForm(true);
 };
  const handleNewsSubmit = async (e) => {
@@ -551,8 +568,10 @@ const loadDocuments = async () => {
     });
 
     await loadNews();
+    showNewsFeedback("success", editingNewsId ? "News updated successfully!" : "News added successfully!");
   } catch (err) {
     console.log("Submit error:", err.message);
+    showNewsFeedback("error", "Failed to save news. Please try again.");
   }
 };
 const handleDeleteNews = (id) => {
@@ -700,10 +719,9 @@ const handleDeleteNews = (id) => {
 
       if (response.ok) {
 
-        setMessage(
-          editingId
-            ? "Stream updated"
-            : "Stream added"
+        showNewsFeedback(
+          "success",
+          editingId ? "Live stream updated successfully!" : "Live stream added successfully!"
         );
 
         setForm({
@@ -734,10 +752,10 @@ const handleDeleteNews = (id) => {
 
   if (editingEventId) {
     await updateEvent(editingEventId, eventForm);
-    alert("Event Updated!");
+    showNewsFeedback("success", "Event updated successfully!");
   } else {
     await addEvent(eventForm);
-    alert("Event Added!");
+    showNewsFeedback("success", "Event added successfully!");
   }
 
   setEventForm({
@@ -777,21 +795,27 @@ const handleDeleteNews = (id) => {
 const handleDocumentSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    formData.append("topic", documentForm.topic);
-    formData.append("file", documentForm.file);
+      formData.append("topic", documentForm.topic);
+      formData.append("file", documentForm.file);
 
-    await uploadDocument(formData);
+      await uploadDocument(formData);
 
-    setDocumentForm({
-        topic: "",
-        file: null,
-    });
+      setDocumentForm({
+          topic: "",
+          file: null,
+      });
 
-    setShowDocumentModal(false);
+      setShowDocumentModal(false);
 
-    loadDocuments();
+      loadDocuments();
+      showNewsFeedback("success", "Document uploaded successfully!");
+    } catch (error) {
+      console.log("Document upload error:", error.message || error);
+      showNewsFeedback("error", "Failed to upload document. Please try again.");
+    }
 };
 
 
@@ -1959,6 +1983,46 @@ const handleDeleteDocument = (id) => {
               color: "white",
               cursor: "pointer"
             }}>Delete</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+    {newsFeedback.open && (
+      <div className="modal-overlay" style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        backgroundColor: "rgba(15, 23, 42, 0.6)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 2200
+      }}>
+        <div className="modal-box" style={{
+          backgroundColor: "white",
+          padding: "30px",
+          borderRadius: "12px",
+          width: "380px",
+          boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
+        }}>
+          <h3 style={{ marginBottom: "10px", color: "#1e293b" }}>
+            {newsFeedback.type === "success" ? "Success" : "Error"}
+          </h3>
+          <p style={{ marginBottom: "20px", color: "#475569" }}>
+            {newsFeedback.text}
+          </p>
+          <div className="modal-actions" style={{ display: "flex", justifyContent: "flex-end" }}>
+            <button type="button" className="confirm-delete-btn" onClick={closeNewsFeedback} style={{
+              padding: "8px 16px",
+              border: "none",
+              borderRadius: "6px",
+              backgroundColor: newsFeedback.type === "success" ? "#2b55cc" : "#dc2626",
+              color: "white",
+              cursor: "pointer"
+            }}>OK</button>
           </div>
         </div>
       </div>
