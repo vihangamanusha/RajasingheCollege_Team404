@@ -113,7 +113,14 @@ export function SportKarate() {
 
   {achievements.length > 0 ? (
 
-    <div className="achievement-grid">
+    <div 
+    className="achievement-grid"
+    style={{
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "30px",
+  }}>
 
       {achievements.map((item, index) => (
 
