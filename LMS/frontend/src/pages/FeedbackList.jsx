@@ -10,7 +10,7 @@ export default function FeedbackList() {
   const [userRole, setUserRole] = useState("Admin");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
-
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -53,17 +53,30 @@ export default function FeedbackList() {
   };
 
   const confirmDelete = async () => {
-    if (!deleteTargetId) return;
+  if (!deleteTargetId) return;
 
+  try {
     const success = await deleteFeedback(deleteTargetId);
+
+    console.log("Delete result:", success);
+
     if (success) {
-      setFeedback((prev) => prev.filter((item) => item.id !== deleteTargetId));
+      setFeedback((prev) =>
+        prev.filter((item) => item.id !== deleteTargetId)
+      );
+
+      showPopup("success", "Feedback deleted successfully!");
+    } else {
+      showPopup("error", "Delete failed");
     }
+  } catch (err) {
+    console.log(err);
+    showPopup("error", "Server error during delete");
+  }
 
-    setShowDeleteModal(false);
-    setDeleteTargetId(null);
-  };
-
+  setShowDeleteModal(false);
+  setDeleteTargetId(null);
+};
   const filteredFeedback = feedback.filter(
     (item) =>
       item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -291,16 +304,18 @@ const styles = {
     background: "white",
     border: "1px solid #e2e8f0",
     borderRadius: "999px",
-    padding: "10px 14px",
+    height: "45px",
     boxShadow: "0 6px 16px rgba(15, 23, 42, 0.04)"
   },
   searchIcon: {
-    marginRight: "8px",
+    marginLeft: "18px",
     fontSize: "16px"
   },
   input: {
     border: "none",
     outline: "none",
+    marginLeft: "28px",
+    marginBottom:"20px",
     width: "100%",
     fontSize: "14px",
     background: "transparent"

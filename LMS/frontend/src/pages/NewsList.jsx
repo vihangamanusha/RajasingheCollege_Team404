@@ -2081,16 +2081,18 @@ const handleDeleteDocument = (id) => {
           </p>
           <div className="modal-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
             <button type="button" className="cancel-btn" onClick={closeDeleteConfirm} style={{
-              padding: "8px 16px",
+              padding: "4px 16px",
               border: "1px solid #cbd5e1",
               borderRadius: "6px",
               backgroundColor: "white",
+              width:"100px",
               cursor: "pointer"
             }}>Cancel</button>
             <button type="button" className="confirm-delete-btn" onClick={confirmDeleteAction} style={{
               padding: "8px 16px",
               border: "none",
               borderRadius: "6px",
+              width:"100px",
               backgroundColor: "#dc2626",
               color: "white",
               cursor: "pointer"
