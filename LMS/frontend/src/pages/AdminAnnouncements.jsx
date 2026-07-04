@@ -516,14 +516,21 @@ const confirmDelete = async () => {
                 <button
                   type="button"
                   className="cancelBtn"
-                  onClick={() => setShowModal(false)}
                   style={{
-                 
-                }}
+                    width: "400px",
+                    backgroundColor:"fffff",
+                    color:"#ffffff",
+                    }}
+                  onClick={() => setShowModal(false)}
+                  
                 >
                   Cancel
                 </button>
-                <button type="submit" className="saveBtn">
+                <button type="submit" 
+                 style={{
+                    width: "400px",
+                    }}
+                className="saveBtn">
                   {editingId ? "Update" : "Add Announcement"}
                 </button>
               </div>
