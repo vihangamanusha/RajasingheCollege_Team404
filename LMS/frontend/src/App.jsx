@@ -13,7 +13,7 @@ import AdminUsers from "./pages/AdminUsers";
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
-import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
+import AdminReport from "./pages/AdminReport"; // NEW: Reporting & Analytics Import
 import AdminClassManagement from "./pages/AdminClassManagement"; // NEW: Class Management
 // --> NEW: ANNOUNCEMENTS <--
 import Announcement from "./pages/Announcements";
@@ -80,7 +80,7 @@ function App() {
                 <Route path="tech-officers" element={<AdminTechOfficerManagement />} />
 
                 {/* --> NEW: ACADEMIC ANALYTICS & REPORTS <-- */}
-                <Route path="analytics" element={<AdminAcademicAnalytics />} />
+                <Route path="analytics" element={<AdminReport />} />
 
                 {/* --> REGISTRATION FORMS <-- */}
                 <Route path="users/student" element={<StudentRegister />} />

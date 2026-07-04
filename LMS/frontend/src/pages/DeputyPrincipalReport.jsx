@@ -552,6 +552,10 @@ export default function DeputyPrincipalReport() {
                         )}
                         {!lowPerfLoading && lowPerfFetched && renderSubjectWise()}
                     </div>
+
+                    <div className="print-footer" style={{ display: "none", justifyContent: "space-between", marginTop: "60px", borderTop: "1px solid #e2e8f0", paddingTop: "20px" }}>
+                        <div className="sig-box">..........................................<br />Deputy Principal (Development) Signature</div>
+                    </div>
                 </div>
             )}
         </div>
