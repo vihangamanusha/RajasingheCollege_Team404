@@ -1,6 +1,7 @@
 package com.rcc.lms.entity;
 
 import jakarta.persistence.*;
+import org.jspecify.annotations.Nullable;
 
 @Entity
 @Table(name = "documents")
@@ -55,5 +56,11 @@ public class Document {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public void setFileType(@Nullable String contentType) {
+    }
+
+    public void setData(byte[] bytes) {
     }
 }

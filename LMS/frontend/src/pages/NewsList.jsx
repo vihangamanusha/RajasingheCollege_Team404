@@ -1811,13 +1811,25 @@ const handleDeleteDocument = async (id) => {
     </div>
 
     <div className="document-list">
-      {documents.length === 0 ? (
-        <div className="document-empty">
-          <div className="icon">📄</div>
-          <h3>No Documents Uploaded</h3>
-          <p>Upload your first PDF document.</p>
-        </div>
-      ) : (
+  {documents.length === 0 ? (
+
+    <div className="empty-state" style={{ marginTop: "20px"}}>
+
+      <div className="empty-icon">
+        📄
+      </div>
+
+      <h3>No Documents Uploaded</h3>
+
+      <p>
+        There are currently no documents available.
+        <br />
+        Upload your first PDF document to get started.
+      </p>
+
+    </div>
+
+  ) : (
         documents.map((doc) => (
           <div key={doc.id} className="document-card">
             <div className="document-info">

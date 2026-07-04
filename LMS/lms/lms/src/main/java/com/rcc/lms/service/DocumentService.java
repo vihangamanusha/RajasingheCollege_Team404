@@ -46,4 +46,25 @@ public class DocumentService {
     public void delete(Long id) {
         repository.deleteById(id);
     }
+
+    public Document updateDocument(Long id, String topic, MultipartFile file) throws Exception {
+
+        Document document = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+
+        document.setTopic(topic);
+
+        if (file != null && !file.isEmpty()) {
+            document.setFileName(file.getOriginalFilename());
+            document.setFileType(file.getContentType());
+            document.setData(file.getBytes());
+        }
+
+        return repository.save(document);
+    }
+
+    public Document getById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Document not found"));
+    }
 }
