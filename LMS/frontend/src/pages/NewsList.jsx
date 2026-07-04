@@ -1305,12 +1305,14 @@ const handleDeleteDocument = (id) => {
                       <button
                         className="edit-btn"
                         onClick={() => openAchievementModal(item)}
+                        style={{ width: "100px", minWidth: "100px", justifyContent: "center" }}
                       >
                         Edit
                       </button>
                       <button
                         className="delete-btn"
                         onClick={() => handleDeleteAchievement(item.id)}
+                        style={{ width: "100px", minWidth: "100px", justifyContent: "center" }}
                       >
                         Delete
                       </button>

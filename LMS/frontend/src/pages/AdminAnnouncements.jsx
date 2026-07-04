@@ -253,9 +253,11 @@ const confirmDelete = async () => {
               <div className="cardTop">
                 <div className="iconBox">📢</div>
                 <div className="cardMain">
-                  <div className="titleRow">
+                  <div className="titleRow" >
                     <h3>{a.title}</h3>
-                    <span className={`badge ${(a.category || "uncategorized").toLowerCase()}`}>
+                    <span 
+                    style={{ marginLeft:"950px" }}
+                    className={`badge ${(a.category || "uncategorized").toLowerCase()}`}>
                       {a.category || "Uncategorized"}
                     </span>
                   </div>
@@ -478,6 +480,7 @@ const confirmDelete = async () => {
                 <select
                   name="category"
                   value={formData.category}
+                  
                   onChange={handleChange}
                   required
                 >
