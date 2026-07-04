@@ -1489,14 +1489,14 @@ const handleDeleteDocument = (id) => {
                         : "Add Stream"}
                     </h2>
 
-                    <button
+                    {/*<button
                       className="close-btn"
                       onClick={() =>
                         setShowForm(false)
                       }
                     >
                       ×
-                    </button>
+                    </button>*/}
 
                   </div>
 
@@ -1519,16 +1519,17 @@ const handleDeleteDocument = (id) => {
                     />
 
                     <input
-                      type="date"
-                      value={form.date}
-                      onChange={(e) =>
-                        setForm({
-                          ...form,
-                          date: e.target.value,
-                        })
-                      }
-                      required
-                    />
+                       type="date"
+                       value={form.date}
+                       min={new Date().toISOString().split("T")[0]}
+                       onChange={(e) =>
+                       setForm({
+                       ...form,
+                       date: e.target.value,
+                       })
+                       }
+                       required
+                      />
 
                     <input
                       type="time"
@@ -1569,6 +1570,18 @@ const handleDeleteDocument = (id) => {
                     <div className="form-buttons">
 
                       <button
+                        type="button"
+                        className="cancel-btn"
+                        style={{width: "440px"}}
+                        onClick={() =>
+                          setShowForm(false)
+                        }
+                      >
+                        Cancel
+                      </button>
+
+
+                      <button
                         type="submit"
                         className="submit-btn"
                       >
@@ -1577,15 +1590,7 @@ const handleDeleteDocument = (id) => {
                           : "Save"}
                       </button>
 
-                      <button
-                        type="button"
-                        className="cancel-btn"
-                        onClick={() =>
-                          setShowForm(false)
-                        }
-                      >
-                        Cancel
-                      </button>
+                      
 
                     </div>
 
