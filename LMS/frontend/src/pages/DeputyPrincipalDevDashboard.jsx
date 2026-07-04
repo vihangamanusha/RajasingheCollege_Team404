@@ -19,7 +19,7 @@ import {
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
-import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
+import DeputyPrincipalReport from "./DeputyPrincipalReport";
 import DeputyPrincipalDevClassManagement from "./DeputyPrincipalDevClassManagement";
 
 export default function DeputyPrincipalDevDashboard() {
@@ -572,7 +572,7 @@ export default function DeputyPrincipalDevDashboard() {
                     )}
 
                     {/* TAB 3: REPORT */}
-                    {activeTab === "reports" && <AdminAcademicAnalytics />}
+                    {activeTab === "reports" && <DeputyPrincipalReport />}
 
                     {/* TAB 4: CLASS */}
                     {activeTab === "class" && <DeputyPrincipalDevClassManagement />}

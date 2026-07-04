@@ -303,7 +303,8 @@
 ========================================== */
 @media print {
     @page {
-        margin: 1cm;
+        margin: 0.8cm;
+        size: A4 landscape;
     }
 
     .no-print,
@@ -327,24 +328,58 @@
     .official-report-header {
         display: block !important;
         border-bottom: 2px solid #000;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
     }
 
     .print-footer {
         display: flex !important;
-        margin-top: 50px;
+        margin-top: 40px;
         page-break-inside: avoid;
     }
 
     .table-card {
         box-shadow: none !important;
-        border: 1px solid #eee !important;
-        page-break-inside: avoid;
-        overflow-x: visible;
+        border: 1px solid #e2e8f0 !important;
+        page-break-inside: auto;
+        overflow: visible !important;
         margin-top: 10px;
+        width: 100% !important;
     }
 
-    /* === NEW CHART PRINT FIX === */
+    /* === WIDE TABLE FIT FIX === */
+    .report-content-body {
+        width: 100% !important;
+        overflow: visible !important;
+    }
+
+    .report-table {
+        width: 100% !important;
+        table-layout: auto !important;
+        border-collapse: collapse !important;
+        font-size: 9pt !important;
+        overflow: visible !important;
+    }
+
+    .report-table thead {
+        display: table-header-group;
+    }
+
+    .report-table tbody tr {
+        page-break-inside: avoid;
+    }
+
+    .report-table th,
+    .report-table td {
+        padding: 4px 6px !important;
+        font-size: 9pt !important;
+        word-break: break-word !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        max-width: 120px;
+    }
+    /* ========================== */
+
+    /* === CHART PRINT FIX === */
     .chart-card {
         box-shadow: none !important;
         border: 1px solid #eee !important;
@@ -352,10 +387,9 @@
         margin-top: 10px;
         width: 100% !important;
         display: block !important;
-        min-width: 700px !important; /* Forces the chart container to stay wide */
+        min-width: 700px !important;
     }
 
-    /* Stop Recharts from shrinking the SVG */
     .recharts-responsive-container,
     .recharts-wrapper,
     .recharts-surface {
@@ -363,7 +397,7 @@
         min-width: 700px !important;
         overflow: visible !important;
     }
-    /* ============================ */
+    /* ======================== */
 
     .report-table th {
         background-color: #f1f5f9 !important;
@@ -374,5 +408,18 @@
     .badge {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
+        padding: 2px 6px !important;
+        font-size: 8pt !important;
+        border-radius: 4px !important;
+        display: inline-block !important;
+    }
+
+    h3 {
+        font-size: 11pt !important;
+        margin-bottom: 6px !important;
+    }
+
+    .decision-metrics-grid {
+        display: none !important;
     }
 }

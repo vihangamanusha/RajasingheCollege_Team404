@@ -2,6 +2,7 @@ package com.rcc.lms.controller;
 
 import com.rcc.lms.dto.AdminSectionMarkDTO; // <-- NEW: Imported our backpack!
 import com.rcc.lms.dto.SectionMarkDTO;
+import com.rcc.lms.dto.SubjectLowPerformerDTO;
 import com.rcc.lms.repository.MarksRepository;
 import com.rcc.lms.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,5 +86,18 @@ public class ReportController {
             @RequestParam String term,
             @RequestParam String grade) {
         return ResponseEntity.ok(marksRepository.getSectionMarksReport(year, term, grade));
+    }
+
+    /**
+     * Endpoint for Subject-wise Low Performers (marks < 40) for a specific class.
+     * URL: /admin/reports/subject-low-performers?year=2026&term=Term 1&className=Grade 7A
+     */
+    @CrossOrigin(origins = "*")
+    @GetMapping("/subject-low-performers")
+    public ResponseEntity<List<SubjectLowPerformerDTO>> getSubjectLowPerformers(
+            @RequestParam int year,
+            @RequestParam String term,
+            @RequestParam String className) {
+        return ResponseEntity.ok(marksRepository.getLowPerformersByClass(year, term, className));
     }
 }

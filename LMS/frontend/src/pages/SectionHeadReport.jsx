@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid,
-    Tooltip, ResponsiveContainer
-} from "recharts";
-import { FiPrinter, FiLayers, FiActivity, FiFilter } from "react-icons/fi";
+import { FiPrinter, FiLayers, FiActivity } from "react-icons/fi";
 import "./AdminAcademicAnalytics.css";
 
 export default function SectionHeadReport() {
@@ -14,9 +10,9 @@ export default function SectionHeadReport() {
     const [reportData, setReportData] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // Range filtering states
-    const [minMark, setMinMark] = useState("0");
-    const [maxMark, setMaxMark] = useState("100");
+    // Range filtering constants
+    const minMark = "0";
+    const maxMark = "100";
 
     const subRole = localStorage.getItem("subRole") || "Section Head Grade 6";
 
@@ -27,6 +23,19 @@ export default function SectionHeadReport() {
     };
 
     const sectionGrade = getSectionGrade();
+
+    const getStatusDetails = (avgVal) => {
+        const avg = parseFloat(avgVal);
+        if (avg < 30) {
+            return { label: "Strongly Weak", bgColor: "#fee2e2", color: "#b91c1c" };
+        } else if (avg >= 30 && avg < 50) {
+            return { label: "Weak", bgColor: "#ffedd5", color: "#ea580c" };
+        } else if (avg >= 50 && avg < 70) {
+            return { label: "Good", bgColor: "#dbeafe", color: "#1d4ed8" };
+        } else {
+            return { label: "Best", bgColor: "#dcfce7", color: "#15803d" };
+        }
+    };
     const gradeLabel = sectionGrade ? `Grade ${sectionGrade}` : "Grade Section";
 
     // Load classes matching the section head's grade
@@ -85,20 +94,6 @@ export default function SectionHeadReport() {
         }
 
         if (selectedClass === "ALL") {
-            // Group by className and calculate average
-            const comparisonData = classes.map(c => {
-                const classMarks = reportData.filter(item => item.className === c.className);
-                const total = classMarks.reduce((sum, item) => sum + item.mark, 0);
-                const count = classMarks.length;
-                const avg = count > 0 ? (total / count) : 0;
-                return {
-                    name: c.className,
-                    avg: parseFloat(avg.toFixed(1))
-                };
-            });
-
-            const hasData = comparisonData.some(c => c.avg > 0);
-
             // Group by student across all classes in the section
             const groupedAll = reportData.reduce((acc, curr) => {
                 if (!acc[curr.studentId]) {
@@ -126,111 +121,54 @@ export default function SectionHeadReport() {
                 avg: student.count > 0 ? (student.total / student.count).toFixed(1) : 0
             })).sort((a, b) => b.avg - a.avg);
 
-            // Filter students according to minMark and maxMark range
-            const filteredAll = finalArrayAll.filter(s => {
-                const avgVal = parseFloat(s.avg);
-                const minVal = minMark.trim() === "" ? 0 : parseFloat(minMark);
-                const maxVal = maxMark.trim() === "" ? 100 : parseFloat(maxMark);
-                return avgVal >= minVal && avgVal <= maxVal;
-            });
+            const filteredAll = finalArrayAll;
 
             return (
                 <div className="overall-report-wrapper">
-                    <div className="chart-card">
-                        <h3>{gradeLabel} - Class Comparison (Avg Marks)</h3>
-                        {!hasData ? (
-                            <p style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>No marks data recorded for this section yet.</p>
-                        ) : (
-                            <ResponsiveContainer width="100%" height={350}>
-                                <BarChart data={comparisonData}>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                                    <XAxis dataKey="name" />
-                                    <YAxis domain={[0, 100]} />
-                                    <Tooltip />
-                                    <Bar
-                                        dataKey="avg"
-                                        fill="#2b55cc"
-                                        radius={[4, 4, 0, 0]}
-                                        barSize={60}
-                                        isAnimationActive={false}
-                                        label={{ position: 'top', fill: '#1e293b', fontWeight: 'bold', formatter: (val) => `${val}%` }}
-                                    />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        )}
-                    </div>
-
-                    <div className="table-card">
-                        <h3>Class Summary Table</h3>
-                        <table className="report-table">
-                            <thead>
-                                <tr>
-                                    <th>Class</th>
-                                    <th>Average Mark</th>
-                                    <th>Performance Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {comparisonData.map(sec => (
-                                    <tr key={sec.name}>
-                                        <td><strong>{sec.name}</strong></td>
-                                        <td>{sec.avg > 0 ? `${sec.avg}%` : "-"}</td>
-                                        <td>
-                                            <span className={`badge ${sec.avg >= 75 ? 'pass' : sec.avg > 0 ? 'neutral' : 'fail'}`}
-                                                style={{ 
-                                                    backgroundColor: sec.avg >= 75 ? '#dcfce7' : sec.avg > 0 ? '#f1f5f9' : '#fee2e2', 
-                                                    color: sec.avg >= 75 ? '#15803d' : sec.avg > 0 ? '#475569' : '#b91c1c' 
-                                                }}>
-                                                {sec.avg >= 75 ? 'Above Target' : sec.avg > 0 ? 'On Track' : 'No Data'}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div className="table-card" style={{ marginTop: "30px" }}>
+                    <div className="table-card" style={{ marginTop: "0" }}>
                         <h3>Section Student Marks & Ranking Sheet ({gradeLabel})</h3>
                         {filteredAll.length === 0 ? (
-                            <p style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>No students fall within the selected average marks range.</p>
+                            <p style={{ textAlign: 'center', padding: '20px', color: '#64748b' }}>No student marks recorded for this section yet.</p>
                         ) : (
                             <table className="report-table">
                                 <thead>
                                     <tr>
                                         <th>Rank</th>
                                         <th>Student ID</th>
-                                        <th>Student Name</th>
                                         <th>Class</th>
                                         {dynamicSubjectsAll.map(sub => (
                                             <th key={sub}>{sub}</th>
                                         ))}
+                                        <th>Total</th>
                                         <th>Avg</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {filteredAll.map((student, index) => (
-                                        <tr key={student.id || index}>
-                                            <td><strong>{index + 1}</strong></td>
-                                            <td>{student.id}</td>
-                                            <td>{student.name}</td>
-                                            <td><strong>{student.className}</strong></td>
-                                            {dynamicSubjectsAll.map(sub => (
-                                                <td key={sub}>{student.subjects[sub] !== undefined ? student.subjects[sub] : '-'}</td>
-                                            ))}
-                                            <td><strong>{student.avg}%</strong></td>
-                                            <td>
-                                                <span className={`badge ${student.avg >= 40 ? 'pass' : 'fail'}`}
-                                                    style={{
-                                                        backgroundColor: student.avg >= 40 ? '#dcfce7' : '#fee2e2',
-                                                        color: student.avg >= 40 ? '#15803d' : '#b91c1c'
-                                                    }}>
-                                                    {student.avg >= 40 ? 'Pass' : 'Needs Help'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
+                                    {filteredAll.map((student, index) => {
+                                        const status = getStatusDetails(student.avg);
+                                        return (
+                                            <tr key={student.id || index}>
+                                                <td><strong>{index + 1}</strong></td>
+                                                <td>{student.id}</td>
+                                                <td><strong>{student.className}</strong></td>
+                                                {dynamicSubjectsAll.map(sub => (
+                                                    <td key={sub}>{student.subjects[sub] !== undefined ? student.subjects[sub] : '-'}</td>
+                                                ))}
+                                                <td><strong>{student.total}</strong></td>
+                                                <td><strong>{student.avg}%</strong></td>
+                                                <td>
+                                                    <span className="badge"
+                                                        style={{
+                                                            backgroundColor: status.bgColor,
+                                                            color: status.color
+                                                        }}>
+                                                        {status.label}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
                                 </tbody>
                             </table>
                         )}
@@ -266,7 +204,7 @@ export default function SectionHeadReport() {
         const finalArray = Object.values(grouped).map(student => ({
             ...student,
             avg: student.count > 0 ? (student.total / student.count).toFixed(1) : 0
-        })).sort((a, b) => b.avg - a.avg);
+        })).sort((a, b) => parseFloat(b.avg) - parseFloat(a.avg));
 
         // Filter students according to minMark and maxMark range
         const filtered = finalArray.filter(s => {
@@ -277,7 +215,7 @@ export default function SectionHeadReport() {
         });
 
         const totalStudents = filtered.length;
-        const passedStudents = filtered.filter(s => parseFloat(s.avg) >= 40).length;
+        const passedStudents = filtered.filter(s => parseFloat(s.avg) >= 50).length;
         const passRate = totalStudents > 0 ? ((passedStudents / totalStudents) * 100).toFixed(1) : 0;
         const classTotalAvg = totalStudents > 0 ? (filtered.reduce((sum, s) => sum + parseFloat(s.avg), 0) / totalStudents).toFixed(1) : 0;
         const highestAvg = totalStudents > 0 ? Math.max(...filtered.map(s => parseFloat(s.avg))).toFixed(1) : 0;
@@ -315,35 +253,38 @@ export default function SectionHeadReport() {
                                 <tr>
                                     <th>Rank</th>
                                     <th>Student ID</th>
-                                    <th>Student Name</th>
                                     {dynamicSubjects.map(sub => (
                                         <th key={sub}>{sub}</th>
                                     ))}
+                                    <th>Total</th>
                                     <th>Avg</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filtered.map((student, index) => (
-                                    <tr key={student.id || index}>
-                                        <td><strong>{index + 1}</strong></td>
-                                        <td>{student.id}</td>
-                                        <td>{student.name}</td>
-                                        {dynamicSubjects.map(sub => (
-                                            <td key={sub}>{student.subjects[sub] !== undefined ? student.subjects[sub] : '-'}</td>
-                                        ))}
-                                        <td><strong>{student.avg}%</strong></td>
-                                        <td>
-                                            <span className={`badge ${student.avg >= 40 ? 'pass' : 'fail'}`}
-                                                style={{
-                                                    backgroundColor: student.avg >= 40 ? '#dcfce7' : '#fee2e2',
-                                                    color: student.avg >= 40 ? '#15803d' : '#b91c1c'
-                                                }}>
-                                                {student.avg >= 40 ? 'Pass' : 'Needs Help'}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
+                                {filtered.map((student, index) => {
+                                    const status = getStatusDetails(student.avg);
+                                    return (
+                                        <tr key={student.id || index}>
+                                            <td><strong>{index + 1}</strong></td>
+                                            <td>{student.id}</td>
+                                            {dynamicSubjects.map(sub => (
+                                                <td key={sub}>{student.subjects[sub] !== undefined ? student.subjects[sub] : '-'}</td>
+                                            ))}
+                                            <td><strong>{student.total}</strong></td>
+                                            <td><strong>{student.avg}%</strong></td>
+                                            <td>
+                                                <span className="badge"
+                                                    style={{
+                                                        backgroundColor: status.bgColor,
+                                                        color: status.color
+                                                    }}>
+                                                    {status.label}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
                     )}
@@ -351,6 +292,36 @@ export default function SectionHeadReport() {
             </div>
         );
     };
+
+    // Compute top 5 students of the overall section grade
+    const getTopFivePerformers = () => {
+        if (!reportData || reportData.length === 0) return [];
+        
+        // Group by student across all classes in the section
+        const groupedAll = reportData.reduce((acc, curr) => {
+            if (!acc[curr.studentId]) {
+                acc[curr.studentId] = { 
+                    id: curr.studentId, 
+                    name: curr.studentName, 
+                    className: curr.className, 
+                    total: 0, 
+                    count: 0 
+                };
+            }
+            acc[curr.studentId].total += curr.mark;
+            acc[curr.studentId].count += 1;
+            return acc;
+        }, {});
+
+        const finalArrayAll = Object.values(groupedAll).map(student => ({
+            ...student,
+            avg: student.count > 0 ? (student.total / student.count).toFixed(1) : 0
+        })).sort((a, b) => parseFloat(b.avg) - parseFloat(a.avg));
+
+        return finalArrayAll.slice(0, 5);
+    };
+
+    const topFivePerformers = getTopFivePerformers();
 
     return (
         <div className="analytics-container">
@@ -399,37 +370,6 @@ export default function SectionHeadReport() {
                         </select>
                     </div>
                 </div>
-
-                {/* Range Filter Controls */}
-                <div style={{ marginTop: "20px", paddingTop: "20px", borderTop: "1px dashed #cbd5e1" }}>
-                    <h4 style={{ fontSize: "14px", fontWeight: "600", color: "#475569", marginBottom: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <FiFilter /> Filter Students by Average Mark Range
-                    </h4>
-                    <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <label style={{ fontSize: "13px", color: "#64748b", fontWeight: "500" }}>Min Average %:</label>
-                            <input
-                                type="number"
-                                min="0"
-                                max="100"
-                                value={minMark}
-                                onChange={(e) => setMinMark(e.target.value)}
-                                style={{ width: "80px", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "13px" }}
-                            />
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <label style={{ fontSize: "13px", color: "#64748b", fontWeight: "500" }}>Max Average %:</label>
-                            <input
-                                type="number"
-                                min="0"
-                                max="100"
-                                value={maxMark}
-                                onChange={(e) => setMaxMark(e.target.value)}
-                                style={{ width: "80px", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "13px" }}
-                            />
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <div className="official-document">
@@ -446,6 +386,50 @@ export default function SectionHeadReport() {
 
                 <div className="report-content-body">
                     {renderReportBody()}
+
+                    {/* Top 5 Performers of the Section - only show when Overall is selected */}
+                    {selectedClass === "ALL" && topFivePerformers.length > 0 && (
+                        <div className="table-card" style={{ marginTop: "40px", borderTop: "2px solid #2b55cc" }}>
+                            <h3 style={{ color: "#2b55cc", display: "flex", alignItems: "center", gap: "8px" }}>
+                                <FiActivity /> Top 5 Outstanding Performers ({gradeLabel})
+                            </h3>
+                            <table className="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Student ID</th>
+                                        <th>Class</th>
+                                        <th>Total Marks</th>
+                                        <th>Avg %</th>
+                                        <th>Academic Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {topFivePerformers.map((student, index) => {
+                                        const status = getStatusDetails(student.avg);
+                                        return (
+                                            <tr key={student.id || index}>
+                                                <td><span style={{ color: "#2b55cc", fontWeight: "bold" }}>#{index + 1}</span></td>
+                                                <td>{student.id}</td>
+                                                <td><strong>{student.className}</strong></td>
+                                                <td><strong>{student.total}</strong></td>
+                                                <td><strong>{student.avg}%</strong></td>
+                                                <td>
+                                                    <span className="badge"
+                                                        style={{
+                                                            backgroundColor: status.bgColor,
+                                                            color: status.color
+                                                        }}>
+                                                        {status.label}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
                 </div>
 
                 <div className="print-footer">
