@@ -10,25 +10,29 @@ public class StudentReport {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "report_id")
     private Integer reportId;
 
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @Column(length = 20)
+    @Column(name = "class_id", length = 20)
     private String classId;
 
     @Column(length = 20)
     private String term;
 
+    @Column(name = "total_marks")
     private Integer totalMarks;
 
     @Column(precision = 5, scale = 2)
     private BigDecimal average;
 
+    @Column(name = "rank_position")
     private Integer rankPosition;
 
+    @Column(name = "generated_date")
     private LocalDate generatedDate;
 
     // Constructors

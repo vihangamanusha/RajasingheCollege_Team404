@@ -12,4 +12,6 @@ public interface StudentDocumentRepository extends JpaRepository<StudentDocument
     List<StudentDocument> findBySubjectId(String subjectId);
     // Find documents by teacher
     List<StudentDocument> findByTeacherId(String teacherId);
+    // Find documents by class
+    List<StudentDocument> findByClassId(String classId);
 }

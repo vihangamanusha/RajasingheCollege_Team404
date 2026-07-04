@@ -181,7 +181,10 @@ const MySubjects = ({ studentId }) => {
 
                                 <button
                                     className="dl-btn"
-                                    onClick={() => window.open(`http://localhost:8080/files/download/${doc.filePath}`, "_blank")}
+                                    onClick={() => {
+                                      const url = doc.filePath && doc.filePath.startsWith("http") ? doc.filePath : `http://localhost:8080/uploads/${doc.filePath}`;
+                                      window.open(url, "_blank");
+                                    }}
                                     title="Download File"
                                 >
                                     <Download size={18} />

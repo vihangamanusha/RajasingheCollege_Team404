@@ -169,6 +169,11 @@ public class StudentController {
         return documentRepository.findAll();
     }
 
+    @GetMapping("/documents/class/{classId}")
+    public List<StudentDocument> getStudentDocumentsByClass(@PathVariable String classId) {
+        return documentRepository.findByClassId(classId);
+    }
+
     // =============================================
     // GET /api/student/{id}/subjects
     // Returns subjects for the student's class
@@ -211,7 +216,7 @@ public class StudentController {
         byte[] pdfBytes = pdfService.generateReportPdf(student, report, marks);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Report_" + id + ".pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Report_" + id + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }

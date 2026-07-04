@@ -15,11 +15,21 @@ export default function StudentMaterials() {
       setError(null);
       try {
         const token = localStorage.getItem("token");
+        const loggedInUsername = localStorage.getItem("username");
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        // Returns List<StudentDocument> from real 'document' table
-        // Fields: documentId (String), title, filePath, uploadDate, teacherId, subjectId
-        const res = await axios.get(`${BASE_URL}/documents`, config);
-        setDocs(Array.isArray(res.data) ? res.data : []);
+
+        // 1. Resolve student profile to get classId
+        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const studentData = profileRes.data;
+
+        if (studentData && studentData.classEntity && studentData.classEntity.classId) {
+          const classId = studentData.classEntity.classId;
+          // 2. Fetch documents for this class
+          const res = await axios.get(`${BASE_URL}/documents/class/${classId}`, config);
+          setDocs(Array.isArray(res.data) ? res.data : []);
+        } else {
+          setDocs([]);
+        }
       } catch (err) {
         console.error("Documents fetch error:", err);
         setError("Failed to load study materials. Please try again.");
@@ -101,7 +111,10 @@ export default function StudentMaterials() {
                     {/* Download Button */}
                     <button
                         className="dl-btn"
-                        onClick={() => window.open(`http://localhost:8080/files/download/${doc.filePath}`, "_blank")}
+                        onClick={() => {
+                          const url = doc.filePath && doc.filePath.startsWith("http") ? doc.filePath : `http://localhost:8080/uploads/${doc.filePath}`;
+                          window.open(url, "_blank");
+                        }}
                         title="Download File"
                     >
                       <Download size={18} />

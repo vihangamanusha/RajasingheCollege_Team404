@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface TeacherAssignmentRepository extends JpaRepository<TeacherAssignment, String> {
     List<TeacherAssignment> findByTeacherId(String teacherId);
+    List<TeacherAssignment> findByClassId(String classId);
 }

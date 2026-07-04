@@ -23,6 +23,11 @@ public class TeacherAssignmentController {
         return ResponseEntity.ok(assignmentRepository.findByTeacherId(teacherId));
     }
 
+    @GetMapping("/class/{classId}")
+    public ResponseEntity<List<TeacherAssignment>> getAssignmentsByClass(@PathVariable String classId) {
+        return ResponseEntity.ok(assignmentRepository.findByClassId(classId));
+    }
+
     @PostMapping
     public ResponseEntity<TeacherAssignment> createAssignment(@RequestBody TeacherAssignment assignment) {
         if (assignment.getAssignmentId() == null || assignment.getAssignmentId().isEmpty()) {

@@ -840,10 +840,10 @@ export default function TeacherDashboard() {
                                                     <div key={m.documentId} className="content-card" style={{ border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                                                         <div>
                                                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                                                                <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b" }}>{m.title}</h4>
+                                                                <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b", wordBreak: "break-word", overflowWrap: "anywhere", flex: 1, paddingRight: "8px" }}>{m.title}</h4>
                                                                 <button 
                                                                     onClick={() => handleDeleteMaterial(m.documentId)}
-                                                                    style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+                                                                    style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px", flexShrink: 0 }}
                                                                     title="Delete Material"
                                                                 >
                                                                     <Trash2 size={18} />
@@ -853,7 +853,7 @@ export default function TeacherDashboard() {
                                                                 Grade {cl ? cl.className : m.classId} • {sub ? sub.subjectName : m.subjectId}
                                                             </p>
                                                             {m.note && (
-                                                                <div style={{ fontSize: "13px", color: "#475569", backgroundColor: "#f8fafc", padding: "10px", borderRadius: "6px", marginBottom: "12px", whiteSpace: "pre-wrap" }}>
+                                                                <div style={{ fontSize: "13px", color: "#475569", backgroundColor: "#f8fafc", padding: "10px", borderRadius: "6px", marginBottom: "12px", whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere", maxHeight: "120px", overflowY: "auto" }}>
                                                                     {m.note}
                                                                 </div>
                                                             )}
@@ -1020,10 +1020,10 @@ export default function TeacherDashboard() {
                                                     <div key={a.assignmentId} className="content-card" style={{ border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                                                         <div>
                                                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-                                                                <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b" }}>{a.title}</h4>
+                                                                <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b", wordBreak: "break-word", overflowWrap: "anywhere", flex: 1, paddingRight: "8px" }}>{a.title}</h4>
                                                                 <button 
                                                                     onClick={() => handleDeleteAssignment(a.assignmentId)}
-                                                                    style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+                                                                    style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px", flexShrink: 0 }}
                                                                     title="Delete Assignment"
                                                                 >
                                                                     <Trash2 size={18} />
@@ -1036,7 +1036,7 @@ export default function TeacherDashboard() {
                                                                 Due Date: {a.dueDate}
                                                             </div>
                                                             {a.note && (
-                                                                <div style={{ fontSize: "13px", color: "#475569", backgroundColor: "#f8fafc", padding: "10px", borderRadius: "6px", marginBottom: "12px", whiteSpace: "pre-wrap" }}>
+                                                                <div style={{ fontSize: "13px", color: "#475569", backgroundColor: "#f8fafc", padding: "10px", borderRadius: "6px", marginBottom: "12px", whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere", maxHeight: "120px", overflowY: "auto" }}>
                                                                     {a.note}
                                                                 </div>
                                                             )}

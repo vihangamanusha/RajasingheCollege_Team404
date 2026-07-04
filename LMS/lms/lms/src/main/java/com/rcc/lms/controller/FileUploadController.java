@@ -35,7 +35,7 @@ public class FileUploadController {
             }
 
             // CREATE unique filename
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename().replaceAll("\\s+", "_");
 
             Path filePath = Paths.get(uploadDir, fileName);
 
