@@ -1844,7 +1844,7 @@ const handleDeleteDocument = (id) => {
 
     {showDocumentModal && (
       <div className="popup-overlay">
-        <div className="popup-form" style={{ height: "320px" }}>
+        <div className="popup-form" style={{ height: "340px" }}>
           <h2>Upload Document</h2>
 
           <form onSubmit={handleDocumentSubmit}>
