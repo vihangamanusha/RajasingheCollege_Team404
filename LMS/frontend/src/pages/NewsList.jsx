@@ -71,6 +71,7 @@ const [newsForm, setNewsForm] = useState({
   const [showForm, setShowForm] = useState(false);
 
   const [editingId, setEditingId] = useState(null);
+  const [videoUrlError, setVideoUrlError] = useState("");
 
   const [form, setForm] = useState({
     title: "",
@@ -704,6 +705,17 @@ const handleDeleteNews = (id) => {
   const handleSubmit = async (e) => {
   e.preventDefault();
 
+  const youtubeRegex =
+    /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+/;
+
+  // ❌ Validate YouTube URL before submit
+  if (!youtubeRegex.test(form.videoURL)) {
+    setVideoUrlError("Only YouTube links are allowed.");
+    return; // stop submission
+  }
+
+  setVideoUrlError(""); // clear error if valid
+
   console.log("Submitting:", form);
 
   try {
@@ -745,15 +757,28 @@ const handleDeleteNews = (id) => {
 
     alert("Saved!");
 
+    // Reload data
     loadStreams();
+
+    //Clear form after success
+    setForm({
+      title: "",
+      date: "",
+      time: "",
+      description: "",
+      videoURL: "",
+    });
+
+    // Clear error
+    setVideoUrlError("");
 
     setShowForm(false);
 
   } catch (err) {
     console.log(err);
+    alert("Something went wrong!");
   }
 };
-
   //runs when form sybmit
   const handleEventSubmit = async (e) => {
   e.preventDefault();
@@ -1543,19 +1568,34 @@ const handleDeleteDocument = (id) => {
                       }
                     />
 
-                    <input
-                      type="text"
-                      placeholder="YouTube URL"
-                      value={form.videoURL}
-                      onChange={(e) =>
-                        setForm({
-                          ...form,
-                          videoURL: e.target.value,
-                        })
-                      }
-                      required
-                    />
+<input
+  type="text"
+  placeholder="YouTube URL"
+  value={form.videoURL}
+  onChange={(e) => {
+    const url = e.target.value;
 
+    setForm({
+      ...form,
+      videoURL: url,
+    });
+
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/).+/;
+
+    if (url === "" || youtubeRegex.test(url)) {
+      setVideoUrlError("");
+    } else {
+      setVideoUrlError("Only YouTube links are allowed.");
+    }
+  }}
+  required
+/>
+{videoUrlError && (
+  <p style={{ color: "red", fontSize: "13px", marginTop: "5px" }}>
+    {videoUrlError}
+  </p>
+)}
                     <div className="form-buttons">
 
                       <button
