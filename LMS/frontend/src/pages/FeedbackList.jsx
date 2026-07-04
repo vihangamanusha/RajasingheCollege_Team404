@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { getFeedback, deleteFeedback } from "../api/feedbackApi";
+import { FiLock } from "react-icons/fi";
 
 export default function FeedbackList() {
   const [feedback, setFeedback] = useState([]);
@@ -104,24 +105,34 @@ export default function FeedbackList() {
   }).length;
 
   return (
-    <div style={styles.page}>
-      <div style={styles.headerBlock}>
-        <div>
-          <p style={styles.orgText}>Rajasinghe Central College</p>
-          <h1 style={styles.title}>User Feedback</h1>
-          <p style={styles.subtitle}>
-            Manage messages submitted through the Contact Us form in a clear and professional view.
-          </p>
+    <div className="main-page-container">
+      {/* TOP HEADER */}
+      <header className="top-header">
+        <div className="header-title">
+          <h3>Rajasinghe Central College</h3>
         </div>
-
-        <div style={styles.profileCard}>
-          <div>
-            <div style={styles.roleText}>{userRole}</div>
-            <div style={styles.userText}>{username}</div>
+        <div className="user-profile">
+          <div className="user-info">
+            <p className="user-role">{userRole}</p>
+            <p className="user-name" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              {username || "User"}
+              <FiLock style={{ cursor: "pointer", color: "#64748b", fontSize: "14px" }} title="Change Password" />
+            </p>
           </div>
-          <div style={styles.avatar}>{(username || "U").slice(0, 2).toUpperCase()}</div>
+          <div className="user-avatar">
+            {(username || "U").slice(0, 2).toUpperCase()}
+          </div>
         </div>
-      </div>
+      </header>
+
+      <div className="page-content">
+        {/* PAGE HEADER */}
+        <div className="header page-header">
+          <div>
+            <h1>User Feedback</h1>
+            <p className="subtitle">Manage messages submitted through the Contact Us form in a clear and professional view.</p>
+          </div>
+        </div>
 
       <div style={styles.summaryRow}>
         <div style={styles.summaryCard}>
@@ -224,77 +235,12 @@ export default function FeedbackList() {
           {popup.msg}
         </div>
       )}
+      </div>
     </div>
   );
 }
 
 const styles = {
-  page: {
-    minHeight: "100vh",
-    background: "#f8fafc",
-    padding: "24px"
-  },
-  headerBlock: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "16px",
-    marginBottom: "20px",
-    flexWrap: "wrap"
-  },
-  orgText: {
-    margin: 0,
-    fontSize: "13px",
-    color: "#64748b",
-    fontWeight: 700,
-    letterSpacing: "0.08em",
-    textTransform: "uppercase"
-  },
-  title: {
-    margin: "4px 0 6px",
-    fontSize: "28px",
-    color: "#0f172a",
-    fontWeight: 700
-  },
-  subtitle: {
-    margin: 0,
-    fontSize: "15px",
-    color: "#64748b",
-    maxWidth: "720px",
-    lineHeight: 1.6
-  },
-  profileCard: {
-    display: "flex",
-    alignItems: "center",
-    gap: "12px",
-    background: "white",
-    border: "1px solid #e2e8f0",
-    borderRadius: "14px",
-    padding: "10px 14px",
-    boxShadow: "0 6px 16px rgba(15, 23, 42, 0.06)"
-  },
-  roleText: {
-    fontSize: "12px",
-    color: "#2563eb",
-    fontWeight: 700,
-    textTransform: "uppercase"
-  },
-  userText: {
-    fontSize: "14px",
-    color: "#0f172a",
-    fontWeight: 600
-  },
-  avatar: {
-    width: "40px",
-    height: "40px",
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    background: "#eff6ff",
-    color: "#1d4ed8",
-    fontWeight: 700
-  },
   summaryRow: {
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
