@@ -101,6 +101,8 @@ const [selectedSport, setSelectedSport] = useState(null);
 const [sportAchievements, setSportAchievements] = useState([]);
 const [showAchievementModal, setShowAchievementModal] = useState(false);
 const [editingAchievementId, setEditingAchievementId] = useState(null);
+const [achievementImageError, setAchievementImageError] = useState("");
+
 const [achievementForm, setAchievementForm] = useState({
   title: "",
   description: "",
@@ -148,8 +150,8 @@ const [achievementForm, setAchievementForm] = useState({
     },
 
     {
-      id: "Other Sports",
-      name: "Other Sports",
+      id:"athletics",
+      name: "Athletics",
       image:
         "https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=900&h=600&fit=crop",
       description:
@@ -447,7 +449,20 @@ const loadDocuments = async () => {
   try {
     const file = e.target.files[0];
 
-    if (!file) return;
+    if (!file) {
+      setAchievementImageError("");
+      return;
+    }
+
+    const maxSize = 1 * 1024 * 1024;
+
+    if (file.size > maxSize) {
+      setAchievementImageError("Only image files up to 1 MB are allowed.");
+      e.target.value = null;
+      return;
+    }
+
+    setAchievementImageError("");
 
     const formData = new FormData();
     formData.append("file", file);
@@ -470,6 +485,7 @@ const loadDocuments = async () => {
     }));
   } catch (error) {
     console.log("Upload error:", error);
+    setAchievementImageError("Failed to upload image. Please try again.");
   }
 };
 
@@ -825,7 +841,6 @@ const handleDocumentSubmit = async (e) => {
 const handleDeleteDocument = (id) => {
     openDeleteConfirm(id, "document", "this document");
 };
-
 
 
   return (
@@ -1315,7 +1330,7 @@ const handleDeleteDocument = (id) => {
           >
             <div
               className="popup-form"
-              style={{height:"520px"}}
+              style={{height:"530px"}}
               onClick={(e) => e.stopPropagation()}
             >
               <div className="popup-header">
@@ -1363,10 +1378,24 @@ const handleDeleteDocument = (id) => {
                 <div className="form-group">
                   <label style={{ marginBottom: "-8px", marginTop: "15px" }}>Upload Image</label>
                   <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleAchievementImageUpload}
-                  />
+  type="file"
+  accept="image/*"
+  required={!editingAchievementId}
+  onChange={handleAchievementImageUpload}
+/>
+{achievementImageError && (
+<p
+  style={{
+    color: "#dc2626",
+    fontSize: "13px",
+    fontWeight: "500",
+    marginTop: "5px",
+    marginBottom: "-15px",
+  }}
+>
+  Only image files up to 1 MB are allowed.
+</p>
+)}
                 </div>
 
                 {/* {achievementForm.image && (
