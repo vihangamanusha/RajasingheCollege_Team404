@@ -1475,6 +1475,7 @@ const handleDeleteDocument = (id) => {
 
                 <div
                   className="popup-form"
+                  style={{ height: "620px" }}
                   onClick={(e) =>
                     e.stopPropagation()
                   }
