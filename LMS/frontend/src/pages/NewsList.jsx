@@ -702,68 +702,57 @@ const handleDeleteNews = (id) => {
 
   /* ADD OR UPDATE STREAM */
   const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  console.log("Submitting:", form);
 
-    try {
+  try {
+    let response;
 
-      let response;
-
-      if (editingId) {
-
-        response = await fetch(
-          `http://localhost:8080/api/livestreams/${editingId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form),
-          }
-        );
-
-      } else {
-
-        response = await fetch(
-          "http://localhost:8080/api/livestreams",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form),
-          }
-        );
-      }
-
-      if (response.ok) {
-
-        showNewsFeedback(
-          "success",
-          editingId ? "Live stream updated successfully!" : "Live stream added successfully!"
-        );
-
-        setForm({
-          title: "",
-          date: "",
-          time: "",
-          description: "",
-          videoURL: "",
-        });
-
-        setEditingId(null);
-
-        setShowForm(false);
-
-        loadStreams();
-      }
-
-    } catch (error) {
-
-      console.log(error);
-
+    if (editingId) {
+      response = await fetch(
+        `http://localhost:8080/api/livestreams/${editingId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
+    } else {
+      response = await fetch(
+        "http://localhost:8080/api/livestreams",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
     }
-  };
+
+    console.log("Status:", response.status);
+
+    const text = await response.text();
+    console.log("Response:", text);
+
+    if (!response.ok) {
+      alert("Save failed");
+      return;
+    }
+
+    alert("Saved!");
+
+    loadStreams();
+
+    setShowForm(false);
+
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   //runs when form sybmit
   const handleEventSubmit = async (e) => {

@@ -15,7 +15,8 @@ public class Livestream {
     private String description;
     private String videoURL;
 
-    private boolean isLive = false;//ture- streaming and false -not
+    @Column(name = "is_live")
+    private boolean isLive = false;
 
     public Livestream() {}
 
@@ -81,6 +82,6 @@ public class Livestream {
     }
 
     public void setLive(boolean live) {
-        isLive = live;
+        this.isLive = live;
     }
 }
