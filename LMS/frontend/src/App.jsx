@@ -14,6 +14,7 @@ import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
 import AdminReport from "./pages/AdminReport"; // NEW: Reporting & Analytics Import
+import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics";
 import AdminClassManagement from "./pages/AdminClassManagement"; // NEW: Class Management
 // --> NEW: ANNOUNCEMENTS <--
 
