@@ -29,7 +29,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       APP_BASE_URL: http://${SERVER_IP}:8080
     volumes:
-      - ./LMS/lms/uploads:/app/uploads
+      - ./LMS/lms/lms/uploads:/app/uploads
     depends_on:
       mysql:
         condition: service_healthy
