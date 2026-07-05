@@ -12,7 +12,7 @@ export default function FeedbackList() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [popup, setPopup] = useState(null); // { type: 'success'|'error', msg: string }
-  
+
   useEffect(() => {
     const token = localStorage.getItem("token");
 
@@ -60,36 +60,36 @@ export default function FeedbackList() {
   };
 
   const confirmDelete = async () => {
-  if (!deleteTargetId) return;
+    if (!deleteTargetId) return;
 
-  try {
-    const { success, status } = await deleteFeedback(deleteTargetId);
+    try {
+      const { success, status } = await deleteFeedback(deleteTargetId);
 
-    console.log("Delete result:", success, "Status:", status);
+      console.log("Delete result:", success, "Status:", status);
 
-    if (success) {
-      setFeedback((prev) =>
-        prev.filter((item) => item.id !== deleteTargetId)
-      );
-      showPopup("success", "Feedback deleted successfully!");
-    } else {
-      const msg =
-        status === 401 ? "Not authorized — please log in again." :
-        status === 403 ? "You don't have permission to delete this." :
-        status === 404 ? "Feedback not found — it may already be deleted." :
-        status === 500 ? "Server error — the backend failed to delete. Please try again." :
-        status === 0   ? "Network error — could not reach the server." :
-        `Delete failed (server error ${status}).`;
-      showPopup("error", msg);
+      if (success) {
+        setFeedback((prev) =>
+          prev.filter((item) => item.id !== deleteTargetId)
+        );
+        showPopup("success", "Feedback deleted successfully!");
+      } else {
+        const msg =
+          status === 401 ? "Not authorized — please log in again." :
+            status === 403 ? "You don't have permission to delete this." :
+              status === 404 ? "Feedback not found — it may already be deleted." :
+                status === 500 ? "Server error — the backend failed to delete. Please try again." :
+                  status === 0 ? "Network error — could not reach the server." :
+                    `Delete failed (server error ${status}).`;
+        showPopup("error", msg);
+      }
+    } catch (err) {
+      console.log(err);
+      showPopup("error", "Unexpected error during delete.");
     }
-  } catch (err) {
-    console.log(err);
-    showPopup("error", "Unexpected error during delete.");
-  }
 
-  setShowDeleteModal(false);
-  setDeleteTargetId(null);
-};
+    setShowDeleteModal(false);
+    setDeleteTargetId(null);
+  };
   const filteredFeedback = feedback.filter(
     (item) =>
       item.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -130,113 +130,113 @@ export default function FeedbackList() {
         <div className="header page-header">
           <div>
             <h1 style={{ marginLeft: "-495px" }}>User Feedback</h1>
-            <p 
-            style={{marginLeft:"12px"}} 
-            className="subtitle">Manage messages submitted through the Contact Us form in a clear and professional view.</p>
+            <p
+              style={{ marginLeft: "12px" }}
+              className="subtitle">Manage messages submitted through the Contact Us form in a clear and professional view.</p>
           </div>
         </div>
 
-      <div style={styles.summaryRow}>
-        <div style={styles.summaryCard}>
-          <div style={styles.summaryLabel}>Total Messages</div>
-          <div style={styles.summaryValue}>{feedback.length}</div>
-        </div>
-        <div style={styles.summaryCard}>
-          <div style={styles.summaryLabel}>Recent This Week</div>
-          <div style={styles.summaryValue}>{recentMessages}</div>
-        </div>
-        <div style={styles.summaryCard}>
-          <div style={styles.summaryLabel}>Search Results</div>
-          <div style={styles.summaryValue}>{filteredFeedback.length}</div>
-        </div>
-      </div>
-
-      <div style={styles.toolbar}>
-        <div style={styles.searchWrap}>
-          <span style={styles.searchIcon}>🔎</span>
-          <input
-            type="text"
-            placeholder="Search by name, email, subject, or message..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={styles.input}
-          />
-        </div>
-        <button style={styles.refreshBtn} onClick={loadFeedback}>
-          Refresh List
-        </button>
-      </div>
-
-      <div style={styles.card}>
-        {loading ? (
-          <div style={styles.emptyState}>Loading feedback...</div>
-        ) : filteredFeedback.length === 0 ? (
-          <div style={styles.emptyState}>
-            {searchTerm ? "No feedback matches your search." : "No feedback messages found."}
+        <div style={styles.summaryRow}>
+          <div style={styles.summaryCard}>
+            <div style={styles.summaryLabel}>Total Messages</div>
+            <div style={styles.summaryValue}>{feedback.length}</div>
           </div>
-        ) : (
-          <div style={styles.list}>
-            {filteredFeedback.map((item) => (
-              <div key={item.id} style={styles.feedbackCard}>
-                <div style={{ flex: 1 }}>
-                  <div style={styles.cardHeader}>
-                    <h2 style={styles.subjectText}>{item.subject || "No Subject"}</h2>
-                    <span style={styles.badge}>New</span>
+          <div style={styles.summaryCard}>
+            <div style={styles.summaryLabel}>Recent This Week</div>
+            <div style={styles.summaryValue}>{recentMessages}</div>
+          </div>
+          <div style={styles.summaryCard}>
+            <div style={styles.summaryLabel}>Search Results</div>
+            <div style={styles.summaryValue}>{filteredFeedback.length}</div>
+          </div>
+        </div>
+
+        <div style={styles.toolbar}>
+          <div style={styles.searchWrap}>
+            <span style={styles.searchIcon}>🔎</span>
+            <input
+              type="text"
+              placeholder="Search by name, email, subject, or message..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+          <button style={styles.refreshBtn} onClick={loadFeedback}>
+            Refresh List
+          </button>
+        </div>
+
+        <div style={styles.card}>
+          {loading ? (
+            <div style={styles.emptyState}>Loading feedback...</div>
+          ) : filteredFeedback.length === 0 ? (
+            <div style={styles.emptyState}>
+              {searchTerm ? "No feedback matches your search." : "No feedback messages found."}
+            </div>
+          ) : (
+            <div style={styles.list}>
+              {filteredFeedback.map((item) => (
+                <div key={item.id} style={styles.feedbackCard}>
+                  <div style={{ flex: 1 }}>
+                    <div style={styles.cardHeader}>
+                      <h2 style={styles.subjectText}>{item.subject || "No Subject"}</h2>
+                      <span style={styles.badge}>New</span>
+                    </div>
+                    <p style={styles.senderText}>
+                      From: {item.name || "Unknown"} ({item.email || "No email"})
+                    </p>
+                    <p style={styles.messageText}>{item.message}</p>
+                    <p style={styles.metaText}>
+                      Received: {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "Date not available"}
+                    </p>
                   </div>
-                  <p style={styles.senderText}>
-                    From: {item.name || "Unknown"} ({item.email || "No email"})
-                  </p>
-                  <p style={styles.messageText}>{item.message}</p>
-                  <p style={styles.metaText}>
-                    Received: {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : "Date not available"}
-                  </p>
-                </div>
 
-                <button style={styles.deleteBtn} onClick={() => handleDeleteClick(item.id)}>
+                  <button style={styles.deleteBtn} onClick={() => handleDeleteClick(item.id)}>
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {showDeleteModal && (
+          <div style={styles.overlay}>
+            <div style={styles.modalBox}>
+              <h3 style={{ margin: "0 0 8px", color: "#0f172a" }}>Delete Feedback</h3>
+              <p style={{ margin: "0 0 20px", color: "#64748b", lineHeight: 1.6 }}>
+                Are you sure you want to delete this feedback message?
+              </p>
+              <div style={styles.modalActions}>
+                <button style={styles.cancelBtn} onClick={() => setShowDeleteModal(false)}>
+                  Cancel
+                </button>
+                <button style={styles.confirmBtn} onClick={confirmDelete}>
                   Delete
                 </button>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {showDeleteModal && (
-        <div style={styles.overlay}>
-          <div style={styles.modalBox}>
-            <h3 style={{ margin: "0 0 8px", color: "#0f172a" }}>Delete Feedback</h3>
-            <p style={{ margin: "0 0 20px", color: "#64748b", lineHeight: 1.6 }}>
-              Are you sure you want to delete this feedback message?
-            </p>
-            <div style={styles.modalActions}>
-              <button style={styles.cancelBtn} onClick={() => setShowDeleteModal(false)}>
-                Cancel
-              </button>
-              <button style={styles.confirmBtn} onClick={confirmDelete}>
-                Delete
-              </button>
             </div>
           </div>
-        </div>
-      )}
-      {popup && (
-        <div style={{
-          position: "fixed",
-          bottom: "620px",
-          right: "28px",
-          background: popup.type === "success" ? "#16a34a" : "#dc2626",
-          color: "white",
-          padding: "12px 20px",
-          borderRadius: "12px",
-          fontWeight: 600,
-          fontSize: "14px",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
-          zIndex: 2000,
-          marginTop:"20px"
-        }}>
-          {popup.msg}
-        </div>
-      )}
+        )}
+        {popup && (
+          <div style={{
+            position: "fixed",
+            bottom: "620px",
+            right: "28px",
+            background: popup.type === "success" ? "#16a34a" : "#dc2626",
+            color: "white",
+            padding: "12px 20px",
+            borderRadius: "12px",
+            fontWeight: 600,
+            fontSize: "14px",
+            boxShadow: "0 8px 24px rgba(0,0,0,0.18)",
+            zIndex: 2000,
+            marginTop: "20px"
+          }}>
+            {popup.msg}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -293,7 +293,7 @@ const styles = {
     border: "none",
     outline: "none",
     marginLeft: "28px",
-    marginBottom:"20px",
+    marginBottom: "20px",
     width: "100%",
     fontSize: "14px",
     background: "transparent"

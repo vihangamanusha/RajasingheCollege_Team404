@@ -251,15 +251,27 @@ const confirmDelete = async () => {
             <div className="announcementCard" key={a.id}>
               {/* TOP ROW */}
               <div className="cardTop">
-                <div className="iconBox">📢</div>
+                <div 
+                className="iconBox"
+                style={{marginTop:"60px"}}
+                >📢</div>
                 <div className="cardMain">
-                  <div className="titleRow" >
-                    <h3>{a.title}</h3>
+                  <div className="titleRow"
+                  style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      gap: "8px"
+                  }} >
                     <span 
-                    style={{ marginLeft:"950px" }}
-                    className={`badge ${(a.category || "uncategorized").toLowerCase()}`}>
+                    
+                    className={`badge ${(a.category || "uncategorized").toLowerCase()}`}
+                    style={{ marginBottom: "10px" }}>
                       {a.category || "Uncategorized"}
                     </span>
+
+                    <h3>{a.title}</h3>
+                    
                   </div>
                   <p className="content">{a.content}</p>
                   {/* META INFO */}
@@ -501,6 +513,11 @@ const confirmDelete = async () => {
                   <option value="Students">Students</option>
                   <option value="Teachers">Teachers</option>
                   <option value="Parents">Parents</option>
+                  <option value="Bio">Bio Stream</option>
+                  <option value="Mathematics">Mathematics stream</option>
+                  <option value="Technology">Technology stream</option>
+                  <option value="Art">Art stream</option>
+                  <option value="Commerce">Commerce stream</option>
                   <option value="All">All</option>
                 </select>
               </div>
@@ -518,6 +535,7 @@ const confirmDelete = async () => {
                   className="cancelBtn"
                   style={{
                     width: "400px",
+                    height:"40px",
                     backgroundColor:"fffff",
                     color:"#ffffff",
                     }}
@@ -529,6 +547,7 @@ const confirmDelete = async () => {
                 <button type="submit" 
                  style={{
                     width: "400px",
+                    height:"40px",
                     }}
                 className="saveBtn">
                   {editingId ? "Update" : "Add Announcement"}
