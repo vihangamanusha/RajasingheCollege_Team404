@@ -99,12 +99,79 @@ public class StudentController {
     }
 
     // =============================================
+    // GET /api/student/{id}/rank
+    // Returns dynamic rank of student in class for term
+    // =============================================
+    @GetMapping("/{id}/rank")
+    public ResponseEntity<java.util.Map<String, Object>> getStudentRank(
+            @PathVariable String id,
+            @RequestParam(required = false, defaultValue = "Term 1") String term) {
+        
+        java.util.Optional<Student> studentOpt = studentRepository.findById(id);
+        if (!studentOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        Student currentStudent = studentOpt.get();
+        if (currentStudent.getClassEntity() == null) {
+            java.util.Map<String, Object> response = new java.util.HashMap<>();
+            response.put("rank", "—");
+            return ResponseEntity.ok(response);
+        }
+        
+        String classId = currentStudent.getClassEntity().getClassId();
+        java.util.List<Student> classStudents = studentRepository.findByClassEntityClassId(classId);
+        
+        java.util.Map<String, Double> studentAverages = new java.util.HashMap<>();
+        
+        for (Student student : classStudents) {
+            java.util.List<StudentMarks> marks = marksRepository.findByStudentStudentId(student.getStudentId());
+            double sum = 0;
+            int count = 0;
+            for (StudentMarks m : marks) {
+                if (term.equalsIgnoreCase(m.getTerm()) && m.getAssignmentMark() != null) {
+                    sum += m.getAssignmentMark();
+                    count++;
+                }
+            }
+            double average = count > 0 ? (sum / count) : -1.0;
+            studentAverages.put(student.getStudentId(), average);
+        }
+        
+        java.util.List<java.util.Map.Entry<String, Double>> sortedStudents = studentAverages.entrySet().stream()
+                .filter(entry -> entry.getValue() >= 0)
+                .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+                .collect(Collectors.toList());
+                
+        int rank = -1;
+        for (int i = 0; i < sortedStudents.size(); i++) {
+            if (sortedStudents.get(i).getKey().equals(id)) {
+                rank = i + 1;
+                break;
+            }
+        }
+        
+        java.util.Map<String, Object> response = new java.util.HashMap<>();
+        if (rank != -1) {
+            response.put("rank", rank);
+        } else {
+            response.put("rank", "—");
+        }
+        return ResponseEntity.ok(response);
+    }
+
+    // =============================================
     // GET /api/student/documents
     // Returns all documents
     // =============================================
     @GetMapping("/documents")
     public List<StudentDocument> getStudentDocuments() {
         return documentRepository.findAll();
+    }
+
+    @GetMapping("/documents/class/{classId}")
+    public List<StudentDocument> getStudentDocumentsByClass(@PathVariable String classId) {
+        return documentRepository.findByClassId(classId);
     }
 
     // =============================================
@@ -149,7 +216,7 @@ public class StudentController {
         byte[] pdfBytes = pdfService.generateReportPdf(student, report, marks);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=Report_" + id + ".pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=Report_" + id + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
     }

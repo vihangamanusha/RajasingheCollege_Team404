@@ -16,6 +16,12 @@ import java.util.List;
 @Service
 public class StudentReportPdfService {
 
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.rcc.lms.repository.StudentRepository studentRepository;
+
+    @org.springframework.beans.factory.annotation.Autowired
+    private com.rcc.lms.repository.StudentMarksRepository marksRepository;
+
     public byte[] generateReportPdf(Student student, StudentReport report, List<StudentMarks> marks) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -43,7 +49,13 @@ public class StudentReportPdfService {
                 document.add(new Paragraph("Class: " + student.getClassEntity().getClassName(), normalFont));
             }
 
-            document.add(new Paragraph("Term: " + (report != null ? report.getTerm() : "N/A"), normalFont));
+            String termVal = "Term 1";
+            if (report != null && report.getTerm() != null) {
+                termVal = report.getTerm();
+            } else if (marks != null && !marks.isEmpty()) {
+                termVal = marks.get(0).getTerm();
+            }
+            document.add(new Paragraph("Term: " + termVal, normalFont));
             document.add(new Paragraph(" ", normalFont));
 
             // Marks Table
@@ -69,20 +81,95 @@ public class StudentReportPdfService {
 
             document.add(table);
 
-            // Report Summary — uses the real DB columns: total_marks, average, rank_position
-            if (report != null) {
-                document.add(new Paragraph(" ", normalFont));
-
-                if (report.getTotalMarks() != null) {
-                    document.add(new Paragraph("Total Marks: " + report.getTotalMarks(), normalFont));
+            // Calculate dynamic rank if not present in report
+            String rankStr = "—";
+            if (report != null && report.getRankPosition() != null) {
+                rankStr = String.valueOf(report.getRankPosition());
+            } else if (student.getClassEntity() != null) {
+                String classId = student.getClassEntity().getClassId();
+                List<Student> classStudents = studentRepository.findByClassEntityClassId(classId);
+                
+                String term = (report != null && report.getTerm() != null) ? report.getTerm() : "Term 1";
+                if (marks != null && !marks.isEmpty()) {
+                    term = marks.get(0).getTerm();
                 }
-                if (report.getAverage() != null) {
-                    document.add(new Paragraph("Average: " + report.getAverage() + "%", normalFont));
+                
+                java.util.Map<String, Double> studentAverages = new java.util.HashMap<>();
+                for (Student s : classStudents) {
+                    List<StudentMarks> sMarks = marksRepository.findByStudentStudentId(s.getStudentId());
+                    double sum = 0;
+                    int count = 0;
+                    for (StudentMarks m : sMarks) {
+                        if (term.equalsIgnoreCase(m.getTerm()) && m.getAssignmentMark() != null) {
+                            sum += m.getAssignmentMark();
+                            count++;
+                        }
+                    }
+                    double average = count > 0 ? (sum / count) : -1.0;
+                    studentAverages.put(s.getStudentId(), average);
                 }
-                if (report.getRankPosition() != null) {
-                    document.add(new Paragraph("Class Rank: " + report.getRankPosition(), normalFont));
+                
+                List<java.util.Map.Entry<String, Double>> sortedStudents = studentAverages.entrySet().stream()
+                        .filter(entry -> entry.getValue() >= 0)
+                        .sorted((e1, e2) -> Double.compare(e2.getValue(), e1.getValue()))
+                        .collect(java.util.stream.Collectors.toList());
+                        
+                int computedRank = -1;
+                for (int i = 0; i < sortedStudents.size(); i++) {
+                    if (sortedStudents.get(i).getKey().equals(student.getStudentId())) {
+                        computedRank = i + 1;
+                        break;
+                    }
+                }
+                if (computedRank != -1) {
+                    rankStr = String.valueOf(computedRank);
                 }
             }
+
+            // Calculate dynamic average and total marks if report is null
+            double dynamicAverage = 0.0;
+            int dynamicTotal = 0;
+            if (marks != null && !marks.isEmpty()) {
+                int sum = 0;
+                int count = 0;
+                for (StudentMarks m : marks) {
+                    if (m.getAssignmentMark() != null) {
+                        sum += m.getAssignmentMark();
+                        count++;
+                    }
+                }
+                dynamicTotal = sum;
+                dynamicAverage = count > 0 ? ((double) sum / count) : 0.0;
+            }
+
+            document.add(new Paragraph(" ", normalFont));
+            int totalMarksVal = (report != null && report.getTotalMarks() != null) ? report.getTotalMarks() : dynamicTotal;
+            double avgVal = (report != null && report.getAverage() != null) ? report.getAverage().doubleValue() : dynamicAverage;
+
+            document.add(new Paragraph("Total Marks: " + totalMarksVal, normalFont));
+            document.add(new Paragraph(String.format("Average: %.1f%%", avgVal), normalFont));
+            document.add(new Paragraph("Class Rank: " + rankStr, normalFont));
+
+            // Signatures block at the bottom
+            document.add(new Paragraph(" ", normalFont));
+            document.add(new Paragraph(" ", normalFont));
+
+            PdfPTable sigTable = new PdfPTable(2);
+            sigTable.setWidthPercentage(100);
+            sigTable.setSpacingBefore(40);
+
+            PdfPCell studCell = new PdfPCell(new Phrase("....................................................\nStudent Signature", normalFont));
+            studCell.setBorder(Rectangle.NO_BORDER);
+            studCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            PdfPCell guardCell = new PdfPCell(new Phrase("....................................................\nGuardian Signature", normalFont));
+            guardCell.setBorder(Rectangle.NO_BORDER);
+            guardCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+            sigTable.addCell(studCell);
+            sigTable.addCell(guardCell);
+
+            document.add(sigTable);
 
             document.close();
 

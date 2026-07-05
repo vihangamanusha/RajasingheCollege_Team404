@@ -13,7 +13,7 @@ import AdminUsers from "./pages/AdminUsers";
 import StudentRegister from "./pages/StudentRegister";
 import TeacherRegister from "./pages/TeacherRegister";
 import TechRegister from "./pages/TechRegister";
-import AdminAcademicAnalytics from "./pages/AdminAcademicAnalytics"; // NEW: Reporting & Analytics Import
+import AdminReport from "./pages/AdminReport"; // NEW: Reporting & Analytics Import
 import AdminClassManagement from "./pages/AdminClassManagement"; // NEW: Class Management
 // --> NEW: ANNOUNCEMENTS <--
 import Announcement from "./pages/Announcements";
@@ -31,6 +31,7 @@ import StudentDashboard from "./pages/student/StudentDashboard";
 import StudentMarks from "./pages/student/StudentMarks";
 import StudentMaterials from "./pages/student/StudentMaterials";
 import StudentReport from "./pages/student/StudentReport";
+import StudentAssignments from "./pages/student/StudentAssignments";
 
 // =========================
 // TEACHER & SECTION HEAD & DEPUTY PRINCIPAL ROLE DASHBOARDS
@@ -96,7 +97,7 @@ function App() {
                 <Route path="tech-officers" element={<AdminTechOfficerManagement />} />
 
                 {/* --> NEW: ACADEMIC ANALYTICS & REPORTS <-- */}
-                <Route path="analytics" element={<AdminAcademicAnalytics />} />
+                <Route path="analytics" element={<AdminReport />} />
 
                 {/* --> REGISTRATION FORMS <-- */}
                 <Route path="users/student" element={<StudentRegister />} />
@@ -127,10 +128,11 @@ function App() {
                 }
             >
                 <Route index element={<Navigate to="dashboard" replace />} />
-                <Route path="dashboard" element={<StudentDashboard studentId="STU001" />} />
-                <Route path="marks" element={<StudentMarks studentId="STU001" />} />
+                <Route path="dashboard" element={<StudentDashboard />} />
+                <Route path="marks" element={<StudentMarks />} />
                 <Route path="materials" element={<StudentMaterials />} />
-                <Route path="report" element={<StudentReport studentId="STU001" />} />
+                <Route path="report" element={<StudentReport />} />
+                <Route path="assignments" element={<StudentAssignments />} />
             </Route>
 
             {/* ============================================================

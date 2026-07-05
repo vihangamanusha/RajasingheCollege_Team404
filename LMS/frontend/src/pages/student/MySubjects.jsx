@@ -14,13 +14,20 @@ const MySubjects = ({ studentId }) => {
 
     // Fetch subjects on mount
     useEffect(() => {
-        if (!studentId) return;
-
         const fetchSubjects = async () => {
             setLoading(true);
             setError(null);
             try {
-                const res = await axios.get(`${BASE_URL}/${studentId}/subjects`);
+                const token = localStorage.getItem("token");
+                const loggedInUsername = localStorage.getItem("username");
+                const config = { headers: { Authorization: `Bearer ${token}` } };
+
+                // 1. Resolve studentId dynamically
+                const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+                const realStudentId = profileRes.data.studentId;
+
+                // 2. Fetch subjects
+                const res = await axios.get(`${BASE_URL}/${realStudentId}/subjects`, config);
                 setSubjects(Array.isArray(res.data) ? res.data : []);
             } catch (err) {
                 console.error("Subjects fetch error:", err);
@@ -31,14 +38,16 @@ const MySubjects = ({ studentId }) => {
         };
 
         fetchSubjects();
-    }, [studentId]);
+    }, []);
 
     // Fetch documents when a subject is selected
     const handleSubjectClick = async (subject) => {
         setSelectedSubject(subject);
         setDocsLoading(true);
         try {
-            const res = await axios.get(`${BASE_URL}/subjects/${subject.subjectId}/documents`);
+            const token = localStorage.getItem("token");
+            const config = { headers: { Authorization: `Bearer ${token}` } };
+            const res = await axios.get(`${BASE_URL}/subjects/${subject.subjectId}/documents`, config);
             setDocuments(Array.isArray(res.data) ? res.data : []);
         } catch (err) {
             console.error("Documents fetch error:", err);
@@ -172,7 +181,10 @@ const MySubjects = ({ studentId }) => {
 
                                 <button
                                     className="dl-btn"
-                                    onClick={() => window.open(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/files/download/${doc.filePath}`, "_blank")}
+                                    onClick={() => {
+                                      const url = doc.filePath && doc.filePath.startsWith("http") ? doc.filePath : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/uploads/${doc.filePath}`;
+                                      window.open(url, "_blank");
+                                    }}
                                     title="Download File"
                                 >
                                     <Download size={18} />

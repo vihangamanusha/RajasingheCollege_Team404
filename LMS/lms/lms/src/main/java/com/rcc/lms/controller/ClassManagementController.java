@@ -297,4 +297,24 @@ public class ClassManagementController {
     ) {
         return ResponseEntity.ok(classManagementService.getTeachersForSubject(subjectName));
     }
+
+    // ─────────────────────────────────────────
+    // GET classes assigned to a teacher (class teacher or subject teacher)
+    // ─────────────────────────────────────────
+    @GetMapping("/teacher/{teacherId}")
+    public ResponseEntity<List<Map<String, Object>>> getClassesByTeacher(
+            @PathVariable String teacherId
+    ) {
+        return ResponseEntity.ok(classManagementService.getClassesByTeacher(teacherId));
+    }
+
+    // ─────────────────────────────────────────
+    // GET subjects assigned to a teacher
+    // ─────────────────────────────────────────
+    @GetMapping("/teacher/{teacherId}/subjects")
+    public ResponseEntity<List<com.rcc.lms.entity.student.Subject>> getSubjectsByTeacher(
+            @PathVariable String teacherId
+    ) {
+        return ResponseEntity.ok(classManagementService.getSubjectsByTeacher(teacherId));
+    }
 }

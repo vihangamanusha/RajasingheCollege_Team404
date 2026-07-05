@@ -20,7 +20,7 @@ import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import AdminClassManagement from "./AdminClassManagement";
 import Announcement from "./Announcements";
-import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
+import DeputyPrincipalAdminReport from "./DeputyPrincipalAdminReport";
 import AdminTeacherManagement from "./AdminTeacherManagement";
 import AdminTechOfficerManagement from "./AdminTechOfficerManagement";
 import AdminNonAcademicManagement from "./AdminNonAcademicManagement";
@@ -323,7 +323,7 @@ export default function DeputyPrincipalDashboard() {
                     {activeTab === "tech-officers" && <AdminTechOfficerManagement />}
                     {activeTab === "non-academic" && <AdminNonAcademicManagement />}
                     {activeTab === "announcements" && <Announcement />}
-                    {activeTab === "reports" && <AdminAcademicAnalytics />}
+                    {activeTab === "reports" && <DeputyPrincipalAdminReport />}
                 </div>
             </div>
         </div>

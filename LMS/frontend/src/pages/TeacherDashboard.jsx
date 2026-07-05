@@ -14,12 +14,16 @@ import {
     Award,
     CheckCircle,
     Calendar,
-    Briefcase
+    Briefcase,
+    Eye,
+    Trash2
 } from "lucide-react";
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import TeacherAddMarks from "../Component/TeacherAddMarks";
+import { getTeacherMaterials, saveMaterial, deleteMaterial, uploadFile } from "../Service/TeacherMaterialService";
+import { getTeacherAssignments, saveAssignment, deleteAssignment } from "../Service/TeacherAssignmentService";
 
 export default function TeacherDashboard() {
     const navigate = useNavigate();
@@ -27,26 +31,32 @@ export default function TeacherDashboard() {
     const [subRole, setSubRole] = useState("Subject Teacher");
     const [activeTab, setActiveTab] = useState("dashboard");
     const [assignedSubjects, setAssignedSubjects] = useState([]);
+    const [teacherId, setTeacherId] = useState("");
+    const [teacherClasses, setTeacherClasses] = useState([]);
+    const [teacherSubjects, setTeacherSubjects] = useState([]);
+    const [selectedSubjectFilter, setSelectedSubjectFilter] = useState(null);
 
-    // Local state for materials upload mock
-    const [materials, setMaterials] = useState([
-        { id: 1, title: "Algebra Lesson 1 Notes.pdf", subject: "Mathematics", grade: "Grade 10", uploadedDate: "2026-06-28" },
-        { id: 2, title: "Quadratic Equations Worksheet.docx", subject: "Mathematics", grade: "Grade 10", uploadedDate: "2026-06-23" },
-        { id: 3, title: "Probability Basics Slides.pptx", subject: "Mathematics", grade: "Grade 11", uploadedDate: "2026-06-15" }
-    ]);
+    // State for Materials
+    const [materialsView, setMaterialsView] = useState("form"); // "form" or "list"
+    const [materialClassId, setMaterialClassId] = useState("");
+    const [materialSubjectId, setMaterialSubjectId] = useState("");
     const [materialTitle, setMaterialTitle] = useState("");
-    const [materialSubject, setMaterialSubject] = useState("Mathematics");
-    const [materialGrade, setMaterialGrade] = useState("Grade 10");
+    const [materialNote, setMaterialNote] = useState("");
+    const [materialYoutube, setMaterialYoutube] = useState("");
+    const [materialPdfFile, setMaterialPdfFile] = useState(null);
+    const [dbMaterials, setDbMaterials] = useState([]);
+    const [materialUploading, setMaterialUploading] = useState(false);
 
-    // Local state for assignments mock
-    const [assignments, setAssignments] = useState([
-        { id: 1, title: "Mathematics Midterm Assignment", dueDate: "2026-07-15", maxMarks: 100, subject: "Mathematics", submissions: "35/42" },
-        { id: 2, title: "Trigonometry Homework Quiz", dueDate: "2026-07-02", maxMarks: 20, subject: "Mathematics", submissions: "12/40" }
-    ]);
+    // State for Assignments
+    const [assignmentsView, setAssignmentsView] = useState("form"); // "form" or "list"
+    const [assignmentClassId, setAssignmentClassId] = useState("");
+    const [assignmentSubjectId, setAssignmentSubjectId] = useState("");
     const [assignmentTitle, setAssignmentTitle] = useState("");
     const [assignmentDueDate, setAssignmentDueDate] = useState("");
-    const [assignmentMaxMarks, setAssignmentMaxMarks] = useState("100");
-    const [assignmentSubject, setAssignmentSubject] = useState("Mathematics");
+    const [assignmentPdfFile, setAssignmentPdfFile] = useState(null);
+    const [assignmentNote, setAssignmentNote] = useState("");
+    const [dbAssignments, setDbAssignments] = useState([]);
+    const [assignmentUploading, setAssignmentUploading] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem("token");
@@ -65,6 +75,136 @@ export default function TeacherDashboard() {
         }
     }, []);
 
+    useEffect(() => {
+        if (teacherClasses.length > 0 && !materialClassId) {
+            const firstClassId = teacherClasses[0].classId;
+            setMaterialClassId(firstClassId);
+            const classSubs = teacherSubjects.filter(s => s.classId === firstClassId);
+            if (classSubs.length > 0) {
+                setMaterialSubjectId(classSubs[0].subjectId);
+            }
+        }
+    }, [teacherClasses, teacherSubjects, materialClassId]);
+
+    const loadMaterials = async () => {
+        if (!teacherId) return;
+        try {
+            const res = await getTeacherMaterials(teacherId);
+            setDbMaterials(res.data || []);
+        } catch (err) {
+            console.error("Failed to load materials:", err);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "materials" && teacherId) {
+            loadMaterials();
+        }
+    }, [activeTab, teacherId]);
+
+    const handleClassChange = (e) => {
+        const classId = e.target.value;
+        setMaterialClassId(classId);
+        const classSubs = teacherSubjects.filter(s => s.classId === classId);
+        if (classSubs.length > 0) {
+            setMaterialSubjectId(classSubs[0].subjectId);
+        } else {
+            setMaterialSubjectId("");
+        }
+    };
+
+    const handleDeleteMaterial = async (id) => {
+        if (window.confirm("Are you sure you want to delete this study material?")) {
+            try {
+                await deleteMaterial(id);
+                alert("Material deleted successfully!");
+                await loadMaterials();
+            } catch (err) {
+                console.error("Failed to delete material:", err);
+                alert("Error deleting material");
+            }
+        }
+    };
+
+    useEffect(() => {
+        if (teacherClasses.length > 0 && !assignmentClassId) {
+            const firstClassId = teacherClasses[0].classId;
+            setAssignmentClassId(firstClassId);
+            const classSubs = teacherSubjects.filter(s => s.classId === firstClassId);
+            if (classSubs.length > 0) {
+                setAssignmentSubjectId(classSubs[0].subjectId);
+            }
+        }
+    }, [teacherClasses, teacherSubjects, assignmentClassId]);
+
+    const loadAssignments = async () => {
+        if (!teacherId) return;
+        try {
+            const res = await getTeacherAssignments(teacherId);
+            setDbAssignments(res.data || []);
+        } catch (err) {
+            console.error("Failed to load assignments:", err);
+        }
+    };
+
+    useEffect(() => {
+        if (activeTab === "assignments" && teacherId) {
+            loadAssignments();
+        }
+    }, [activeTab, teacherId]);
+
+    const handleAssignmentClassChange = (e) => {
+        const classId = e.target.value;
+        setAssignmentClassId(classId);
+        const classSubs = teacherSubjects.filter(s => s.classId === classId);
+        if (classSubs.length > 0) {
+            setAssignmentSubjectId(classSubs[0].subjectId);
+        } else {
+            setAssignmentSubjectId("");
+        }
+    };
+
+    const handleDeleteAssignment = async (id) => {
+        if (window.confirm("Are you sure you want to delete this assignment?")) {
+            try {
+                await deleteAssignment(id);
+                alert("Assignment deleted successfully!");
+                await loadAssignments();
+            } catch (err) {
+                console.error("Failed to delete assignment:", err);
+                alert("Error deleting assignment");
+            }
+        }
+    };
+
+    const fetchTeacherClasses = async (token, tId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/classes/teacher/${tId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setTeacherClasses(data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch teacher classes", error);
+        }
+    };
+
+    const fetchTeacherSubjects = async (token, tId) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/classes/teacher/${tId}/subjects`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setTeacherSubjects(data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch teacher subjects", error);
+        }
+    };
+
     const fetchTeacherProfile = async (token, userVal) => {
         try {
             const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/teacher/${userVal}`, {
@@ -72,6 +212,11 @@ export default function TeacherDashboard() {
             });
             if (response.ok) {
                 const data = await response.json();
+                if (data.teacherId) {
+                    setTeacherId(data.teacherId);
+                    fetchTeacherClasses(token, data.teacherId);
+                    fetchTeacherSubjects(token, data.teacherId);
+                }
                 if (data.subjectSpecialization) {
                     const subjectsArray = data.subjectSpecialization.split(",").map(s => s.trim()).filter(Boolean);
                     setAssignedSubjects(subjectsArray);
@@ -108,37 +253,103 @@ export default function TeacherDashboard() {
         navigate("/login");
     };
 
-    const handleUploadMaterial = (e) => {
+    const handleUploadMaterial = async (e) => {
         e.preventDefault();
-        if (!materialTitle.trim()) return;
+        if (!materialClassId || !materialSubjectId || !materialTitle.trim()) {
+            alert("Please fill in Class, Subject, and Title fields");
+            return;
+        }
 
-        const newMaterial = {
-            id: Date.now(),
-            title: materialTitle,
-            subject: materialSubject,
-            grade: materialGrade,
-            uploadedDate: new Date().toISOString().split("T")[0]
-        };
-        setMaterials([newMaterial, ...materials]);
-        setMaterialTitle("");
+        setMaterialUploading(true);
+        try {
+            let uploadedUrl = "";
+            if (materialPdfFile) {
+                const uploadRes = await uploadFile(materialPdfFile);
+                uploadedUrl = uploadRes.data;
+            }
+
+            const payload = {
+                title: materialTitle.trim(),
+                filePath: uploadedUrl,
+                teacherId: teacherId,
+                subjectId: materialSubjectId,
+                classId: materialClassId,
+                note: materialNote.trim(),
+                youtubeLink: materialYoutube.trim()
+            };
+
+            await saveMaterial(payload);
+            alert("Material saved successfully!");
+            
+            setMaterialTitle("");
+            setMaterialNote("");
+            setMaterialYoutube("");
+            setMaterialPdfFile(null);
+            
+            const fileInput = document.getElementById("material-pdf-file");
+            if (fileInput) fileInput.value = "";
+
+            await loadMaterials();
+            setMaterialsView("list");
+        } catch (err) {
+            console.error("Failed to save material:", err);
+            alert("Error saving material");
+        } finally {
+            setMaterialUploading(false);
+        }
     };
 
-    const handleCreateAssignment = (e) => {
+    const handleCreateAssignment = async (e) => {
         e.preventDefault();
-        if (!assignmentTitle.trim() || !assignmentDueDate) return;
+        if (!assignmentClassId || !assignmentSubjectId || !assignmentTitle.trim() || !assignmentDueDate) {
+            alert("Please fill in Class, Subject, Title, and Due Date fields");
+            return;
+        }
 
-        const newAssignment = {
-            id: Date.now(),
-            title: assignmentTitle,
-            dueDate: assignmentDueDate,
-            maxMarks: parseInt(assignmentMaxMarks),
-            subject: assignmentSubject,
-            submissions: "0/40"
-        };
-        setAssignments([newAssignment, ...assignments]);
-        setAssignmentTitle("");
-        setAssignmentDueDate("");
+        setAssignmentUploading(true);
+        try {
+            let uploadedUrl = "";
+            if (assignmentPdfFile) {
+                const uploadRes = await uploadFile(assignmentPdfFile);
+                uploadedUrl = uploadRes.data;
+            }
+
+            const payload = {
+                title: assignmentTitle.trim(),
+                dueDate: assignmentDueDate,
+                filePath: uploadedUrl,
+                note: assignmentNote.trim(),
+                teacherId: teacherId,
+                subjectId: assignmentSubjectId,
+                classId: assignmentClassId
+            };
+
+            await saveAssignment(payload);
+            alert("Assignment saved successfully!");
+            
+            setAssignmentTitle("");
+            setAssignmentDueDate("");
+            setAssignmentNote("");
+            setAssignmentPdfFile(null);
+
+            const fileInput = document.getElementById("assignment-pdf-file");
+            if (fileInput) fileInput.value = "";
+
+            await loadAssignments();
+            setAssignmentsView("list");
+        } catch (err) {
+            console.error("Failed to save assignment:", err);
+            alert("Error saving assignment");
+        } finally {
+            setAssignmentUploading(false);
+        }
     };
+
+    const filteredClasses = selectedSubjectFilter
+        ? teacherClasses.filter(c => 
+            teacherSubjects.some(ts => ts.subjectName.toLowerCase() === selectedSubjectFilter.toLowerCase() && ts.classId === c.classId)
+          )
+        : teacherClasses;
 
     return (
         <div className="admin-layout">
@@ -177,7 +388,10 @@ export default function TeacherDashboard() {
                     {/* My Class */}
                     <div
                         className={`nav-item ${activeTab === "my-class" ? "active" : ""}`}
-                        onClick={() => setActiveTab("my-class")}
+                        onClick={() => {
+                            setSelectedSubjectFilter(null);
+                            setActiveTab("my-class");
+                        }}
                     >
                         <Users className="nav-icon" /> My Class
                     </div>
@@ -252,7 +466,7 @@ export default function TeacherDashboard() {
                                 <div className="stat-card">
                                     <div className="stat-info">
                                         <p>Total Students</p>
-                                        <h3>{assignedSubjects.reduce((acc, sub) => acc + getSubjectDetails(sub).totalStudents, 0)}</h3>
+                                        <h3>{teacherClasses.reduce((acc, cls) => acc + (cls.studentCount || 0), 0)}</h3>
                                     </div>
                                     <div className="stat-icon blue"><Users size={20} /></div>
                                 </div>
@@ -260,7 +474,7 @@ export default function TeacherDashboard() {
                                 <div className="stat-card">
                                     <div className="stat-info">
                                         <p>Classes Assigned</p>
-                                        <h3>{assignedSubjects.reduce((acc, sub) => acc + getSubjectDetails(sub).classes.length, 0)}</h3>
+                                        <h3>{teacherClasses.length}</h3>
                                     </div>
                                     <div className="stat-icon yellow"><BookOpen size={20} /></div>
                                 </div>
@@ -268,7 +482,7 @@ export default function TeacherDashboard() {
                                 <div className="stat-card">
                                     <div className="stat-info">
                                         <p>Uploaded Materials</p>
-                                        <h3>{materials.length}</h3>
+                                        <h3>{dbMaterials.length}</h3>
                                     </div>
                                     <div className="stat-icon green"><FileText size={20} /></div>
                                 </div>
@@ -276,7 +490,7 @@ export default function TeacherDashboard() {
                                 <div className="stat-card">
                                     <div className="stat-info">
                                         <p>Pending Assignments</p>
-                                        <h3>{assignments.length}</h3>
+                                        <h3>{dbAssignments.length}</h3>
                                     </div>
                                     <div className="stat-icon purple"><Briefcase size={20} /></div>
                                 </div>
@@ -398,7 +612,7 @@ export default function TeacherDashboard() {
                                     assignedSubjects.map((subject, index) => {
                                         const details = getSubjectDetails(subject);
                                         return (
-                                            <div className="content-card" key={index} style={{ padding: "25px", borderRadius: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "300px" }}>
+                                            <div className="content-card" key={index} style={{ padding: "25px", borderRadius: "16px", display: "flex", flexDirection: "column", justifyContent: "space-between", height: "180px" }}>
                                                 <div>
                                                     <div style={{ display: "flex", alignItems: "center", gap: "15px", marginBottom: "20px" }}>
                                                         <div style={{ width: "48px", height: "48px", backgroundColor: "#eff6ff", color: "#2b55cc", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -406,27 +620,15 @@ export default function TeacherDashboard() {
                                                         </div>
                                                         <div>
                                                             <h3 style={{ margin: 0, fontSize: "18px", color: "#1e293b", fontWeight: "700" }}>{subject}</h3>
-                                                            <span style={{ fontSize: "13px", color: "#94a3b8" }}>{details.classesCount}</span>
-                                                        </div>
-                                                    </div>
-
-                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" }}>
-                                                        <span style={{ color: "#64748b", fontSize: "14px" }}>Total Students:</span>
-                                                        <strong style={{ fontSize: "16px", color: "#1e293b" }}>{details.totalStudents}</strong>
-                                                    </div>
-
-                                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-                                                        <span style={{ color: "#64748b", fontSize: "14px" }}>Classes:</span>
-                                                        <div style={{ display: "flex", gap: "6px" }}>
-                                                            {details.classes.map((cls, i) => (
-                                                                <span key={i} style={{ padding: "4px 10px", backgroundColor: "#eff6ff", color: "#2b55cc", borderRadius: "6px", fontSize: "12px", fontWeight: "600" }}>{cls}</span>
-                                                            ))}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <button
-                                                    onClick={() => setActiveTab("my-class")}
+                                                    onClick={() => {
+                                                        setSelectedSubjectFilter(subject);
+                                                        setActiveTab("my-class");
+                                                    }}
                                                     style={{
                                                         width: "100%",
                                                         padding: "12px",
@@ -466,30 +668,22 @@ export default function TeacherDashboard() {
                                 </p>
                             </div>
                             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" }}>
-                                <div className="content-card">
-                                    <h3 style={{ margin: "0 0 10px 0", fontSize: "18px", color: "#1e293b" }}>Grade 10 - A</h3>
-                                    <p style={{ margin: "0 0 15px 0", fontSize: "13px", color: "#64748b" }}>Medium: English</p>
-                                    <div style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                        <span style={{ fontSize: "14px", color: "#64748b" }}>Students enrolled:</span>
-                                        <strong style={{ fontSize: "18px", color: "#2b55cc" }}>42</strong>
+                                {filteredClasses && filteredClasses.length > 0 ? (
+                                    filteredClasses.map((cls, index) => (
+                                        <div className="content-card" key={cls.classId || index}>
+                                            <h3 style={{ margin: "0 0 10px 0", fontSize: "18px", color: "#1e293b" }}>Grade {cls.className}</h3>
+                                            <p style={{ margin: "0 0 15px 0", fontSize: "13px", color: "#64748b" }}>Medium: {cls.medium || "English"}</p>
+                                            <div style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                                <span style={{ fontSize: "14px", color: "#64748b" }}>Students enrolled:</span>
+                                                <strong style={{ fontSize: "18px", color: "#2b55cc" }}>{cls.studentCount ?? 0}</strong>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="content-card" style={{ gridColumn: "span 3", textAlign: "center", padding: "40px" }}>
+                                        <p style={{ color: "#94a3b8", fontSize: "16px" }}>No assigned classes found.</p>
                                     </div>
-                                </div>
-                                <div className="content-card">
-                                    <h3 style={{ margin: "0 0 10px 0", fontSize: "18px", color: "#1e293b" }}>Grade 10 - B</h3>
-                                    <p style={{ margin: "0 0 15px 0", fontSize: "13px", color: "#64748b" }}>Medium: Sinhala</p>
-                                    <div style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                        <span style={{ fontSize: "14px", color: "#64748b" }}>Students enrolled:</span>
-                                        <strong style={{ fontSize: "18px", color: "#2b55cc" }}>38</strong>
-                                    </div>
-                                </div>
-                                <div className="content-card">
-                                    <h3 style={{ margin: "0 0 10px 0", fontSize: "18px", color: "#1e293b" }}>Grade 11 - A</h3>
-                                    <p style={{ margin: "0 0 15px 0", fontSize: "13px", color: "#64748b" }}>Medium: English</p>
-                                    <div style={{ padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                        <span style={{ fontSize: "14px", color: "#64748b" }}>Students enrolled:</span>
-                                        <strong style={{ fontSize: "18px", color: "#2b55cc" }}>40</strong>
-                                    </div>
-                                </div>
+                                )}
                             </div>
                         </>
                     )}
@@ -514,107 +708,266 @@ export default function TeacherDashboard() {
                     {/* TAB 5: STUDY MATERIALS */}
                     {activeTab === "materials" && (
                         <>
-                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
-                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
-                                    Study Materials
-                                </h1>
-                                <p style={{ fontSize: "16px", color: "#64748b" }}>
-                                    Upload course documents, notes, and textbook slides for student download
-                                </p>
+                            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+                                <div>
+                                    <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                        Study Materials
+                                    </h1>
+                                    <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                        Manage class lesson files, reference links, and custom notes
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => setMaterialsView(materialsView === "form" ? "list" : "form")}
+                                    style={{ padding: "10px 20px", display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#0f766e", color: "white", border: "none", borderRadius: "6px", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}
+                                >
+                                    {materialsView === "form" ? (
+                                        <>
+                                            <Eye size={16} /> View Materials
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Plus size={16} /> Add Material
+                                        </>
+                                    )}
+                                </button>
                             </div>
-                            <div className="content-grid" style={{ gridTemplateColumns: "1fr 2fr", gap: "25px" }}>
-                                {/* Left Side: Add Material Form */}
-                                <div className="content-card">
-                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Upload Material</h3>
+
+                            {materialsView === "form" ? (
+                                <div className="content-card" style={{ maxWidth: "600px", margin: "0 auto" }}>
+                                    <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: "600", color: "#1e293b" }}>Upload Material</h3>
                                     <form onSubmit={handleUploadMaterial}>
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Material Title</label>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Select Class *</label>
+                                            <select
+                                                value={materialClassId}
+                                                onChange={handleClassChange}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option value="">-- Choose Class --</option>
+                                                {teacherClasses.map(c => (
+                                                    <option key={c.classId} value={c.classId}>
+                                                        Grade {c.className}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Choose Subject *</label>
+                                            <select
+                                                value={materialSubjectId}
+                                                onChange={(e) => setMaterialSubjectId(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option value="">-- Choose Subject --</option>
+                                                {teacherSubjects
+                                                    .filter(sub => sub.classId === materialClassId)
+                                                    .map(sub => (
+                                                        <option key={sub.subjectId} value={sub.subjectId}>
+                                                            {sub.subjectName}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Material Title *</label>
                                             <input
                                                 type="text"
-                                                placeholder="e.g. Vectors Revision Notes"
+                                                placeholder="e.g. Geometry Lesson 1 Notes"
                                                 value={materialTitle}
                                                 onChange={(e) => setMaterialTitle(e.target.value)}
                                                 required
                                                 style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                                             />
                                         </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Subject</label>
-                                            <select
-                                                value={materialSubject}
-                                                onChange={(e) => setMaterialSubject(e.target.value)}
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                            >
-                                                <option>Mathematics</option>
-                                                <option>Science</option>
-                                                <option>English</option>
-                                            </select>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>PDF File</label>
+                                            <input
+                                                id="material-pdf-file"
+                                                type="file"
+                                                accept="application/pdf"
+                                                onChange={(e) => setMaterialPdfFile(e.target.files[0])}
+                                                style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", backgroundColor: "white" }}
+                                            />
                                         </div>
+
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>YouTube Link</label>
+                                            <input
+                                                type="url"
+                                                placeholder="e.g. https://www.youtube.com/watch?v=..."
+                                                value={materialYoutube}
+                                                onChange={(e) => setMaterialYoutube(e.target.value)}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            />
+                                        </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "20px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Target Grade</label>
-                                            <select
-                                                value={materialGrade}
-                                                onChange={(e) => setMaterialGrade(e.target.value)}
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                            >
-                                                <option>Grade 10</option>
-                                                <option>Grade 11</option>
-                                            </select>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Note / Description</label>
+                                            <textarea
+                                                placeholder="Add reference notes or description here..."
+                                                value={materialNote}
+                                                onChange={(e) => setMaterialNote(e.target.value)}
+                                                rows={4}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", resize: "vertical" }}
+                                            />
                                         </div>
-                                        <button type="submit" className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center" }}>
-                                            <Plus size={16} style={{ marginRight: "6px" }} /> Upload Document
+
+                                        <button type="submit" disabled={materialUploading} className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center", padding: "12px", backgroundColor: "#2b55cc", color: "white", fontSize: "15px", fontWeight: "600" }}>
+                                            {materialUploading ? "Uploading & Saving..." : "Save Material"}
                                         </button>
                                     </form>
                                 </div>
-
-                                {/* Right Side: Material List */}
+                            ) : (
                                 <div className="content-card">
-                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Active Study Materials</h3>
-                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                                        {materials.map((m) => (
-                                            <div key={m.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                                                <div>
-                                                    <h4 style={{ margin: "0 0 5px 0", fontSize: "14px", color: "#1e293b" }}>{m.title}</h4>
-                                                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>{m.subject} • {m.grade}</span>
-                                                </div>
-                                                <span style={{ fontSize: "12px", color: "#94a3b8" }}>Uploaded: {m.uploadedDate}</span>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: "600", color: "#1e293b" }}>Uploaded Study Materials</h3>
+                                    {dbMaterials.length === 0 ? (
+                                        <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
+                                            No materials uploaded yet.
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+                                            {dbMaterials.map((m) => {
+                                                const cl = teacherClasses.find(c => c.classId === m.classId);
+                                                const sub = teacherSubjects.find(s => s.subjectId === m.subjectId);
+                                                return (
+                                                    <div key={m.documentId} className="content-card" style={{ border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                                                        <div>
+                                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                                                                <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b", wordBreak: "break-word", overflowWrap: "anywhere", flex: 1, paddingRight: "8px" }}>{m.title}</h4>
+                                                                <button 
+                                                                    onClick={() => handleDeleteMaterial(m.documentId)}
+                                                                    style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px", flexShrink: 0 }}
+                                                                    title="Delete Material"
+                                                                >
+                                                                    <Trash2 size={18} />
+                                                                </button>
+                                                            </div>
+                                                            <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 8px 0", fontWeight: "600" }}>
+                                                                Grade {cl ? cl.className : m.classId} • {sub ? sub.subjectName : m.subjectId}
+                                                            </p>
+                                                            {m.note && (
+                                                                <div style={{ fontSize: "13px", color: "#475569", backgroundColor: "#f8fafc", padding: "10px", borderRadius: "6px", marginBottom: "12px", whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere", maxHeight: "120px", overflowY: "auto" }}>
+                                                                    {m.note}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div style={{ marginTop: "12px" }}>
+                                                            <div style={{ display: "flex", gap: "10px", marginBottom: "12px" }}>
+                                                                {m.filePath && (
+                                                                    <a href={m.filePath} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: "center", padding: "8px", backgroundColor: "#e0f2fe", color: "#0369a1", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
+                                                                        Download PDF
+                                                                    </a>
+                                                                )}
+                                                                {m.youtubeLink && (
+                                                                    <a href={m.youtubeLink} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: "center", padding: "8px", backgroundColor: "#fee2e2", color: "#b91c1c", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
+                                                                        Watch YouTube
+                                                                    </a>
+                                                                )}
+                                                            </div>
+                                                            <div style={{ fontSize: "11px", color: "#94a3b8", textAlign: "right" }}>
+                                                                Uploaded: {m.uploadDate}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
+                            )}
                         </>
                     )}
 
                     {/* TAB 6: ASSIGNMENTS */}
                     {activeTab === "assignments" && (
                         <>
-                            <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
-                                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
-                                    Student Assignments
-                                </h1>
-                                <p style={{ fontSize: "16px", color: "#64748b" }}>
-                                    Publish assignments, set due deadlines, and view submitted coursework
-                                </p>
+                            <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" }}>
+                                <div>
+                                    <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>
+                                        Student Assignments
+                                    </h1>
+                                    <p style={{ fontSize: "16px", color: "#64748b" }}>
+                                        Publish assignments, set due deadlines, and view submitted coursework
+                                    </p>
+                                </div>
+                                <button 
+                                    onClick={() => setAssignmentsView(assignmentsView === "form" ? "list" : "form")}
+                                    style={{ padding: "10px 20px", display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#0f766e", color: "white", border: "none", borderRadius: "6px", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}
+                                >
+                                    {assignmentsView === "form" ? (
+                                        <>
+                                            <Eye size={16} /> View Assignments
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Plus size={16} /> Add Assignment
+                                        </>
+                                    )}
+                                </button>
                             </div>
-                            <div className="content-grid" style={{ gridTemplateColumns: "1fr 2fr", gap: "25px" }}>
-                                {/* Left Side: Create Assignment Form */}
-                                <div className="content-card">
-                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Create Assignment</h3>
+
+                            {assignmentsView === "form" ? (
+                                <div className="content-card" style={{ maxWidth: "600px", margin: "0 auto" }}>
+                                    <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: "600", color: "#1e293b" }}>Create Assignment</h3>
                                     <form onSubmit={handleCreateAssignment}>
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Assignment Title</label>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Select Class *</label>
+                                            <select
+                                                value={assignmentClassId}
+                                                onChange={handleAssignmentClassChange}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option value="">-- Choose Class --</option>
+                                                {teacherClasses.map(c => (
+                                                    <option key={c.classId} value={c.classId}>
+                                                        Grade {c.className}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Choose Subject *</label>
+                                            <select
+                                                value={assignmentSubjectId}
+                                                onChange={(e) => setAssignmentSubjectId(e.target.value)}
+                                                required
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                            >
+                                                <option value="">-- Choose Subject --</option>
+                                                {teacherSubjects
+                                                    .filter(sub => sub.classId === assignmentClassId)
+                                                    .map(sub => (
+                                                        <option key={sub.subjectId} value={sub.subjectId}>
+                                                            {sub.subjectName}
+                                                        </option>
+                                                    ))
+                                                }
+                                            </select>
+                                        </div>
+
+                                        <div className="modal-form-group" style={{ marginBottom: "15px" }}>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Assignment Title *</label>
                                             <input
                                                 type="text"
-                                                placeholder="e.g. Midterm Algebra Homework"
+                                                placeholder="e.g. Vectors Midterm Assignment"
                                                 value={assignmentTitle}
                                                 onChange={(e) => setAssignmentTitle(e.target.value)}
                                                 required
                                                 style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                                             />
                                         </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Due Date</label>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Due Date *</label>
                                             <input
                                                 type="date"
                                                 value={assignmentDueDate}
@@ -623,53 +976,88 @@ export default function TeacherDashboard() {
                                                 style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
                                             />
                                         </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "15px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Max Marks</label>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>PDF File</label>
                                             <input
-                                                type="number"
-                                                value={assignmentMaxMarks}
-                                                onChange={(e) => setAssignmentMaxMarks(e.target.value)}
-                                                required
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                                                id="assignment-pdf-file"
+                                                type="file"
+                                                accept="application/pdf"
+                                                onChange={(e) => setAssignmentPdfFile(e.target.files[0])}
+                                                style={{ width: "100%", padding: "8px", borderRadius: "6px", border: "1px solid #cbd5e1", backgroundColor: "white" }}
                                             />
                                         </div>
+
                                         <div className="modal-form-group" style={{ marginBottom: "20px" }}>
-                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Subject</label>
-                                            <select
-                                                value={assignmentSubject}
-                                                onChange={(e) => setAssignmentSubject(e.target.value)}
-                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
-                                            >
-                                                <option>Mathematics</option>
-                                                <option>Science</option>
-                                                <option>English</option>
-                                            </select>
+                                            <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#64748b", marginBottom: "6px" }}>Note / Instruction</label>
+                                            <textarea
+                                                placeholder="Add homework notes or instructions here..."
+                                                value={assignmentNote}
+                                                onChange={(e) => setAssignmentNote(e.target.value)}
+                                                rows={4}
+                                                style={{ width: "100%", padding: "10px", borderRadius: "6px", border: "1px solid #cbd5e1", resize: "vertical" }}
+                                            />
                                         </div>
-                                        <button type="submit" className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center" }}>
-                                            <Plus size={16} style={{ marginRight: "6px" }} /> Create Task
+
+                                        <button type="submit" disabled={assignmentUploading} className="add-btn tech-btn" style={{ width: "100%", justifyContent: "center", padding: "12px", backgroundColor: "#2b55cc", color: "white", fontSize: "15px", fontWeight: "600" }}>
+                                            {assignmentUploading ? "Uploading & Saving..." : "Save Assignment"}
                                         </button>
                                     </form>
                                 </div>
-
-                                {/* Right Side: Assignments List */}
+                            ) : (
                                 <div className="content-card">
-                                    <h3 style={{ marginBottom: "20px", fontSize: "16px", fontWeight: "600" }}>Active Assignments</h3>
-                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
-                                        {assignments.map((as) => (
-                                            <div key={as.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "15px", backgroundColor: "#f8fafc", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                                                <div>
-                                                    <h4 style={{ margin: "0 0 5px 0", fontSize: "14px", color: "#1e293b" }}>{as.title}</h4>
-                                                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>{as.subject} • Max Marks: {as.maxMarks}</span>
-                                                </div>
-                                                <div style={{ textAlign: "right" }}>
-                                                    <span style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#2b55cc", marginBottom: "3px" }}>Submissions: {as.submissions}</span>
-                                                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>Due Date: {as.dueDate}</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                    <h3 style={{ marginBottom: "20px", fontSize: "18px", fontWeight: "600", color: "#1e293b" }}>Active Assignments</h3>
+                                    {dbAssignments.length === 0 ? (
+                                        <div style={{ textAlign: "center", padding: "40px", color: "#94a3b8" }}>
+                                            No assignments created yet.
+                                        </div>
+                                    ) : (
+                                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" }}>
+                                            {dbAssignments.map((a) => {
+                                                const cl = teacherClasses.find(c => c.classId === a.classId);
+                                                const sub = teacherSubjects.find(s => s.subjectId === a.subjectId);
+                                                return (
+                                                    <div key={a.assignmentId} className="content-card" style={{ border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)", display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                                                        <div>
+                                                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                                                                <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b", wordBreak: "break-word", overflowWrap: "anywhere", flex: 1, paddingRight: "8px" }}>{a.title}</h4>
+                                                                <button 
+                                                                    onClick={() => handleDeleteAssignment(a.assignmentId)}
+                                                                    style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px", flexShrink: 0 }}
+                                                                    title="Delete Assignment"
+                                                                >
+                                                                    <Trash2 size={18} />
+                                                                </button>
+                                                            </div>
+                                                            <p style={{ fontSize: "12px", color: "#64748b", margin: "0 0 8px 0", fontWeight: "600" }}>
+                                                                Grade {cl ? cl.className : a.classId} • {sub ? sub.subjectName : a.subjectId}
+                                                            </p>
+                                                            <div style={{ fontSize: "13px", fontWeight: "600", color: "#b91c1c", marginBottom: "12px" }}>
+                                                                Due Date: {a.dueDate}
+                                                            </div>
+                                                            {a.note && (
+                                                                <div style={{ fontSize: "13px", color: "#475569", backgroundColor: "#f8fafc", padding: "10px", borderRadius: "6px", marginBottom: "12px", whiteSpace: "pre-wrap", wordBreak: "break-word", overflowWrap: "anywhere", maxHeight: "120px", overflowY: "auto" }}>
+                                                                    {a.note}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                        <div style={{ marginTop: "12px" }}>
+                                                            {a.filePath && (
+                                                                <a href={a.filePath} target="_blank" rel="noopener noreferrer" style={{ display: "block", textAlign: "center", padding: "8px", backgroundColor: "#e0f2fe", color: "#0369a1", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none", marginBottom: "12px" }}>
+                                                                    Download Assignment PDF
+                                                                </a>
+                                                            )}
+                                                            <div style={{ fontSize: "11px", color: "#94a3b8", textAlign: "right" }}>
+                                                                Created: {a.uploadDate}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
                                 </div>
-                            </div>
+                            )}
                         </>
                     )}
 

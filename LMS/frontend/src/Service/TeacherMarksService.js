@@ -1,7 +1,9 @@
-import axios from "axios";
-
-const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/v1/marks`;
+import API from "../services/api";
 
 export const saveMarks = (data) => {
-    return axios.post(`${API_URL}/save`, data);
+    return API.post("/api/v1/marks/save", data);
+};
+
+export const getMarks = (classId, subjectId, term, year) => {
+    return API.get(`/api/v1/marks/class/${classId}/subject/${subjectId}/term/${term}/year/${year}`);
 };

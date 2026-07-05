@@ -14,27 +14,50 @@ export default function StudentReport({ studentId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [rank, setRank]       = useState("—");
 
   useEffect(() => {
-    if (!studentId) return;
-
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const [studentRes, reportRes, marksRes] = await Promise.all([
-          axios.get(`${BASE_URL}/${studentId}`),        // → StudentProfileDTO
-          axios.get(`${BASE_URL}/${studentId}/report`), // → List<StudentReport>
-          axios.get(`${BASE_URL}/${studentId}/marks`),  // → List<StudentMarksDTO>
+        const token = localStorage.getItem("token");
+        const loggedInUsername = localStorage.getItem("username");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        // 1. Resolve studentId dynamically
+        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const realStudentId = profileRes.data.studentId;
+
+        // 2. Fetch student details and marks
+        const [studentRes, marksRes] = await Promise.all([
+          axios.get(`${BASE_URL}/${realStudentId}`, config),        // → StudentProfileDTO
+          axios.get(`${BASE_URL}/${realStudentId}/marks`, config),  // → List<StudentMarksDTO>
         ]);
 
         setStudent(studentRes.data);
+        const fetchedMarks = Array.isArray(marksRes.data) ? marksRes.data : [];
+        setMarks(fetchedMarks);
 
-        // Pick the most recent report
-        const reports = Array.isArray(reportRes.data) ? reportRes.data : [];
-        setReport(reports.length > 0 ? reports[reports.length - 1] : null);
+        // 3. Fetch report details (optional, don't crash if it fails or is not generated yet)
+        try {
+          const reportRes = await axios.get(`${BASE_URL}/${realStudentId}/report`, config);
+          const reports = Array.isArray(reportRes.data) ? reportRes.data : [];
+          setReport(reports.length > 0 ? reports[reports.length - 1] : null);
+        } catch (reportErr) {
+          console.error("Optional report fetch failed:", reportErr);
+          setReport(null);
+        }
 
-        setMarks(Array.isArray(marksRes.data) ? marksRes.data : []);
+        // 4. Fetch dynamic class rank (optional, don't crash if it fails)
+        try {
+          const currentTerm = fetchedMarks.length > 0 ? fetchedMarks[0].term : "Term 1";
+          const rankRes = await axios.get(`${BASE_URL}/${realStudentId}/rank?term=${currentTerm}`, config);
+          setRank(rankRes.data.rank || "—");
+        } catch (rankErr) {
+          console.error("Optional dynamic rank fetch failed:", rankErr);
+          setRank("—");
+        }
       } catch (err) {
         console.error("Report fetch error:", err);
         setError("Failed to load report data. Please try again.");
@@ -44,7 +67,7 @@ export default function StudentReport({ studentId }) {
     };
 
     fetchData();
-  }, [studentId]);
+  }, []);
 
   // Calculate average from real marks data
   const marksAverage =
@@ -53,7 +76,7 @@ export default function StudentReport({ studentId }) {
           : null;
 
   const handleDownload = () => {
-    window.open(`${BASE_URL}/${studentId}/report/pdf`, "_blank");
+    window.open(`${BASE_URL}/${student?.studentId}/report/pdf`, "_blank");
     setShowModal(true);
   };
 
@@ -143,28 +166,28 @@ export default function StudentReport({ studentId }) {
               <FileText size={20} color="#2563eb" /> Performance Summary
             </h3>
 
-            {/* total_marks from 'report' table */}
+            {/* total_marks */}
             <div className="stat-row">
               <span style={{ fontWeight: 500, color: "#475569" }}>Total Marks</span>
               <span style={{ fontWeight: 800, color: "#2563eb", fontSize: "1.05rem" }}>
-              {report?.totalMarks != null ? report.totalMarks : "—"}
-            </span>
+                {report?.totalMarks != null ? report.totalMarks : marks.reduce((sum, m) => sum + (m.assignmentMark || 0), 0)}
+              </span>
             </div>
 
-            {/* average from 'report' table (DECIMAL 5,2) */}
+            {/* average */}
             <div className="stat-row">
-              <span style={{ fontWeight: 500, color: "#475569" }}>Average (from Report)</span>
+              <span style={{ fontWeight: 500, color: "#475569" }}>Average</span>
               <span style={{ fontWeight: 800, color: "#2563eb", fontSize: "1.05rem" }}>
-              {report?.average != null ? `${report.average}%` : (marksAverage != null ? `${marksAverage}%` : "—")}
-            </span>
+                {report?.average != null ? `${report.average}%` : (marksAverage != null ? `${marksAverage}%` : "0.0%")}
+              </span>
             </div>
 
-            {/* rank_position from 'report' table */}
+            {/* class rank */}
             <div className="stat-row">
               <span style={{ fontWeight: 500, color: "#475569" }}>Class Rank</span>
               <span style={{ fontWeight: 800, color: "#16a34a", fontSize: "1.05rem" }}>
-              {report?.rankPosition != null ? `#${report.rankPosition}` : "—"}
-            </span>
+                {report?.rankPosition != null ? `#${report.rankPosition}` : (rank !== "—" ? `#${rank}` : "—")}
+              </span>
             </div>
 
             {/* Derived from marks DTO */}
@@ -174,9 +197,44 @@ export default function StudentReport({ studentId }) {
             </div>
           </div>
 
-          {!report && (
-              <div style={{ textAlign: "center", padding: "2rem", color: "#94a3b8", background: "#f8fafc", borderRadius: 12 }}>
-                No report has been generated yet.
+          {/* Term-by-Term Marks Table */}
+          <div style={{ marginTop: "2.5rem" }}>
+            <h3 style={{ display: "flex", alignItems: "center", gap: 10, fontSize: "1.05rem", fontWeight: 700, color: "#1e293b", marginBottom: "1.25rem" }}>
+              <Award size={20} color="#2563eb" /> Term-by-Term Marks
+            </h3>
+            <div style={{ overflowX: "auto", border: "1px solid #e2e8f0", borderRadius: "12px" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.9rem" }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+                    <th style={{ textAlign: "left", padding: "12px 16px", color: "#64748b", fontWeight: 600 }}>Subject</th>
+                    <th style={{ textAlign: "left", padding: "12px 16px", color: "#64748b", fontWeight: 600 }}>Term</th>
+                    <th style={{ textAlign: "right", padding: "12px 16px", color: "#64748b", fontWeight: 600 }}>Mark</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {marks.length > 0 ? (
+                    marks.map((m, idx) => (
+                      <tr key={idx} style={{ borderBottom: idx < marks.length - 1 ? "1px solid #f1f5f9" : "none" }}>
+                        <td style={{ padding: "12px 16px", fontWeight: 500, color: "#1e293b" }}>{m.subjectName || "—"}</td>
+                        <td style={{ padding: "12px 16px", color: "#64748b" }}>{m.term || "—"}</td>
+                        <td style={{ padding: "12px 16px", textAlign: "right", fontWeight: 700, color: "#2563eb" }}>
+                          {m.assignmentMark != null ? `${m.assignmentMark}%` : "—"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="3" style={{ textAlign: "center", padding: "24px", color: "#94a3b8" }}>No marks recorded yet.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {marks.length === 0 && (
+              <div style={{ textAlign: "center", padding: "2rem", color: "#94a3b8", background: "#f8fafc", borderRadius: 12, marginTop: "1.5rem" }}>
+                No report details or marks recorded yet.
               </div>
           )}
         </div>

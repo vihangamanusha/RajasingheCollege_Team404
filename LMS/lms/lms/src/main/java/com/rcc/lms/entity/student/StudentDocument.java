@@ -8,21 +8,31 @@ import java.time.LocalDate;
 public class StudentDocument {
 
     @Id
-    @Column(length = 20)
+    @Column(name = "document_id", length = 20)
     private String documentId;
 
     @Column(nullable = false, length = 100)
     private String title;
 
-    @Column(nullable = false, length = 255)
+    @Column(name = "file_path", length = 255)
     private String filePath;
 
+    @Column(name = "classId", length = 20)
+    private String classId;
+
+    @Column(columnDefinition = "TEXT")
+    private String note;
+
+    @Column(name = "youtube_link", length = 255)
+    private String youtubeLink;
+
+    @Column(name = "upload_date")
     private LocalDate uploadDate;
 
-    @Column(length = 20)
+    @Column(name = "teacher_id", length = 20)
     private String teacherId;
 
-    @Column(length = 20)
+    @Column(name = "subject_id", length = 20)
     private String subjectId;
 
     // Constructors
@@ -46,4 +56,13 @@ public class StudentDocument {
 
     public String getSubjectId() { return subjectId; }
     public void setSubjectId(String subjectId) { this.subjectId = subjectId; }
+
+    public String getClassId() { return classId; }
+    public void setClassId(String classId) { this.classId = classId; }
+
+    public String getNote() { return note; }
+    public void setNote(String note) { this.note = note; }
+
+    public String getYoutubeLink() { return youtubeLink; }
+    public void setYoutubeLink(String youtubeLink) { this.youtubeLink = youtubeLink; }
 }

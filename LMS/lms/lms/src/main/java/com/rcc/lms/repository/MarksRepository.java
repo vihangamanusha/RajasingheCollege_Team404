@@ -2,6 +2,8 @@ package com.rcc.lms.repository;
 
 import com.rcc.lms.entity.Mark;
 import com.rcc.lms.dto.AdminSectionMarkDTO; // 1. Added the import for our new backpack
+import com.rcc.lms.dto.SectionMarkDTO;
+import com.rcc.lms.dto.SubjectLowPerformerDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -41,5 +43,38 @@ public interface MarksRepository extends JpaRepository<Mark, Integer> {
             @Param("year") int year,
             @Param("term") String term,
             @Param("section") String section
+    );
+
+    @Query("SELECT new com.rcc.lms.dto.SectionMarkDTO(s.studentId, s.fullName, c.className, sub.subjectName, m.assignmentMark) " +
+            "FROM Mark m " +
+            "JOIN m.student s " +
+            "JOIN m.subject sub " +
+            "JOIN s.classEntity c " +
+            "WHERE m.academicYear = :year " +
+            "AND m.term = :term " +
+            "AND c.grade = :grade")
+    List<SectionMarkDTO> getSectionMarksReport(
+            @Param("year") int year,
+            @Param("term") String term,
+            @Param("grade") String grade
+    );
+
+    // ==========================================
+    // Query for Subject-wise Low Performers (mark < 40) by class
+    // ==========================================
+    @Query("SELECT new com.rcc.lms.dto.SubjectLowPerformerDTO(s.studentId, s.fullName, sub.subjectName, m.assignmentMark) " +
+            "FROM Mark m " +
+            "JOIN m.student s " +
+            "JOIN m.subject sub " +
+            "JOIN s.classEntity c " +
+            "WHERE m.academicYear = :year " +
+            "AND m.term = :term " +
+            "AND c.className = :className " +
+            "AND m.assignmentMark < 40 " +
+            "ORDER BY sub.subjectName, m.assignmentMark ASC")
+    List<SubjectLowPerformerDTO> getLowPerformersByClass(
+            @Param("year") int year,
+            @Param("term") String term,
+            @Param("className") String className
     );
 }

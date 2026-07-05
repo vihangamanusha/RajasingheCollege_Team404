@@ -15,10 +15,15 @@ public class TeacherMarksService {
     @Autowired
     private TeacherMarksRepository marksRepository;
 
-    public void saveMarks(List<TeacherMarksDTO> dtoList) {
+    @Autowired
+    private com.rcc.lms.repository.StudentRepository studentRepository;
 
+    public void saveMarks(List<TeacherMarksDTO> dtoList) {
         List<TeacherMarks> marksList = dtoList.stream().map(dto -> {
-            TeacherMarks m = new TeacherMarks();
+            TeacherMarks m = marksRepository.findByStudentIdAndSubjectIdAndTermAndAcademicYear(
+                    dto.getStudentId(), dto.getSubjectId(), dto.getTerm(), dto.getAcademicYear())
+                    .orElse(new TeacherMarks());
+            
             m.setStudentId(dto.getStudentId());
             m.setSubjectId(dto.getSubjectId());
             m.setTerm(dto.getTerm());
@@ -30,5 +35,14 @@ public class TeacherMarksService {
         }).toList();
 
         marksRepository.saveAll(marksList);
+    }
+
+    public List<TeacherMarks> getMarks(String classId, String subjectId, String term, int year) {
+        List<com.rcc.lms.entity.student.Student> students = studentRepository.findByClassEntityClassId(classId);
+        List<String> studentIds = students.stream().map(com.rcc.lms.entity.student.Student::getStudentId).toList();
+        if (studentIds.isEmpty()) {
+            return new java.util.ArrayList<>();
+        }
+        return marksRepository.findByStudentIdInAndSubjectIdAndTermAndAcademicYear(studentIds, subjectId, term, year);
     }
 }

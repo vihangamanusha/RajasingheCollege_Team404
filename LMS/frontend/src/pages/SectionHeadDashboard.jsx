@@ -16,19 +16,21 @@ import "../layouts/AdminLayout.css";
 import "./SectionHeadDashboard.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import SectionHeadClassManagement from "./SectionHeadClassManagement";
-import AdminAcademicAnalytics from "./AdminAcademicAnalytics";
+import SectionHeadReport from "./SectionHeadReport";
 
 export default function SectionHeadDashboard() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("dashboard");
     const [subRole, setSubRole] = useState("Section Head Grade 6");
     const [username, setUsername] = useState("Section Head");
-    const [announcements, setAnnouncements] = useState([
-        { id: 1, title: "Mid-Term Exam Scheduling", date: "2026-07-02", target: "All Classes" },
-        { id: 2, title: "Parent-Teacher Association Meeting", date: "2026-07-05", target: "Parents" },
-    ]);
-    const [newAnnouncement, setNewAnnouncement] = useState({ title: "", target: "All Classes" });
     const [toast, setToast] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [sectionClasses, setSectionClasses] = useState([]);
+    const [stats, setStats] = useState({
+        totalStudents: 0,
+        totalTeachers: 0,
+        totalClasses: 0
+    });
 
     useEffect(() => {
         const storedSubRole = localStorage.getItem("subRole");
@@ -37,109 +39,44 @@ export default function SectionHeadDashboard() {
         if (storedUsername) setUsername(storedUsername);
     }, []);
 
-    // Extract grade from subRole (e.g. "Section Head Grade 8" -> "Grade 8")
-    const gradeLabel = subRole ? subRole.replace("Section Head ", "") : "Grade Section";
+    // Extract grade from subRole (e.g. "Section Head Grade 8" -> "8")
+    const gradeNumber = subRole ? subRole.replace("Section Head Grade ", "").trim() : "";
 
-    // Mock data based on selected Grade Section
-    const getGradeSpecificData = () => {
-        switch (gradeLabel.toLowerCase()) {
-            case "grade 6":
-                return {
-                    classes: [
-                        { name: "Grade 6A", teacher: "Mr. Ranjith Perera", students: 42, avgMark: 74 },
-                        { name: "Grade 6B", teacher: "Mrs. K. Silva", students: 40, avgMark: 71 },
-                        { name: "Grade 6C", teacher: "Miss N. Fernando", students: 38, avgMark: 68 },
-                    ],
-                    totalStudents: 120,
-                    avgPerf: "71.2%",
-                    teachersCount: 3,
-                };
-            case "grade 7":
-                return {
-                    classes: [
-                        { name: "Grade 7A", teacher: "Mrs. A. Jayasekara", students: 45, avgMark: 78 },
-                        { name: "Grade 7B", teacher: "Mr. T. Alwis", students: 43, avgMark: 75 },
-                    ],
-                    totalStudents: 88,
-                    avgPerf: "76.5%",
-                    teachersCount: 2,
-                };
-            case "grade 8":
-                return {
-                    classes: [
-                        { name: "Grade 8A", teacher: "Miss P. de Silva", students: 39, avgMark: 65 },
-                        { name: "Grade 8B", teacher: "Mr. S. Kumara", students: 41, avgMark: 63 },
-                        { name: "Grade 8C", teacher: "Mrs. D. Wickramasinghe", students: 40, avgMark: 70 },
-                    ],
-                    totalStudents: 120,
-                    avgPerf: "66.0%",
-                    teachersCount: 3,
-                };
-            case "grade 9":
-                return {
-                    classes: [
-                        { name: "Grade 9A", teacher: "Mrs. V. Perera", students: 44, avgMark: 81 },
-                        { name: "Grade 9B", teacher: "Mr. M. Fernando", students: 43, avgMark: 78 },
-                    ],
-                    totalStudents: 87,
-                    avgPerf: "79.5%",
-                    teachersCount: 2,
-                };
-            case "grade 10":
-                return {
-                    classes: [
-                        { name: "Grade 10A", teacher: "Mr. Nimal Silva", students: 42, avgMark: 67 },
-                        { name: "Grade 10B", teacher: "Mrs. C. Rajapakse", students: 38, avgMark: 70 },
-                        { name: "Grade 10C", teacher: "Mr. H. Herath", students: 40, avgMark: 64 },
-                    ],
-                    totalStudents: 120,
-                    avgPerf: "67.0%",
-                    teachersCount: 3,
-                };
-            case "grade 11":
-                return {
-                    classes: [
-                        { name: "Grade 11A", teacher: "Mr. J. K. Perera", students: 40, avgMark: 83 },
-                        { name: "Grade 11B", teacher: "Mrs. L. Siriwardene", students: 39, avgMark: 85 },
-                        { name: "Grade 11C", teacher: "Miss T. Jayasinghe", students: 41, avgMark: 79 },
-                    ],
-                    totalStudents: 120,
-                    avgPerf: "82.3%",
-                    teachersCount: 3,
-                };
-            default:
-                return {
-                    classes: [
-                        { name: "Class A", teacher: "Mr. P. Silva", students: 40, avgMark: 70 },
-                        { name: "Class B", teacher: "Mrs. M. Perera", students: 40, avgMark: 72 },
-                    ],
-                    totalStudents: 80,
-                    avgPerf: "71.0%",
-                    teachersCount: 2,
-                };
-        }
-    };
-
-    const sectionData = getGradeSpecificData();
+    useEffect(() => {
+        if (!gradeNumber) return;
+        const loadSectionData = async () => {
+            setLoading(true);
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch("http://localhost:8080/api/classes", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const all = await res.json();
+                    const filtered = all.filter(c => String(c.grade) === String(gradeNumber));
+                    setSectionClasses(filtered);
+                    
+                    const studentCountSum = filtered.reduce((sum, c) => sum + (c.studentCount || 0), 0);
+                    const uniqueTeachers = new Set(filtered.map(c => c.teacherId).filter(Boolean)).size;
+                    
+                    setStats({
+                        totalStudents: studentCountSum,
+                        totalTeachers: uniqueTeachers,
+                        totalClasses: filtered.length
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to load section classes", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadSectionData();
+    }, [gradeNumber]);
 
     const handleLogout = () => {
         localStorage.clear();
         navigate("/login");
-    };
-
-    const handleCreateAnnouncement = (e) => {
-        e.preventDefault();
-        if (!newAnnouncement.title) return;
-        const newAnn = {
-            id: announcements.length + 1,
-            title: newAnnouncement.title,
-            date: new Date().toISOString().split("T")[0],
-            target: newAnnouncement.target
-        };
-        setAnnouncements([newAnn, ...announcements]);
-        setNewAnnouncement({ title: "", target: "All Classes" });
-        setToast("Announcement published successfully!");
-        setTimeout(() => setToast(""), 3000);
     };
 
     return (
@@ -208,7 +145,7 @@ export default function SectionHeadDashboard() {
                             {/* Center aligned title */}
                             <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>
                                 <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", marginBottom: "8px" }}>Section Head Dashboard</h1>
-                                <p style={{ fontSize: "16px", color: "#64748b" }}>Welcome back! Here's what's happening today in {gradeLabel}.</p>
+                                <p style={{ fontSize: "16px", color: "#64748b" }}>Welcome back! Here's what's happening today in Grade {gradeNumber}.</p>
                             </div>
 
                             {/* STATS ROW */}
@@ -216,25 +153,25 @@ export default function SectionHeadDashboard() {
                                 <div className="stat-card">
                                     <div className="stat-info">
                                         <p>Total Students</p>
-                                        <h3>{sectionData.totalStudents.toLocaleString()}</h3>
+                                        <h3>{stats.totalStudents.toLocaleString()}</h3>
                                     </div>
                                     <div className="stat-icon blue"><Users size={20} /></div>
                                 </div>
 
                                 <div className="stat-card">
                                     <div className="stat-info">
-                                        <p>Class Teachers</p>
-                                        <h3>{sectionData.teachersCount}</h3>
+                                        <p>Total Teachers</p>
+                                        <h3>{stats.totalTeachers}</h3>
                                     </div>
                                     <div className="stat-icon yellow"><UserCheck size={20} /></div>
                                 </div>
 
                                 <div className="stat-card">
                                     <div className="stat-info">
-                                        <p>Average Performance</p>
-                                        <h3>{sectionData.avgPerf}</h3>
+                                        <p>Total Classes</p>
+                                        <h3>{stats.totalClasses}</h3>
                                     </div>
-                                    <div className="stat-icon green"><TrendingUp size={20} /></div>
+                                    <div className="stat-icon green"><FileSpreadsheet size={20} /></div>
                                 </div>
                             </div>
 
@@ -255,108 +192,85 @@ export default function SectionHeadDashboard() {
                                             fontSize: "12px",
                                             fontWeight: "600",
                                             color: "#64748b"
-                                        }}>{sectionData.classes.length} Classes</span>
+                                        }}>{sectionClasses.length} Classes</span>
                                     </div>
                                     <div className="table-responsive">
-                                        <table className="sh-table" style={{ width: "100%", borderCollapse: "collapse" }}>
-                                            <thead>
-                                                <tr>
-                                                    <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Class Name</th>
-                                                    <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Class Teacher</th>
-                                                    <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Total Students</th>
-                                                    <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Average Term Mark</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {sectionData.classes.map((cls, index) => (
-                                                    <tr key={index} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                                                        <td style={{ padding: "16px", fontSize: "14px", fontWeight: "600", color: "#1e293b" }}>{cls.name}</td>
-                                                        <td style={{ padding: "16px", fontSize: "14px", color: "#475569" }}>{cls.teacher}</td>
-                                                        <td style={{ padding: "16px", fontSize: "14px", color: "#475569" }}>{cls.students}</td>
-                                                        <td style={{ padding: "16px", fontSize: "14px", fontWeight: "600", color: cls.avgMark >= 70 ? "#10b981" : "#f59e0b" }}>{cls.avgMark}%</td>
+                                        {loading ? (
+                                            <p style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>Loading classes...</p>
+                                        ) : sectionClasses.length === 0 ? (
+                                            <p style={{ textAlign: "center", padding: "20px", color: "#64748b" }}>No classes assigned to this section yet.</p>
+                                        ) : (
+                                            <table className="sh-table" style={{ width: "100%", borderCollapse: "collapse" }}>
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Class Name</th>
+                                                        <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Class Teacher</th>
+                                                        <th style={{ padding: "12px 16px", fontSize: "12px", fontWeight: "600", color: "#64748b", textTransform: "uppercase", borderBottom: "2px solid #e2e8f0", textAlign: "left" }}>Total Students</th>
                                                     </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                                </thead>
+                                                <tbody>
+                                                    {sectionClasses.map((cls, index) => (
+                                                        <tr key={index} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                                                            <td style={{ padding: "16px", fontSize: "14px", fontWeight: "600", color: "#1e293b" }}>{cls.className}</td>
+                                                            <td style={{ padding: "16px", fontSize: "14px", color: "#475569" }}>{cls.teacherName || "Not Assigned"}</td>
+                                                            <td style={{ padding: "16px", fontSize: "14px", color: "#475569" }}>{cls.studentCount}</td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
+                                        )}
                                     </div>
                                 </div>
 
-                                {/* Right Card: Announcements Panel */}
+                                {/* Right Card: Quick Actions */}
                                 <div className="content-card">
                                     <div className="card-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
-                                        <Bell size={18} style={{ color: "#f59e0b" }} />
-                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Publish Announcement</h3>
+                                        <TrendingUp size={18} style={{ color: "#f59e0b" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Quick Actions</h3>
                                     </div>
-                                    <form onSubmit={handleCreateAnnouncement} style={{ marginBottom: "20px" }}>
-                                        <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                                            <input
-                                                type="text"
-                                                placeholder="Type your announcement..."
-                                                value={newAnnouncement.title}
-                                                onChange={(e) => setNewAnnouncement({ ...newAnnouncement, title: e.target.value })}
-                                                required
-                                                style={{
-                                                    padding: "10px 14px",
-                                                    border: "1px solid #e2e8f0",
-                                                    borderRadius: "8px",
-                                                    fontSize: "14px",
-                                                    outline: "none"
-                                                }}
-                                            />
-                                            <div style={{ display: "flex", gap: "10px" }}>
-                                                <select
-                                                    value={newAnnouncement.target}
-                                                    onChange={(e) => setNewAnnouncement({ ...newAnnouncement, target: e.target.value })}
-                                                    style={{
-                                                        flex: 1,
-                                                        padding: "10px 14px",
-                                                        border: "1px solid #e2e8f0",
-                                                        borderRadius: "8px",
-                                                        fontSize: "14px",
-                                                        backgroundColor: "white",
-                                                        outline: "none"
-                                                    }}
-                                                >
-                                                    <option value="All Classes">All Classes</option>
-                                                    <option value="Teachers Only">Teachers Only</option>
-                                                    <option value="Students Only">Students Only</option>
-                                                </select>
-                                                <button type="submit" className="publish-btn" style={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    justifyContent: "center",
-                                                    gap: "6px",
-                                                    padding: "10px 16px",
-                                                    backgroundColor: "#0f172a",
-                                                    color: "white",
-                                                    border: "none",
-                                                    borderRadius: "8px",
-                                                    fontWeight: "600",
-                                                    fontSize: "14px",
-                                                    cursor: "pointer"
-                                                }}>
-                                                    <PlusCircle size={16} />
-                                                    <span>Publish</span>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </form>
-
-                                    <div className="announcements-list" style={{ display: "flex", flexDirection: "column", gap: "14px", maxHeight: "280px", overflowY: "auto" }}>
-                                        {announcements.map((ann) => (
-                                            <div key={ann.id} className="announcement-item" style={{
-                                                backgroundColor: "#f8fafc",
-                                                borderLeft: "4px solid #f59e0b",
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                                        <button
+                                            onClick={() => setActiveTab("classes")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
                                                 padding: "14px",
-                                                borderRadius: "0 8px 8px 0"
-                                            }}>
-                                                <div className="ann-header" style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-                                                    <span className="ann-date" style={{ fontSize: "11px", color: "#94a3b8" }}>{ann.date}</span>
-                                                    <span className="ann-target" style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", color: "#f59e0b" }}>{ann.target}</span>
-                                                </div>
-                                                <p className="ann-title" style={{ margin: 0, fontSize: "13px", fontWeight: "600", color: "#0f172a" }}>{ann.title}</p>
-                                            </div>
-                                        ))}
+                                                backgroundColor: "#2b55cc",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <FileSpreadsheet size={16} />
+                                            <span>Manage Section Classes</span>
+                                        </button>
+                                        <button
+                                            onClick={() => setActiveTab("reports")}
+                                            style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                justifyContent: "center",
+                                                gap: "8px",
+                                                padding: "14px",
+                                                backgroundColor: "#10b981",
+                                                color: "white",
+                                                border: "none",
+                                                borderRadius: "8px",
+                                                fontWeight: "600",
+                                                fontSize: "14px",
+                                                cursor: "pointer",
+                                                transition: "opacity 0.2s"
+                                            }}
+                                        >
+                                            <FileText size={16} />
+                                            <span>View Section Reports</span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -364,7 +278,7 @@ export default function SectionHeadDashboard() {
                     )}
 
                     {activeTab === "classes" && <SectionHeadClassManagement />}
-                    {activeTab === "reports" && <AdminAcademicAnalytics />}
+                    {activeTab === "reports" && <SectionHeadReport />}
                 </div>
             </div>
 

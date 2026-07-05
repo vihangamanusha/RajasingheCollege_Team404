@@ -12,18 +12,26 @@ export default function StudentDashboard({ studentId }) {
   const [error, setError]     = useState(null);
 
   useEffect(() => {
-    if (!studentId) return;
-
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const [profileRes, marksRes] = await Promise.all([
-          axios.get(`${BASE_URL}/${studentId}`),
-          axios.get(`${BASE_URL}/${studentId}/marks`),
+        const token = localStorage.getItem("token");
+        const loggedInUsername = localStorage.getItem("username");
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+
+        // 1. Resolve studentId dynamically
+        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const studentData = profileRes.data;
+        const realStudentId = studentData.studentId;
+
+        // 2. Fetch student details and marks
+        const [detailRes, marksRes] = await Promise.all([
+          axios.get(`${BASE_URL}/${realStudentId}`, config),
+          axios.get(`${BASE_URL}/${realStudentId}/marks`, config),
         ]);
-        setStudent(profileRes.data);
-        // Show only the 3 most recent marks
+
+        setStudent(detailRes.data);
         setMarks(Array.isArray(marksRes.data) ? marksRes.data.slice(0, 3) : []);
       } catch (err) {
         console.error("Dashboard fetch error:", err);
@@ -34,7 +42,7 @@ export default function StudentDashboard({ studentId }) {
     };
 
     fetchData();
-  }, [studentId]);
+  }, []);
 
   if (loading) return (
       <div style={{ display: "flex", height: "80vh", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "1rem" }}>
@@ -94,7 +102,7 @@ export default function StudentDashboard({ studentId }) {
 
           <div
               className="action-card"
-              onClick={() => window.open(`${BASE_URL}/${studentId}/report/pdf`, "_blank")}
+              onClick={() => window.open(`${BASE_URL}/${student?.studentId}/report/pdf`, "_blank")}
           >
             <div style={{ width: 44, height: 44, borderRadius: 10, background: "#f59e0b", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "1rem", color: "white" }}>
               <Download size={22} />

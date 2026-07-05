@@ -35,9 +35,9 @@ const StudentSidebar = () => {
       path: "/student/materials",
     },
     {
-      name: "My Subjects",
+      name: "Assignment",
       icon: <BookCopy size={22} />,
-      path: "/student/subjects",
+      path: "/student/assignments",
     },
     {
       name: "Announcements",
