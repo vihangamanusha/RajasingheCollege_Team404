@@ -4,7 +4,7 @@
    LAYOUT & HEADER
 ========================================================= */
 .admin-tech-management-container {
-    padding: 10px 0;
+    padding: 24px 30px;
 }
 
 .page-header-flex {
@@ -83,6 +83,7 @@
     color: #334155;
     outline: none;
     transition: border-color 0.2s;
+    margin-top: 0;
 }
 
 .search-container input:focus {
