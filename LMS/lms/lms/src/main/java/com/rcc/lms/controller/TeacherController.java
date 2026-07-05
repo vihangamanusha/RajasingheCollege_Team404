@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/teachers")
+@RequestMapping("/api/students/teachers")
 @CrossOrigin(origins = "http://localhost:5173") // React frontend
 public class TeacherController {
 
