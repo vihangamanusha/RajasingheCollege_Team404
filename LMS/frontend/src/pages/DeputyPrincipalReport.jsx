@@ -41,7 +41,7 @@ export default function DeputyPrincipalReport() {
         const loadClasses = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/classes`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -60,7 +60,7 @@ export default function DeputyPrincipalReport() {
         const loadClasses = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/classes`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -80,7 +80,7 @@ export default function DeputyPrincipalReport() {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `http://localhost:8080/admin/reports/section-marks?year=${year}&term=${term}&grade=${selectedGrade}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/reports/section-marks?year=${year}&term=${term}&grade=${selectedGrade}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (res.ok) setReportData(await res.json());
@@ -97,7 +97,7 @@ export default function DeputyPrincipalReport() {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `http://localhost:8080/admin/reports/subject-low-performers?year=${year}&term=${term}&className=${encodeURIComponent(subjectClass)}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/reports/subject-low-performers?year=${year}&term=${term}&className=${encodeURIComponent(subjectClass)}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (res.ok) setLowPerfData(await res.json());

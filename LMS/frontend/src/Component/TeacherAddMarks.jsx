@@ -48,7 +48,7 @@ function TeacherAddMarks() {
                 const userVal = decoded.sub || "Teacher";
                 
                 // Get Teacher Profile
-                const profileRes = await fetch(`http://localhost:8080/admin/users/teacher/${userVal}`, {
+                const profileRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/teacher/${userVal}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (profileRes.ok) {
@@ -56,7 +56,7 @@ function TeacherAddMarks() {
                     const tId = profileData.teacherId;
                     if (tId) {
                         // Get Teacher Classes
-                        const classesRes = await fetch(`http://localhost:8080/api/classes/teacher/${tId}`, {
+                        const classesRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes/teacher/${tId}`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         if (classesRes.ok) {
@@ -83,7 +83,7 @@ function TeacherAddMarks() {
             }
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/classes/${selectedClass}/subjects`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes/${selectedClass}/subjects`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -118,7 +118,7 @@ function TeacherAddMarks() {
         setIsLoaded(false);
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:8080/api/classes/${selectedClass}/students`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes/${selectedClass}/students`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (res.ok) {
@@ -149,7 +149,7 @@ function TeacherAddMarks() {
         setIsLoaded(false);
         try {
             const token = localStorage.getItem("token");
-            const studentsRes = await fetch(`http://localhost:8080/api/classes/${selectedClass}/students`, {
+            const studentsRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes/${selectedClass}/students`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (studentsRes.ok) {

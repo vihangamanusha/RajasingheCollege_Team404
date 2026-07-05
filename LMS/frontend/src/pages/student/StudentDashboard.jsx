@@ -21,7 +21,7 @@ export default function StudentDashboard({ studentId }) {
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
         // 1. Resolve studentId dynamically
-        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const profileRes = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/student/${loggedInUsername}`, config);
         const studentData = profileRes.data;
         const realStudentId = studentData.studentId;
 

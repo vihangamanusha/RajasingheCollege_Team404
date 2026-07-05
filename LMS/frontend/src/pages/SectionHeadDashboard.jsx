@@ -48,7 +48,7 @@ export default function SectionHeadDashboard() {
             setLoading(true);
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch("http://localhost:8080/api/classes", {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {

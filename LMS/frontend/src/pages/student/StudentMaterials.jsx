@@ -19,7 +19,7 @@ export default function StudentMaterials() {
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
         // 1. Resolve student profile to get classId
-        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const profileRes = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/student/${loggedInUsername}`, config);
         const studentData = profileRes.data;
 
         if (studentData && studentData.classEntity && studentData.classEntity.classId) {

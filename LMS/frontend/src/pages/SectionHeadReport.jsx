@@ -44,7 +44,7 @@ export default function SectionHeadReport() {
             if (!sectionGrade) return;
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/classes`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes`, {
                     headers: { "Authorization": `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -66,7 +66,7 @@ export default function SectionHeadReport() {
         try {
             const token = localStorage.getItem("token");
             const response = await fetch(
-                `http://localhost:8080/admin/reports/section-marks?year=${year}&term=${term}&grade=${sectionGrade}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/reports/section-marks?year=${year}&term=${term}&grade=${sectionGrade}`,
                 {
                     headers: token ? { Authorization: `Bearer ${token}` } : {}
                 }

@@ -179,7 +179,7 @@ export default function TeacherDashboard() {
 
     const fetchTeacherClasses = async (token, tId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/classes/teacher/${tId}`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes/teacher/${tId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.ok) {
@@ -193,7 +193,7 @@ export default function TeacherDashboard() {
 
     const fetchTeacherSubjects = async (token, tId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/classes/teacher/${tId}/subjects`, {
+            const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes/teacher/${tId}/subjects`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (response.ok) {

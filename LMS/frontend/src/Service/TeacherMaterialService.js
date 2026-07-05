@@ -16,7 +16,7 @@ export const deleteMaterial = (id) => {
 export const uploadFile = (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    return axios.post("http://localhost:8080/api/files/upload", formData, {
+    return axios.post(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/files/upload`, formData, {
         headers: {
             "Content-Type": "multipart/form-data"
         }

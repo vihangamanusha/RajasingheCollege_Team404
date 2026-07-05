@@ -54,7 +54,7 @@ export default function DeputyPrincipalAdminReport() {
         const loadClasses = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/classes`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -73,7 +73,7 @@ export default function DeputyPrincipalAdminReport() {
         const loadClasses = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/classes`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -92,7 +92,7 @@ export default function DeputyPrincipalAdminReport() {
         const loadClasses = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/classes`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/classes`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -110,7 +110,7 @@ export default function DeputyPrincipalAdminReport() {
         const loadSubjects = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await fetch(`http://localhost:8080/api/curriculum-subjects`, {
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/curriculum-subjects`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.ok) {
@@ -136,7 +136,7 @@ export default function DeputyPrincipalAdminReport() {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `http://localhost:8080/admin/reports/section-marks?year=${year}&term=${term}&grade=${selectedGrade}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/reports/section-marks?year=${year}&term=${term}&grade=${selectedGrade}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (res.ok) setReportData(await res.json());
@@ -153,7 +153,7 @@ export default function DeputyPrincipalAdminReport() {
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(
-                `http://localhost:8080/admin/reports/subject-low-performers?year=${year}&term=${term}&className=${encodeURIComponent(subjectClass)}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/reports/subject-low-performers?year=${year}&term=${term}&className=${encodeURIComponent(subjectClass)}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (res.ok) setLowPerfData(await res.json());
@@ -172,7 +172,7 @@ export default function DeputyPrincipalAdminReport() {
         try {
             const token = localStorage.getItem("token");
             // Fetch profile
-            const profileRes = await fetch(`http://localhost:8080/api/student/${searchStudentId.trim()}`, {
+            const profileRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/student/${searchStudentId.trim()}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             if (!profileRes.ok) {
@@ -183,7 +183,7 @@ export default function DeputyPrincipalAdminReport() {
             const profileData = await profileRes.json();
 
             // Fetch marks
-            const marksRes = await fetch(`http://localhost:8080/api/student/${searchStudentId.trim()}/marks`, {
+            const marksRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/student/${searchStudentId.trim()}/marks`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const marksData = marksRes.ok ? await marksRes.json() : [];
@@ -205,7 +205,7 @@ export default function DeputyPrincipalAdminReport() {
             const token = localStorage.getItem("token");
             // Fetch all section marks
             const res = await fetch(
-                `http://localhost:8080/admin/reports/section-marks?year=${year}&term=${term}&grade=${filterGrade}`,
+                `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/reports/section-marks?year=${year}&term=${term}&grade=${filterGrade}`,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
             if (!res.ok) {

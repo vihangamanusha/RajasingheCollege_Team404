@@ -43,7 +43,7 @@ export default function AdminAnnouncements() {
   const [passwordMessage, setPasswordMessage] = useState({ text: "", type: "" });
   const [userRole, setUserRole] = useState("User");
 
-  const API_URL = "http://localhost:8080/api/announcements";
+  const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`;
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -148,7 +148,7 @@ export default function AdminAnnouncements() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
         {
           method: "PUT",
           headers: {

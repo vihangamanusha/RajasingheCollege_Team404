@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FileText, Video, Download, Loader2, BookOpen, Calendar, ClipboardList } from "lucide-react";
 
-const BASE_URL = "http://localhost:8080/api/v1/assignments";
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/v1/assignments`;
 
 export default function StudentAssignments() {
   const [assignments, setAssignments] = useState([]);
@@ -19,7 +19,7 @@ export default function StudentAssignments() {
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
         // 1. Resolve student profile to get classId
-        const profileRes = await axios.get(`http://localhost:8080/admin/users/student/${loggedInUsername}`, config);
+        const profileRes = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/users/student/${loggedInUsername}`, config);
         const studentData = profileRes.data;
 
         if (studentData && studentData.classEntity && studentData.classEntity.classId) {
@@ -118,7 +118,7 @@ export default function StudentAssignments() {
                         <button
                             className="dl-btn"
                             onClick={() => {
-                              const url = asm.filePath.startsWith("http") ? asm.filePath : `http://localhost:8080/uploads/${asm.filePath}`;
+                              const url = asm.filePath.startsWith("http") ? asm.filePath : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/uploads/${asm.filePath}`;
                               window.open(url, "_blank");
                             }}
                             title="Download Assignment File"

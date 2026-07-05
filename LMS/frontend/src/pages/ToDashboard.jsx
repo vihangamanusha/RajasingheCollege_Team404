@@ -39,7 +39,7 @@ export default function Dashboard() {
 
   const fetchDashboardStats = async (token) => {
     try {
-      const response = await fetch("http://localhost:8080/admin/dashboard/stats", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/admin/dashboard/stats`, {
         headers: { "Authorization": `Bearer ${token}` }
       });
       if (response.ok) {
@@ -78,7 +78,7 @@ export default function Dashboard() {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
         {
           method: "PUT",
           headers: {

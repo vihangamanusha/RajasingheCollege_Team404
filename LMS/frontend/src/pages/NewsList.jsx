@@ -229,7 +229,7 @@ const loadDocuments = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8080/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/user/change-password?username=${encodeURIComponent(username)}&newPassword=${encodeURIComponent(newPassword)}`,
         {
           method: "PUT",
           headers: {
@@ -277,7 +277,7 @@ const loadDocuments = async () => {
     try {
 
       const response = await fetch(
-        "http://localhost:8080/api/livestreams"
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams`
       );
 
       const data = await response.json();
@@ -414,7 +414,7 @@ const loadDocuments = async () => {
           loadEvents();
         }
       } else if (deleteConfirm.type === "stream") {
-        await fetch(`http://localhost:8080/api/livestreams/${deleteConfirm.id}`, {
+        await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${deleteConfirm.id}`, {
           method: "DELETE",
         });
         loadStreams();
@@ -471,7 +471,7 @@ const loadDocuments = async () => {
     formData.append("file", file);
 
     const res = await fetch(
-      "http://localhost:8080/api/files/upload",
+      `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/files/upload`,
       {
         method: "POST",
         body: formData,
@@ -531,7 +531,7 @@ const loadDocuments = async () => {
       const formData = new FormData();
       formData.append("file", newsForm.image);
 
-      const res = await fetch("http://localhost:8080/api/files/upload", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/files/upload`, {
         method: "POST",
         body: formData,
       });
@@ -555,7 +555,7 @@ const loadDocuments = async () => {
 
     if (editingNewsId) {
       response = await fetch(
-        `http://localhost:8080/api/news/${editingNewsId}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/news/${editingNewsId}`,
         {
           method: "PUT",
           headers: {
@@ -565,7 +565,7 @@ const loadDocuments = async () => {
         }
       );
     } else {
-      response = await fetch("http://localhost:8080/api/news", {
+      response = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/news`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -637,7 +637,7 @@ const handleDeleteNews = (id) => {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}/start`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}/start`,
         {
           method: "PUT",
         }
@@ -660,7 +660,7 @@ const handleDeleteNews = (id) => {
     try {
 
       await fetch(
-        `http://localhost:8080/api/livestreams/${id}/stop`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${id}/stop`,
         {
           method: "PUT",
         }
@@ -725,7 +725,7 @@ const handleDeleteNews = (id) => {
 
     if (editingId) {
       response = await fetch(
-        `http://localhost:8080/api/livestreams/${editingId}`,
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams/${editingId}`,
         {
           method: "PUT",
           headers: {
@@ -736,7 +736,7 @@ const handleDeleteNews = (id) => {
       );
     } else {
       response = await fetch(
-        "http://localhost:8080/api/livestreams",
+        `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/livestreams`,
         {
           method: "POST",
           headers: {
@@ -1021,7 +1021,7 @@ const handleDeleteDocument = (id) => {
               article.image?.startsWith("http")
                 ? article.image
                 : article.image
-                ? `http://localhost:8080${article.image}`
+                ? `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${article.image}`
                 : "https://via.placeholder.com/400"
             }
             alt={article.title}
