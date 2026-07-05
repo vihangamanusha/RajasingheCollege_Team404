@@ -19,7 +19,7 @@ import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
 import AdminClassManagement from "./AdminClassManagement";
-import Announcement from "./Announcements";
+import Announcement from "./AdminAnnouncements";
 import DeputyPrincipalAdminReport from "./DeputyPrincipalAdminReport";
 import AdminTeacherManagement from "./AdminTeacherManagement";
 import AdminTechOfficerManagement from "./AdminTechOfficerManagement";
