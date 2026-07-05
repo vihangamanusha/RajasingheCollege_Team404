@@ -11,6 +11,22 @@ export default function AdminAnnouncements() {
   const [editingId, setEditingId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [popup, setPopup] = useState({ show: false, message: "", type: "success" });
+  const showPopup = (message, type = "success") => {
+    setPopup({
+      show: true,
+      message,
+      type,
+    });
+
+    setTimeout(() => {
+      setPopup({
+        show: false,
+        message: "",
+        type: "success",
+      });
+    }, 3000);
+  };
 
   const [formData, setFormData] = useState({
     title: "",
@@ -66,8 +82,10 @@ export default function AdminAnnouncements() {
     try {
       if (editingId) {
         await axios.put(`${API_URL}/${editingId}`, formData);
+        showPopup("Announcement updated successfully!");
       } else {
         await axios.post(API_URL, formData);
+        showPopup("Announcement added successfully!");
       }
 
       setFormData({
@@ -86,21 +104,21 @@ export default function AdminAnnouncements() {
   };
 
   const handleDeleteClick = (id) => {
-  setDeleteId(id);
-  setShowDeleteModal(true);
-};
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
 
-const confirmDelete = async () => {
-  try {
-    await axios.delete(`${API_URL}/${deleteId}`);
-    fetchAnnouncements();
-  } catch (error) {
-    console.log(error);
-  } finally {
-    setShowDeleteModal(false);
-    setDeleteId(null);
-  }
-};
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`${API_URL}/${deleteId}`);
+      fetchAnnouncements();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    }
+  };
 
   const handleEdit = (announcement) => {
     setEditingId(announcement.id);
@@ -152,7 +170,8 @@ const confirmDelete = async () => {
         setPasswordMessage({ text: `Failed: ${errText}`, type: "error" });
       }
     } catch (error) {
-      setPasswordMessage({ text: "Server error during password update.", type: "error" });
+      console.log(error);
+      showPopup("Something went wrong!", "error");
     }
   };
 
@@ -173,15 +192,15 @@ const confirmDelete = async () => {
             <p className="user-role">{userRole}</p>
             <p className="user-name" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               {username || "User"}
-              <FiLock 
-                style={{ cursor: "pointer", color: "#64748b", fontSize: "14px" }} 
+              <FiLock
+                style={{ cursor: "pointer", color: "#64748b", fontSize: "14px" }}
                 title="Change Password"
                 onClick={() => {
                   setPasswordMessage({ text: "", type: "" });
                   setNewPassword("");
                   setConfirmPassword("");
                   setShowPasswordModal(true);
-                }} 
+                }}
               />
             </p>
           </div>
@@ -206,93 +225,93 @@ const confirmDelete = async () => {
 
         <div className="cardContainer">
           {announcements.length === 0 ? (
-    <div
-  style={{
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "60px 20px",
-    background: "linear-gradient(135deg, #f8fafc, #eef2f7)",
-    borderRadius: "14px",
-    border: "1px solid #e2e8f0",
-    color: "#475569",
-    textAlign: "center",
-    boxShadow: "0 6px 18px rgba(15, 23, 42, 0.06)",
-    
-  }}
->
-  <div style={{ fontSize: "42px", marginBottom: "12px" }}>📭</div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "60px 20px",
+                background: "linear-gradient(135deg, #f8fafc, #eef2f7)",
+                borderRadius: "14px",
+                border: "1px solid #e2e8f0",
+                color: "#475569",
+                textAlign: "center",
+                boxShadow: "0 6px 18px rgba(15, 23, 42, 0.06)",
 
-  <h3
-    style={{
-      margin: "0 0 6px 0",
-      fontSize: "18px",
-      fontWeight: "600",
-      color: "#1e293b"
-    }}
-  >
-    No Announcements Found
-  </h3>
+              }}
+            >
+              <div style={{ fontSize: "42px", marginBottom: "12px" }}>📭</div>
 
-  <p
-    style={{
-      margin: 0,
-      fontSize: "14px",
-      color: "#64748b"
-    }}
-  >
-    There are currently no announcements available.  
-    Create a new one to get started.
-  </p>
-</div>
-  ) : (
-          announcements.map((a) => (
-            <div className="announcementCard" key={a.id}>
-              {/* TOP ROW */}
-              <div className="cardTop">
-                <div 
-                className="iconBox"
-                style={{marginTop:"60px"}}
-                >📢</div>
-                <div className="cardMain">
-                  <div className="titleRow"
-                  style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      gap: "8px"
-                  }} >
-                    <span 
-                    
-                    className={`badge ${(a.category || "uncategorized").toLowerCase()}`}
-                    style={{ marginBottom: "10px" }}>
-                      {a.category || "Uncategorized"}
-                    </span>
+              <h3
+                style={{
+                  margin: "0 0 6px 0",
+                  fontSize: "18px",
+                  fontWeight: "600",
+                  color: "#1e293b"
+                }}
+              >
+                No Announcements Found
+              </h3>
 
-                    <h3>{a.title}</h3>
-                    
-                  </div>
-                  <p className="content">{a.content}</p>
-                  {/* META INFO */}
-                  <div className="meta">
-                    <span>📅 {new Date().toLocaleDateString()}</span>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: "14px",
+                  color: "#64748b"
+                }}
+              >
+                There are currently no announcements available.
+                Create a new one to get started.
+              </p>
+            </div>
+          ) : (
+            announcements.map((a) => (
+              <div className="announcementCard" key={a.id}>
+                {/* TOP ROW */}
+                <div className="cardTop">
+                  <div
+                    className="iconBox"
+                    style={{ marginTop: "60px" }}
+                  >📢</div>
+                  <div className="cardMain">
+                    <div className="titleRow"
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "flex-start",
+                        gap: "8px"
+                      }} >
+                      <span
+
+                        className={`badge ${(a.category || "uncategorized").toLowerCase()}`}
+                        style={{ marginBottom: "10px" }}>
+                        {a.category || "Uncategorized"}
+                      </span>
+
+                      <h3>{a.title}</h3>
+
+                    </div>
+                    <p className="content">{a.content}</p>
+                    {/* META INFO */}
+                    <div className="meta">
+                      <span>📅 {new Date().toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* ACTIONS */}
-              <div className="cardActions">
-                <button className="editBtn" onClick={() => handleEdit(a)}>
-                  Edit
-                </button>
-                <button className="deleteBtn" onClick={() => handleDeleteClick(a.id)}>
+                {/* ACTIONS */}
+                <div className="cardActions">
+                  <button className="editBtn" onClick={() => handleEdit(a)}>
+                    Edit
+                  </button>
+                  <button className="deleteBtn" onClick={() => handleDeleteClick(a.id)}>
                     Delete
-                </button>
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
-        )}
+            ))
+          )}
         </div>
       </div>
 
@@ -318,7 +337,7 @@ const confirmDelete = async () => {
             boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
           }}>
             <div className="modal-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-              <FiLock className="warning-icon" style={{color: "#2b55cc", fontSize: "24px"}} />
+              <FiLock className="warning-icon" style={{ color: "#2b55cc", fontSize: "24px" }} />
               <h2 style={{ margin: 0, fontSize: "1.25rem", fontWeight: "700", color: "#1e293b" }}>Change Password</h2>
             </div>
             <form onSubmit={handlePasswordChange}>
@@ -396,64 +415,64 @@ const confirmDelete = async () => {
         </div>
       )}
       {showDeleteModal && (
-  <div className="modal-overlay" style={{
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "rgba(15, 23, 42, 0.6)",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 3000
-  }}>
-    <div className="modal-box" style={{
-      backgroundColor: "white",
-      padding: "25px",
-      borderRadius: "12px",
-      width: "350px",
-      textAlign: "center"
-    }}>
-      
-      <h3 style={{ marginBottom: "10px" }}>Delete Announcement</h3>
-      <p style={{ color: "#64748b", marginBottom: "20px" }}>
-        Are you sure you want to delete this announcement?
-      </p>
+        <div className="modal-overlay" style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundColor: "rgba(15, 23, 42, 0.6)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 3000
+        }}>
+          <div className="modal-box" style={{
+            backgroundColor: "white",
+            padding: "25px",
+            borderRadius: "12px",
+            width: "350px",
+            textAlign: "center"
+          }}>
 
-      <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-        <button
-          onClick={() => setShowDeleteModal(false)}
-          style={{
-            padding: "8px 16px",
-            border: "1px solid #cbd5e1",
-            background: "white",
-            borderRadius: "6px",
-            cursor: "pointer",
-            backgroundColor: "#2d75bc",
-          }}
-        >
-          Cancel
-        </button>
+            <h3 style={{ marginBottom: "10px" }}>Delete Announcement</h3>
+            <p style={{ color: "#64748b", marginBottom: "20px" }}>
+              Are you sure you want to delete this announcement?
+            </p>
 
-        <button
-          onClick={confirmDelete}
-          style={{
-            padding: "8px 16px",
-            border: "none",
-            background: "#dc2626",
-            color: "white",
-            borderRadius: "6px",
-            cursor: "pointer"
-          }}
-        >
-          Delete
-        </button>
-      </div>
+            <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                style={{
+                  padding: "8px 16px",
+                  border: "1px solid #cbd5e1",
+                  background: "white",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  backgroundColor: "#2d75bc",
+                }}
+              >
+                Cancel
+              </button>
 
-    </div>
-  </div>
-)}
+              <button
+                onClick={confirmDelete}
+                style={{
+                  padding: "8px 16px",
+                  border: "none",
+                  background: "#dc2626",
+                  color: "white",
+                  borderRadius: "6px",
+                  cursor: "pointer"
+                }}
+              >
+                Delete
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
 
       {/* MODAL */}
       {showModal && (
@@ -485,14 +504,14 @@ const confirmDelete = async () => {
                   onChange={handleChange}
                   required
                   style={{
-                         width: "550px",
+                    width: "550px",
                   }}
                 />
                 <br />
                 <select
                   name="category"
                   value={formData.category}
-                  
+
                   onChange={handleChange}
                   required
                 >
@@ -527,7 +546,7 @@ const confirmDelete = async () => {
                 value={formData.content}
                 onChange={handleChange}
                 required
-                
+
               />
               <div className="modalActions">
                 <button
@@ -535,29 +554,50 @@ const confirmDelete = async () => {
                   className="cancelBtn"
                   style={{
                     width: "400px",
-                    height:"40px",
-                    backgroundColor:"fffff",
-                    color:"#ffffff",
-                    }}
+                    height: "40px",
+                    backgroundColor: "fffff",
+                    color: "#ffffff",
+                  }}
                   onClick={() => setShowModal(false)}
-                  
+
                 >
                   Cancel
                 </button>
-                <button type="submit" 
-                 style={{
+                <button type="submit"
+                  style={{
                     width: "400px",
-                    height:"40px",
-                    }}
-                className="saveBtn">
+                    height: "40px",
+                  }}
+                  className="saveBtn">
                   {editingId ? "Update" : "Add Announcement"}
                 </button>
+
+
               </div>
             </form>
           </div>
         </div>
       )}
+      {popup.show && (
+        <div
+          style={{
+            position: "fixed",
+            top: "25px",
+            right: "25px",
+            backgroundColor:
+              popup.type === "success" ? "#16a34a" : "#dc2626",
+            color: "#fff",
+            padding: "14px 22px",
+            borderRadius: "10px",
+            fontWeight: "600",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
+            zIndex: 5000,
+            animation: "slideIn 0.3s ease",
+          }}
+        >
+          {popup.message}
+        </div>
+      )}
     </div>
-    
   );
 }

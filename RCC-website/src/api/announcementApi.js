@@ -13,6 +13,12 @@ export const getAcademicAnnouncements = async (audience) => {
 
   const all = await res.json();
 
+  // DEBUG: log all announcements so we can see exact DB values
+  console.log(
+    "[DEBUG] All announcements from DB:",
+    all.map((a) => ({ id: a.id, category: a.category, targetAudience: a.targetAudience, title: a.title }))
+  );
+
   // Filter by category "Academic" and matching targetAudience
   return all.filter(
     (item) =>

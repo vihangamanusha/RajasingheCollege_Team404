@@ -11,11 +11,11 @@ export function AcademicALevel() {
   const [loading, setLoading] = useState(false);
 
   const streams = [
-    { id: "bio",      name: "Biology Stream"     },
-    { id: "maths",    name: "Mathematics Stream"  },
-    { id: "tech",     name: "Technology Stream"   },
-    { id: "art",      name: "Arts Stream"         },
-    { id: "commerce", name: "Commerce Stream"     },
+    { id: "bio",      name: "Biology Stream",    audience: "Bio"         },
+    { id: "maths",    name: "Mathematics Stream", audience: "Mathematics" },
+    { id: "tech",     name: "Technology Stream",  audience: "Technology"  },
+    { id: "art",      name: "Arts Stream",        audience: "Art"         },
+    { id: "commerce", name: "Commerce Stream",    audience: "Commerce"   },
   ];
 
   useEffect(() => {
@@ -24,12 +24,11 @@ export function AcademicALevel() {
 
   const loadNotifications = async () => {
     setLoading(true);
-    const audiences = ["Biology", "Mathematics", "Technology", "Arts", "Commerce"];
     try {
       const result = {};
-      for (const audience of audiences) {
-        const data = await getAcademicAnnouncements(audience);
-        result[audience] = data;
+      for (const stream of streams) {
+        const data = await getAcademicAnnouncements(stream.audience);
+        result[stream.audience] = data;
       }
       setNotifications(result);
     } catch (err) {
@@ -81,8 +80,7 @@ export function AcademicALevel() {
           <div className="stream-grid">
 
             {streams.map((stream) => {
-              const key = stream.name.replace(" Stream", "");
-              const items = notifications[key] || [];
+              const items = notifications[stream.audience] || [];
 
               return (
                 <div
