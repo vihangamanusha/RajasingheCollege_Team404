@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { FiUsers, FiBook, FiGrid, FiLock } from "react-icons/fi";
+import { FiUsers, FiBook, FiGrid, FiLock, FiBell, FiArrowRight } from "react-icons/fi";
 import { FaGraduationCap } from "react-icons/fa";
 import { getNews } from "../api/newsApi";
+import axios from "axios";
 import "./ToDashboard.css";
 
 export default function Dashboard() {
@@ -22,6 +23,7 @@ export default function Dashboard() {
   });
 
   const [news, setNews] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -35,6 +37,7 @@ export default function Dashboard() {
       }
     }
     loadNews();
+    loadAnnouncements();
   }, []);
 
   const fetchDashboardStats = async (token) => {
@@ -59,6 +62,17 @@ export default function Dashboard() {
   const loadNews = async () => {
     const data = await getNews();
     setNews(data || []);
+  };
+
+  const loadAnnouncements = async () => {
+    try {
+      const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`;
+      const response = await axios.get(API_URL);
+      const sorted = (response.data || []).sort((a, b) => b.id - a.id);
+      setAnnouncements(sorted);
+    } catch (error) {
+      console.error("Failed to load announcements:", error);
+    }
   };
 
   const handlePasswordChange = async (e) => {
@@ -121,15 +135,15 @@ export default function Dashboard() {
             <p className="user-role">Technical Officer</p>
             <p className="user-name" style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               {username || "TO Officer"}
-              <FiLock 
-                style={{ cursor: "pointer", color: "#64748b", fontSize: "14px" }} 
+              <FiLock
+                style={{ cursor: "pointer", color: "#64748b", fontSize: "14px" }}
                 title="Change Password"
                 onClick={() => {
                   setPasswordMessage({ text: "", type: "" });
                   setNewPassword("");
                   setConfirmPassword("");
                   setShowPasswordModal(true);
-                }} 
+                }}
               />
             </p>
           </div>
@@ -227,8 +241,8 @@ export default function Dashboard() {
             </div>
 
             <div className="quick-actions-list">
-              <button 
-                className="btn secondary quick-action-button" 
+              <button
+                className="btn secondary quick-action-button"
                 type="button"
                 onClick={() => navigate("/to/feedback")}
               >
@@ -255,6 +269,83 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* ANNOUNCEMENTS SECTION */}
+        <div className="section-card announcements-card" style={{ marginTop: "24px" }}>
+          <div className="section-header section-header-space-between" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <FiBell style={{ fontSize: "20px", color: "#2b55cc" }} />
+              <div>
+                <div className="section-label">Announcements</div>
+                <h2 className="section-title">Recent Announcements</h2>
+              </div>
+            </div>
+            <button
+              className="btn outline"
+              type="button"
+              style={{ display: "flex", alignItems: "center", gap: "5px", fontSize: "13px", padding: "6px 14px" }}
+              onClick={() => navigate("/to/admin/announcements")}
+            >
+              View All <FiArrowRight />
+            </button>
+          </div>
+
+          {announcements.length === 0 ? (
+            <div className="empty-state">No announcements yet.</div>
+          ) : (
+            <div className="announcements-list" style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+              {announcements.slice(0, 3).map((ann) => (
+                <div
+                  key={ann.id}
+                  className="announcement-item"
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    justifyContent: "space-between",
+                    padding: "14px 16px",
+                    borderRadius: "10px",
+                    backgroundColor: "#f8faff",
+                    border: "1px solid #e2e8f0",
+                    gap: "12px"
+                  }}
+                >
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "600", color: "#1e293b" }}>{ann.title}</h3>
+                    <p style={{ margin: 0, fontSize: "12px", color: "#64748b" }}>
+                      {ann.content ? ann.content.substring(0, 80) + (ann.content.length > 80 ? "..." : "") : "No content"}
+                    </p>
+                  </div>
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px", flexShrink: 0 }}>
+                    {ann.category && (
+                      <span style={{
+                        fontSize: "11px",
+                        fontWeight: "600",
+                        padding: "3px 10px",
+                        borderRadius: "20px",
+                        backgroundColor: "#dbeafe",
+                        color: "#1d4ed8"
+                      }}>
+                        {ann.category}
+                      </span>
+                    )}
+                    {ann.targetAudience && (
+                      <span style={{
+                        fontSize: "11px",
+                        fontWeight: "500",
+                        padding: "3px 10px",
+                        borderRadius: "20px",
+                        backgroundColor: "#f0fdf4",
+                        color: "#15803d"
+                      }}>
+                        {ann.targetAudience}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* CHANGE PASSWORD MODAL */}
@@ -279,7 +370,7 @@ export default function Dashboard() {
             boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
           }}>
             <div className="modal-header" style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "20px" }}>
-              <FiLock className="warning-icon" style={{color: "#2b55cc", fontSize: "24px"}} />
+              <FiLock className="warning-icon" style={{ color: "#2b55cc", fontSize: "24px" }} />
               <h2 style={{ margin: 0, fontSize: "1.25rem", fontWeight: "700", color: "#1e293b" }}>Change Password</h2>
             </div>
             <form onSubmit={handlePasswordChange}>

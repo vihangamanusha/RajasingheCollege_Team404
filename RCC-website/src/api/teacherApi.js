@@ -1,4 +1,4 @@
-const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/teachers`;
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/students/teachers`;
 
 export const getAllTeachers = async () => {
   try {
