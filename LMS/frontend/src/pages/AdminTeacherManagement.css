@@ -102,6 +102,10 @@
     border-collapse: collapse;
 }
 
+.data-table thead {
+    background: transparent;
+}
+
 .data-table th {
     text-align: left;
     padding: 15px;
