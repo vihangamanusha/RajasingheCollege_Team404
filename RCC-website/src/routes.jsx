@@ -23,6 +23,7 @@ import { SportAthletics } from "./pages/SportAthletics";
 import { ClubsSocieties } from "./pages/clubs-societies";
 import { LiveStream } from "./pages/LiveStream";
 import { Contact } from "./pages/Contact";
+import { Downloads } from "./pages/Download";
 import { NotFound } from "./pages/NotFound";
 
 export const router = createBrowserRouter([
@@ -50,6 +51,7 @@ export const router = createBrowserRouter([
       { path: "sports/athletics", element: <SportAthletics /> },
       { path: "clubs-societies", element: <ClubsSocieties /> },
       { path: "live-stream", element: <LiveStream /> },
+      { path: "downloads", element: <Downloads /> },
       
       { path: "contact", element: <Contact /> },
 

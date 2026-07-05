@@ -28,4 +28,9 @@ public class ContactController {
     public List<ContactMessage> getMessages() {
         return service.getAll();
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteMessage(@PathVariable Long id) {
+        service.deleteById(id);
+    }
 }

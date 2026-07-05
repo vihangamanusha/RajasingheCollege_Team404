@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { getBySportType } from "../api/sportApi";
+import coverimage from "../assets/karathe.jpeg";
+import karateTeam from "../assets/karatecover.jpg";
+
 import "../styles/styles.css";
 
 export function SportKarate() {
@@ -37,7 +40,7 @@ export function SportKarate() {
       <section className="sport-hero">
 
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1555597673-b21d5c935865?w=1920&h=1080&fit=crop"
+          src={coverimage}
           alt="Karate"
         />
 
@@ -91,7 +94,7 @@ export function SportKarate() {
         <div className="about-right">
 
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=900&h=700&fit=crop"
+            src={karateTeam}
             alt="Karate Team"
           />
 
@@ -110,7 +113,14 @@ export function SportKarate() {
 
   {achievements.length > 0 ? (
 
-    <div className="achievement-grid">
+    <div 
+    className="achievement-grid"
+    style={{
+    display: "flex",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    gap: "30px",
+  }}>
 
       {achievements.map((item, index) => (
 

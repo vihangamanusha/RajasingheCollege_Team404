@@ -22,10 +22,16 @@ export const addEvent = async (eventData) => {
 
 //delete event
 export const deleteEvent = async (Id) => {
-    await fetch(`${BASE_URL}/${Id}`,{
-        method:"DELETE"
+    const res = await fetch(`${BASE_URL}/${Id}`, {
+        method: "DELETE"
     });
-    return res.ok;
+
+    if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || "Failed to delete event");
+    }
+
+    return true;
 }
 
 //update event

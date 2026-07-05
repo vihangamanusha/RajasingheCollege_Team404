@@ -22,4 +22,8 @@ public class ContactService {
     public List<ContactMessage> getAll() {
         return repo.findAll();
     }
+
+    public void deleteById(Long id) {
+        repo.deleteById(id);
+    }
 }

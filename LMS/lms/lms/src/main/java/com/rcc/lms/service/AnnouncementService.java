@@ -12,27 +12,37 @@ import java.util.List;
 public class AnnouncementService {
 
     @Autowired
-    private AnnouncementRepository announcementRepository;
+    private AnnouncementRepository repository;
 
-    // =========================
-    // CREATE ANNOUNCEMENT
-    // =========================
-    public String createAnnouncement(Announcement announcement) {
+    public Announcement saveAnnouncement(Announcement announcement) {
 
-        // automatically save current date/time
-        announcement.setCreatedDate(LocalDateTime.now());
+        announcement.setCreatedAt(LocalDateTime.now());
 
-        // save announcement
-        announcementRepository.save(announcement);
-
-        return "Announcement Added Successfully!";
+        return repository.save(announcement);
     }
 
-    // =========================
-    // GET ALL ANNOUNCEMENTS
-    // NEWEST FIRST
-    // =========================
     public List<Announcement> getAllAnnouncements() {
-        return announcementRepository.findAllByOrderByCreatedDateDesc();
+        return repository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public Announcement getAnnouncementById(Long id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    public Announcement updateAnnouncement(Long id, Announcement newData) {
+
+        Announcement existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Announcement not found"));
+
+        existing.setTitle(newData.getTitle());
+        existing.setCategory(newData.getCategory());
+        existing.setTargetAudience(newData.getTargetAudience());
+        existing.setContent(newData.getContent());
+
+        return repository.save(existing);
+    }
+
+    public void deleteAnnouncement(Long id) {
+        repository.deleteById(id);
     }
 }
