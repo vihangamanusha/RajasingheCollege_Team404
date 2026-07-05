@@ -74,7 +74,7 @@ public class EventController {
                             + "\nVenue: " + event.getVenue()
             );
 
-            announcement.setCreatedDate(java.time.LocalDateTime.now());
+            announcement.setCreatedAt(java.time.LocalDateTime.now());
 
             announcementRepository.save(announcement);
         }
