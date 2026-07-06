@@ -12,10 +12,10 @@ public class TeacherMarks {
     @Column(name = "mark_id")
     private int markId;
 
-    @Column(name="student_id",nullable = false)
+    @Column(name="student_id",nullable = false, length = 20)
     private String studentId;
 
-    @Column(name="subject_id",nullable = false)
+    @Column(name="subject_id",nullable = false, length = 20)
     private String subjectId;
 
     private String term;
