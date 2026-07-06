@@ -861,7 +861,7 @@ export default function TeacherDashboard() {
                                                         <div style={{ marginTop: "12px" }}>
                                                             <div style={{ display: "flex", gap: "10px", marginBottom: "12px" }}>
                                                                 {m.filePath && (
-                                                                    <a href={m.filePath} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: "center", padding: "8px", backgroundColor: "#e0f2fe", color: "#0369a1", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
+                                                                    <a href={m.filePath.startsWith("http") ? m.filePath : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/uploads/${m.filePath}`} target="_blank" rel="noopener noreferrer" style={{ flex: 1, textAlign: "center", padding: "8px", backgroundColor: "#e0f2fe", color: "#0369a1", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
                                                                         Download PDF
                                                                     </a>
                                                                 )}
@@ -1043,7 +1043,12 @@ export default function TeacherDashboard() {
                                                         </div>
                                                         <div style={{ marginTop: "12px" }}>
                                                             {a.filePath && (
-                                                                <a href={a.filePath} target="_blank" rel="noopener noreferrer" style={{ display: "block", textAlign: "center", padding: "8px", backgroundColor: "#e0f2fe", color: "#0369a1", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none", marginBottom: "12px" }}>
+                                                                <a
+                                                                    href={a.filePath.startsWith("http") ? a.filePath : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/uploads/${a.filePath}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    style={{ display: "block", textAlign: "center", padding: "8px", backgroundColor: "#e0f2fe", color: "#0369a1", borderRadius: "6px", fontSize: "13px", fontWeight: "600", textDecoration: "none", marginBottom: "12px" }}
+                                                                >
                                                                     Download Assignment PDF
                                                                 </a>
                                                             )}

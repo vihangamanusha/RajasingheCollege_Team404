@@ -20,7 +20,7 @@ public class TeacherAssignment {
     @Column(name = "file_path", length = 255)
     private String filePath;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String note;
 
     @Column(name = "teacher_id", nullable = false, length = 20)

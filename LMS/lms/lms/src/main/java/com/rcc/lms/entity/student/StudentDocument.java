@@ -20,7 +20,7 @@ public class StudentDocument {
     @Column(name = "classId", length = 20)
     private String classId;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob
     private String note;
 
     @Column(name = "youtube_link", length = 255)

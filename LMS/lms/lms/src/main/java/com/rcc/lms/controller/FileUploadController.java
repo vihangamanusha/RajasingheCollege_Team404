@@ -46,10 +46,8 @@ public class FileUploadController {
             // SAVE FILE
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-            // RETURN IMAGE URL
-            String imageUrl = baseUrl + "/uploads/" + fileName;
-
-            return ResponseEntity.ok(imageUrl);
+            // RETURN FILENAME (Relative path resolved by front-end)
+            return ResponseEntity.ok(fileName);
 
         } catch (Exception e) {
 
