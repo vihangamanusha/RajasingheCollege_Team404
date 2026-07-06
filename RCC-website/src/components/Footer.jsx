@@ -79,7 +79,7 @@ export function Footer() {
             {t("nav.liveStream")}
           </Link>
           <a
-            href={import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : "https://lms.rrcc.lk/login")}
+            href={import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : `http://${window.location.hostname}:3000/login`)}
             target="_blank"
             rel="noopener noreferrer"
             className="footer-nav-link"

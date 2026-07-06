@@ -479,17 +479,21 @@ const loadDocuments = async () => {
       }
     );
 
-    if (!res.ok) throw new Error("Image upload failed");
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText);
+    }
 
     const imageUrl = await res.text();
 
     setAchievementForm((prev) => ({
       ...prev,
-      image: imageUrl, // store REAL URL, not file
+      image: imageUrl,
     }));
   } catch (error) {
     console.log("Upload error:", error);
-    setAchievementImageError("Failed to upload image. Please try again.");
+    setAchievementImageError("Failed to upload image: " + error.message);
+    alert("Failed to upload image: " + error.message);
   }
 };
 
