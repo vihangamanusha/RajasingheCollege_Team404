@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { saveMarks, getMarks } from "../Service/TeacherMarksService";
 import { jwtDecode } from "jwt-decode";
 import "./TeacherAddMarks.css";
 
@@ -156,8 +155,10 @@ function TeacherAddMarks() {
                 const studentsData = await studentsRes.json();
                 setStudentsList(studentsData);
                 
-                const marksRes = await getMarks(selectedClass, selectedSubject, term, academicYear);
-                const existingMarksList = marksRes.data || [];
+                const marksRes = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/v1/marks/class/${selectedClass}/subject/${selectedSubject}/term/${term}/year/${academicYear}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const existingMarksList = marksRes.ok ? await marksRes.json() : [];
                 
                 const initialMarks = {};
                 studentsData.forEach(s => {
@@ -218,8 +219,20 @@ function TeacherAddMarks() {
         }));
 
         try {
-            await saveMarks(payload);
-            alert("Marks saved successfully");
+            const token = localStorage.getItem("token");
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/v1/marks/save`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+            if (res.ok) {
+                alert("Marks saved successfully");
+            } else {
+                alert("Error saving marks");
+            }
         } catch (error) {
             console.error(error);
             alert("Error saving marks");
