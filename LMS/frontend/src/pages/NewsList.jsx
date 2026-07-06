@@ -754,7 +754,7 @@ const handleDeleteNews = (id) => {
     console.log("Response:", text);
 
     if (!response.ok) {
-      alert("Save failed");
+      alert("Save failed: " + text);
       return;
     }
 
