@@ -17,7 +17,7 @@ public class Livestream {
     private String description;
     private String videoURL;
 
-    @Column(name = "is_live")
+    @Column(name = "isLive")
     private boolean isLive = false;
 
     public Livestream() {}
