@@ -272,7 +272,8 @@ export default function Dashboard() {
                                         borderRadius: "6px",
                                         border: "1px solid #cbd5e1",
                                         fontSize: "14px",
-                                        backgroundColor: "white"
+                                        backgroundColor: "white",
+                                        marginTop: "0"
                                     }}
                                 />
                             </div>
@@ -290,7 +291,8 @@ export default function Dashboard() {
                                         borderRadius: "6px",
                                         border: "1px solid #cbd5e1",
                                         fontSize: "14px",
-                                        backgroundColor: "white"
+                                        backgroundColor: "white",
+                                        marginTop: "0"
                                     }}
                                 />
                             </div>
