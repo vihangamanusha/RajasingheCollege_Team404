@@ -49,11 +49,14 @@ export function LiveStream() {
       );
 
       const data = await res.json();
-
-      setStreams(data);
-
+      if (Array.isArray(data)) {
+        setStreams(data);
+      } else {
+        setStreams([]);
+      }
     } catch (err) {
       console.log(err);
+      setStreams([]);
     }
   };
 
@@ -61,9 +64,9 @@ export function LiveStream() {
   
   // backend should return "live" OR "isLive"
 
-  const liveStream = streams.find(
+  const liveStream = Array.isArray(streams) ? streams.find(
     (stream) => stream.live === true
-  );
+  ) : null;
 
   return (
 
