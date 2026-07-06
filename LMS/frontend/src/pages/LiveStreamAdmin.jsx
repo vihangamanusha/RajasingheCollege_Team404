@@ -58,11 +58,14 @@ export default function LiveStreamAdmin() {
       );
 
       const data = await response.json();
-
-      setStreams(data);
-
+      if (Array.isArray(data)) {
+        setStreams(data);
+      } else {
+        setStreams([]);
+      }
     } catch (error) {
       console.log(error);
+      setStreams([]);
     }
   };
 
