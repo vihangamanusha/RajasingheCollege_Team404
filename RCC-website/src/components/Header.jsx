@@ -9,7 +9,7 @@ export function Header() {
   const { language, toggleLanguage, t } = useLanguage();
   const location = useLocation();
 
-  const lmsUrl = import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : "https://lms.rrcc.lk/login");
+  const lmsUrl = import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : `http://${window.location.hostname}:3000/login`);
 
   const navItems = [
     { name: t("nav.home"), path: "/" },

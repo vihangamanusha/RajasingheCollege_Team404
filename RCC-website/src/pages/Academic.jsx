@@ -241,7 +241,7 @@ export function Academic() {
             {t("academic.lmsDesc")}
           </p>
           <a
-            href={import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : "https://lms.rrcc.lk/login")}
+            href={import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : `http://${window.location.hostname}:3000/login`)}
             target="_blank"
             rel="noopener noreferrer"
             className="academic-button academic-button-secondary"
