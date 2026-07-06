@@ -61,7 +61,7 @@ export default function AdminClassManagement() {
   // Role detection
   const userSubRole = localStorage.getItem("subRole") || "";
   const userRole = localStorage.getItem("role") || "";
-  const isAdmin = userRole.toLowerCase() === "admin";
+  const isAdmin = userRole.toLowerCase() === "admin" || userRole.toLowerCase() === "technical_officer" || userRole.toLowerCase() === "role_technical_officer";
   const isDeputyAdmin = userSubRole.toLowerCase().includes("deputy principal") && !isAdmin;
 
   // ── LOAD ALL CLASSES FOR DEPUTY ────────────────────────────
@@ -83,7 +83,7 @@ export default function AdminClassManagement() {
   // ── LOAD AVAILABLE SUBJECT TEACHERS ────────────────────────
   const loadAvailableTeachers = async (classId) => {
     try {
-      const url = classId 
+      const url = classId
         ? `${API}/api/classes/available-teachers?currentClassId=${classId}`
         : `${API}/api/classes/available-teachers`;
       const res = await fetch(url, {
@@ -458,13 +458,13 @@ export default function AdminClassManagement() {
         fetch(`${API}/api/classes/${cls.classId}/subjects`, { headers: authHeaders() }),
         fetch(`${API}/api/classes/${cls.classId}/students`, { headers: authHeaders() })
       ]);
-      
+
       let subjects = [];
       let rosterData = [];
-      
+
       if (subjRes.ok) subjects = await subjRes.json();
       if (rosterRes.ok) rosterData = await rosterRes.json();
-      
+
       setSelectedClassSubjects(subjects);
       setSelectedClassRoster(rosterData);
     } catch (err) {
@@ -605,7 +605,7 @@ export default function AdminClassManagement() {
               Read-only view of available classes, assigned teachers, subjects, and student rosters.
             </p>
           </div>
-          <button 
+          <button
             className="acm-btn acm-btn--ghost"
             onClick={loadAllClasses}
             disabled={overviewLoading}
@@ -983,12 +983,12 @@ export default function AdminClassManagement() {
               <h2 style={{ fontSize: "18px", fontWeight: "700", margin: "0 0 15px 0", color: "#0f172a", borderBottom: "1px solid #f1f5f9", paddingBottom: "10px" }}>
                 Class Allocation Details: {selectedClass.className}
               </h2>
-              
+
               <div style={{ marginBottom: "25px" }}>
                 <label style={{ display: "block", fontSize: "13px", fontWeight: "600", color: "#475569", marginBottom: "6px" }}>
                   Class Teacher
                 </label>
-                
+
                 {/* Select Field to Toggle Dropdown */}
                 <div className="input-container" style={{ position: "relative", marginBottom: "12px" }}>
                   <div
@@ -1009,7 +1009,7 @@ export default function AdminClassManagement() {
                     }}
                   >
                     <span>
-                      {selectedClass.teacherName 
+                      {selectedClass.teacherName
                         ? `${selectedClass.teacherName} (${selectedClass.teacherId})`
                         : "-- Click to Select Class Teacher --"
                       }
@@ -1039,11 +1039,11 @@ export default function AdminClassManagement() {
                       />
                     </div>
 
-                    <div style={{ 
-                      maxHeight: "180px", 
-                      overflowY: "auto", 
-                      border: "1px solid #cbd5e1", 
-                      borderRadius: "8px", 
+                    <div style={{
+                      maxHeight: "180px",
+                      overflowY: "auto",
+                      border: "1px solid #cbd5e1",
+                      borderRadius: "8px",
                       backgroundColor: "white"
                     }}>
                       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
@@ -1066,10 +1066,10 @@ export default function AdminClassManagement() {
                             .map((t) => {
                               const isCurrent = selectedClass.teacherId === t.teacherId;
                               return (
-                                <tr 
-                                  key={t.teacherId} 
-                                  style={{ 
-                                    borderBottom: "1px solid #cbd5e1", 
+                                <tr
+                                  key={t.teacherId}
+                                  style={{
+                                    borderBottom: "1px solid #cbd5e1",
                                     backgroundColor: isCurrent ? "#eff6ff" : "white"
                                   }}
                                 >
@@ -1111,12 +1111,12 @@ export default function AdminClassManagement() {
                             const matchesId = t.teacherId && String(t.teacherId).toLowerCase().includes(query);
                             return matchesName || matchesId;
                           }).length === 0 && (
-                            <tr>
-                              <td colSpan="4" style={{ padding: "20px 12px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
-                                No matching teachers found.
-                              </td>
-                            </tr>
-                          )}
+                              <tr>
+                                <td colSpan="4" style={{ padding: "20px 12px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
+                                  No matching teachers found.
+                                </td>
+                              </tr>
+                            )}
                         </tbody>
                       </table>
                     </div>
@@ -1223,7 +1223,7 @@ export default function AdminClassManagement() {
                     }}
                   >
                     <span>
-                      {newClass.teacherId 
+                      {newClass.teacherId
                         ? `${availableTeachers.find(t => t.teacherId === newClass.teacherId)?.fullName || newClass.teacherId} (${newClass.teacherId})`
                         : "-- Click to Select Class Teacher --"
                       }
@@ -1259,11 +1259,11 @@ export default function AdminClassManagement() {
                         />
                       </div>
 
-                      <div style={{ 
-                        maxHeight: "150px", 
-                        overflowY: "auto", 
-                        border: "1px solid #cbd5e1", 
-                        borderRadius: "6px", 
+                      <div style={{
+                        maxHeight: "150px",
+                        overflowY: "auto",
+                        border: "1px solid #cbd5e1",
+                        borderRadius: "6px",
                         backgroundColor: "white"
                       }}>
                         <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "11px", textAlign: "left" }}>
@@ -1286,10 +1286,10 @@ export default function AdminClassManagement() {
                               .map((t) => {
                                 const isSelected = newClass.teacherId === t.teacherId;
                                 return (
-                                  <tr 
-                                    key={t.teacherId} 
-                                    style={{ 
-                                      borderBottom: "1px solid #cbd5e1", 
+                                  <tr
+                                    key={t.teacherId}
+                                    style={{
+                                      borderBottom: "1px solid #cbd5e1",
                                       backgroundColor: isSelected ? "#eff6ff" : "white"
                                     }}
                                   >
@@ -1330,12 +1330,12 @@ export default function AdminClassManagement() {
                               const matchesId = t.teacherId && String(t.teacherId).toLowerCase().includes(query);
                               return matchesName || matchesId;
                             }).length === 0 && (
-                              <tr>
-                                <td colSpan="4" style={{ padding: "15px 8px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
-                                  No matching teachers found.
-                                </td>
-                              </tr>
-                            )}
+                                <tr>
+                                  <td colSpan="4" style={{ padding: "15px 8px", textAlign: "center", color: "#94a3b8", fontStyle: "italic" }}>
+                                    No matching teachers found.
+                                  </td>
+                                </tr>
+                              )}
                           </tbody>
                         </table>
                       </div>
@@ -1426,256 +1426,256 @@ export default function AdminClassManagement() {
         <>
           {/* ── DOB FILTER BAR ── */}
           <div className="acm-filter-bar">
-        <div className="acm-filter-group">
-          <label>DOB From</label>
-          <input
-            type="date"
-            value={dobFrom}
-            onChange={(e) => setDobFrom(e.target.value)}
-          />
-        </div>
-        <div className="acm-filter-group">
-          <label>DOB To</label>
-          <input
-            type="date"
-            value={dobTo}
-            onChange={(e) => setDobTo(e.target.value)}
-          />
-        </div>
-        <button
-          className="acm-btn acm-btn--primary"
-          onClick={loadBatch}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : "Load Student Pool"}
-        </button>
-        {batchLoaded && (
-          <div className="acm-batch-stats">
-            <span className="acm-stat-pill">
-              <FiUsers /> {pool.length} Unassigned
-            </span>
-            <span className="acm-stat-pill">
-              <FiBook /> {classes.length} Classes
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* ── 3-PANEL LAYOUT ── */}
-      <div className="acm-panels">
-        {/* ── PANEL 1: CLASS LIST ── */}
-        <div className="acm-panel acm-panel--classes">
-          <div className="acm-panel-header">
-            <h3>Classes</h3>
+            <div className="acm-filter-group">
+              <label>DOB From</label>
+              <input
+                type="date"
+                value={dobFrom}
+                onChange={(e) => setDobFrom(e.target.value)}
+              />
+            </div>
+            <div className="acm-filter-group">
+              <label>DOB To</label>
+              <input
+                type="date"
+                value={dobTo}
+                onChange={(e) => setDobTo(e.target.value)}
+              />
+            </div>
             <button
-              className="acm-btn-add-class"
-              onClick={() => setShowCreateModal(true)}
-              title="Create new class"
+              className="acm-btn acm-btn--primary"
+              onClick={loadBatch}
+              disabled={loading}
             >
-              <FiPlus style={{ marginRight: "4px" }} /> Create
+              {loading ? "Loading..." : "Load Student Pool"}
             </button>
-          </div>
-          <div className="acm-search">
-            <FiSearch className="acm-search-icon" />
-            <input
-              placeholder="Search classes..."
-              value={classSearch}
-              onChange={(e) => setClassSearch(e.target.value)}
-            />
-          </div>
-          <div className="acm-class-list">
-            {filteredClasses.length === 0 && (
-              <div className="acm-empty">
-                {batchLoaded
-                  ? "No classes for this batch. Create one!"
-                  : "Load a DOB batch to see classes."}
+            {batchLoaded && (
+              <div className="acm-batch-stats">
+                <span className="acm-stat-pill">
+                  <FiUsers /> {pool.length} Unassigned
+                </span>
+                <span className="acm-stat-pill">
+                  <FiBook /> {classes.length} Classes
+                </span>
               </div>
             )}
-            {filteredClasses.map((cls) => (
-              <div
-                key={cls.classId}
-                className={`acm-class-item ${selectedClass?.classId === cls.classId ? "acm-class-item--active" : ""}`}
-                onClick={() => selectClass(cls)}
-              >
-                <div className="acm-class-icon">
-                  <FiBook />
-                </div>
-                <div className="acm-class-info">
-                  <h4>{cls.className}</h4>
+          </div>
+
+          {/* ── 3-PANEL LAYOUT ── */}
+          <div className="acm-panels">
+            {/* ── PANEL 1: CLASS LIST ── */}
+            <div className="acm-panel acm-panel--classes">
+              <div className="acm-panel-header">
+                <h3>Classes</h3>
+                <button
+                  className="acm-btn-add-class"
+                  onClick={() => setShowCreateModal(true)}
+                  title="Create new class"
+                >
+                  <FiPlus style={{ marginRight: "4px" }} /> Create
+                </button>
+              </div>
+              <div className="acm-search">
+                <FiSearch className="acm-search-icon" />
+                <input
+                  placeholder="Search classes..."
+                  value={classSearch}
+                  onChange={(e) => setClassSearch(e.target.value)}
+                />
+              </div>
+              <div className="acm-class-list">
+                {filteredClasses.length === 0 && (
+                  <div className="acm-empty">
+                    {batchLoaded
+                      ? "No classes for this batch. Create one!"
+                      : "Load a DOB batch to see classes."}
+                  </div>
+                )}
+                {filteredClasses.map((cls) => (
+                  <div
+                    key={cls.classId}
+                    className={`acm-class-item ${selectedClass?.classId === cls.classId ? "acm-class-item--active" : ""}`}
+                    onClick={() => selectClass(cls)}
+                  >
+                    <div className="acm-class-icon">
+                      <FiBook />
+                    </div>
+                    <div className="acm-class-info">
+                      <h4>{cls.className}</h4>
+                      <p>
+                        {cls.studentCount ?? "?"} students
+                        {cls.teacherName && <> · {cls.teacherName}</>}
+                      </p>
+                    </div>
+                    <div className="acm-class-actions">
+                      <button
+                        className={`acm-toggle-btn ${cls.assignmentOpen ? "acm-toggle-btn--open" : ""}`}
+                        onClick={(e) => toggleTeacherEdit(cls.classId, e)}
+                        title={
+                          cls.assignmentOpen
+                            ? "Disable teacher edit"
+                            : "Enable teacher edit"
+                        }
+                      >
+                        {cls.assignmentOpen ? <FiUnlock /> : <FiLock />}
+                      </button>
+                      <button
+                        className="acm-delete-btn"
+                        onClick={(e) => deleteClass(cls.classId, e)}
+                        title="Delete class"
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
+                    <FiChevronRight className="acm-chevron" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ── PANEL 2: STUDENT POOL ── */}
+            <div className="acm-panel acm-panel--pool">
+              <div className="acm-panel-header">
+                <h3>Student Pool</h3>
+                <span className="acm-badge">{pool.length}</span>
+              </div>
+              <div className="acm-search">
+                <FiSearch className="acm-search-icon" />
+                <input
+                  placeholder="Search students..."
+                  value={poolSearch}
+                  onChange={(e) => setPoolSearch(e.target.value)}
+                />
+              </div>
+              {!batchLoaded ? (
+                <div className="acm-empty acm-empty--lg">
+                  <FiUsers size={40} />
                   <p>
-                    {cls.studentCount ?? "?"} students
-                    {cls.teacherName && <> · {cls.teacherName}</>}
+                    Set a DOB range and click <strong>Load Student Pool</strong>
                   </p>
                 </div>
-                <div className="acm-class-actions">
-                  <button
-                    className={`acm-toggle-btn ${cls.assignmentOpen ? "acm-toggle-btn--open" : ""}`}
-                    onClick={(e) => toggleTeacherEdit(cls.classId, e)}
-                    title={
-                      cls.assignmentOpen
-                        ? "Disable teacher edit"
-                        : "Enable teacher edit"
-                    }
-                  >
-                    {cls.assignmentOpen ? <FiUnlock /> : <FiLock />}
-                  </button>
-                  <button
-                    className="acm-delete-btn"
-                    onClick={(e) => deleteClass(cls.classId, e)}
-                    title="Delete class"
-                  >
-                    <FiTrash2 />
-                  </button>
-                </div>
-                <FiChevronRight className="acm-chevron" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── PANEL 2: STUDENT POOL ── */}
-        <div className="acm-panel acm-panel--pool">
-          <div className="acm-panel-header">
-            <h3>Student Pool</h3>
-            <span className="acm-badge">{pool.length}</span>
-          </div>
-          <div className="acm-search">
-            <FiSearch className="acm-search-icon" />
-            <input
-              placeholder="Search students..."
-              value={poolSearch}
-              onChange={(e) => setPoolSearch(e.target.value)}
-            />
-          </div>
-          {!batchLoaded ? (
-            <div className="acm-empty acm-empty--lg">
-              <FiUsers size={40} />
-              <p>
-                Set a DOB range and click <strong>Load Student Pool</strong>
-              </p>
-            </div>
-          ) : (
-            <div className="acm-student-list">
-              {filteredPool.length === 0 && (
-                <div className="acm-empty">
-                  All students in this batch are assigned! 🎉
-                </div>
-              )}
-              {filteredPool.map((student) => (
-                <div key={student.studentId} className="acm-student-item">
-                  <div className="acm-student-avatar">
-                    {student.fullName?.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="acm-student-info">
-                    <h4>{student.fullName}</h4>
-                    <p>
-                      {student.studentId} · {student.dateOfBirth}
-                    </p>
-                  </div>
-                  <button
-                    className="acm-assign-btn"
-                    onClick={() => assignStudent(student.studentId)}
-                    disabled={!selectedClass}
-                    title={
-                      selectedClass
-                        ? `Add to ${selectedClass.className}`
-                        : "Select a class first"
-                    }
-                  >
-                    <FiPlus />{" "}
-                    {selectedClass ? selectedClass.className : "Select class"}
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* ── PANEL 3: CLASS ROSTER ── */}
-        <div className="acm-panel acm-panel--roster">
-          <div className="acm-panel-header">
-            <h3>
-              {selectedClass ? (
-                <>
-                  <span className="acm-selected-class">
-                    {selectedClass.className}
-                  </span>{" "}
-                  Roster
-                </>
               ) : (
-                "Class Roster"
+                <div className="acm-student-list">
+                  {filteredPool.length === 0 && (
+                    <div className="acm-empty">
+                      All students in this batch are assigned! 🎉
+                    </div>
+                  )}
+                  {filteredPool.map((student) => (
+                    <div key={student.studentId} className="acm-student-item">
+                      <div className="acm-student-avatar">
+                        {student.fullName?.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="acm-student-info">
+                        <h4>{student.fullName}</h4>
+                        <p>
+                          {student.studentId} · {student.dateOfBirth}
+                        </p>
+                      </div>
+                      <button
+                        className="acm-assign-btn"
+                        onClick={() => assignStudent(student.studentId)}
+                        disabled={!selectedClass}
+                        title={
+                          selectedClass
+                            ? `Add to ${selectedClass.className}`
+                            : "Select a class first"
+                        }
+                      >
+                        <FiPlus />{" "}
+                        {selectedClass ? selectedClass.className : "Select class"}
+                      </button>
+                    </div>
+                  ))}
+                </div>
               )}
-            </h3>
-            {selectedClass && (
-              <span className="acm-badge">{roster.length}</span>
-            )}
-          </div>
-          {selectedClass && (
-            <div className="acm-roster-meta">
-              <span
-                className={`acm-status-pill ${selectedClass.assignmentOpen ? "acm-status-pill--open" : ""}`}
-              >
-                {selectedClass.assignmentOpen ? (
-                  <>
-                    <FiUnlock /> Teacher Edit ON
-                  </>
-                ) : (
-                  <>
-                    <FiLock /> Teacher Edit OFF
-                  </>
+            </div>
+
+            {/* ── PANEL 3: CLASS ROSTER ── */}
+            <div className="acm-panel acm-panel--roster">
+              <div className="acm-panel-header">
+                <h3>
+                  {selectedClass ? (
+                    <>
+                      <span className="acm-selected-class">
+                        {selectedClass.className}
+                      </span>{" "}
+                      Roster
+                    </>
+                  ) : (
+                    "Class Roster"
+                  )}
+                </h3>
+                {selectedClass && (
+                  <span className="acm-badge">{roster.length}</span>
                 )}
-              </span>
-              {selectedClass.teacherName && (
-                <span className="acm-teacher-pill">
-                  <FiUserCheck /> {selectedClass.teacherName}
-                </span>
-              )}
-            </div>
-          )}
-          <div className="acm-search">
-            <FiSearch className="acm-search-icon" />
-            <input
-              placeholder="Search roster..."
-              value={rosterSearch}
-              onChange={(e) => setRosterSearch(e.target.value)}
-            />
-          </div>
-          {!selectedClass ? (
-            <div className="acm-empty acm-empty--lg">
-              <FiBook size={40} />
-              <p>Click a class on the left to view its students</p>
-            </div>
-          ) : (
-            <div className="acm-student-list">
-              {filteredRoster.length === 0 && (
-                <div className="acm-empty">
-                  No students assigned yet. Add from the pool →
-                </div>
-              )}
-              {filteredRoster.map((student) => (
-                <div key={student.studentId} className="acm-student-item">
-                  <div className="acm-student-avatar acm-student-avatar--assigned">
-                    {student.fullName?.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="acm-student-info">
-                    <h4>{student.fullName}</h4>
-                    <p>
-                      {student.studentId} · {student.dateOfBirth}
-                    </p>
-                  </div>
-                  <button
-                    className="acm-remove-btn"
-                    onClick={() => removeStudent(student.studentId)}
-                    title="Remove from class"
+              </div>
+              {selectedClass && (
+                <div className="acm-roster-meta">
+                  <span
+                    className={`acm-status-pill ${selectedClass.assignmentOpen ? "acm-status-pill--open" : ""}`}
                   >
-                    <FiX />
-                  </button>
+                    {selectedClass.assignmentOpen ? (
+                      <>
+                        <FiUnlock /> Teacher Edit ON
+                      </>
+                    ) : (
+                      <>
+                        <FiLock /> Teacher Edit OFF
+                      </>
+                    )}
+                  </span>
+                  {selectedClass.teacherName && (
+                    <span className="acm-teacher-pill">
+                      <FiUserCheck /> {selectedClass.teacherName}
+                    </span>
+                  )}
                 </div>
-              ))}
+              )}
+              <div className="acm-search">
+                <FiSearch className="acm-search-icon" />
+                <input
+                  placeholder="Search roster..."
+                  value={rosterSearch}
+                  onChange={(e) => setRosterSearch(e.target.value)}
+                />
+              </div>
+              {!selectedClass ? (
+                <div className="acm-empty acm-empty--lg">
+                  <FiBook size={40} />
+                  <p>Click a class on the left to view its students</p>
+                </div>
+              ) : (
+                <div className="acm-student-list">
+                  {filteredRoster.length === 0 && (
+                    <div className="acm-empty">
+                      No students assigned yet. Add from the pool →
+                    </div>
+                  )}
+                  {filteredRoster.map((student) => (
+                    <div key={student.studentId} className="acm-student-item">
+                      <div className="acm-student-avatar acm-student-avatar--assigned">
+                        {student.fullName?.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="acm-student-info">
+                        <h4>{student.fullName}</h4>
+                        <p>
+                          {student.studentId} · {student.dateOfBirth}
+                        </p>
+                      </div>
+                      <button
+                        className="acm-remove-btn"
+                        onClick={() => removeStudent(student.studentId)}
+                        title="Remove from class"
+                      >
+                        <FiX />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
         </>
       )}
 
@@ -1717,9 +1717,8 @@ export default function AdminClassManagement() {
                 .map((cls) => (
                   <div
                     key={cls.classId}
-                    className={`acm-ov-card ${
-                      expandedClassId === cls.classId ? "acm-ov-card--open" : ""
-                    }`}
+                    className={`acm-ov-card ${expandedClassId === cls.classId ? "acm-ov-card--open" : ""
+                      }`}
                   >
                     {/* ── Class header row ── */}
                     <div
@@ -1737,9 +1736,8 @@ export default function AdminClassManagement() {
                       </div>
                       <div className="acm-ov-badges">
                         <span
-                          className={`acm-status-pill ${
-                            cls.assignmentOpen ? "acm-status-pill--open" : ""
-                          }`}
+                          className={`acm-status-pill ${cls.assignmentOpen ? "acm-status-pill--open" : ""
+                            }`}
                         >
                           {cls.assignmentOpen
                             ? <><FiUnlock /> Open</>
@@ -1758,9 +1756,8 @@ export default function AdminClassManagement() {
                           <FiTrash2 />
                         </button>
                         <FiChevronDown
-                          className={`acm-ov-chevron ${
-                            expandedClassId === cls.classId ? "acm-ov-chevron--open" : ""
-                          }`}
+                          className={`acm-ov-chevron ${expandedClassId === cls.classId ? "acm-ov-chevron--open" : ""
+                            }`}
                         />
                       </div>
                     </div>

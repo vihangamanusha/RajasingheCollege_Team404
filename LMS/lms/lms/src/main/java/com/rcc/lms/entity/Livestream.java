@@ -12,10 +12,12 @@ public class Livestream {
     private String title;
     private String date;
     private String time;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String videoURL;
 
-    @Column(name = "is_live")
+    @Column(name = "isLive")
     private boolean isLive = false;
 
     public Livestream() {}

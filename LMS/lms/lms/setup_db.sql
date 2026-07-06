@@ -161,6 +161,110 @@ CREATE TABLE IF NOT EXISTS report (
     ON DELETE CASCADE
 );
 
+-- =========================
+-- LIVESTREAMS TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS livestreams (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    date VARCHAR(255),
+    time VARCHAR(255),
+    description TEXT,
+    videoURL VARCHAR(255),
+    is_live TINYINT(1) DEFAULT 0
+);
+
+-- =========================
+-- NEWS TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS news (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    date VARCHAR(255) NOT NULL,
+    image VARCHAR(255)
+);
+
+-- =========================
+-- ANNOUNCEMENTS TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS announcements (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    category VARCHAR(255),
+    targetAudience VARCHAR(255),
+    content TEXT,
+    createdAt DATETIME
+);
+
+-- =========================
+-- DOCUMENTS TABLE (WEBSITE PUBLIC UPLOADS)
+-- =========================
+CREATE TABLE IF NOT EXISTS documents (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    topic VARCHAR(255),
+    fileName VARCHAR(255),
+    filePath VARCHAR(255)
+);
+
+-- =========================
+-- SPORTS TABLE (SPORT ACHIEVEMENTS)
+-- =========================
+CREATE TABLE IF NOT EXISTS sports (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    typesport VARCHAR(255) NOT NULL,
+    topic VARCHAR(255) NOT NULL,
+    description TEXT,
+    image VARCHAR(255)
+);
+
+-- =========================
+-- ASSIGNMENT TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS assignment (
+    assignment_id VARCHAR(50) PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    due_date DATE NOT NULL,
+    file_path VARCHAR(255),
+    note TEXT,
+    teacher_id VARCHAR(20) NOT NULL,
+    subject_id VARCHAR(50) NOT NULL,
+    class_id VARCHAR(50) NOT NULL,
+    upload_date DATE NOT NULL
+);
+
+-- =========================
+-- SYSTEM CONFIG TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS system_config (
+    config_key VARCHAR(50) PRIMARY KEY,
+    config_value VARCHAR(100) NOT NULL
+);
+
+-- =========================
+-- NON ACADEMIC TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS non_academic (
+    non_academic_id VARCHAR(20) PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    contact_number VARCHAR(15),
+    nic VARCHAR(20) UNIQUE,
+    designation VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'ACTIVE',
+    enroll_date VARCHAR(20),
+    deletion_note VARCHAR(500)
+);
+
+-- =========================
+-- CURRICULUM SUBJECT TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS curriculum_subject (
+    subject_name VARCHAR(50) PRIMARY KEY,
+    status VARCHAR(20) DEFAULT 'ACTIVE',
+    deletion_note VARCHAR(255)
+);
+
 -- Clear existing test data if any
 DELETE FROM marks WHERE student_id LIKE 'S_TEST_%';
 DELETE FROM subject WHERE subject_id LIKE 'SUB_TEST_%';

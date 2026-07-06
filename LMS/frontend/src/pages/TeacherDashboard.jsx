@@ -16,8 +16,14 @@ import {
     Calendar,
     Briefcase,
     Eye,
-    Trash2
+    Trash2,
+    Megaphone,
+    ChevronDown,
+    ChevronUp,
+    ChevronRight,
+    Bell
 } from "lucide-react";
+import axios from "axios";
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
 import schoolLogo from "../assets/school-logo.jpeg";
@@ -58,6 +64,11 @@ export default function TeacherDashboard() {
     const [dbAssignments, setDbAssignments] = useState([]);
     const [assignmentUploading, setAssignmentUploading] = useState(false);
 
+    // Announcements
+    const [announcements, setAnnouncements] = useState([]);
+    const [expandedAnnId, setExpandedAnnId] = useState(null);
+    const [annFilterCategory, setAnnFilterCategory] = useState("All");
+
     useEffect(() => {
         const token = localStorage.getItem("token");
         const storedSubRole = localStorage.getItem("subRole");
@@ -73,6 +84,8 @@ export default function TeacherDashboard() {
                 console.error("Failed to decode token", error);
             }
         }
+        // Fetch teacher announcements
+        fetchTeacherAnnouncements();
     }, []);
 
     useEffect(() => {
@@ -85,6 +98,20 @@ export default function TeacherDashboard() {
             }
         }
     }, [teacherClasses, teacherSubjects, materialClassId]);
+
+    const fetchTeacherAnnouncements = async () => {
+        try {
+            const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`);
+            const all = (res.data || []).sort((a, b) => b.id - a.id);
+            const teacherAnn = all.filter((ann) => {
+                const audience = (ann.targetAudience || "").toLowerCase();
+                return audience === "teachers" || audience === "all" || audience === "";
+            });
+            setAnnouncements(teacherAnn);
+        } catch (err) {
+            console.error("Failed to load teacher announcements:", err);
+        }
+    };
 
     const loadMaterials = async () => {
         if (!teacherId) return;
@@ -419,6 +446,14 @@ export default function TeacherDashboard() {
                     >
                         <Briefcase className="nav-icon" /> Assignments
                     </div>
+
+                    {/* Announcements */}
+                    <div
+                        className={`nav-item ${activeTab === "announcements" ? "active" : ""}`}
+                        onClick={() => setActiveTab("announcements")}
+                    >
+                        <Bell className="nav-icon" /> Announcements
+                    </div>
                 </div>
 
                 <div className="sidebar-footer">
@@ -593,10 +628,131 @@ export default function TeacherDashboard() {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Announcements Preview */}
+                            <div className="content-card" style={{ marginTop: "25px" }}>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "16px", borderBottom: "1px solid #f1f5f9", paddingBottom: "12px" }}>
+                                    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                        <Megaphone size={18} style={{ color: "#2b55cc" }} />
+                                        <h3 style={{ margin: 0, fontSize: "16px", fontWeight: "600" }}>Recent Announcements</h3>
+                                    </div>
+                                    <button
+                                        onClick={() => setActiveTab("announcements")}
+                                        style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", color: "#2b55cc", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}
+                                    >
+                                        View All <ChevronRight size={15} />
+                                    </button>
+                                </div>
+                                {announcements.length === 0 ? (
+                                    <p style={{ color: "#94a3b8", fontSize: "14px" }}>No announcements yet.</p>
+                                ) : (
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                                        {announcements.slice(0, 3).map((ann) => (
+                                            <div key={ann.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: "#f8fafc", borderRadius: 10 }}>
+                                                <div style={{ flex: 1 }}>
+                                                    <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "#1e293b" }}>{ann.title}</p>
+                                                    {ann.content && (
+                                                        <p style={{ margin: "3px 0 0", fontSize: "12px", color: "#64748b" }}>
+                                                            {ann.content.substring(0, 70)}{ann.content.length > 70 ? "…" : ""}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                                {ann.category && (
+                                                    <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 10px", borderRadius: 20, background: "#dbeafe", color: "#1d4ed8", flexShrink: 0, marginLeft: 12 }}>
+                                                        {ann.category}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </>
                     )}
 
-                    {/* TAB 2: MY SUBJECTS */}
+                    {/* TAB: ANNOUNCEMENTS */}
+                    {activeTab === "announcements" && (() => {
+                        const annCategories = ["All", ...Array.from(new Set(announcements.map(a => a.category).filter(Boolean)))];
+                        const displayedAnn = annFilterCategory === "All" ? announcements : announcements.filter(a => a.category === annFilterCategory);
+                        return (
+                            <>
+                                {/* Header banner */}
+                                <div style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2b55cc 100%)", color: "white", padding: "2rem 2.5rem", borderRadius: "1rem", display: "flex", alignItems: "center", gap: "1.25rem", boxShadow: "0 10px 25px rgba(30,58,138,0.2)", marginBottom: "2rem" }}>
+                                    <div style={{ background: "rgba(255,255,255,0.2)", width: 52, height: 52, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <Bell size={26} />
+                                    </div>
+                                    <div>
+                                        <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700 }}>Announcements</h1>
+                                        <p style={{ margin: "4px 0 0", opacity: 0.85, fontSize: "0.9rem" }}>School announcements for teachers</p>
+                                    </div>
+                                    <div style={{ marginLeft: "auto", background: "rgba(255,255,255,0.15)", padding: "7px 16px", borderRadius: "999px", fontSize: "0.85rem", fontWeight: 600 }}>
+                                        {displayedAnn.length} Notice{displayedAnn.length !== 1 ? "s" : ""}
+                                    </div>
+                                </div>
+
+                                {/* Category filter pills */}
+                                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+                                    {annCategories.map(cat => (
+                                        <button
+                                            key={cat}
+                                            onClick={() => setAnnFilterCategory(cat)}
+                                            style={{ padding: "6px 16px", borderRadius: 999, border: annFilterCategory === cat ? "none" : "1px solid #e2e8f0", background: annFilterCategory === cat ? "#2b55cc" : "#f8fafc", color: annFilterCategory === cat ? "#fff" : "#475569", fontSize: 13, fontWeight: 500, cursor: "pointer" }}
+                                        >
+                                            {cat}
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Announcement cards */}
+                                {displayedAnn.length === 0 ? (
+                                    <div style={{ textAlign: "center", padding: "4rem 0", color: "#94a3b8" }}>
+                                        <Megaphone size={48} style={{ marginBottom: "1rem", opacity: 0.5 }} />
+                                        <p style={{ fontSize: "1.1rem" }}>No announcements found.</p>
+                                    </div>
+                                ) : (
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                                        {displayedAnn.map(ann => {
+                                            const isOpen = expandedAnnId === ann.id;
+                                            return (
+                                                <div
+                                                    key={ann.id}
+                                                    onClick={() => setExpandedAnnId(isOpen ? null : ann.id)}
+                                                    style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "20px 24px", cursor: "pointer", transition: "all 0.2s" }}
+                                                >
+                                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+                                                        <div style={{ display: "flex", alignItems: "center", gap: 14, flex: 1 }}>
+                                                            <div style={{ width: 44, height: 44, borderRadius: 10, background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                                                <Megaphone size={20} color="#2b55cc" />
+                                                            </div>
+                                                            <div style={{ flex: 1 }}>
+                                                                <h3 style={{ margin: "0 0 4px", fontSize: 15, fontWeight: 600, color: "#1e293b" }}>{ann.title}</h3>
+                                                                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                                                    {ann.category && (
+                                                                        <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 10px", borderRadius: 20, background: "#dbeafe", color: "#1d4ed8" }}>{ann.category}</span>
+                                                                    )}
+                                                                    {ann.targetAudience && (
+                                                                        <span style={{ fontSize: 11, fontWeight: 500, padding: "2px 10px", borderRadius: 20, background: "#f0fdf4", color: "#15803d" }}>{ann.targetAudience}</span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div style={{ color: "#94a3b8", flexShrink: 0 }}>
+                                                            {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                                                        </div>
+                                                    </div>
+                                                    {isOpen && ann.content && (
+                                                        <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid #f1f5f9", fontSize: 14, color: "#475569", lineHeight: 1.7 }}>
+                                                            {ann.content}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </>
+                        );
+                    })()}
                     {activeTab === "my-subject" && (
                         <>
                             <div className="page-header" style={{ textAlign: "center", marginBottom: "40px" }}>

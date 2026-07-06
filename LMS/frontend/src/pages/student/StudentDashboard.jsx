@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Award, ClipboardList, Download, BookOpen, Loader2 } from "lucide-react";
+import { Award, ClipboardList, Download, BookOpen, Loader2, Megaphone, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/student`;
@@ -10,6 +10,7 @@ export default function StudentDashboard({ studentId }) {
   const [marks, setMarks]     = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(null);
+  const [announcements, setAnnouncements] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,6 +34,19 @@ export default function StudentDashboard({ studentId }) {
 
         setStudent(detailRes.data);
         setMarks(Array.isArray(marksRes.data) ? marksRes.data.slice(0, 3) : []);
+
+        // Fetch announcements for students
+        try {
+          const annRes = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`);
+          const allAnn = (annRes.data || []).sort((a, b) => b.id - a.id);
+          const studentAnn = allAnn.filter((ann) => {
+            const audience = (ann.targetAudience || "").toLowerCase();
+            return audience === "students" || audience === "all" || audience === "";
+          });
+          setAnnouncements(studentAnn.slice(0, 3));
+        } catch {
+          // announcements optional — don't break the page
+        }
       } catch (err) {
         console.error("Dashboard fetch error:", err);
         setError("Failed to load dashboard data. Please try again.");
@@ -132,6 +146,44 @@ export default function StudentDashboard({ studentId }) {
               </div>
           )) : (
               <p style={{ color: "#94a3b8", textAlign: "center", padding: "1.5rem 0" }}>No marks recorded yet.</p>
+          )}
+        </div>
+
+        {/* Announcements Preview */}
+        <div style={{ background: "#fff", padding: "1.5rem", borderRadius: "1rem", border: "1px solid #e2e8f0", marginTop: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.25rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: "#eff6ff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Megaphone size={18} color="#2563eb" />
+              </div>
+              <h2 style={{ fontSize: "1.1rem", fontWeight: 700, color: "#1e293b", margin: 0 }}>Recent Announcements</h2>
+            </div>
+            <Link to="/student/announcements" style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>
+              View All <ChevronRight size={15} />
+            </Link>
+          </div>
+          {announcements.length === 0 ? (
+            <p style={{ color: "#94a3b8", textAlign: "center", padding: "1rem 0" }}>No announcements yet.</p>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {announcements.map((ann) => (
+                <div key={ann.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 16px", background: "#f8fafc", borderRadius: 10 }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ margin: 0, fontWeight: 600, fontSize: "14px", color: "#1e293b" }}>{ann.title}</p>
+                    {ann.content && (
+                      <p style={{ margin: "3px 0 0", fontSize: "12px", color: "#64748b" }}>
+                        {ann.content.substring(0, 70)}{ann.content.length > 70 ? "…" : ""}
+                      </p>
+                    )}
+                  </div>
+                  {ann.category && (
+                    <span style={{ fontSize: "11px", fontWeight: 600, padding: "3px 10px", borderRadius: 20, background: "#dbeafe", color: "#1d4ed8", flexShrink: 0, marginLeft: 12 }}>
+                      {ann.category}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>

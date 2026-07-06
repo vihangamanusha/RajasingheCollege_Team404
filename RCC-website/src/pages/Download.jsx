@@ -98,7 +98,7 @@ export function Downloads() {
 
                     
                   <a
-                    href={`http://localhost:8080/api/documents/download/${doc.id}`}
+                    href={`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/documents/download/${doc.id}`}
                     className="download-btn"
                     target="_blank"
                     rel="noopener noreferrer"
