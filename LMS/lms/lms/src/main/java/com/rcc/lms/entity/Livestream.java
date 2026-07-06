@@ -3,7 +3,7 @@ package com.rcc.lms.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="livestreams")
+@Table(name="Livestreams")
 public class Livestream {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
