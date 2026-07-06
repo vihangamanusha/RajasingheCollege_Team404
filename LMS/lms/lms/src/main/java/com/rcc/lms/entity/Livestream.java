@@ -3,7 +3,7 @@ package com.rcc.lms.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name="Livestreams")
+@Table(name="livestreams")
 public class Livestream {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,6 +12,8 @@ public class Livestream {
     private String title;
     private String date;
     private String time;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String videoURL;
 
