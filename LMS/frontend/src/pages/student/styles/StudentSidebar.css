@@ -1,0 +1,83 @@
+.student-sidebar {
+    width: 260px;
+    height: 100vh;
+    background-color: #1e3a8a;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    position: fixed;
+    left: 0;
+    top: 0;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+}
+
+.logo-circle {
+    background: white;
+    color: #1e3a8a;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    color: #cbd5e1;
+    text-decoration: none;
+    margin-bottom: 0.5rem;
+    transition: 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: #2563eb;
+    color: white;
+}
+
+/* RESPONSIVENESS */
+@media (max-width: 768px) {
+    .student-sidebar {
+        width: 70px;
+        padding: 1rem 0.5rem;
+    }
+    .nav-label, .logo-text {
+        display: none; /* Mobile wala text hide karala icons witharak pennanawa */
+    }
+    .logo-circle {
+        margin: 0 auto;
+    }
+    .nav-item {
+        justify-content: center;
+    }
+}
+.layout-container {
+    display: flex;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: 260px; /* Sidebar width eka */
+    background-color: #f9fafb;
+    min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 70px; /* Mobile wala sidebar eka podi nisa */
+    }
+}

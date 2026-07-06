@@ -1,0 +1,59 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: rcc-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: rcc
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  backend:
+    build: ./LMS/lms/lms
+    container_name: rcc-backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/rcc
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      APP_BASE_URL: http://${SERVER_IP}:8080
+    volumes:
+      - ./LMS/lms/lms/uploads:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  rcc-website:
+    build:
+      context: ./RCC-website
+      args:
+        VITE_API_URL: http://${SERVER_IP}:8080
+    container_name: rcc-website
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+  admin-frontend:
+    build:
+      context: ./LMS/frontend
+      args:
+        VITE_API_URL: http://${SERVER_IP}:8080
+    container_name: rcc-admin
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
