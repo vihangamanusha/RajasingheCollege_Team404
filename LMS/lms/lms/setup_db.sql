@@ -161,6 +161,19 @@ CREATE TABLE IF NOT EXISTS report (
     ON DELETE CASCADE
 );
 
+-- =========================
+-- LIVESTREAMS TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS livestreams (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    date VARCHAR(255),
+    time VARCHAR(255),
+    description TEXT,
+    videoURL VARCHAR(255),
+    is_live TINYINT(1) DEFAULT 0
+);
+
 -- Clear existing test data if any
 DELETE FROM marks WHERE student_id LIKE 'S_TEST_%';
 DELETE FROM subject WHERE subject_id LIKE 'SUB_TEST_%';
