@@ -357,7 +357,7 @@ const totalPages = Math.ceil(events.length / eventsPerPage);
                 {t("home.lmsDesc")}
               </p>
               <a
-                href="https://lms.rrcc.lk"
+                href={import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : "https://lms.rrcc.lk/login")}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn btn-secondary-lms"

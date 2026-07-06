@@ -9,6 +9,8 @@ export function Header() {
   const { language, toggleLanguage, t } = useLanguage();
   const location = useLocation();
 
+  const lmsUrl = import.meta.env.VITE_LMS_URL || (import.meta.env.DEV ? "http://localhost:5174/login" : "https://lms.rrcc.lk/login");
+
   const navItems = [
     { name: t("nav.home"), path: "/" },
     { name: t("nav.about"), path: "/about" },
@@ -19,7 +21,7 @@ export function Header() {
     { name: t("nav.liveStream"), path: "/live-stream" },
     { name: t("nav.Downloads"), path: "/downloads" },
     { name: t("nav.contact"), path: "/contact" },
-    { name: t("nav.lms"), path: "#lms" },
+    { name: t("nav.lms"), path: lmsUrl },
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -50,11 +52,13 @@ export function Header() {
             {/* Desktop Navigation - Right */}
             <nav className="header-desktop-nav">
               {navItems.map((item) => {
-                if (item.path === "#lms") {
+                if (item.path.startsWith("http")) {
                   return (
                     <a
                       key={item.path}
                       href={item.path}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="nav-link"
                     >
                       {item.name}
@@ -99,12 +103,14 @@ export function Header() {
           {isMenuOpen && (
             <nav className="mobile-nav">
               {navItems.map((item) => {
-                if (item.path === "#lms") {
+                if (item.path.startsWith("http")) {
                   return (
                     <a
                       key={item.path}
                       href={item.path}
                       onClick={() => setIsMenuOpen(false)}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="mobile-nav-link"
                     >
                       {item.name}
