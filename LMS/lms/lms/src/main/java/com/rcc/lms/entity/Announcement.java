@@ -9,6 +9,7 @@ public class Announcement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "announcement_id")
     private Long id;
 
     private String title;
@@ -20,6 +21,7 @@ public class Announcement {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "created_date")
     private LocalDateTime createdAt;
 
     public Announcement() {
