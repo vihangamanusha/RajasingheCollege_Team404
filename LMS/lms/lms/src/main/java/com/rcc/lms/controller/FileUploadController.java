@@ -1,5 +1,6 @@
 package com.rcc.lms.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,11 +22,8 @@ public class FileUploadController {
 
     private static final String UPLOAD_DIR = "uploads/";
 
-    @Value("${app.base-url:http://localhost:8080}")
-    private String baseUrl;
-
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
 
         try {
 
@@ -46,8 +44,22 @@ public class FileUploadController {
             // SAVE FILE
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
+            // DETECT BASE URL DYNAMICALLY FROM REQUEST
+            String scheme = request.getScheme();             // http or https
+            String serverName = request.getServerName();     // localhost, IP, or domain
+            int serverPort = request.getServerPort();         // port number (e.g. 8080)
+            String contextPath = request.getContextPath();   // application context path
+
+            StringBuilder urlBuilder = new StringBuilder();
+            urlBuilder.append(scheme).append("://").append(serverName);
+            if (serverPort != 80 && serverPort != 443 && serverPort > 0) {
+                urlBuilder.append(":").append(serverPort);
+            }
+            urlBuilder.append(contextPath);
+            String computedBaseUrl = urlBuilder.toString();
+
             // RETURN IMAGE URL
-            String imageUrl = baseUrl + "/uploads/" + fileName;
+            String imageUrl = computedBaseUrl + "/uploads/" + fileName;
 
             return ResponseEntity.ok(imageUrl);
 
