@@ -63,10 +63,18 @@ export default function AdminAnnouncements() {
   const fetchAnnouncements = async () => {
     try {
       const response = await axios.get(API_URL);
-      const sorted = (response.data || []).sort((a, b) => b.id - a.id);
-      setAnnouncements(sorted);
+      const data = response.data;
+      if (Array.isArray(data)) {
+        const sorted = data.sort((a, b) => b.id - a.id);
+        setAnnouncements(sorted);
+      } else {
+        setAnnouncements([]);
+      }
     } catch (error) {
       console.log(error);
+      const errMsg = error.response?.data?.message || error.message || error;
+      alert("Failed to load announcements: " + JSON.stringify(errMsg));
+      setAnnouncements([]);
     }
   };
 
@@ -100,6 +108,8 @@ export default function AdminAnnouncements() {
       fetchAnnouncements();
     } catch (error) {
       console.log(error);
+      const errMsg = error.response?.data?.message || error.message || error;
+      alert("Failed to save announcement: " + JSON.stringify(errMsg));
     }
   };
 

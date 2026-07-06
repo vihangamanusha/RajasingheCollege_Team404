@@ -68,10 +68,16 @@ export default function Dashboard() {
     try {
       const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`;
       const response = await axios.get(API_URL);
-      const sorted = (response.data || []).sort((a, b) => b.id - a.id);
-      setAnnouncements(sorted);
+      const data = response.data;
+      if (Array.isArray(data)) {
+        const sorted = data.sort((a, b) => b.id - a.id);
+        setAnnouncements(sorted);
+      } else {
+        setAnnouncements([]);
+      }
     } catch (error) {
       console.error("Failed to load announcements:", error);
+      setAnnouncements([]);
     }
   };
 
