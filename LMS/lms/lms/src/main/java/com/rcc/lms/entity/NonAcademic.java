@@ -34,7 +34,23 @@ public class NonAcademic {
     @Column(name = "deletion_note", length = 500)
     private String deletionNote;
 
+    @Column(name = "nic_front_url", length = 255)
+    private String nicFrontUrl;
+
+    @Column(name = "nic_back_url", length = 255)
+    private String nicBackUrl;
+
+    @Column(name = "emergency_contact", length = 15)
+    private String emergencyContact;
+
     // Getters and Setters
+    public String getNicFrontUrl() { return nicFrontUrl; }
+    public void setNicFrontUrl(String nicFrontUrl) { this.nicFrontUrl = nicFrontUrl; }
+    public String getNicBackUrl() { return nicBackUrl; }
+    public void setNicBackUrl(String nicBackUrl) { this.nicBackUrl = nicBackUrl; }
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
+
     public String getNonAcademicId() { return nonAcademicId; }
     public void setNonAcademicId(String nonAcademicId) { this.nonAcademicId = nonAcademicId; }
     public String getFullName() { return fullName; }
