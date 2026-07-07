@@ -19,6 +19,12 @@ public class StudentProfileDTO {
     // From User
     private String email;
     private String status;
+    // Parent Details
+    private String fatherName;
+    private String motherName;
+    private String fatherContact;
+    private String motherContact;
+    private String emergencyContact;
 
     public StudentProfileDTO() {}
 
@@ -55,4 +61,19 @@ public class StudentProfileDTO {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public String getFatherName() { return fatherName; }
+    public void setFatherName(String fatherName) { this.fatherName = fatherName; }
+
+    public String getMotherName() { return motherName; }
+    public void setMotherName(String motherName) { this.motherName = motherName; }
+
+    public String getFatherContact() { return fatherContact; }
+    public void setFatherContact(String fatherContact) { this.fatherContact = fatherContact; }
+
+    public String getMotherContact() { return motherContact; }
+    public void setMotherContact(String motherContact) { this.motherContact = motherContact; }
+
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
 }
