@@ -49,6 +49,25 @@ public class StudentRegistrationRequest {
     @NotBlank(message = "Medium is required")
     private String medium;
 
+    @NotBlank(message = "Father's Name is required")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Father's Name can only contain letters and spaces")
+    private String fatherName;
+
+    @NotBlank(message = "Mother's Name is required")
+    @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "Mother's Name can only contain letters and spaces")
+    private String motherName;
+
+    @NotBlank(message = "Father's Contact is required")
+    @Pattern(regexp = "^\\d+$", message = "Father's Contact must contain only digits")
+    private String fatherContact;
+
+    @NotBlank(message = "Mother's Contact is required")
+    @Pattern(regexp = "^\\d+$", message = "Mother's Contact must contain only digits")
+    private String motherContact;
+
+    @NotBlank(message = "Emergency Contact is required")
+    private String emergencyContact;
+
     // ===== GETTERS AND SETTERS =====
 
     public String getUserId() { return userId; }
@@ -80,4 +99,19 @@ public class StudentRegistrationRequest {
 
     public String getMedium() { return medium; }
     public void setMedium(String medium) { this.medium = medium; }
+
+    public String getFatherName() { return fatherName; }
+    public void setFatherName(String fatherName) { this.fatherName = fatherName; }
+
+    public String getMotherName() { return motherName; }
+    public void setMotherName(String motherName) { this.motherName = motherName; }
+
+    public String getFatherContact() { return fatherContact; }
+    public void setFatherContact(String fatherContact) { this.fatherContact = fatherContact; }
+
+    public String getMotherContact() { return motherContact; }
+    public void setMotherContact(String motherContact) { this.motherContact = motherContact; }
+
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
 }

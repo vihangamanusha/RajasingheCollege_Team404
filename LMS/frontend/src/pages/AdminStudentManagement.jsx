@@ -28,7 +28,8 @@ export default function AdminStudentManagement() {
     const [originalEditData, setOriginalEditData] = useState(null);
     const [editFormData, setEditFormData] = useState({
         username: "", userId: "", email: "", password: "",
-        fullName: "", dateOfBirth: "", address: "", medium: "Sinhala", contactNumber: ""
+        fullName: "", dateOfBirth: "", address: "", medium: "Sinhala", contactNumber: "",
+        fatherName: "", motherName: "", fatherContact: "", motherContact: "", emergencyContact: ""
     });
 
     // =========================
@@ -85,7 +86,12 @@ export default function AdminStudentManagement() {
                     dateOfBirth: fullProfile.dateOfBirth || "",
                     address: fullProfile.address || "",
                     medium: fullProfile.medium || "SINHALA",
-                    contactNumber: fullProfile.contactNumber || ""
+                    contactNumber: fullProfile.contactNumber || "",
+                    fatherName: fullProfile.fatherName || "",
+                    motherName: fullProfile.motherName || "",
+                    fatherContact: fullProfile.fatherContact || "",
+                    motherContact: fullProfile.motherContact || "",
+                    emergencyContact: fullProfile.emergencyContact || ""
                 };
                 setEditFormData(completeData);
                 setOriginalEditData(completeData);
@@ -115,6 +121,23 @@ export default function AdminStudentManagement() {
         // 3. Contact Check: Exactly 10 digits
         if (!/^\d{10}$/.test(editFormData.contactNumber)) {
             errors.contactNumber = "Contact number must be exactly 10 digits.";
+        }
+
+        // Parent Details Checks
+        if (!/^[a-zA-Z\s]+$/.test(editFormData.fatherName)) {
+            errors.fatherName = "Father's Name can only contain letters and spaces.";
+        }
+        if (!/^[a-zA-Z\s]+$/.test(editFormData.motherName)) {
+            errors.motherName = "Mother's Name can only contain letters and spaces.";
+        }
+        if (!/^\d{10}$/.test(editFormData.fatherContact)) {
+            errors.fatherContact = "Father's contact must be exactly 10 digits.";
+        }
+        if (!/^\d{10}$/.test(editFormData.motherContact)) {
+            errors.motherContact = "Mother's contact must be exactly 10 digits.";
+        }
+        if (!editFormData.emergencyContact) {
+            errors.emergencyContact = "Please select an Emergency Contact.";
         }
 
         // 4. Email Check
@@ -333,6 +356,67 @@ export default function AdminStudentManagement() {
                                     rows="2"
                                 />
                                 {fieldErrors.address && <span className="error-text">{fieldErrors.address}</span>}
+                            </div>
+
+                            {/* PARENT DETAILS FIELDS */}
+                            <div className="modal-grid">
+                                <div className="modal-form-group">
+                                    <label>Father's Name</label>
+                                    <input
+                                        type="text"
+                                        className={fieldErrors.fatherName ? "error-input" : ""}
+                                        value={editFormData.fatherName}
+                                        onChange={(e) => setEditFormData({...editFormData, fatherName: e.target.value})}
+                                    />
+                                    {fieldErrors.fatherName && <span className="error-text">{fieldErrors.fatherName}</span>}
+                                </div>
+                                <div className="modal-form-group">
+                                    <label>Father's Contact Number</label>
+                                    <input
+                                        type="text"
+                                        className={fieldErrors.fatherContact ? "error-input" : ""}
+                                        value={editFormData.fatherContact}
+                                        onChange={(e) => setEditFormData({...editFormData, fatherContact: e.target.value})}
+                                    />
+                                    {fieldErrors.fatherContact && <span className="error-text">{fieldErrors.fatherContact}</span>}
+                                </div>
+                            </div>
+
+                            <div className="modal-grid">
+                                <div className="modal-form-group">
+                                    <label>Mother's Name</label>
+                                    <input
+                                        type="text"
+                                        className={fieldErrors.motherName ? "error-input" : ""}
+                                        value={editFormData.motherName}
+                                        onChange={(e) => setEditFormData({...editFormData, motherName: e.target.value})}
+                                    />
+                                    {fieldErrors.motherName && <span className="error-text">{fieldErrors.motherName}</span>}
+                                </div>
+                                <div className="modal-form-group">
+                                    <label>Mother's Contact Number</label>
+                                    <input
+                                        type="text"
+                                        className={fieldErrors.motherContact ? "error-input" : ""}
+                                        value={editFormData.motherContact}
+                                        onChange={(e) => setEditFormData({...editFormData, motherContact: e.target.value})}
+                                    />
+                                    {fieldErrors.motherContact && <span className="error-text">{fieldErrors.motherContact}</span>}
+                                </div>
+                            </div>
+
+                            <div className="modal-form-group">
+                                <label>Emergency Contact</label>
+                                <select
+                                    className={fieldErrors.emergencyContact ? "error-input" : ""}
+                                    value={editFormData.emergencyContact}
+                                    onChange={(e) => setEditFormData({...editFormData, emergencyContact: e.target.value})}
+                                >
+                                    <option value="" disabled>Select Emergency Contact</option>
+                                    <option value="FATHER">Father</option>
+                                    <option value="MOTHER">Mother</option>
+                                </select>
+                                {fieldErrors.emergencyContact && <span className="error-text">{fieldErrors.emergencyContact}</span>}
                             </div>
 
                             <div className="modal-grid">

@@ -66,6 +66,11 @@ CREATE TABLE IF NOT EXISTS student (
     medium ENUM('Sinhala','English') NOT NULL,
     class_id VARCHAR(20),
     contact_number VARCHAR(15),
+    father_name VARCHAR(100),
+    mother_name VARCHAR(100),
+    father_contact VARCHAR(15),
+    mother_contact VARCHAR(15),
+    emergency_contact VARCHAR(10),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON DELETE CASCADE,
@@ -284,10 +289,10 @@ INSERT INTO teacher (teacher_id, user_id, full_name, subject_specialization, con
 ('T_TEST_001', 'U_TEST_001', 'Test Teacher', 'Mathematics', '0711111111');
 
 -- Insert Students
-INSERT INTO student (student_id, user_id, full_name, date_of_birth, address, medium, class_id, contact_number) VALUES
-('S_TEST_001', 'U_TEST_002', 'Student One', '2010-05-15', 'Address 1', 'English', NULL, '0722222222'),
-('S_TEST_002', 'U_TEST_003', 'Student Two', '2010-06-20', 'Address 2', 'English', NULL, '0733333333'),
-('S_TEST_003', 'U_TEST_004', 'Student Three', '2010-07-25', 'Address 3', 'English', NULL, '0744444444');
+INSERT INTO student (student_id, user_id, full_name, date_of_birth, address, medium, class_id, contact_number, father_name, mother_name, father_contact, mother_contact, emergency_contact) VALUES
+('S_TEST_001', 'U_TEST_002', 'Student One', '2010-05-15', 'Address 1', 'English', NULL, '0722222222', 'Father One', 'Mother One', '0777777777', '0788888888', 'FATHER'),
+('S_TEST_002', 'U_TEST_003', 'Student Two', '2010-06-20', 'Address 2', 'English', NULL, '0733333333', 'Father Two', 'Mother Two', '0777777778', '0788888889', 'MOTHER'),
+('S_TEST_003', 'U_TEST_004', 'Student Three', '2010-07-25', 'Address 3', 'English', NULL, '0744444444', 'Father Three', 'Mother Three', '0777777779', '0788888890', 'FATHER');
 
 -- Insert Subject
 INSERT INTO subject (subject_id, subject_name, class_id, teacher_id) VALUES
