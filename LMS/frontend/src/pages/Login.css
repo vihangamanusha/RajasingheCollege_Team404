@@ -79,6 +79,7 @@
     outline: none;
     transition: border-color 0.2s;
     box-sizing: border-box;
+    margin-top: 0;
 }
 
 .input-container input::placeholder {

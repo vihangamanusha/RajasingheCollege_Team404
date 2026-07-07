@@ -1,7 +1,7 @@
 /* AdminTeacherManagement.css */
 
 .admin-teacher-management-container {
-    padding: 10px 0;
+    padding: 24px 30px;
 }
 
 /* =========================================
@@ -87,6 +87,7 @@
     border-radius: 8px;
 
     outline: none;
+    margin-top: 0;
 }
 
 .search-container input:focus {
@@ -100,6 +101,10 @@
 .data-table {
     width: 100%;
     border-collapse: collapse;
+}
+
+.data-table thead {
+    background: transparent;
 }
 
 .data-table th {
