@@ -27,7 +27,10 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
         contactNumber: "",
         nic: "",
         designation: "Clerk",
-        enrollDate: new Date().toISOString().split("T")[0]
+        enrollDate: new Date().toISOString().split("T")[0],
+        emergencyContact: "",
+        nicFrontUrl: "",
+        nicBackUrl: ""
     });
 
     const [editForm, setEditForm] = useState({
@@ -37,7 +40,10 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
         contactNumber: "",
         nic: "",
         designation: "",
-        enrollDate: ""
+        enrollDate: "",
+        emergencyContact: "",
+        nicFrontUrl: "",
+        nicBackUrl: ""
     });
 
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -70,6 +76,30 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
         return () => clearTimeout(delayDebounce);
     }, [searchTerm]);
 
+    const handleFileUpload = async (file, field, setFormObj, formObj, setMessageObj) => {
+        if (!file) return;
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/files/upload`, {
+                method: "POST",
+                body: formData
+            });
+            if (res.ok) {
+                const fileUrl = await res.text();
+                setFormObj(prev => ({ ...prev, [field]: fileUrl }));
+                setMessageObj({ text: `${field === "nicFrontUrl" ? "NIC Front" : "NIC Back"} uploaded successfully!`, type: "success" });
+            } else {
+                const errMsg = await res.text();
+                setMessageObj({ text: errMsg || "File upload failed", type: "error" });
+            }
+        } catch (err) {
+            console.error("Error uploading file:", err);
+            setMessageObj({ text: "Error uploading file", type: "error" });
+        }
+    };
+
     const openAddModal = async () => {
         setAddMessage({ text: "", type: "" });
         try {
@@ -86,7 +116,10 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
                     contactNumber: "",
                     nic: "",
                     designation: "Clerk",
-                    enrollDate: new Date().toISOString().split("T")[0]
+                    enrollDate: new Date().toISOString().split("T")[0],
+                    emergencyContact: "",
+                    nicFrontUrl: "",
+                    nicBackUrl: ""
                 });
                 setShowAddModal(true);
             }
@@ -101,6 +134,9 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
         if (!form.contactNumber.match(/^\d{10}$/)) return "Contact number must be exactly 10 digits!";
         if (form.email && !form.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) return "Invalid email address pattern!";
         if (!form.nic.match(/^([0-9]{9}[xXvV]|[0-9]{12})$/)) return "Invalid Sri Lankan NIC format!";
+        if (!form.emergencyContact || !form.emergencyContact.match(/^\d{10}$/)) return "Emergency contact number must be exactly 10 digits!";
+        if (!form.nicFrontUrl) return "NIC Front image is required!";
+        if (!form.nicBackUrl) return "NIC Back image is required!";
         return null;
     };
 
@@ -146,7 +182,10 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
             contactNumber: staff.contactNumber || "",
             nic: staff.nic || "",
             designation: staff.designation || "Clerk",
-            enrollDate: staff.enrollDate || ""
+            enrollDate: staff.enrollDate || "",
+            emergencyContact: staff.emergencyContact || "",
+            nicFrontUrl: staff.nicFrontUrl || "",
+            nicBackUrl: staff.nicBackUrl || ""
         });
         setShowEditModal(true);
     };
@@ -367,6 +406,48 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
                                         required
                                     />
                                 </div>
+                                <div className="modal-form-group">
+                                    <label>Emergency Contact *</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Emergency Contact"
+                                        value={addForm.emergencyContact}
+                                        onChange={(e) => setAddForm({ ...addForm, emergencyContact: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className="modal-form-group">
+                                    <label>NIC Front Image *</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleFileUpload(e.target.files[0], "nicFrontUrl", setAddForm, addForm, setAddMessage)}
+                                        required
+                                    />
+                                    {addForm.nicFrontUrl && (
+                                        <div style={{ marginTop: "4px" }}>
+                                            <a href={addForm.nicFrontUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#0f766e", fontWeight: "600" }}>
+                                                View Front Image
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="modal-form-group" style={{ gridColumn: "span 2" }}>
+                                    <label>NIC Back Image *</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleFileUpload(e.target.files[0], "nicBackUrl", setAddForm, addForm, setAddMessage)}
+                                        required
+                                    />
+                                    {addForm.nicBackUrl && (
+                                        <div style={{ marginTop: "4px" }}>
+                                            <a href={addForm.nicBackUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#0f766e", fontWeight: "600" }}>
+                                                View Back Image
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {addMessage.text && (
@@ -459,6 +540,46 @@ export default function AdminNonAcademicManagement({ readOnly = false }) {
                                         onChange={(e) => setEditForm({ ...editForm, enrollDate: e.target.value })}
                                         required
                                     />
+                                </div>
+                                <div className="modal-form-group">
+                                    <label>Emergency Contact *</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Emergency Contact"
+                                        value={editForm.emergencyContact}
+                                        onChange={(e) => setEditForm({ ...editForm, emergencyContact: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className="modal-form-group">
+                                    <label>NIC Front Image</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleFileUpload(e.target.files[0], "nicFrontUrl", setEditForm, editForm, setEditMessage)}
+                                    />
+                                    {editForm.nicFrontUrl && (
+                                        <div style={{ marginTop: "4px" }}>
+                                            <a href={editForm.nicFrontUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#0f766e", fontWeight: "600" }}>
+                                                View Current Front
+                                            </a>
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="modal-form-group" style={{ gridColumn: "span 2" }}>
+                                    <label>NIC Back Image</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(e) => handleFileUpload(e.target.files[0], "nicBackUrl", setEditForm, editForm, setEditMessage)}
+                                    />
+                                    {editForm.nicBackUrl && (
+                                        <div style={{ marginTop: "4px" }}>
+                                            <a href={editForm.nicBackUrl} target="_blank" rel="noreferrer" style={{ fontSize: "12px", color: "#0f766e", fontWeight: "600" }}>
+                                                View Current Back
+                                            </a>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

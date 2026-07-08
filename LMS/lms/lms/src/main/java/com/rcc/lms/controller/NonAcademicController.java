@@ -75,6 +75,15 @@ public class NonAcademicController {
             if (nonAcademic.getNic() == null || !nonAcademic.getNic().matches("^([0-9]{9}[xXvV]|[0-9]{12})$")) {
                 return ResponseEntity.badRequest().body("Error: Invalid Sri Lankan NIC format!");
             }
+            if (nonAcademic.getEmergencyContact() == null || !nonAcademic.getEmergencyContact().matches("^\\d{10}$")) {
+                return ResponseEntity.badRequest().body("Error: Emergency contact number must be exactly 10 digits!");
+            }
+            if (nonAcademic.getNicFrontUrl() == null || nonAcademic.getNicFrontUrl().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Error: NIC Front image is required!");
+            }
+            if (nonAcademic.getNicBackUrl() == null || nonAcademic.getNicBackUrl().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Error: NIC Back image is required!");
+            }
 
             nonAcademic.setStatus("ACTIVE");
             nonAcademicRepository.save(nonAcademic);
@@ -105,6 +114,15 @@ public class NonAcademicController {
             if (request.getNic() == null || !request.getNic().matches("^([0-9]{9}[xXvV]|[0-9]{12})$")) {
                 return ResponseEntity.badRequest().body("Error: Invalid Sri Lankan NIC format!");
             }
+            if (request.getEmergencyContact() == null || !request.getEmergencyContact().matches("^\\d{10}$")) {
+                return ResponseEntity.badRequest().body("Error: Emergency contact number must be exactly 10 digits!");
+            }
+            if (request.getNicFrontUrl() == null || request.getNicFrontUrl().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Error: NIC Front image is required!");
+            }
+            if (request.getNicBackUrl() == null || request.getNicBackUrl().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Error: NIC Back image is required!");
+            }
 
             existing.setFullName(request.getFullName());
             existing.setEmail(request.getEmail());
@@ -112,6 +130,9 @@ public class NonAcademicController {
             existing.setNic(request.getNic());
             existing.setDesignation(request.getDesignation());
             existing.setEnrollDate(request.getEnrollDate());
+            existing.setNicFrontUrl(request.getNicFrontUrl());
+            existing.setNicBackUrl(request.getNicBackUrl());
+            existing.setEmergencyContact(request.getEmergencyContact());
 
             nonAcademicRepository.save(existing);
             return ResponseEntity.ok("Non-academic staff profile updated successfully!");
