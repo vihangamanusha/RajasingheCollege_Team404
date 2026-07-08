@@ -31,7 +31,7 @@ import TeacherAnnouncementsView from "./TeacherAnnouncementsView";
 import TeacherAddMarks from "../Component/TeacherAddMarks";
 import { getTeacherMaterials, saveMaterial, deleteMaterial, uploadFile } from "../Service/TeacherMaterialService";
 import { getTeacherAssignments, saveAssignment, deleteAssignment } from "../Service/TeacherAssignmentService";
-
+//add
 export default function TeacherDashboard() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("Teacher");
@@ -308,12 +308,12 @@ export default function TeacherDashboard() {
 
             await saveMaterial(payload);
             alert("Material saved successfully!");
-            
+
             setMaterialTitle("");
             setMaterialNote("");
             setMaterialYoutube("");
             setMaterialPdfFile(null);
-            
+
             const fileInput = document.getElementById("material-pdf-file");
             if (fileInput) fileInput.value = "";
 
@@ -354,7 +354,7 @@ export default function TeacherDashboard() {
 
             await saveAssignment(payload);
             alert("Assignment saved successfully!");
-            
+
             setAssignmentTitle("");
             setAssignmentDueDate("");
             setAssignmentNote("");
@@ -374,9 +374,9 @@ export default function TeacherDashboard() {
     };
 
     const filteredClasses = selectedSubjectFilter
-        ? teacherClasses.filter(c => 
+        ? teacherClasses.filter(c =>
             teacherSubjects.some(ts => ts.subjectName.toLowerCase() === selectedSubjectFilter.toLowerCase() && ts.classId === c.classId)
-          )
+        )
         : teacherClasses;
 
     return (
@@ -480,7 +480,7 @@ export default function TeacherDashboard() {
 
                 {/* MAIN CONTENT AREA */}
                 <div className="dashboard-content" style={{ padding: "30px" }}>
-                    
+
                     {/* TAB 1: DASHBOARD OVERVIEW */}
                     {activeTab === "dashboard" && (
                         <>
@@ -870,7 +870,7 @@ export default function TeacherDashboard() {
                                         Manage class lesson files, reference links, and custom notes
                                     </p>
                                 </div>
-                                <button 
+                                <button
                                     onClick={() => setMaterialsView(materialsView === "form" ? "list" : "form")}
                                     style={{ padding: "10px 20px", display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#0f766e", color: "white", border: "none", borderRadius: "6px", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}
                                 >
@@ -994,7 +994,7 @@ export default function TeacherDashboard() {
                                                         <div>
                                                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
                                                                 <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b", wordBreak: "break-word", overflowWrap: "anywhere", flex: 1, paddingRight: "8px" }}>{m.title}</h4>
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleDeleteMaterial(m.documentId)}
                                                                     style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px", flexShrink: 0 }}
                                                                     title="Delete Material"
@@ -1050,7 +1050,7 @@ export default function TeacherDashboard() {
                                         Publish assignments, set due deadlines, and view submitted coursework
                                     </p>
                                 </div>
-                                <button 
+                                <button
                                     onClick={() => setAssignmentsView(assignmentsView === "form" ? "list" : "form")}
                                     style={{ padding: "10px 20px", display: "flex", alignItems: "center", gap: "8px", backgroundColor: "#0f766e", color: "white", border: "none", borderRadius: "6px", fontSize: "14px", fontWeight: "600", cursor: "pointer" }}
                                 >
@@ -1174,7 +1174,7 @@ export default function TeacherDashboard() {
                                                         <div>
                                                             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
                                                                 <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#1e293b", wordBreak: "break-word", overflowWrap: "anywhere", flex: 1, paddingRight: "8px" }}>{a.title}</h4>
-                                                                <button 
+                                                                <button
                                                                     onClick={() => handleDeleteAssignment(a.assignmentId)}
                                                                     style={{ color: "#ef4444", background: "none", border: "none", cursor: "pointer", padding: "4px", flexShrink: 0 }}
                                                                     title="Delete Assignment"
