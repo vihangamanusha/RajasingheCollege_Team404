@@ -17,9 +17,8 @@ import {
 } from "lucide-react";
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
-import schoolLogo from "../assets/school-logo.jpeg";
+import schoolLogo from "../assets/rcc.png";
 import AdminClassManagement from "./AdminClassManagement";
-import Announcement from "./AdminAnnouncements";
 import DeputyPrincipalAdminReport from "./DeputyPrincipalAdminReport";
 import AdminTeacherManagement from "./AdminTeacherManagement";
 import AdminTechOfficerManagement from "./AdminTechOfficerManagement";
@@ -38,6 +37,26 @@ export default function DeputyPrincipalDashboard() {
         totalSubjects: 0,
         recentActivities: []
     });
+    const [announcements, setAnnouncements] = useState([]);
+
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await fetch(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const sorted = (data || []).sort((a, b) => b.id - a.id);
+                    setAnnouncements(sorted);
+                }
+            } catch (err) {
+                console.error("Failed to load announcements:", err);
+            }
+        };
+        fetchAnnouncements();
+    }, []);
 
     useEffect(() => {
         const storedSubRole = localStorage.getItem("subRole");
@@ -75,16 +94,12 @@ export default function DeputyPrincipalDashboard() {
             {/* SIDEBAR NAVIGATION */}
             <div className="layout-sidebar">
                 <div className="sidebar-header">
-                    <div className="sidebar-logo">
-                        <img
-                            src={schoolLogo}
-                            alt="RCC Logo"
-                            style={{ width: '100%', borderRadius: '50%' }}
-                        />
-                    </div>
-                    <div className="sidebar-title">
-                        <h2>Rajasinghe<br />LMS</h2>
-                    </div>
+                    <img
+                        src={schoolLogo}
+                        alt="RCC Logo"
+                        className="logo-image"
+                    />
+                    <h2 className="logo">Rajasinghe LMS</h2>
                 </div>
 
                 <div className="sidebar-nav">
@@ -322,10 +337,106 @@ export default function DeputyPrincipalDashboard() {
                     {activeTab === "teachers" && <AdminTeacherManagement />}
                     {activeTab === "tech-officers" && <AdminTechOfficerManagement />}
                     {activeTab === "non-academic" && <AdminNonAcademicManagement />}
-                    {activeTab === "announcements" && <Announcement />}
+                    {activeTab === "announcements" && <DeputyPrincipalAnnouncementsView announcements={announcements} />}
                     {activeTab === "reports" && <DeputyPrincipalAdminReport />}
                 </div>
             </div>
+        </div>
+    );
+}
+
+function DeputyPrincipalAnnouncementsView({ announcements }) {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("All");
+
+    const filteredAnnouncements = announcements.filter(ann => {
+        const matchesSearch = ann.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                              ann.content.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategory === "All" || ann.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+    });
+
+    return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "24px", animation: "fadeIn 0.4s ease" }}>
+            <div className="page-header" style={{ marginBottom: "20px" }}>
+                <h1 style={{ fontSize: "28px", fontWeight: "700", color: "#1e293b", margin: "0 0 8px 0" }}>School Announcements</h1>
+                <p style={{ fontSize: "16px", color: "#64748b", margin: 0 }}>Stay informed with the latest updates and notices across all categories.</p>
+            </div>
+
+            {/* Filter controls */}
+            <div className="content-card" style={{ padding: "20px", display: "flex", flexWrap: "wrap", gap: "15px", alignItems: "center", justifyContent: "space-between" }}>
+                <input 
+                    type="text" 
+                    placeholder="Search announcements..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    style={{
+                        padding: "10px 16px",
+                        borderRadius: "8px",
+                        border: "1px solid #cbd5e1",
+                        fontSize: "14px",
+                        width: "300px",
+                        outline: "none",
+                        transition: "border-color 0.2s"
+                    }}
+                />
+                
+                <div style={{ display: "flex", gap: "10px" }}>
+                    {["All", "Academic", "Sports", "General"].map(cat => (
+                        <button
+                            key={cat}
+                            onClick={() => setSelectedCategory(cat)}
+                            style={{
+                                padding: "8px 16px",
+                                borderRadius: "20px",
+                                border: selectedCategory === cat ? "none" : "1px solid #cbd5e1",
+                                backgroundColor: selectedCategory === cat ? "#2b55cc" : "white",
+                                color: selectedCategory === cat ? "white" : "#64748b",
+                                fontSize: "13px",
+                                fontWeight: "600",
+                                cursor: "pointer",
+                                transition: "all 0.2s"
+                            }}
+                        >
+                            {cat}
+                        </button>
+                    ))}
+                </div>
+            </div>
+
+            {/* Announcements Grid */}
+            {filteredAnnouncements.length === 0 ? (
+                <div className="content-card" style={{ padding: "40px", textAlign: "center" }}>
+                    <p style={{ color: "#94a3b8", fontSize: "15px" }}>No announcements found matching the filter criteria.</p>
+                </div>
+            ) : (
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "20px" }}>
+                    {filteredAnnouncements.map((ann) => (
+                        <div key={ann.id} className="content-card" style={{ padding: "24px", display: "flex", flexDirection: "column", gap: "16px", height: "100%", justifyContent: "space-between" }}>
+                            <div>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" }}>
+                                    <span style={{
+                                        padding: "4px 8px",
+                                        fontSize: "11px",
+                                        fontWeight: "600",
+                                        borderRadius: "4px",
+                                        backgroundColor: ann.category === "Academic" ? "#dbeafe" : ann.category === "Sports" ? "#fef3c7" : "#e2e8f0",
+                                        color: ann.category === "Academic" ? "#1e40af" : ann.category === "Sports" ? "#d97706" : "#475569",
+                                        textTransform: "uppercase"
+                                    }}>{ann.category || "General"}</span>
+                                    <span style={{ fontSize: "12px", color: "#94a3b8" }}>Audience: {ann.targetAudience || "All"}</span>
+                                </div>
+                                <h3 style={{ margin: "0 0 10px 0", fontSize: "17px", color: "#1e293b", fontWeight: "700" }}>{ann.title}</h3>
+                                <p style={{ margin: 0, fontSize: "14px", color: "#475569", lineHeight: "1.6" }}>{ann.content}</p>
+                            </div>
+                            <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "12px", display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#94a3b8" }}>
+                                <span>Published</span>
+                                <span>📅 {new Date().toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
