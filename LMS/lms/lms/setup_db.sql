@@ -115,6 +115,8 @@ CREATE TABLE IF NOT EXISTS marks (
     subject_id VARCHAR(20) NOT NULL,
     term VARCHAR(20),
     assignment_mark INT,
+    academic_year INT NOT NULL,
+    exam_date DATE,
 
     FOREIGN KEY (student_id) REFERENCES student(student_id)
     ON DELETE CASCADE,
