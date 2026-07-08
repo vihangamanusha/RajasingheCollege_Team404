@@ -281,13 +281,14 @@ const loadDocuments = async () => {
       );
 
       const data = await response.json();
-
-      setStreams(data);
-
+      if (Array.isArray(data)) {
+        setStreams(data);
+      } else {
+        setStreams([]);
+      }
     } catch (error) {
-
       console.log(error);
-
+      setStreams([]);
     }
   };
 
@@ -478,17 +479,21 @@ const loadDocuments = async () => {
       }
     );
 
-    if (!res.ok) throw new Error("Image upload failed");
+    if (!res.ok) {
+      const errText = await res.text();
+      throw new Error(errText);
+    }
 
     const imageUrl = await res.text();
 
     setAchievementForm((prev) => ({
       ...prev,
-      image: imageUrl, // store REAL URL, not file
+      image: imageUrl,
     }));
   } catch (error) {
     console.log("Upload error:", error);
-    setAchievementImageError("Failed to upload image. Please try again.");
+    setAchievementImageError("Failed to upload image: " + error.message);
+    alert("Failed to upload image: " + error.message);
   }
 };
 
@@ -753,7 +758,7 @@ const handleDeleteNews = (id) => {
     console.log("Response:", text);
 
     if (!response.ok) {
-      alert("Save failed");
+      alert("Save failed: " + text);
       return;
     }
 
@@ -1298,13 +1303,18 @@ const handleDeleteDocument = (id) => {
               >
               <div className="achievement-image">
                   {item.image ? (
-                    <img src={item.image} alt={item.topic} />
+                    <img
+                      src={
+                        item.image.startsWith("http")
+                          ? item.image
+                          : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${item.image}`
+                      }
+                      alt={item.topic}
+                    />
                   ) : (
                     <div className="image-placeholder">
                       No Image
                     </div>
-
-                    
                   )}
                 </div>
                 
@@ -1416,14 +1426,19 @@ const handleDeleteDocument = (id) => {
 )}
                 </div>
 
-                {/* {achievementForm.image && (
-                  <div className="preview-image">
+                {achievementForm.image && (
+                  <div className="preview-image" style={{ marginTop: "10px", textAlign: "center" }}>
                     <img
-                      src={achievementForm.image}
+                      src={
+                        achievementForm.image.startsWith("http")
+                          ? achievementForm.image
+                          : `${import.meta.env.VITE_API_URL || "http://localhost:8080"}${achievementForm.image}`
+                      }
                       alt="preview"
+                      style={{ maxWidth: "100px", maxHeight: "100px", borderRadius: "6px", objectFit: "cover" }}
                     />
                   </div>
-                )} */}
+                )}
 
                 <div className="form-buttons">
                   <button type="button" 

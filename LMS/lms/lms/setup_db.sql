@@ -66,6 +66,11 @@ CREATE TABLE IF NOT EXISTS student (
     medium ENUM('Sinhala','English') NOT NULL,
     class_id VARCHAR(20),
     contact_number VARCHAR(15),
+    father_name VARCHAR(100),
+    mother_name VARCHAR(100),
+    father_contact VARCHAR(15),
+    mother_contact VARCHAR(15),
+    emergency_contact VARCHAR(10),
 
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     ON DELETE CASCADE,
@@ -161,6 +166,110 @@ CREATE TABLE IF NOT EXISTS report (
     ON DELETE CASCADE
 );
 
+-- =========================
+-- LIVESTREAMS TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS livestreams (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    date VARCHAR(255),
+    time VARCHAR(255),
+    description TEXT,
+    videoURL VARCHAR(255),
+    is_live TINYINT(1) DEFAULT 0
+);
+
+-- =========================
+-- NEWS TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS news (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    date VARCHAR(255) NOT NULL,
+    image VARCHAR(255)
+);
+
+-- =========================
+-- ANNOUNCEMENTS TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS announcements (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    category VARCHAR(255),
+    targetAudience VARCHAR(255),
+    content TEXT,
+    createdAt DATETIME
+);
+
+-- =========================
+-- DOCUMENTS TABLE (WEBSITE PUBLIC UPLOADS)
+-- =========================
+CREATE TABLE IF NOT EXISTS documents (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    topic VARCHAR(255),
+    fileName VARCHAR(255),
+    filePath VARCHAR(255)
+);
+
+-- =========================
+-- SPORTS TABLE (SPORT ACHIEVEMENTS)
+-- =========================
+CREATE TABLE IF NOT EXISTS sports (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    typesport VARCHAR(255) NOT NULL,
+    topic VARCHAR(255) NOT NULL,
+    description TEXT,
+    image VARCHAR(255)
+);
+
+-- =========================
+-- ASSIGNMENT TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS assignment (
+    assignment_id VARCHAR(50) PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    due_date DATE NOT NULL,
+    file_path VARCHAR(255),
+    note TEXT,
+    teacher_id VARCHAR(20) NOT NULL,
+    subject_id VARCHAR(50) NOT NULL,
+    class_id VARCHAR(50) NOT NULL,
+    upload_date DATE NOT NULL
+);
+
+-- =========================
+-- SYSTEM CONFIG TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS system_config (
+    config_key VARCHAR(50) PRIMARY KEY,
+    config_value VARCHAR(100) NOT NULL
+);
+
+-- =========================
+-- NON ACADEMIC TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS non_academic (
+    non_academic_id VARCHAR(20) PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100),
+    contact_number VARCHAR(15),
+    nic VARCHAR(20) UNIQUE,
+    designation VARCHAR(50),
+    status VARCHAR(20) DEFAULT 'ACTIVE',
+    enroll_date VARCHAR(20),
+    deletion_note VARCHAR(500)
+);
+
+-- =========================
+-- CURRICULUM SUBJECT TABLE
+-- =========================
+CREATE TABLE IF NOT EXISTS curriculum_subject (
+    subject_name VARCHAR(50) PRIMARY KEY,
+    status VARCHAR(20) DEFAULT 'ACTIVE',
+    deletion_note VARCHAR(255)
+);
+
 -- Clear existing test data if any
 DELETE FROM marks WHERE student_id LIKE 'S_TEST_%';
 DELETE FROM subject WHERE subject_id LIKE 'SUB_TEST_%';
@@ -180,10 +289,10 @@ INSERT INTO teacher (teacher_id, user_id, full_name, subject_specialization, con
 ('T_TEST_001', 'U_TEST_001', 'Test Teacher', 'Mathematics', '0711111111');
 
 -- Insert Students
-INSERT INTO student (student_id, user_id, full_name, date_of_birth, address, medium, class_id, contact_number) VALUES
-('S_TEST_001', 'U_TEST_002', 'Student One', '2010-05-15', 'Address 1', 'English', NULL, '0722222222'),
-('S_TEST_002', 'U_TEST_003', 'Student Two', '2010-06-20', 'Address 2', 'English', NULL, '0733333333'),
-('S_TEST_003', 'U_TEST_004', 'Student Three', '2010-07-25', 'Address 3', 'English', NULL, '0744444444');
+INSERT INTO student (student_id, user_id, full_name, date_of_birth, address, medium, class_id, contact_number, father_name, mother_name, father_contact, mother_contact, emergency_contact) VALUES
+('S_TEST_001', 'U_TEST_002', 'Student One', '2010-05-15', 'Address 1', 'English', NULL, '0722222222', 'Father One', 'Mother One', '0777777777', '0788888888', 'FATHER'),
+('S_TEST_002', 'U_TEST_003', 'Student Two', '2010-06-20', 'Address 2', 'English', NULL, '0733333333', 'Father Two', 'Mother Two', '0777777778', '0788888889', 'MOTHER'),
+('S_TEST_003', 'U_TEST_004', 'Student Three', '2010-07-25', 'Address 3', 'English', NULL, '0744444444', 'Father Three', 'Mother Three', '0777777779', '0788888890', 'FATHER');
 
 -- Insert Subject
 INSERT INTO subject (subject_id, subject_name, class_id, teacher_id) VALUES

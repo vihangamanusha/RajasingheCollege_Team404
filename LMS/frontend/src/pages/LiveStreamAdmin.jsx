@@ -58,11 +58,14 @@ export default function LiveStreamAdmin() {
       );
 
       const data = await response.json();
-
-      setStreams(data);
-
+      if (Array.isArray(data)) {
+        setStreams(data);
+      } else {
+        setStreams([]);
+      }
     } catch (error) {
       console.log(error);
+      setStreams([]);
     }
   };
 
@@ -167,8 +170,9 @@ export default function LiveStreamAdmin() {
         loadStreams();
 
       } else {
-
-        setMessage("Operation failed");
+        const errorText = await response.text();
+        setMessage("Operation failed: " + errorText);
+        alert("Operation failed: " + errorText);
       }
 
     } catch (error) {

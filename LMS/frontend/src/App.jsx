@@ -201,8 +201,10 @@ function App() {
                 <Route path="admin/teachers" element={<AdminTeacherManagement />} />
                 <Route path="admin/tech-officers" element={<AdminTechOfficerManagement />} />
                 <Route path="admin/announcements" element={<AdminAnnouncements />} />
-                <Route path="admin/analytics" element={<AdminAcademicAnalytics />} />
+                <Route path="admin/analytics" element={<AdminReport />} />
                 <Route path="admin/classes" element={<AdminClassManagement />} />
+                <Route path="admin/users/student" element={<StudentRegister />} />
+                <Route path="admin/users/teacher" element={<TeacherRegister />} />
 
                 <Route path="student-register" element={<StudentRegister />} />
                 <Route path="events" element={<Event />} />

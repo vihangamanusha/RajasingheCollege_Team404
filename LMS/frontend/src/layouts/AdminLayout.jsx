@@ -90,8 +90,8 @@ export default function AdminLayout() {
 
                     {/* Announcements */}
                     <div
-                        className={`nav-item ${isActive("#")}`}
-                        onClick={() => navigate("#")}
+                        className={`nav-item ${isActive("/admin/announcements")}`}
+                        onClick={() => navigate("/admin/announcements")}
                     >
                         <FiMessageSquare className="nav-icon" /> Announcements
                     </div>

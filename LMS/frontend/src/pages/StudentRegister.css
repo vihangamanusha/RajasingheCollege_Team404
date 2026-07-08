@@ -16,28 +16,117 @@
 
 .page-header h1 {
     text-align: center;
-    margin: 0 0 8px 0;
+}
+
+.page-header h1 {
+    font-size: 28px;
+    font-weight: 800;
     color: #0f172a;
-    font-size: 24px;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
 }
 
 .page-header p {
-    text-align: center;
-    margin: 0 0 30px 0;
     color: #64748b;
-    font-size: 16px;
+    font-size: 15px;
+    margin: 0;
 }
 
 .form-card {
     background: white;
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     border: 1px solid #f1f5f9;
 }
 
+/* ==========================================
+   PROGRESS BAR TRACKER
+========================================== */
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    margin-bottom: 40px;
+    padding: 0 20px;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    flex: 1;
+}
+
+.step-number {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.step-label {
+    margin-top: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94a3b8;
+    transition: all 0.3s ease;
+}
+
+.progress-step.active .step-number {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+}
+
+.progress-step.active .step-label {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.progress-line {
+    position: absolute;
+    top: 19px;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background-color: #e2e8f0;
+    z-index: 1;
+}
+
+.progress-line-fill {
+    height: 100%;
+    background-color: #2563eb;
+    transition: width 0.4s ease;
+}
+
+/* ==========================================
+   FORM CONTROLS
+========================================== */
+.section-subtitle {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin: 25px 0 15px 0;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
     text-align: left;
 }
 
@@ -47,32 +136,47 @@
     font-size: 14px;
     font-weight: 600;
     margin-bottom: 8px;
+    transition: color 0.2s ease;
+}
+
+.form-group:focus-within label {
+    color: #2563eb;
 }
 
 .input-container {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
 .input-icon {
     position: absolute;
     left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
     color: #94a3b8;
     font-size: 18px;
+    transition: color 0.2s ease;
+    pointer-events: none;
+    z-index: 5;
 }
 
-/* Include select elements so the dropdown matches text inputs */
+.form-group:focus-within .input-icon {
+    color: #2563eb;
+}
+
 .input-container input,
 .input-container select {
     width: 100%;
-    padding: 12px 12px 12px 40px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
+    height: 48px;
+    padding: 0 12px 0 44px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
     font-size: 14px;
-    color: #334155;
+    color: #1e293b;
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s ease-in-out;
     box-sizing: border-box;
     background-color: white;
     margin-top: 0;
@@ -84,99 +188,117 @@
 
 .input-container input:focus,
 .input-container select:focus {
-    border-color: #2b55cc;
+    border-color: #2563eb;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
 .message-box {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 8px;
+    margin-top: 25px;
+    padding: 14px;
+    border-radius: 10px;
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 600;
     text-align: center;
 }
 
 .message-box.success {
-    background-color: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background-color: #f0fdf4;
+    color: #15803d;
+    border: 1.5px solid #bbf7d0;
 }
 
 .message-box.error {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background-color: #fef2f2;
+    color: #b91c1c;
+    border: 1.5px solid #fecaca;
 }
 
 /* ==========================================
-   NEW WIZARD STYLES
-========================================== */
-
-.step-indicator {
-    text-align: center;
-    color: #2b55cc;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 25px;
-    background-color: #eff6ff;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #bfdbfe;
-}
-
+   BUTTONS & GRIDS
+========================================= */
 .button-group {
     display: flex;
     gap: 15px;
-    margin-top: 25px;
+    margin-top: 30px;
 }
 
 .back-btn {
     width: 100%;
-    background-color: #f1f5f9;
-    color: #475569;
-    border: none;
-    border-radius: 8px;
+    background-color: #ffffff;
+    color: #64748b;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 10px;
     padding: 14px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease-in-out;
 }
 
 .back-btn:hover {
-    background-color: #e2e8f0;
-    color: #1e293b;
+    background-color: #f8fafc;
+    color: #334155;
+    border-color: #cbd5e1;
 }
 
 .submit-btn {
     width: 100%;
-    background-color: #2b55cc;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
     color: #ffffff;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 14px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
 }
 
 .submit-btn:hover:not(:disabled) {
-    background-color: #1e40af;
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px -1px rgba(37, 99, 235, 0.3);
 }
 
-/* Visually disable buttons when validation fails */
+.submit-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
 .submit-btn:disabled {
-    background-color: #94a3b8;
+    background: #cbd5e1;
+    color: #94a3b8;
     cursor: not-allowed;
-    opacity: 0.8;
+    box-shadow: none;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 640px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
 }
 
 .wizard-step {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
+    from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
