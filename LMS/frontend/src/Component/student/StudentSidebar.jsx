@@ -11,7 +11,7 @@ import {
   Library,
 } from "lucide-react";
 
-import schoolLogo from "../../assets/school-logo.jpeg";
+import schoolLogo from "../../assets/rcc.png";
 const StudentSidebar = () => {
   const menuItems = [
     {
@@ -56,53 +56,35 @@ const StudentSidebar = () => {
           color: #ffffff;
           display: flex;
           flex-direction: column;
-          padding: 1.5rem 1rem;
+          padding: 28px 22px;
           position: fixed;
           left: 0;
           top: 0;
-          border-right: 1px solid #1e40af;
           box-shadow: 4px 0 15px rgba(0, 0, 0, 0.2);
           z-index: 1000;
         }
 
-        .logo-area {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          margin-bottom: 2.5rem;
-          padding: 0.5rem;
+        .logo-image {
+          width: 108px;
+          height: 102px;
+          margin-left: 55px;
+          display: block;
         }
 
-        /* Photo ekata galapenna meka haduwa */
-        .logo-photo-container {
-          width: 45px;
-          height: 45px;
-          border-radius: 10px;
-          overflow: hidden; /* Photo eka border eken pita yanne nathi wenna */
-          background-color: #0629eeff;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .logo-photo-container img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover; /* Photo eka lassanata fit wenna */
-        }
-
-        .logo-brand {
+        .logo {
+          margin: 10px 0 30px;
+          font-size: 1.3rem;
+          letter-spacing: 0.04em;
           font-weight: 700;
-          font-size: 1.1rem;
           line-height: 1.2;
-          color: #fafafaff;
+          margin-left: 25px;
+          color: #ffffff;
         }
 
         .nav-menu {
           display: flex;
           flex-direction: column;
-          gap: 0.4rem;
+          gap: 10px;
           flex: 1;
         }
 
@@ -110,63 +92,59 @@ const StudentSidebar = () => {
           display: flex;
           align-items: center;
           gap: 12px;
-          padding: 0.9rem 1.25rem;
-          border-radius: 12px;
+          padding: 12px 16px;
+          border-radius: 14px;
           text-decoration: none;
-          color: rgba(255, 255, 255, 0.7);
+          color: #dbe6ff;
           font-weight: 500;
-          transition: all 0.2s ease;
+          transition: background 0.2s ease, color 0.2s ease;
         }
 
         .nav-link-item:hover {
-          background-color: rgba(255, 255, 255, 0.1);
+          background-color: rgba(255, 255, 255, 0.12);
           color: #ffffff;
-          transform: translateX(4px);
         }
 
         .nav-link-item.active {
-          background-color: #2563eb;
+          background-color: rgba(255, 255, 255, 0.12);
           color: #ffffff;
-          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
         }
 
         .sidebar-footer {
           margin-top: auto;
           padding-top: 1.5rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .logout-button {
           width: 100%;
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 0.9rem 1.25rem;
-          background: transparent;
+          justify-content: center;
+          gap: 10px;
+          padding: 12px 16px;
+          background: #ff4d65;
           border: none;
-          color: rgba(255, 255, 255, 0.6);
+          color: #ffffff !important;
           cursor: pointer;
-          font-size: 1rem;
+          font-size: 15px;
           font-weight: 600;
-          border-radius: 12px;
+          border-radius: 14px;
+          transition: background 0.3s;
+          margin-top: 40px;
+        }
+
+        .logout-button:hover {
+          background: #ff3653 !important;
         }
       `}</style>
 
-        <div className="logo-area">
-          {/* Logo Photo eka methanata danna */}
-          <div className="logo-photo-container">
-            <img
-                src={schoolLogo}
-                alt="School Logo"
-            />
-          </div>
-          <div className="logo-brand">
-            Rajasinghe
-            <br />
-            <span style={{ fontSize: "0.85rem", opacity: 0.7, fontWeight: 400 }}>
-            LMS 
-          </span>
-          </div>
+        <div className="sidebar-header" style={{ display: "block", padding: "0", marginBottom: "2rem" }}>
+          <img
+              src={schoolLogo}
+              alt="RCC Logo"
+              className="logo-image"
+          />
+          <h2 className="logo">Rajasinghe LMS</h2>
         </div>
 
         <nav className="nav-menu">
@@ -187,7 +165,10 @@ const StudentSidebar = () => {
         <div className="sidebar-footer">
           <button
               className="logout-button"
-              onClick={() => (window.location.href = "/login")}
+              onClick={() => {
+                  localStorage.clear();
+                  window.location.href = "/login";
+              }}
           >
             <LogOut size={22} />
             <span>Logout</span>

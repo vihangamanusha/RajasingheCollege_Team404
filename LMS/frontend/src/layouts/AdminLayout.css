@@ -8,82 +8,98 @@
 
 /* Sidebar Styles */
 .layout-sidebar {
-    width: 250px;
-    background-color: #2b4c9b;
+    width: 260px;
+    background-color: #1e3a8a;
     color: white;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    /* Added relative positioning for the mobile handle */
-    position: relative;
+    padding: 28px 22px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.layout-sidebar .logo {
+    margin: 0 0 30px;
+    font-size: 1.3rem;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-left: 25px;
+    color: #ffffff;
 }
 
 .sidebar-header {
-    padding: 24px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.sidebar-logo {
-    width: 40px;
-    height: 40px;
-    background-color: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #2b4c9b;
-    font-weight: bold;
-    font-size: 12px;
-}
-
-.sidebar-title h2 {
-    margin: 0;
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffffff;
+    padding: 0;
+    display: block;
+    border-bottom: none;
 }
 
 .sidebar-nav {
     padding: 20px 0;
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 12px 20px;
-    margin: 4px 16px; /* Added margin for rounded pill shape */
-    color: rgba(255, 255, 255, 0.8);
+    padding: 12px 16px;
+    margin: 0;
+    color: #dbe6ff;
     text-decoration: none;
     font-size: 15px;
-    border-radius: 8px; /* Rounded corners */
-    transition: all 0.2s;
+    border-radius: 14px;
+    transition: background 0.2s ease, color 0.2s ease;
     cursor: pointer;
 }
 
 .nav-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.12);
     color: white;
 }
 
 /* Updated active state to match the prototype's rounded blue button style */
 .nav-item.active {
-    background-color: #3b66d4;
+    background-color: rgba(255, 255, 255, 0.12);
     color: white;
     font-weight: 500;
 }
 
 .nav-icon {
-    margin-right: 15px;
+    margin-right: 12px;
     font-size: 18px;
+    color: #ffffff;
+    flex-shrink: 0;
 }
 
 .sidebar-footer {
-    padding: 20px 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0;
+    border-top: none;
+}
+
+.logout-item {
+    width: 100%;
+    background: #ff4d65;
+    color: #ffffff !important;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 40px;
+    transition: 0.3s;
+}
+
+.logout-item:hover {
+    background: #ff3653 !important;
 }
 
 /* Main Content Area */
@@ -121,7 +137,7 @@
     .layout-sidebar {
         position: fixed;
         top: 0;
-        left: -230px; /* 250px width minus 20px handle = -230px */
+        left: -240px; /* 260px width minus 20px handle = -240px */
         height: 100vh;
         z-index: 1000;
         transition: left 0.3s ease-in-out;

@@ -26,7 +26,8 @@ import {
 import axios from "axios";
 import "./Dashboard.css";
 import "../layouts/AdminLayout.css";
-import schoolLogo from "../assets/school-logo.jpeg";
+import schoolLogo from "../assets/rcc.png";
+import TeacherAnnouncementsView from "./TeacherAnnouncementsView";
 import TeacherAddMarks from "../Component/TeacherAddMarks";
 import { getTeacherMaterials, saveMaterial, deleteMaterial, uploadFile } from "../Service/TeacherMaterialService";
 import { getTeacherAssignments, saveAssignment, deleteAssignment } from "../Service/TeacherAssignmentService";
@@ -383,16 +384,12 @@ export default function TeacherDashboard() {
             {/* SIDEBAR NAVIGATION */}
             <div className="layout-sidebar">
                 <div className="sidebar-header">
-                    <div className="sidebar-logo">
-                        <img
-                            src={schoolLogo}
-                            alt="RCC Logo"
-                            style={{ width: '100%', borderRadius: '50%' }}
-                        />
-                    </div>
-                    <div className="sidebar-title">
-                        <h2>Rajasinghe<br />LMS</h2>
-                    </div>
+                    <img
+                        src={schoolLogo}
+                        alt="RCC Logo"
+                        className="logo-image"
+                    />
+                    <h2 className="logo">Rajasinghe LMS</h2>
                 </div>
 
                 <div className="sidebar-nav">
@@ -1216,6 +1213,8 @@ export default function TeacherDashboard() {
                             )}
                         </>
                     )}
+
+                    {activeTab === "announcements" && <TeacherAnnouncementsView />}
 
                 </div>
             </div>

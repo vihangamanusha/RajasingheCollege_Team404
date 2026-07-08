@@ -4,7 +4,7 @@ import {
 } from "react-icons/fi";
 import { FaChalkboardTeacher, FaUserShield } from "react-icons/fa";
 import "./AdminLayout.css";
-import schoolLogo from "../assets/school-logo.jpeg";
+import schoolLogo from "../assets/rcc.png";
 
 export default function AdminLayout() {
     const navigate = useNavigate();
@@ -38,16 +38,12 @@ export default function AdminLayout() {
             <div className="layout-sidebar">
 
                 <div className="sidebar-header">
-                    <div className="sidebar-logo">
-                        <img
-                            src={schoolLogo}
-                            alt="RCC Logo"
-                            style={{ width: '100%', borderRadius: '50%' }}
-                        />
-                    </div>
-                    <div className="sidebar-title">
-                        <h2>Rajasinghe<br />LMS</h2>
-                    </div>
+                    <img
+                        src={schoolLogo}
+                        alt="RCC Logo"
+                        className="logo-image"
+                    />
+                    <h2 className="logo">Rajasinghe LMS</h2>
                 </div>
 
                 <div className="sidebar-nav">
