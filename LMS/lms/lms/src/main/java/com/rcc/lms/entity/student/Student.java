@@ -36,6 +36,21 @@ public class Student {
     @Column(name = "contact_number", length = 15)
     private String contactNumber;
 
+    @Column(name = "father_name", length = 100)
+    private String fatherName;
+
+    @Column(name = "mother_name", length = 100)
+    private String motherName;
+
+    @Column(name = "father_contact", length = 15)
+    private String fatherContact;
+
+    @Column(name = "mother_contact", length = 15)
+    private String motherContact;
+
+    @Column(name = "emergency_contact", length = 10)
+    private String emergencyContact;
+
     // Constructors
     public Student() {}
 
@@ -49,6 +64,25 @@ public class Student {
         this.medium = medium;
         this.classEntity = classEntity;
         this.contactNumber = contactNumber;
+    }
+
+    public Student(String studentId, User user, String fullName, LocalDate dateOfBirth,
+                   String address, Medium medium, ClassEntity classEntity, String contactNumber,
+                   String fatherName, String motherName, String fatherContact, String motherContact,
+                   String emergencyContact) {
+        this.studentId = studentId;
+        this.user = user;
+        this.fullName = fullName;
+        this.dateOfBirth = dateOfBirth;
+        this.address = address;
+        this.medium = medium;
+        this.classEntity = classEntity;
+        this.contactNumber = contactNumber;
+        this.fatherName = fatherName;
+        this.motherName = motherName;
+        this.fatherContact = fatherContact;
+        this.motherContact = motherContact;
+        this.emergencyContact = emergencyContact;
     }
 
     // Getters and Setters
@@ -75,4 +109,19 @@ public class Student {
 
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public String getFatherName() { return fatherName; }
+    public void setFatherName(String fatherName) { this.fatherName = fatherName; }
+
+    public String getMotherName() { return motherName; }
+    public void setMotherName(String motherName) { this.motherName = motherName; }
+
+    public String getFatherContact() { return fatherContact; }
+    public void setFatherContact(String fatherContact) { this.fatherContact = fatherContact; }
+
+    public String getMotherContact() { return motherContact; }
+    public void setMotherContact(String motherContact) { this.motherContact = motherContact; }
+
+    public String getEmergencyContact() { return emergencyContact; }
+    public void setEmergencyContact(String emergencyContact) { this.emergencyContact = emergencyContact; }
 }
