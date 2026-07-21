@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 "/api/files/**",
                                 "/api/sports/**",
                                 "/uploads/**",
-                                "/api/student/*/report/pdf"
+                                "/api/student/*/report/pdf",
+                                "/api/v1/**"
                         ).permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/curriculum-subjects").permitAll()
                         .anyRequest().authenticated()
