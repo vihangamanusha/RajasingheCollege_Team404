@@ -1,28 +1,36 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { Bell, Loader2, Search } from "lucide-react";
+import { Bell, Megaphone, ChevronDown, ChevronUp } from "lucide-react";
+
+const API_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`;
+
+const categoryColors = {
+  Academic:   { bg: "#dbeafe", color: "#1d4ed8" },
+  Event:      { bg: "#fef3c7", color: "#b45309" },
+  General:    { bg: "#f0fdf4", color: "#15803d" },
+  Sports:     { bg: "#fce7f3", color: "#be185d" },
+  Urgent:     { bg: "#fee2e2", color: "#b91c1c" },
+};
 
 export default function StudentAnnouncements() {
   const [announcements, setAnnouncements] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [expandedId, setExpandedId] = useState(null);
+  const [filterCategory, setFilterCategory] = useState("All");
 
   useEffect(() => {
     const fetchAnnouncements = async () => {
-      setLoading(true);
-      setError(null);
       try {
-        const token = localStorage.getItem("token");
-        const config = { headers: { Authorization: `Bearer ${token}` } };
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`, config);
-        const data = Array.isArray(res.data) ? res.data : [];
-        const sorted = data.sort((a, b) => b.id - a.id);
-        setAnnouncements(sorted);
+        const res = await axios.get(API_URL);
+        const all = (res.data || []).sort((a, b) => b.id - a.id);
+        // Show announcements targeted at Students or All
+        const filtered = all.filter((ann) => {
+          const audience = (ann.targetAudience || "").toLowerCase();
+          return audience === "students" || audience === "all" || audience === "";
+        });
+        setAnnouncements(filtered);
       } catch (err) {
-        console.error("Failed to load announcements:", err);
-        setError("Failed to load announcements. Please try again.");
+        console.error("Failed to fetch announcements:", err);
       } finally {
         setLoading(false);
       }
@@ -30,147 +38,99 @@ export default function StudentAnnouncements() {
     fetchAnnouncements();
   }, []);
 
-  const filteredAnnouncements = announcements.filter(ann => {
-    const matchesSearch = (ann.title && ann.title.toLowerCase().includes(searchTerm.toLowerCase())) || 
-                          (ann.content && ann.content.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === "All" || ann.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const categories = ["All", ...Array.from(new Set(announcements.map((a) => a.category).filter(Boolean)))];
+
+  const displayed = filterCategory === "All"
+    ? announcements
+    : announcements.filter((a) => a.category === filterCategory);
 
   if (loading) return (
-    <div style={{ display: "flex", height: "60vh", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: "1rem" }}>
-      <Loader2 size={36} style={{ animation: "spin 1s linear infinite", color: "#2563eb" }} />
-      <style>{`@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }`}</style>
-    </div>
-  );
-
-  if (error) return (
-    <div style={{ display: "flex", height: "60vh", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ textAlign: "center", color: "#ef4444", background: "#fef2f2", padding: "2rem", borderRadius: "1rem", border: "1px solid #fecaca" }}>
-        <p style={{ fontSize: "1.1rem", fontWeight: 600 }}>{error}</p>
-      </div>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "60vh", color: "#64748b" }}>
+      Loading announcements...
     </div>
   );
 
   return (
-    <div style={{ fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ fontFamily: "'Inter', sans-serif", animation: "fadeIn 0.4s ease" }}>
       <style>{`
-        .announcement-card {
-          background: #fff;
-          border-radius: 1rem;
-          border: 1px solid #e2e8f0;
-          padding: 1.5rem;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          transition: all 0.25s;
-          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .announcement-card:hover {
-          transform: translateY(-3px);
-          box-shadow: 0 8px 20px rgba(0,0,0,0.07);
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        .ann-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px 24px; cursor: pointer; transition: all 0.2s ease; }
+        .ann-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); border-color: #c7d2fe; transform: translateY(-2px); }
+        .filter-pill { padding: 6px 16px; border-radius: 999px; border: 1px solid #e2e8f0; background: #f8fafc; color: #475569; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+        .filter-pill.active { background: #1d4ed8; color: #fff; border-color: #1d4ed8; }
+        .filter-pill:hover:not(.active) { border-color: #94a3b8; }
       `}</style>
 
       {/* Header */}
-      <div style={{ marginBottom: "2rem" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 6 }}>
-          <Bell size={28} color="#1e3a8a" />
-          <h1 style={{ margin: 0, fontSize: "1.6rem", color: "#1e293b", fontWeight: 700 }}>Announcements & Notices</h1>
+      <div style={{ background: "linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%)", color: "white", padding: "2rem 2.5rem", borderRadius: "1rem", display: "flex", alignItems: "center", gap: "1.25rem", boxShadow: "0 10px 25px rgba(30,58,138,0.2)", marginBottom: "2rem" }}>
+        <div style={{ background: "rgba(255,255,255,0.2)", width: 56, height: 56, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <Bell size={28} />
         </div>
-        <p style={{ color: "#64748b", margin: 0, fontSize: "0.9rem" }}>
-          School-wide notices and academic updates.
-        </p>
-      </div>
-
-      {/* Filter controls */}
-      <div style={{
-        background: "#fff",
-        border: "1px solid #e2e8f0",
-        borderRadius: "1rem",
-        padding: "1.25rem",
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "1rem",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: "2rem"
-      }}>
-        <div style={{ position: "relative", width: "300px" }}>
-          <input 
-            type="text" 
-            placeholder="Search announcements..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              padding: "10px 16px 10px 40px",
-              borderRadius: "8px",
-              border: "1px solid #cbd5e1",
-              fontSize: "14px",
-              width: "100%",
-              outline: "none",
-              boxSizing: "border-box"
-            }}
-          />
-          <Search size={16} style={{ position: "absolute", left: 14, top: 12, color: "#94a3b8" }} />
+        <div>
+          <h1 style={{ margin: 0, fontSize: "1.6rem", fontWeight: 700 }}>Announcements</h1>
+          <p style={{ margin: "4px 0 0", opacity: 0.85, fontSize: "0.95rem" }}>Stay up to date with school news and notices</p>
         </div>
-        
-        <div style={{ display: "flex", gap: "8px" }}>
-          {["All", "Academic", "Sports", "General"].map(cat => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              style={{
-                padding: "8px 16px",
-                borderRadius: "20px",
-                border: selectedCategory === cat ? "none" : "1px solid #cbd5e1",
-                backgroundColor: selectedCategory === cat ? "#1e3a8a" : "white",
-                color: selectedCategory === cat ? "white" : "#64748b",
-                fontSize: "13px",
-                fontWeight: "600",
-                cursor: "pointer",
-                transition: "all 0.2s"
-              }}
-            >
-              {cat}
-            </button>
-          ))}
+        <div style={{ marginLeft: "auto", background: "rgba(255,255,255,0.15)", padding: "8px 18px", borderRadius: "999px", fontSize: "0.9rem", fontWeight: 600 }}>
+          {displayed.length} Notice{displayed.length !== 1 ? "s" : ""}
         </div>
       </div>
 
-      {/* Announcements List */}
-      {filteredAnnouncements.length === 0 ? (
-        <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: "1rem", padding: "40px", textAlign: "center" }}>
-          <p style={{ color: "#94a3b8", fontSize: "15px", margin: 0 }}>No announcements found matching the filter criteria.</p>
+      {/* Category filters */}
+      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+        {categories.map((cat) => (
+          <button key={cat} className={`filter-pill ${filterCategory === cat ? "active" : ""}`} onClick={() => setFilterCategory(cat)}>
+            {cat}
+          </button>
+        ))}
+      </div>
+
+      {/* Announcements list */}
+      {displayed.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "4rem 0", color: "#94a3b8" }}>
+          <Megaphone size={48} style={{ marginBottom: "1rem", opacity: 0.5 }} />
+          <p style={{ fontSize: "1.1rem" }}>No announcements found.</p>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: "1.25rem" }}>
-          {filteredAnnouncements.map((ann) => (
-            <div key={ann.id} className="announcement-card">
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span style={{
-                  padding: "4px 8px",
-                  fontSize: "11px",
-                  fontWeight: "600",
-                  borderRadius: "4px",
-                  backgroundColor: ann.category === "Academic" ? "#dbeafe" : ann.category === "Sports" ? "#fef3c7" : "#e2e8f0",
-                  color: ann.category === "Academic" ? "#1e40af" : ann.category === "Sports" ? "#d97706" : "#475569",
-                  textTransform: "uppercase"
-                }}>{ann.category || "General"}</span>
-                <span style={{ fontSize: "12px", color: "#94a3b8" }}>Audience: {ann.targetAudience || "All"}</span>
+        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+          {displayed.map((ann) => {
+            const isOpen = expandedId === ann.id;
+            const colors = categoryColors[ann.category] || { bg: "#f1f5f9", color: "#475569" };
+            return (
+              <div key={ann.id} className="ann-card" onClick={() => setExpandedId(isOpen ? null : ann.id)}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "14px", flex: 1 }}>
+                    <div style={{ width: 44, height: 44, borderRadius: 10, background: colors.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                      <Megaphone size={20} color={colors.color} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ margin: "0 0 4px", fontSize: "15px", fontWeight: 600, color: "#1e293b" }}>{ann.title}</h3>
+                      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                        {ann.category && (
+                          <span style={{ fontSize: "11px", fontWeight: 600, padding: "2px 10px", borderRadius: 20, background: colors.bg, color: colors.color }}>
+                            {ann.category}
+                          </span>
+                        )}
+                        {ann.targetAudience && (
+                          <span style={{ fontSize: "11px", fontWeight: 500, padding: "2px 10px", borderRadius: 20, background: "#f0fdf4", color: "#15803d" }}>
+                            {ann.targetAudience}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ color: "#94a3b8", flexShrink: 0 }}>
+                    {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </div>
+                </div>
+
+                {isOpen && ann.content && (
+                  <div style={{ marginTop: "16px", paddingTop: "16px", borderTop: "1px solid #f1f5f9", fontSize: "14px", color: "#475569", lineHeight: 1.7 }}>
+                    {ann.content}
+                  </div>
+                )}
               </div>
-              <h3 style={{ margin: "4px 0 0", fontSize: "1.1rem", color: "#1e293b", fontWeight: 700 }}>
-                {ann.title}
-              </h3>
-              <p style={{ margin: 0, fontSize: "0.9rem", color: "#475569", lineHeight: "1.5", flex: 1 }}>
-                {ann.content}
-              </p>
-              <div style={{ borderTop: "1px solid #f1f5f9", paddingTop: "12px", display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#94a3b8" }}>
-                <span>Published</span>
-                <span>📅 {new Date().toLocaleDateString()}</span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:8080/api/announcements";
+const BASE_URL = `${import.meta.env.VITE_API_URL || "http://localhost:8080"}/api/announcements`;
 
 /**
  * Fetch all announcements then filter client-side by category + targetAudience.

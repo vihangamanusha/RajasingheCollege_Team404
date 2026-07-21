@@ -1,4 +1,5 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import logoImage from "../assets/rcc.png";
 import {
   LayoutDashboard,
@@ -13,6 +14,38 @@ import {
 
 export default function Sidebar() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isActive = (path) => {
+    const toPath = path.startsWith("/admin") ? path.replace("/admin", "/to/admin") : path;
+    return location.pathname.startsWith(path) || location.pathname.startsWith(toPath) ? "active" : "";
+  };
+
+  useEffect(() => {
+    const originalPushState = window.history.pushState;
+    const originalReplaceState = window.history.replaceState;
+
+    const rewriteUrl = (url) => {
+      if (url === "/admin/users/student") return "/to/admin/users/student";
+      if (url === "/admin/users/teacher") return "/to/admin/users/teacher";
+      if (url === "/admin/classes") return "/to/admin/classes";
+      if (url === "/admin/analytics") return "/to/admin/analytics";
+      if (url === "/admin/announcements") return "/to/admin/announcements";
+      return url;
+    };
+
+    window.history.pushState = function (state, title, url) {
+      return originalPushState.apply(this, [state, title, rewriteUrl(url)]);
+    };
+
+    window.history.replaceState = function (state, title, url) {
+      return originalReplaceState.apply(this, [state, title, rewriteUrl(url)]);
+    };
+
+    return () => {
+      window.history.pushState = originalPushState;
+      window.history.replaceState = originalReplaceState;
+    };
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -38,15 +71,18 @@ export default function Sidebar() {
           <GraduationCap size={18} />
           Teacher
         </NavLink>
-        <NavLink to="/to/admin/classes" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+        <NavLink to="/to/admin/classes" className={`nav-link ${isActive("/admin/classes")}`}
+                        onClick={() => navigate("/admin/classes")}> 
           <BookOpen size={18} />
           Classes
         </NavLink>
-        <NavLink to="/to/admin/announcements" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+        <NavLink to="/to/admin/announcements"  className={`nav-link ${isActive("/admin/announcements")}`}
+                        onClick={() => navigate("/admin/announcements")}> 
           <Megaphone size={18} />
           Announcement
         </NavLink>
-        <NavLink to="/to/admin/analytics" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}> 
+        <NavLink to="/to/admin/analytics" className={`nav-link ${isActive("/admin/analytics")}`}
+                        onClick={() => navigate("/admin/analytics")}> 
           <FileText size={18} />
           Reports
         </NavLink>

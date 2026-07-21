@@ -9,6 +9,7 @@ export default function StudentRegister() {
     const [step, setStep] = useState(1);//Controls which page is shown
     const [form, setForm] = useState({//Stores all user input
         fullName: "", dateOfBirth: "", address: "", contactNumber: "", medium: "",
+        fatherName: "", motherName: "", fatherContact: "", motherContact: "", emergencyContact: "",
         userId: "", username: "", email: "", password: ""
     });
 
@@ -36,6 +37,36 @@ export default function StudentRegister() {
             // Requirement: Exactly 10 digits (Standard Sri Lankan format)
             if (!/^\d{10}$/.test(form.contactNumber)) {
                 setMessage("Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+            // Father's Name Validation
+            if (!/^[a-zA-Z\s]+$/.test(form.fatherName)) {
+                setMessage("Father's Name can only contain letters and spaces.");
+                setMessageType("error");
+                return false;
+            }
+            // Mother's Name Validation
+            if (!/^[a-zA-Z\s]+$/.test(form.motherName)) {
+                setMessage("Mother's Name can only contain letters and spaces.");
+                setMessageType("error");
+                return false;
+            }
+            // Father's Contact Validation
+            if (!/^\d{10}$/.test(form.fatherContact)) {
+                setMessage("Father's Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+            // Mother's Contact Validation
+            if (!/^\d{10}$/.test(form.motherContact)) {
+                setMessage("Mother's Contact Number must be exactly 10 digits.");
+                setMessageType("error");
+                return false;
+            }
+            // Emergency Contact Validation
+            if (!form.emergencyContact) {
+                setMessage("Please select an Emergency Contact.");
                 setMessageType("error");
                 return false;
             }
@@ -122,6 +153,7 @@ export default function StudentRegister() {
                 setMessageType("success");
                 setForm({
                     fullName: "", dateOfBirth: "", address: "", contactNumber: "", medium: "",
+                    fatherName: "", motherName: "", fatherContact: "", motherContact: "", emergencyContact: "",
                     userId: "", username: "", email: "", password: ""
                 });
                 setStep(1);
@@ -144,52 +176,118 @@ export default function StudentRegister() {
             </div>
 
             <div className="form-card">
-                <div className="step-indicator">
-                    {step === 1 ? "Step 1: Personal Profile" : "Step 2: Account Security"}
+                <div className="progress-bar-container">
+                    <div className={`progress-step ${step >= 1 ? "active" : ""}`}>
+                        <div className="step-number">1</div>
+                        <div className="step-label">Personal & Parent Info</div>
+                    </div>
+                    <div className="progress-line">
+                        <div className="progress-line-fill" style={{ width: step === 2 ? "100%" : "0%" }}></div>
+                    </div>
+                    <div className={`progress-step ${step === 2 ? "active" : ""}`}>
+                        <div className="step-number">2</div>
+                        <div className="step-label">Account Security</div>
+                    </div>
                 </div>
 
                 <form onSubmit={handleSubmit}>
                     {step === 1 && (
                         <div className="wizard-step">
-                            <div className="form-group">
-                                <label>Full Name (Letters Only)</label>
-                                <div className="input-container">
-                                    <FiUser className="input-icon" />
-                                    <input name="fullName" value={form.fullName} onChange={handleChange} required />
+                            <h3 className="section-subtitle">Personal Details</h3>
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Full Name (Letters Only)</label>
+                                    <div className="input-container">
+                                        <FiUser className="input-icon" />
+                                        <input name="fullName" value={form.fullName} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>Date of Birth</label>
+                                    <div className="input-container">
+                                        <FiCalendar className="input-icon" />
+                                        <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleChange} required />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label>Date of Birth</label>
-                                <div className="input-container">
-                                    <FiCalendar className="input-icon" />
-                                    <input name="dateOfBirth" type="date" value={form.dateOfBirth} onChange={handleChange} required />
+
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Home Address (Letters, Numbers, Commas)</label>
+                                    <div className="input-container">
+                                        <FiMapPin className="input-icon" />
+                                        <input name="address" value={form.address} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>Guardian Contact (10 Digits)</label>
+                                    <div className="input-container">
+                                        <FiPhone className="input-icon" />
+                                        <input name="contactNumber" value={form.contactNumber} onChange={handleChange} required />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label>Home Address (Letters, Numbers, Commas)</label>
-                                <div className="input-container">
-                                    <FiMapPin className="input-icon" />
-                                    <input name="address" value={form.address} onChange={handleChange} required />
+
+                            <h3 className="section-subtitle">Parents' Details</h3>
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Father's Name (Letters Only)</label>
+                                    <div className="input-container">
+                                        <FiUser className="input-icon" />
+                                        <input name="fatherName" value={form.fatherName} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>Father's Contact (10 Digits)</label>
+                                    <div className="input-container">
+                                        <FiPhone className="input-icon" />
+                                        <input name="fatherContact" value={form.fatherContact} onChange={handleChange} required />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label>Guardian Contact (10 Digits)</label>
-                                <div className="input-container">
-                                    <FiPhone className="input-icon" />
-                                    <input name="contactNumber" value={form.contactNumber} onChange={handleChange} required />
+
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Mother's Name (Letters Only)</label>
+                                    <div className="input-container">
+                                        <FiUser className="input-icon" />
+                                        <input name="motherName" value={form.motherName} onChange={handleChange} required />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>Mother's Contact (10 Digits)</label>
+                                    <div className="input-container">
+                                        <FiPhone className="input-icon" />
+                                        <input name="motherContact" value={form.motherContact} onChange={handleChange} required />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label>Learning Medium</label>
-                                <div className="input-container">
-                                    <FiBookOpen className="input-icon" />
-                                    <select name="medium" value={form.medium} onChange={handleChange} required>
-                                        <option value="" disabled>Select Medium</option>
-                                        <option value="Sinhala">Sinhala</option>
-                                        <option value="English">English</option>
-                                    </select>
+
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Emergency Contact Selector</label>
+                                    <div className="input-container">
+                                        <FiUser className="input-icon" />
+                                        <select name="emergencyContact" value={form.emergencyContact} onChange={handleChange} required>
+                                            <option value="" disabled>Select Emergency Contact</option>
+                                            <option value="FATHER">Father</option>
+                                            <option value="MOTHER">Mother</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>Learning Medium</label>
+                                    <div className="input-container">
+                                        <FiBookOpen className="input-icon" />
+                                        <select name="medium" value={form.medium} onChange={handleChange} required>
+                                            <option value="" disabled>Select Medium</option>
+                                            <option value="Sinhala">Sinhala</option>
+                                            <option value="English">English</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
+
                             <button type="button" className="submit-btn" onClick={handleNext}>
                                 Next Step <FiArrowRight style={{ marginLeft: '5px' }} />
                             </button>
@@ -198,32 +296,36 @@ export default function StudentRegister() {
 
                     {step === 2 && (
                         <div className="wizard-step">
-                            <div className="form-group">
-                                <label>Student ID (Automatically Generated)</label>
-                                <div className="input-container">
-                                    <FiHash className="input-icon" />
-                                    <input name="userId" value={form.userId} readOnly style={{ backgroundColor: "#e2e8f0", cursor: "not-allowed" }} required />
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Student ID (Automatically Generated)</label>
+                                    <div className="input-container">
+                                        <FiHash className="input-icon" />
+                                        <input name="userId" value={form.userId} readOnly style={{ backgroundColor: "#e2e8f0", cursor: "not-allowed" }} required />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <label>System Username (Alphanumeric)</label>
+                                    <div className="input-container">
+                                        <FiUser className="input-icon" />
+                                        <input name="username" value={form.username} onChange={handleChange} required />
+                                    </div>
                                 </div>
                             </div>
-                            <div className="form-group">
-                                <label>System Username (Alphanumeric)</label>
-                                <div className="input-container">
-                                    <FiUser className="input-icon" />
-                                    <input name="username" value={form.username} onChange={handleChange} required />
+                            <div className="form-grid">
+                                <div className="form-group">
+                                    <label>Email Address</label>
+                                    <div className="input-container">
+                                        <FiMail className="input-icon" />
+                                        <input name="email" type="email" value={form.email} onChange={handleChange} required />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="form-group">
-                                <label>Email Address</label>
-                                <div className="input-container">
-                                    <FiMail className="input-icon" />
-                                    <input name="email" type="email" value={form.email} onChange={handleChange} required />
-                                </div>
-                            </div>
-                            <div className="form-group">
-                                <label>Account Password (Min 8 Characters)</label>
-                                <div className="input-container">
-                                    <FiLock className="input-icon" />
-                                    <input name="password" type="password" value={form.password} onChange={handleChange} required />
+                                <div className="form-group">
+                                    <label>Account Password (Min 8 Characters)</label>
+                                    <div className="input-container">
+                                        <FiLock className="input-icon" />
+                                        <input name="password" type="password" value={form.password} onChange={handleChange} required />
+                                    </div>
                                 </div>
                             </div>
                             <div className="button-group">

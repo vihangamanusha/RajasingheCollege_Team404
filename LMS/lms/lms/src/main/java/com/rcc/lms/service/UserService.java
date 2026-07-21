@@ -165,6 +165,11 @@ public class UserService {
         newStudent.setAddress(request.getAddress());
         newStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
         newStudent.setContactNumber(request.getContactNumber());
+        newStudent.setFatherName(request.getFatherName());
+        newStudent.setMotherName(request.getMotherName());
+        newStudent.setFatherContact(request.getFatherContact());
+        newStudent.setMotherContact(request.getMotherContact());
+        newStudent.setEmergencyContact(request.getEmergencyContact());
         newStudent.setUser(newUser);
         studentRepository.save(newStudent);
 
@@ -296,6 +301,11 @@ public class UserService {
             if (request.getMedium() != null) {
                 existingStudent.setMedium(com.rcc.lms.entity.student.Medium.valueOf(request.getMedium()));
             }
+            existingStudent.setFatherName(request.getFatherName());
+            existingStudent.setMotherName(request.getMotherName());
+            existingStudent.setFatherContact(request.getFatherContact());
+            existingStudent.setMotherContact(request.getMotherContact());
+            existingStudent.setEmergencyContact(request.getEmergencyContact());
             studentRepository.save(existingStudent);//update databse
         }
         return "Student profile updated successfully!";

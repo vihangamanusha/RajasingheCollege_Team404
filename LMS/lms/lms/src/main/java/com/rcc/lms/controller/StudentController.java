@@ -232,6 +232,11 @@ public class StudentController {
         dto.setAddress(s.getAddress());
         dto.setMedium(s.getMedium() != null ? s.getMedium().name() : null);
         dto.setContactNumber(s.getContactNumber());
+        dto.setFatherName(s.getFatherName());
+        dto.setMotherName(s.getMotherName());
+        dto.setFatherContact(s.getFatherContact());
+        dto.setMotherContact(s.getMotherContact());
+        dto.setEmergencyContact(s.getEmergencyContact());
 
         if (s.getClassEntity() != null) {
             dto.setClassId(s.getClassEntity().getClassId());
